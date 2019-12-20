@@ -28,9 +28,31 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
- #include "FWCore/Utilities/interface/InputTag.h"
- #include "DataFormats/TrackReco/interface/Track.h"
- #include "DataFormats/TrackReco/interface/TrackFwd.h"
+#include "FWCore/Utilities/interface/InputTag.h"
+#include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/TrackReco/interface/TrackFwd.h"
+
+#include "FWCore/Framework/interface/Event.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/Framework/interface/EDConsumerBase.h"
+#include "FWCore/Framework/interface/ConsumesCollector.h"
+#include "DataFormats/PatCandidates/interface/Electron.h"
+#include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
+#include "DataFormats/PatCandidates/interface/Conversion.h"
+#include "DataFormats/EgammaCandidates/interface/ConversionFwd.h"
+#include "DataFormats/EgammaCandidates/interface/Conversion.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
+#include "DataFormats/Common/interface/ValueMap.h"
+#include "DataFormats/PatCandidates/interface/VIDCutFlowResult.h"
+#include "DataFormats/PatCandidates/interface/MET.h"
+#include "DataFormats/EcalRecHit/interface/EcalRecHitCollections.h"
+#include "DataFormats/DetId/interface/DetId.h"
+#include "DataFormats/EcalDetId/interface/EBDetId.h"
+#include "DataFormats/EcalDetId/interface/EEDetId.h"
+
+
 //
 // class declaration
 //
@@ -57,7 +79,9 @@ class LLP2018 : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       virtual void endJob() override;
 
       // ----------member data ---------------------------
-      edm::EDGetTokenT<TrackCollection> tracksToken_;  //used to select what tracks to read from configuration file
+      //edm::EDGetTokenT<TrackCollection> tracksToken_;  //used to select what tracks to read from configuration file
+      edm::EDGetTokenT<std::vector<pat::Electron>> electronToken_;  //used to select what tracks to read from configuration file
+      std::string EleVetoIdMapToken;
 };
 
 //
@@ -73,8 +97,9 @@ class LLP2018 : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 //
 LLP2018::LLP2018(const edm::ParameterSet& iConfig)
  :
-  tracksToken_(consumes<TrackCollection>(iConfig.getUntrackedParameter<edm::InputTag>("tracks")))
-
+  //tracksToken_(consumes<TrackCollection>(iConfig.getUntrackedParameter<edm::InputTag>("tracks"))),
+  electronToken_(consumes< std::vector<pat::Electron> >(iConfig.getUntrackedParameter<edm::InputTag>("electrons"))),
+  EleVetoIdMapToken(iConfig.getUntrackedParameter<std::string>("eleVetoIdMap"))
 {
    //now do what ever initialization is needed
 
@@ -100,6 +125,7 @@ LLP2018::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    using namespace edm;
 
+   /*
     Handle<TrackCollection> tracks;
     iEvent.getByToken(tracksToken_, tracks);
     for(TrackCollection::const_iterator itTrack = tracks->begin();
@@ -108,6 +134,26 @@ LLP2018::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       // do something with track parameters, e.g, plot the charge.
       // int charge = itTrack->charge();
     }
+   */
+
+    std::vector<pat::Electron> Vect;
+    // Declare and open collection                                                                                                                                         
+    edm::Handle<std::vector<pat::Electron> > EleCollection;
+    iEvent.getByToken(electronToken_, EleCollection);
+
+    //edm::Handle<edm::ValueMap<bool> > VetoIdDecisions;
+    //iEvent.getByToken(EleVetoIdMapToken, VetoIdDecisions);
+
+    //unsigned int elIdx = 0;
+
+    for(std::vector<pat::Electron>::const_iterator it=EleCollection->begin(); it!=EleCollection->end(); ++it) {
+      pat::Electron el=*it;
+      //pat::ElectronRef elRef(EleCollection, elIdx);
+      //bool isPassVeto = (*VetoIdDecisions)[elRef];
+      //el.addUserInt("isVeto", isPassVeto ? 1 : 0);
+      std::cout<<"el is veto: " << el.electronID(EleVetoIdMapToken) << std::endl;
+    }
+
 
 #ifdef THIS_IS_AN_EVENT_EXAMPLE
    Handle<ExampleData> pIn;
