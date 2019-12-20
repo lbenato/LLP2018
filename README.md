@@ -17,9 +17,33 @@ git cms-init
 scram b -j 10
 ```
 
+##EGAMMA modules
+Recipe: https://twiki.cern.ch/twiki/bin/view/CMS/EgammaMiniAODV2#2018_MiniAOD
+
+```
+cd $CMSSW_BASE/src
+git cms-merge-topic cms-egamma:EgammaPostRecoTools #just adds in an extra file to have a setup function to make things easier 
+git cms-merge-topic cms-egamma:PhotonIDValueMapSpeedup1029 #optional but speeds up the photon ID value module so things fun faster
+git cms-merge-topic cms-egamma:slava77-btvDictFix_10210 #fixes the Run2018D dictionary issue, see https://github.com/cms-sw/cmssw/issues/26182, may not be necessary for later releases, try it first and see if it works
+#now to add the scale and smearing for 2018 (eventually this will not be necessary in later releases but is harmless to do regardless)
+git cms-addpkg EgammaAnalysis/ElectronTools
+rm EgammaAnalysis/ElectronTools/data -rf
+git clone git@github.com:cms-data/EgammaAnalysis-ElectronTools.git EgammaAnalysis/ElectronTools/data
+#now build everything
+scram b -j 32
+```
+
+##Jet Toolbox
+Recipe: https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetToolbox
+```
+cd $CMSSW_BASE/src
+git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_102X_v2
+scram b -j 32
+```
+
 ## Checkout LLPDNNX
 ```
-cd CMSSW_10_2_18/src
+cd $CMSSW_BASE/src
 git clone https://github.com/LLPDNNX/LLPReco.git LLPReco
 scram b
 ```
