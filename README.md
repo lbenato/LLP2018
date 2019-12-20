@@ -31,4 +31,5 @@ mkdir Analyzer
 cd Analyzer
 git clone https://github.com/lbenato/LLP2018.git
 cd LLP2018
+scram b -j 32
 ```
