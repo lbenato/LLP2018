@@ -41,6 +41,17 @@ git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToo
 scram b -j 32
 ```
 
+## PU Jet ID
+Recipe:
+```
+git clone -b 94X_weights_DYJets_inc_v2 git@github.com:cms-jet/PUjetID.git PUJetIDweights/
+cp PUJetIDWeights/weights/pileupJetId_102X_Eta* $CMSSW_BASE/src/RecoJets/JetProducers/data/
+git cms-merge-topic singh-ramanpreet:PUID_102_15_v2
+##rm -rf PUJetIDweights/  ### If needed
+git cms-merge-topic singh-ramanpreet:PUID_102_15_v2
+```
+
+
 ## Checkout LLPDNNX
 ```
 cd $CMSSW_BASE/src
