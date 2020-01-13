@@ -862,6 +862,31 @@ chosen_AK8 = "packedPatJetsAK8" # including SoftDrop info
 #chosen_AK8 = "patJetsAK8CHSReclustered"#'slimmedJetsAK8'
 
 #-----------------------#
+#       PU Jet ID       #
+#-----------------------#
+
+from RecoJets.JetProducers.PileupJetID_cfi import _chsalgos_94x, _chsalgos_102x
+#from RecoJets.JetProducers.PileupJetID_cfi import pileupJetId
+#process.pileupJetId = pileupJetId.clone(
+#  jets=cms.InputTag(jets_after_btag_tools),
+#  inputIsCorrected=True,
+#  applyJec=False,
+#  vertexes=cms.InputTag("offlineSlimmedPrimaryVertices"),
+#  pileupJetId.algos = cms.VPSet(_chsalgos_102x),
+#  )
+process.load("RecoJets.JetProducers.PileupJetID_cfi")
+process.pileupJetId.jets = cms.InputTag(jets_after_btag_tools)
+process.pileupJetId.inputIsCorrected = True
+process.pileupJetId.applyJec = False
+process.pileupJetId.vertexes = cms.InputTag("offlineSlimmedPrimaryVertices")
+##process.pileupJetId.algos = cms.VPSet(_chsalgos_94x) # for 2017
+process.pileupJetId.algos = cms.VPSet(_chsalgos_102x) # for 2018
+#task.add(process.pileupJetId)
+
+#jets_after_btag_tools
+jets_to_be_used = "pileupJetId"
+
+#-----------------------#
 #       ANALYZER        #
 #-----------------------#
 
@@ -928,7 +953,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         l1filters = cms.vstring('hltL1sTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBFIorHTT300','hltL1sDoubleJetC112','hltL1sQuadJetC50IorQuadJetC60IorHTT280IorHTT300IorHTT320IorTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBF','hltL1sTripleJetVBFIorHTTIorDoubleJetCIorSingleJet','hltL1sSingleMu22','hltL1sV0SingleMu22IorSingleMu25','hltL1sZeroBias','hltL1sSingleJet60','hltL1sSingleJet35','hltTripleJet50','hltDoubleJet65','hltSingleJet80','hltVBFFilterDisplacedJets'),
     ),
     allJetSet = cms.PSet(
-        jets = cms.InputTag(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
+        jets = cms.InputTag(jets_to_be_used),#(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
         jetid = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet1pt = cms.double(15.),
         jet2pt = cms.double(15.),
@@ -978,7 +1003,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         jerNameSf = cms.string('data/JER/Spring16_25nsV10_MC_SF_AK4PFchs.txt'),#v10 is the latest
     ),
     chsJetSet = cms.PSet(
-        jets = cms.InputTag(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
+        jets = cms.InputTag(jets_to_be_used),#(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
         jetid = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet1pt = cms.double(pt_AK4),
         jet2pt = cms.double(pt_AK4),
@@ -1028,7 +1053,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         jerNameSf = cms.string('data/JER/Spring16_25nsV10_MC_SF_AK4PFchs.txt'),#v10 is the latest
     ),
     vbfJetSet = cms.PSet(
-        jets = cms.InputTag(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
+        jets = cms.InputTag(jets_to_be_used),#(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
         jetid = cms.int32(3), # 0: no selection, 1: loose, 2: medium, 3: tight
         #jet1pt = cms.double(30.),#https://indico.desy.de/indico/event/20983/contribution/0/material/slides/0.pdf
         #jet2pt = cms.double(30.),#https://indico.desy.de/indico/event/20983/contribution/0/material/slides/0.pdf
