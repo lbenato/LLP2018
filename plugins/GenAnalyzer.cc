@@ -84,6 +84,21 @@ GenAnalyzer::~GenAnalyzer() {
 
 // ---------- GEN WEIGHTS ----------
 
+
+float GenAnalyzer::GenEventWeight(const edm::Event& iEvent) {
+  float weight(1.);
+  if(iEvent.isRealData()) return weight;
+
+  // Declare and open collection
+  edm::Handle<GenEventInfoProduct> GenEventCollection;
+  iEvent.getByToken(GenToken, GenEventCollection);
+  const GenEventInfoProduct& genEventInfo = *(GenEventCollection.product());
+
+  weight = genEventInfo.weights()[0];
+  return weight;
+}
+
+
 std::map<int, float> GenAnalyzer::FillWeightsMap(const edm::Event& iEvent) {
     std::map<int, float> Weights;
     Weights[-1] = 1.; // EventWeight
