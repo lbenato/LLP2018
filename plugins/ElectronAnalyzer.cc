@@ -263,14 +263,15 @@ std::vector<pat::Electron> ElectronAnalyzer::FillElectronVector(const edm::Event
         el.addUserInt("isMVATrigTight", isPassMVATrigTight ? 1 : 0);
 
 	//convolution of scale and smearing, as per: https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaMiniAODV2#Energy_Scale_and_Smearing
-        float scale         = el.userFloat("ecalTrkEnergyPostCorr")/el.energy();
-        float error_scale   = el.userFloat("ecalTrkEnergyErrPostCorr")/el.energy();
+	//some exceptions thrown; userFloat not existing!
+        float scale         = el.hasUserFloat("ecalTrkEnergyPostCorr") ? el.userFloat("ecalTrkEnergyPostCorr")/el.energy() : 0.;
+        float error_scale   = el.hasUserFloat("ecalTrkEnergyErrPostCorr") ? el.userFloat("ecalTrkEnergyErrPostCorr")/el.energy() : 0.;
 	//question: do we have to divide by ecalTrkEnergyPostCorr?! Or by energy?
 
 	//not sure, to be checked later:
-        float sigma         = el.userFloat("energySigmaValue");
-        float error_sigma_u = el.userFloat("energySigmaUp");
-        float error_sigma_d = el.userFloat("energySigmaDown");
+        float sigma         = el.hasUserFloat("energySigmaValue") ? el.userFloat("energySigmaValue") : 0.;
+        float error_sigma_u = el.hasUserFloat("energySigmaUp")    ? el.userFloat("energySigmaUp")    : 0.;
+        float error_sigma_d = el.hasUserFloat("energySigmaDown")  ? el.userFloat("energySigmaDown")  : 0.;
 
         el.addUserFloat("SSscale",          scale);
         el.addUserFloat("SSscaleUnc",       error_scale);
