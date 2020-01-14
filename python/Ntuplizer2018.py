@@ -120,7 +120,7 @@ process.options   = cms.untracked.PSet(
 )
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -132,7 +132,10 @@ if len(options.inputFiles) == 0:
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
             #'/store/mc/RunIIAutumn18DRPremix/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/3017154C-F483-964E-855B-E06F2590FD6B.root'#2018 MC with muons!  #
-            'file:/afs/desy.de/user/e/eichm/public/forLisa/VBFH_m20_ctau500.root'
+            #'/store/mc/RunIISummer16MiniAODv2/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/E65DC503-55C9-E611-9A11-02163E019C7F.root',
+            #'file:/afs/desy.de/user/e/eichm/public/forLisa/VBFH_m20_ctau500.root'
+            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_Summer16_MINIAODSIM_calojets_Tranche2/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets/181218_125055/0000/miniaod_1.root',
+            
         )
     )
 
@@ -319,7 +322,8 @@ task.add(process.BadChargedCandidateFilter)
 #       COUNTER         #
 #-----------------------#
 process.counter = cms.EDAnalyzer('CounterAnalyzer',
-    lheProduct = cms.InputTag('externalLHEProducer' if not isbbH else 'source'),
+    #lheProduct = cms.InputTag('externalLHEProducer' if not isbbH else 'source'),
+    genProduct = cms.InputTag('generator'),
     pythiaLOSample = cms.bool(True if noLHEinfo else False),
 )
 
@@ -679,6 +683,7 @@ bTagInfos = [
    ,'softPFElectronsTagInfos'
    ,'pfInclusiveSecondaryVertexFinderCvsLTagInfos'
    ,'pfInclusiveSecondaryVertexFinderNegativeCvsLTagInfos'
+   ,'pfDeepCSVTagInfos' #Imperial
 #   ,'pfDeepFlavourTagInfos' # not available for 2016
 ]
 
@@ -795,7 +800,23 @@ updateJetCollection(
 for m in ['updatedPatJets'+postfix, 'updatedPatJetsTransientCorrected'+postfix]:
     setattr( getattr(process,m), 'addTagInfos', cms.bool(True) )
 
+
+#Imperial
+process.updatedPatJetsFinal.addBTagInfo = cms.bool(True)
+process.updatedPatJetsFinal.addDiscriminators = cms.bool(True)
+process.updatedPatJetsFinal.addJetCorrFactors = cms.bool(True)
+process.updatedPatJetsFinal.addTagInfos = cms.bool(True)
+#Imperial
+process.updatedPatJetsTransientCorrectedFinal.addBTagInfo = cms.bool(True)
+process.updatedPatJetsTransientCorrectedFinal.addDiscriminators = cms.bool(True)
+process.updatedPatJetsTransientCorrectedFinal.addJetCorrFactors = cms.bool(True)
+process.updatedPatJetsTransientCorrectedFinal.addTagInfos = cms.bool(True)
+
 jets_after_btag_tools = 'updatedPatJetsTransientCorrected'+postfix
+
+task.add(process.pfImpactParameterTagInfosFinal)
+task.add(process.pfInclusiveSecondaryVertexFinderTagInfosFinal)
+task.add(process.pfDeepCSVTagInfosFinal)
 task.add(process.updatedPatJetsFinal)
 task.add(process.updatedPatJetsTransientCorrectedFinal)
 
@@ -861,30 +882,78 @@ task.add(process.packedPatJetsAK8)
 chosen_AK8 = "packedPatJetsAK8" # including SoftDrop info
 #chosen_AK8 = "patJetsAK8CHSReclustered"#'slimmedJetsAK8'
 
+
+#-----------------------#
+#    Imperial Tagger    #
+#-----------------------#
+
+
+process.pfXTagInfos = cms.EDProducer("XTagInfoProducer",
+    jets = cms.InputTag(jets_after_btag_tools),
+    shallow_tag_infos = cms.InputTag('pfDeepCSVTagInfosFinal'),
+    vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
+    secondary_vertices = cms.InputTag("slimmedSecondaryVertices")
+)
+
+process.pfXTags = cms.EDProducer("XTagProducer",
+    graph_path=cms.FileInPath("LLPReco/XTagProducer/data/da.pb"),
+    src=cms.InputTag("pfXTagInfos"),
+    ctau_values=cms.vdouble(-2., 0., 3.), # provide log(ctau/1mm) to be evaluated: i.e. 10 mum, 1 mm and 1 m here
+    ctau_descriptors=cms.vstring("0p01", "1", "1000") # provide log(ctau/1mm) to be evaluated: i.e. 1 mum, 1 mm and 1 m here
+)
+
+#task.add(process.patJetCorrFactors)
+task.add(process.pfXTagInfos)
+task.add(process.pfXTags)
+
 #-----------------------#
 #       PU Jet ID       #
 #-----------------------#
 
-from RecoJets.JetProducers.PileupJetID_cfi import _chsalgos_94x, _chsalgos_102x
-#from RecoJets.JetProducers.PileupJetID_cfi import pileupJetId
-#process.pileupJetId = pileupJetId.clone(
-#  jets=cms.InputTag(jets_after_btag_tools),
-#  inputIsCorrected=True,
-#  applyJec=False,
-#  vertexes=cms.InputTag("offlineSlimmedPrimaryVertices"),
-#  pileupJetId.algos = cms.VPSet(_chsalgos_102x),
-#  )
-process.load("RecoJets.JetProducers.PileupJetID_cfi")
-process.pileupJetId.jets = cms.InputTag(jets_after_btag_tools)
-process.pileupJetId.inputIsCorrected = True
-process.pileupJetId.applyJec = False
-process.pileupJetId.vertexes = cms.InputTag("offlineSlimmedPrimaryVertices")
+#This recipe is suggested on the twiki but it does not work.
+#from RecoJets.JetProducers.PileupJetID_cfi import _chsalgos_94x, _chsalgos_102x
+#process.load("RecoJets.JetProducers.PileupJetID_cfi")
+#process.pileupJetId.jets = cms.InputTag('slimmedJets')#(jets_after_btag_tools)
+#process.pileupJetId.inputIsCorrected = True
+#process.pileupJetId.applyJec = True#?!False
+#process.pileupJetId.vertexes = cms.InputTag("offlineSlimmedPrimaryVertices")
 ##process.pileupJetId.algos = cms.VPSet(_chsalgos_94x) # for 2017
-process.pileupJetId.algos = cms.VPSet(_chsalgos_102x) # for 2018
-#task.add(process.pileupJetId)
+#process.pileupJetId.algos = cms.VPSet(_chsalgos_102x) # for 2018
+##task.add(process.pileupJetId)
 
-#jets_after_btag_tools
-jets_to_be_used = "pileupJetId"
+#Added by me, but useless:
+#process.pileupJetIdCalculator.jets = cms.InputTag('slimmedJets')#(jets_after_btag_tools)
+#process.pileupJetIdCalculator.inputIsCorrected = True
+#process.pileupJetIdCalculator.applyJec = True#?!False
+#process.pileupJetIdCalculator.vertexes = cms.InputTag("offlineSlimmedPrimaryVertices")
+
+#process.pileupJetIdEvaluator.jets = cms.InputTag('slimmedJets')#(jets_after_btag_tools)
+#process.pileupJetIdEvaluator.inputIsCorrected = True
+#process.pileupJetIdEvaluator.applyJec = True#?!False
+#process.pileupJetIdEvaluator.vertexes = cms.InputTag("offlineSlimmedPrimaryVertices")
+
+#This gives excpetions
+#task.add(process.pileUpJetIDTask)
+
+##Adding corrections and updating jets: this alone works, but it's not necessary w/o pileupJetId
+#process.load("PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff")
+#process.patJetCorrFactorsReapplyJEC = process.updatedPatJetCorrFactors.clone(
+#  src = cms.InputTag(jets_after_btag_tools),
+#  levels = ['L1FastJet', 'L2Relative', 'L3Absolute'] )
+
+#process.updatedJetsPUID = process.updatedPatJets.clone(
+#  jetSource = cms.InputTag(jets_after_btag_tools),
+#  jetCorrFactorsSource = cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
+#  )
+
+#process.updatedJetsPUID.userData.userInts.src += ['pileupJetId:fullId']
+#process.updatedJetsPUID.userData.userFloats.src += ['pileupJetId:fullDiscriminant']
+
+#task.add(process.patJetCorrFactorsReapplyJEC)
+#task.add(process.updatedJetsPUID)
+
+#jets_to_be_used = "updatedJetsPUID"
+jets_to_be_used = 'updatedPatJetsTransientCorrected'+postfix
 
 #-----------------------#
 #       ANALYZER        #
@@ -1307,6 +1376,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     calculateNsubjettiness = cms.bool(False),
     performPreFiringStudies = cms.bool(True if ('unprefirable' in process.source.fileNames[0]) else False),
     ##
+    ##btagToken = cms.untracked.InputTag("pfTrackCountingHighEffBJetTagsFinal","","ntuple"),
     verbose = cms.bool(False),
     verboseTrigger  = cms.bool(False),
     svTagInfoProducer = cms.untracked.InputTag("inclusiveSecondaryVertexFinderTagInfos"),
@@ -1327,6 +1397,9 @@ process.test = cms.EDAnalyzer('LLP2018',
 
 
 task.add(process.patAlgosToolsTask)
+#maybe here?
+#task.add(process.pileupJetId, process.patAlgosToolsTask)
+#task.add(process.pileUpJetIDTask)
 
 process.seq = cms.Sequence(
     process.egammaPostRecoSeq *
@@ -1346,12 +1419,22 @@ process.seq = cms.Sequence(
     ##process.slimmedElectrons *
     ####process.fullPatMetSequenceTEST *#leading to segfault
     process.counter *
-    #process.test
+    ##process.test
     process.ntuple
 )
 
 process.p = cms.Path(process.seq)
 process.p.associate(task)
+
+## If we want to keep the output miniaod:
+#from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
+#process.OUT = cms.OutputModule("PoolOutputModule",
+#    fileName = cms.untracked.string('test.root'),
+#    outputCommands = cms.untracked.vstring(['keep *', 'keep *_pfXTags_*_*', 'keep *_pfXTagInfos_*_*', 'drop *_reco*_*_*', 'drop recoVert*_*_*_*']),
+#    ###outputCommands = cms.untracked.vstring(['keep *_pfXTags_*_*', 'keep *_pfXTagInfos_*_*', 'drop *']),
+#)
+
+#process.endpath= cms.EndPath(process.OUT)
 
 outFile = open("tmpConfig_Ntuplizer2018.py","w")
 outFile.write(process.dumpPython())

@@ -46,6 +46,9 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     PhotonPSet(iConfig.getParameter<edm::ParameterSet>("photonSet")),
     VertexPSet(iConfig.getParameter<edm::ParameterSet>("vertexSet")),
     PFCandidatePSet(iConfig.getParameter<edm::ParameterSet>("pfCandidateSet")),
+
+    //JetTagToken(CColl.consumes<reco::JetTagCollection>(iConfig.getParameter<edm::InputTag>("jetTagToken"))),//here????
+
     MinGenBpt(iConfig.getParameter<double>("minGenBpt")),
     MaxGenBeta(iConfig.getParameter<double>("maxGenBeta")),
     InvmassVBF(iConfig.getParameter<double>("invmassVBF")),
@@ -112,6 +115,17 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     for(unsigned int i = 0; i < MetFiltersList.size(); i++) MetFiltersMap[ MetFiltersList[i] ] = false;
     std::vector<std::string> L1FiltersList(TriggerPSet.getParameter<std::vector<std::string> >("l1filters"));
     for(unsigned int i = 0; i < L1FiltersList.size(); i++) L1FiltersMap[ L1FiltersList[i] ] = false;
+
+    //Imperial College Tagger
+    edm::InputTag JetTagWP0p01 = edm::InputTag("pfXTags:0p01:ntuple");
+    JetTagWP0p01Token= consumes<reco::JetTagCollection>(JetTagWP0p01);
+
+    edm::InputTag JetTagWP1 = edm::InputTag("pfXTags:1:ntuple");
+    JetTagWP1Token= consumes<reco::JetTagCollection>(JetTagWP1);
+
+    edm::InputTag JetTagWP1000 = edm::InputTag("pfXTags:1000:ntuple");
+    JetTagWP1000Token= consumes<reco::JetTagCollection>(JetTagWP1000);
+
 
     if(isVerbose) std::cout << "CONSTRUCTOR" << std::endl;
     //if(isVerbose) std::cout << "ONLY EVENTS WITH 4 GEN B QUARKS IN ACCEPTANCE" << std::endl;
@@ -198,7 +212,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     number_of_b_matched_to_FatJets = 0;
     number_of_VBFGen_matched_to_AllJets = 0;
     //number_of_b_matched_to_CaloJets = number_of_b_matched_to_CaloJetsWithGenJets = 0;
-    EventWeight = PUWeight = PUWeightDown = PUWeightUp = LeptonWeight = ZewkWeight = WewkWeight = 1.;
+    GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = LeptonWeight = ZewkWeight = WewkWeight = 1.;
     HT = 0.;
     MinJetMetDPhi = MinJetMetDPhiAllJets = 10.;
     m_pi = 0.;
@@ -213,6 +227,11 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     EventNumber = iEvent.id().event();
     LumiNumber = iEvent.luminosityBlock();
     RunNumber = iEvent.id().run();
+
+
+    //GenEventWeight
+    GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
+    EventWeight *= GenEventWeight;
 
 
     // Trigger and MET filters
@@ -704,6 +723,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
     // CHSJetsVect CHSJetsVect CHSJetsVect CHSJetsVect MatchedCHSJetsVect MatchedCHSJetsVect MatchedCHSJetsVect MatchedCHSJetsVect GenBquarks GenBquarksGenBquarksGenBquarks
+
 
 
     //------------------------------------------------------------------------------------------
@@ -1273,6 +1293,80 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       CHSJetsVect.at(j).addUserInt("nTrackConstituents",nTrackConstituents);
     }
 
+
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // AK4 CHS Jets: Imperial College Tagger
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+
+    //First attempt to read Imperial Tagger
+    edm::Handle<reco::JetTagCollection> pfXTagWP0p01Handle;
+    iEvent.getByToken(JetTagWP0p01Token, pfXTagWP0p01Handle);
+    const reco::JetTagCollection & pfXWP0p01Tags = *(pfXTagWP0p01Handle.product());
+
+    edm::Handle<reco::JetTagCollection> pfXTagWP1Handle;
+    iEvent.getByToken(JetTagWP1Token, pfXTagWP1Handle);
+    const reco::JetTagCollection & pfXWP1Tags = *(pfXTagWP1Handle.product());
+
+    edm::Handle<reco::JetTagCollection> pfXTagWP1000Handle;
+    iEvent.getByToken(JetTagWP1000Token, pfXTagWP1000Handle);
+    const reco::JetTagCollection & pfXWP1000Tags = *(pfXTagWP1000Handle.product());
+
+    //Addd per-jet user float including Imperial Tagger
+    for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+      {
+	for(unsigned int s = 0; s<pfXWP0p01Tags.size(); s++)
+	  {
+	    //if(pfXWP0p01Tags[s].first->eta()==CHSJetsVect[r].eta())
+            if( reco::deltaR(pfXWP0p01Tags[s].first->eta(),pfXWP0p01Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
+	      {
+                //std::cout << "CHS Jets n. " << r << " and pfXWP0p01 n. " << s << "are matching!" << std::endl;
+		CHSJetsVect[r].addUserFloat("pfXWP0p01",pfXWP0p01Tags[s].second);
+	      }
+	  }
+
+	for(unsigned int s = 0; s<pfXWP1Tags.size(); s++)
+	  {
+	    //if(pfXWP1Tags[s].first->eta()==CHSJetsVect[r].eta())
+            if( reco::deltaR(pfXWP1Tags[s].first->eta(),pfXWP1Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
+	      {
+                //std::cout << "CHS Jets n. " << r << " and pfXWP1 n. " << s << "are matching!" << std::endl;
+		CHSJetsVect[r].addUserFloat("pfXWP1",pfXWP1Tags[s].second);
+	      }
+	  }
+
+	for(unsigned int s = 0; s<pfXWP1000Tags.size(); s++)
+	  {
+	    //if(pfXWP1000Tags[s].first->eta()==CHSJetsVect[r].eta())
+            if( reco::deltaR(pfXWP1000Tags[s].first->eta(),pfXWP1000Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
+	      {
+                if(isVerbose) std::cout << "CHS Jets n. " << r << " and pfXWP1000 n. " << s << " are matching; dR: " << reco::deltaR(pfXWP1000Tags[s].first->eta(),pfXWP1000Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) << std::endl;
+		CHSJetsVect[r].addUserFloat("pfXWP1000",pfXWP1000Tags[s].second);
+	      }
+	  }
+      }
+
+
+    //# Loop over jets and study b tag info.
+    //for (unsigned int i = 0; i != pfXWP0p01Tags.size(); ++i) {
+    //    if(pfXWP0p01Tags[i].first->pt()>1 && abs(pfXWP0p01Tags[i].first->eta())<2.4) std::cout << "  pfX WP0p01 tag jet  [" << i << "]\tpt: " << pfXWP0p01Tags[i].first->pt() << "\teta: " << pfXWP0p01Tags[i].first->eta() << "\tphi: " << pfXWP0p01Tags[i].first->phi() << "\tpfXTags: " << pfXWP0p01Tags[i].second << std::endl;
+    //}
+
+    //for (unsigned int i = 0; i != pfXWP1Tags.size(); ++i) {
+    //    if(pfXWP1Tags[i].first->pt()>1 && abs(pfXWP1Tags[i].first->eta())<2.4) std::cout << "  pfX WP1 tag jet  [" << i << "]\tpt: " << pfXWP1Tags[i].first->pt() << "\teta: " << pfXWP1Tags[i].first->eta() << "\tphi: " << pfXWP1Tags[i].first->phi() << "\tpfXTags: " << pfXWP1Tags[i].second << std::endl;
+    //}
+
+    if(isVerbose) {
+      for (unsigned int i = 0; i != pfXWP1000Tags.size(); ++i) {
+          if(pfXWP1000Tags[i].first->pt()>1 && abs(pfXWP1000Tags[i].first->eta())<2.4) std::cout << "  pfX WP1000 tag jet  [" << i << "]\tpt: " << pfXWP1000Tags[i].first->pt() << "\teta: " << pfXWP1000Tags[i].first->eta() << "\tphi: " << pfXWP1000Tags[i].first->phi() << "\tpfXTags: " << pfXWP1000Tags[i].second << std::endl;
+      }
+    }
+
+    //If you have a Jet, rather than a JetTag, and wish to know if it is b-tagged, there are several ways of doing so. One which always works is to perform angular matching between the Jet and the JetTag::jet(). (The match should be perfect if your JetCollection was used to produce the JetTagCollection).
+
+
+
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     // AK4 CALO Jets
@@ -1550,30 +1644,30 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //Write a summary, in verbose mode
       std::cout << " --- Event n. " << iEvent.id().event() << ", lumi " << iEvent.luminosityBlock() << ", run " << iEvent.id().run() << std::endl;
 
-      std::cout << "number of All AK4 jets:  " << AllJetsVect.size() << std::endl;
-      if (WriteAllJets) for(unsigned int i = 0; i < AllJetsVect.size(); i++) std::cout << "  All CHS AK4 jet  [" << i << "]\tpt: " << AllJetsVect[i].pt() << "\teta: " << AllJetsVect[i].eta() << "\tphi: " << AllJetsVect[i].phi() << "\tmass: " << AllJetsVect[i].mass() << std::endl;
+      //wait//std::cout << "number of All AK4 jets:  " << AllJetsVect.size() << std::endl;
+      //wait//if (WriteAllJets) for(unsigned int i = 0; i < AllJetsVect.size(); i++) std::cout << "  All CHS AK4 jet  [" << i << "]\tpt: " << AllJetsVect[i].pt() << "\teta: " << AllJetsVect[i].eta() << "\tphi: " << AllJetsVect[i].phi() << "\tmass: " << AllJetsVect[i].mass() << std::endl;
 
       std::cout << "number of CHS AK4 jets:  " << CHSJetsVect.size() << std::endl;
       for(unsigned int i = 0; i < CHSJetsVect.size(); i++) std::cout << "  CHS AK4 jet  [" << i << "]\tpt: " << CHSJetsVect[i].pt() << "\teta: " << CHSJetsVect[i].eta() << "\tphi: " << CHSJetsVect[i].phi() << "\tmass: " << CHSJetsVect[i].mass() << std::endl;
-      std::cout << "VBF jets pair:  " << VBFPairJetsVect.size() << std::endl;
-      if(isVBF) std::cout << "VBF conditions satisfied" << std::endl;
-      for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) std::cout << "  VBF jet  [" << i << "]\tpt: " << VBFPairJetsVect[i].pt() << "\teta: " << VBFPairJetsVect[i].eta() << "\tphi: " << VBFPairJetsVect[i].phi() << "\tmass: " << VBFPairJetsVect[i].mass() << std::endl;
+      //wait//std::cout << "VBF jets pair:  " << VBFPairJetsVect.size() << std::endl;
+      //wait//if(isVBF) std::cout << "VBF conditions satisfied" << std::endl;
+      //wait//or(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) std::cout << "  VBF jet  [" << i << "]\tpt: " << VBFPairJetsVect[i].pt() << "\teta: " << VBFPairJetsVect[i].eta() << "\tphi: " << VBFPairJetsVect[i].phi() << "\tmass: " << VBFPairJetsVect[i].mass() << std::endl;
 
       std::cout << "number of Gen B quarks:  " << GenBquarksVect.size() << std::endl;
       for(unsigned int i = 0; i < GenBquarksVect.size(); i++) std::cout << "  Gen B quark  [" << i << "]\tpt: " << GenBquarksVect[i].pt() << "\teta: " << GenBquarksVect[i].eta() << "\tphi: " << GenBquarksVect[i].phi() << "\tmass: " << GenBquarksVect[i].mass() << std::endl;
       std::cout << "number of CHS AK4 jets matched to b quarks:  " << MatchedCHSJetsVect.size() << std::endl;
       for(unsigned int i = 0; i < MatchedCHSJetsVect.size(); i++) std::cout << "  Matched CHS AK4 jet  [" << i << "]\tpt: " << MatchedCHSJetsVect[i].pt() << "\teta: " << MatchedCHSJetsVect[i].eta() << "\tphi: " << MatchedCHSJetsVect[i].phi() << "\tmass: " << MatchedCHSJetsVect[i].mass() << std::endl;
 
-      std::cout << "number of Gen VBF quarks/gluons:  " << GenVBFVect.size() << std::endl;
-      for(unsigned int i = 0; i < GenVBFVect.size(); i++) std::cout << "  Gen VBF parton  [" << i << "]\tpt: " << GenVBFVect[i].pt() << "\teta: " << GenVBFVect[i].eta() << "\tphi: " << GenVBFVect[i].phi() << "\tmass: " << GenVBFVect[i].mass() << "\tpdgid: " << GenVBFVect[i].pdgId() << std::endl;
-      std::cout << "number of CHS AK4 jets matched to VBF partons:  " << VBFGenMatchedJetsVect.size() << std::endl;
-      for(unsigned int i = 0; i < VBFGenMatchedJetsVect.size(); i++) std::cout << "  Matched CHS AK4 jet  [" << i << "]\tpt: " << VBFGenMatchedJetsVect[i].pt() << "\teta: " << VBFGenMatchedJetsVect[i].eta() << "\tphi: " << VBFGenMatchedJetsVect[i].phi() << "\tmass: " << VBFGenMatchedJetsVect[i].mass() << std::endl;
+      //wait//std::cout << "number of Gen VBF quarks/gluons:  " << GenVBFVect.size() << std::endl;
+      //wait//for(unsigned int i = 0; i < GenVBFVect.size(); i++) std::cout << "  Gen VBF parton  [" << i << "]\tpt: " << GenVBFVect[i].pt() << "\teta: " << GenVBFVect[i].eta() << "\tphi: " << GenVBFVect[i].phi() << "\tmass: " << GenVBFVect[i].mass() << "\tpdgid: " << GenVBFVect[i].pdgId() << std::endl;
+      //wait//std::cout << "number of CHS AK4 jets matched to VBF partons:  " << VBFGenMatchedJetsVect.size() << std::endl;
+      //wait//for(unsigned int i = 0; i < VBFGenMatchedJetsVect.size(); i++) std::cout << "  Matched CHS AK4 jet  [" << i << "]\tpt: " << VBFGenMatchedJetsVect[i].pt() << "\teta: " << VBFGenMatchedJetsVect[i].eta() << "\tphi: " << VBFGenMatchedJetsVect[i].phi() << "\tmass: " << VBFGenMatchedJetsVect[i].mass() << std::endl;
       //if(isSignal) std::cout << "number of Calo AK4 jets:  " << CaloJetsVect.size() << std::endl;
       //if(isSignal) for(unsigned int i = 0; i < CaloJetsVect.size(); i++) std::cout << "  Calo AK4 jet  [" << i << "]\tpt: " << CaloJetsVect[i].pt() << "\teta: " << CaloJetsVect[i].eta() << "\tphi: " << CaloJetsVect[i].phi() << "\tmass: " << CaloJetsVect[i].mass() << std::endl;
       //if(isSignal) std::cout << "number of Matched Calo AK4 jets:  " << MatchedCaloJetsVect.size() << std::endl;
       //if(isSignal) for(unsigned int i = 0; i < MatchedCaloJetsVect.size(); i++) std::cout << "  Calo AK4 jet  [" << i << "]\tpt: " << MatchedCaloJetsVect[i].pt() << "\teta: " << MatchedCaloJetsVect[i].eta() << "\tphi: " << MatchedCaloJetsVect[i].phi() << "\tmass: " << MatchedCaloJetsVect[i].mass() << std::endl;
-      std::cout << "number of CHS AK8 jets:  " << CHSFatJetsVect.size() << std::endl;
-      for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) std::cout << "  AK8 jet  [" << i << "]\tpt: " << CHSFatJetsVect[i].pt() << "\teta: " << CHSFatJetsVect[i].eta() << "\tphi: " << CHSFatJetsVect[i].phi() << "\tmass: " << CHSFatJetsVect[i].mass() << std::endl;
+      //wait//std::cout << "number of CHS AK8 jets:  " << CHSFatJetsVect.size() << std::endl;
+      //wait//for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) std::cout << "  AK8 jet  [" << i << "]\tpt: " << CHSFatJetsVect[i].pt() << "\teta: " << CHSFatJetsVect[i].eta() << "\tphi: " << CHSFatJetsVect[i].phi() << "\tmass: " << CHSFatJetsVect[i].mass() << std::endl;
     }
 
 
@@ -2235,6 +2329,7 @@ Ntuplizer::beginJob()
     tree -> Branch("LumiNumber" , &LumiNumber , "LumiNumber/L");
     tree -> Branch("RunNumber" , &RunNumber , "RunNumber/L");
     tree -> Branch("EventWeight", &EventWeight, "EventWeight/F");
+    tree -> Branch("GenEventWeight", &GenEventWeight, "GenEventWeight/F");
     tree -> Branch("AtLeastOneTrigger" , &AtLeastOneTrigger , "AtLeastOneTrigger/O");
     tree -> Branch("AtLeastOneL1Filter" , &AtLeastOneL1Filter , "AtLeastOneL1Filter/O");
     tree -> Branch("Prefired" , &Prefired , "Prefired/O");

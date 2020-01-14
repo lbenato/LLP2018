@@ -115,7 +115,9 @@ matchBquark(-1), matchLL(-1),
 //VBF_DisplacedJet40_VTightID_Hadronic_match(0), VBF_DisplacedJet40_VVTightID_Hadronic_match(0),
     ptJESUp (-1.), ptJESDown (-1.), ptJERUp (-1.), ptJERDown (-1.), tau1(-1.), tau2(-1.), tau3(-1.), nSubJets(-1), tau21(-1.), tau31(-1.), tau32(-1.), tau1_neutral(-1.), tau2_neutral(-1.), tau21_neutral(-1.), tau1_charged(-1.), tau2_charged(-1.), tau21_charged(-1.), TriggerMatched_VBFJet(0), TriggerMatched_DisplacedJet(0), TriggerMatched_TripleJet50(0),
     nConstituents (-1), nTrackConstituents (-1), nTracks0PixelHits(-1), nTracks1PixelHit(-1),nTracks2PixelHits(-1),nTracks3PixelHits(-1),nTracks4PixelHits(-1),nTracks5PixelHits(-1),nTracksAtLeast6PixelHits(-1),
-    nTracksValidHitInBPix1(-1),nTracks0LostInnerHits(-1), nTracks1LostInnerHit(-1), nTracksAtLeast2LostInnerHits(-1), nMatchedGenBquarks(-1){}
+    nTracksValidHitInBPix1(-1),nTracks0LostInnerHits(-1), nTracks1LostInnerHit(-1), nTracksAtLeast2LostInnerHits(-1), nMatchedGenBquarks(-1),
+    //Imperial College tagger
+    pfXWP0p01(-1.), pfXWP1(-1.), pfXWP1000(-1.){}
     float pt;
     float eta;
     float phi;
@@ -285,6 +287,9 @@ matchBquark(-1), matchLL(-1),
     int nTracks1LostInnerHit;
     int nTracksAtLeast2LostInnerHits;
     int nMatchedGenBquarks;
+    float pfXWP0p01; 
+    float pfXWP1; 
+    float pfXWP1000;
 };
 
 

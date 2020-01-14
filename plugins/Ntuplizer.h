@@ -58,6 +58,11 @@
 #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 
+//TagInfo
+#include "DataFormats/BTauReco/interface/FeaturesTagInfo.h"
+#include "LLPReco/DataFormats/interface/XTagInfo.h"
+#include "LLPReco/DataFormats/interface/XTagFeatures.h"
+
 #include "CommonTools/CandUtils/interface/AddFourMomenta.h"
 
 #include "fastjet/PseudoJet.hh"
@@ -95,6 +100,7 @@
 class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
    public:
       explicit Ntuplizer(const edm::ParameterSet&);
+      //explicit Ntuplizer(const edm::ParameterSet&, edm::ConsumesCollector&&);
       ~Ntuplizer();
 
       static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
@@ -136,6 +142,10 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     PhotonAnalyzer* thePhotonAnalyzer;
     VertexAnalyzer* theVertexAnalyzer;
     PFCandidateAnalyzer* thePFCandidateAnalyzer;
+
+    edm::EDGetTokenT<reco::JetTagCollection> JetTagWP0p01Token;
+    edm::EDGetTokenT<reco::JetTagCollection> JetTagWP1Token;
+    edm::EDGetTokenT<reco::JetTagCollection> JetTagWP1000Token;
 
     double MinGenBpt, MaxGenBeta;
     double InvmassVBF, DetaVBF;//VBF tagging
@@ -193,6 +203,9 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::Service<TFileService> fs;
     TTree* tree;
 
+
+    //edm::EDGetTokenT<reco::JetTagCollection> BTagToken;
+
     bool isVerbose, isVerboseTrigger, isSignal, isCalo;
     bool isMC;
     long int EventNumber, LumiNumber, RunNumber, nPV, nSV;
@@ -211,6 +224,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     long int number_of_SV;
     long int nPFCandidates, nPFCandidatesTrack, nPFCandidatesHighPurityTrack, nPFCandidatesFullTrackInfo;
     float EventWeight;
+    float GenEventWeight;
     float PUWeight, PUWeightUp, PUWeightDown;
     float FacWeightUp, FacWeightDown, RenWeightUp, RenWeightDown, CorrWeightUp, CorrWeightDown;
     float PdfWeight;
