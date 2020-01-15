@@ -2,12 +2,12 @@
 
 Ntuplizer compatible with LLPDNNX tagger (https://github.com/LLPDNNX/LLPReco)
 
-## Login to naf SLC7 and setup CMSSW release
+## Login to naf SLC6 and setup CMSSW release
 ```
-ssh naf-cms-el7
+ssh naf-cms.desy.de
 bash #if you like bash
 source /etc/profile.d/modules.sh #if you like bash
-export SCRAM_ARCH=slc7_amd64_gcc700
+export SCRAM_ARCH=slc6_amd64_gcc700
 module use -a /afs/desy.de/group/cms/modulefiles/
 module load cmssw
 cmsrel CMSSW_10_2_18
@@ -44,11 +44,10 @@ scram b -j 32
 ## PU Jet ID
 Recipe:
 ```
-git clone -b 94X_weights_DYJets_inc_v2 git@github.com:cms-jet/PUjetID.git PUJetIDweights/
+git clone -b 94X_weights_DYJets_inc_v2 git@github.com:cms-jet/PUjetID.git PUJetIDWeights/
+git cms-merge-topic singh-ramanpreet:PUID_102_15_v2
 cp PUJetIDWeights/weights/pileupJetId_102X_Eta* $CMSSW_BASE/src/RecoJets/JetProducers/data/
-git cms-merge-topic singh-ramanpreet:PUID_102_15_v2
-##rm -rf PUJetIDweights/  ### If needed
-git cms-merge-topic singh-ramanpreet:PUID_102_15_v2
+##rm -rf PUJetIDWeights/  ### If needed
 ```
 
 
