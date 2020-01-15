@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     # Selection of samples via python lists
     import os
-    from Analyzer.LLP.samples import sample, samples
+    from Analyzer.LLP2018.samples import sample, samples
 
     list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH"]#,"data_obs"
     print "Possible subgroups of samples:"
@@ -81,14 +81,14 @@ if __name__ == '__main__':
     pset = ''
     workarea = ''
     if options.lists == "v7_calo":
-        from Analyzer.LLP.crab_requests_lists_v7_calo import * 
+        from Analyzer.LLP2018.crab_requests_lists_v7_calo import * 
         pset = "Ntuplizer_multithreading.py"
         folder = "v7_calo_24Oct2019_multithreading"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
         isCalo=True
     elif options.lists == "v0_pfXTag_calo":
-        from Analyzer.LLP.crab_requests_lists_v0_pfXTag_calo import * 
+        from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import * 
         pset = "Ntuplizer2018.py"
         folder = "v0_pfXTag_calo_14Jan2020"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
