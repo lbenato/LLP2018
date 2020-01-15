@@ -219,7 +219,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     gen_b_radius = -1.;
     Prefired = false;
     HDiCHS = HTriCHS = HQuadCHS = HDiCHSMatched = HTriCHSMatched = HQuadCHSMatched = 0;
-    nPFCandidates = nPFCandidatesTrack = nPFCandidatesHighPurityTrack = nPFCandidatesFullTrackInfo = 0;
+    nPFCandidates = nPFCandidatesTrack = nPFCandidatesHighPurityTrack = nPFCandidatesFullTrackInfo = nPFCandidatesFullTrackInfo_pt = nPFCandidatesFullTrackInfo_hasTrackDetails = 0;
     //HDiCalo = HTriCalo = HQuadCalo = HDiCaloMatched = HTriCaloMatched = HQuadCaloMatched = 0;
 
     //Event info
@@ -1736,7 +1736,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nPFCandidates++;
       if(PFCandidateVect.at(i).charge()!=0) nPFCandidatesTrack++;
       if(PFCandidateVect.at(i).trackHighPurity()) nPFCandidatesHighPurityTrack++;
-      if(PFCandidateVect.at(i).charge()!=0 && PFCandidateVect.at(i).pt() > 0.95) nPFCandidatesFullTrackInfo++;
+      if(PFCandidateVect.at(i).charge()!=0 && PFCandidateVect.at(i).pt() > 0.95) nPFCandidatesFullTrackInfo_pt++;//old
+      if(PFCandidateVect.at(i).charge()!=0 && PFCandidateVect.at(i).pt() > 0.95 && PFCandidateVect.at(i).hasTrackDetails()) nPFCandidatesFullTrackInfo++;
+      if(PFCandidateVect.at(i).charge()!=0 && PFCandidateVect.at(i).hasTrackDetails()) nPFCandidatesFullTrackInfo_hasTrackDetails++;
     }
 
     // PFCandidate matching to AK4 jets, AK8 jets and PV's
@@ -1791,7 +1793,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       // PVs
       for(unsigned int j = 0; j < PVertexVect.size(); j++){
 
-	if (PFCandidateVect[i].vertexRef()->position() == PVertexVect[j].position()){
+	if (PFCandidateVect[i].vertexRef()->position() == PVertexVect[j].position()){//was this expection?
 	  PFCandidateVtxIndex[i]=j;
 	  nMatchedPVs++;
 	}
@@ -1870,7 +1872,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 	    // Full tracking info stored only for pT>0.95 GeV
 	    // https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2016#Embedded_track_information
-	    if(PFCandidateVect[i].pt()>0.95) {
+	    //if(PFCandidateVect[i].pt()>0.95) {//old, causing exceptions!
+	    if(PFCandidateVect[i].pt()>0.95 && PFCandidateVect[i].hasTrackDetails()) {//this looks more conservative
+	    //if(PFCandidateVect[i].hasTrackDetails()) {
 
               sigIP2D.push_back(PFCandidateVect[i].dxy()/PFCandidateVect[i].dxyError());
 
@@ -2013,7 +2017,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
             // Full tracking info stored only for pT>0.95 GeV
             // https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2016#Embedded_track_information
-            if(PFCandidateVect[i].pt()>0.95) {
+            //if(PFCandidateVect[i].pt()>0.95) {//old, throwing exceptions
+	    if(PFCandidateVect[i].pt()>0.95 && PFCandidateVect[i].hasTrackDetails()) {//this looks more conservative
+	    //if(PFCandidateVect[i].hasTrackDetails()) {
 
               sigIP2D.push_back(PFCandidateVect[i].dxy()/PFCandidateVect[i].dxyError());
 
@@ -2374,6 +2380,8 @@ Ntuplizer::beginJob()
     tree -> Branch("nPFCandidatesTrack", &nPFCandidatesTrack, "nPFCandidatesTrack/I");
     tree -> Branch("nPFCandidatesHighPurityTrack", &nPFCandidatesHighPurityTrack, "nPFCandidatesHighPurityTrack/I");
     tree -> Branch("nPFCandidatesFullTrackInfo", &nPFCandidatesFullTrackInfo, "nPFCandidatesFullTrackInfo/I");
+    tree -> Branch("nPFCandidatesFullTrackInfo_pt", &nPFCandidatesFullTrackInfo_pt, "nPFCandidatesFullTrackInfo_pt/I");
+    tree -> Branch("nPFCandidatesFullTrackInfo_hasTrackDetails", &nPFCandidatesFullTrackInfo_hasTrackDetails, "nPFCandidatesFullTrackInfo_hasTrackDetails/I");
     tree -> Branch("Flag_BadPFMuon", &BadPFMuonFlag, "Flag_BadPFMuon/O");
     tree -> Branch("Flag_BadChCand", &BadChCandFlag, "Flag_BadChCand/O");
     tree -> Branch("isVBF" , &isVBF, "isVBF/O");

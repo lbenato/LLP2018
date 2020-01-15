@@ -1651,9 +1651,9 @@ void ObjectsFormat::FillPFCandidateType(PFCandidateType& I, const pat::PackedCan
   I.dxyError        = C->dxyError();
   I.dz              = C->dzAssociatedPV();
   I.dzError         = C->dzError();
-  I.nHits           = C->numberOfHits();
-  I.nPixelHits      = C->numberOfPixelHits();
-  I.lostInnerHits   = C->lostInnerHits();
+  I.nHits           = C->hasTrackDetails() ? C->numberOfHits() : -1;
+  I.nPixelHits      = C->hasTrackDetails() ? C->numberOfPixelHits() : -1;
+  I.lostInnerHits   = C->hasTrackDetails() ? C->lostInnerHits() : -9;
   I.charge          = C->charge();
   //I.hcalFraction    = C->hcalFraction();
   I.POCA_x          = C->vx();

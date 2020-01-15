@@ -222,7 +222,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     long int nTightElectrons, nTightMuons;
     long int number_of_PV;
     long int number_of_SV;
-    long int nPFCandidates, nPFCandidatesTrack, nPFCandidatesHighPurityTrack, nPFCandidatesFullTrackInfo;
+  long int nPFCandidates, nPFCandidatesTrack, nPFCandidatesHighPurityTrack, nPFCandidatesFullTrackInfo, nPFCandidatesFullTrackInfo_pt, nPFCandidatesFullTrackInfo_hasTrackDetails;
     float EventWeight;
     float GenEventWeight;
     float PUWeight, PUWeightUp, PUWeightDown;
