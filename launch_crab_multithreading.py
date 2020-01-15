@@ -90,7 +90,7 @@ if __name__ == '__main__':
     elif options.lists == "v0_pfXTag_calo":
         from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import * 
         pset = "Ntuplizer2018.py"
-        folder = "v0_pfXTag_calo_14Jan2020"#CHANGE here your crab folder name
+        folder = "v0_pfXTag_calo_15Jan2020"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
         isCalo=True
@@ -146,6 +146,7 @@ if __name__ == '__main__':
         isReHLT = False
         isReReco          = True if ('23Sep2016' in j) else False
         isReMiniAod       = True if ('03Feb2017' in j) else False
+        is2017            = True if ('RunIIFall17MiniAODv2' in j) else False
         isPromptReco      = True if ('PromptReco' in j) else False
         theRunBCD = ['Run2016B','Run2016C','Run2016D']    
         theRunEF  = ['Run2016E','Run2016F']
@@ -196,6 +197,7 @@ if __name__ == '__main__':
         string_isREHLT = 'PisReHLT='+str(isReHLT)
         string_isReReco = 'PisReReco='+str(isReReco)
         string_isReMiniAod = 'PisReMiniAod='+str(isReMiniAod)
+        string_is2017 = 'Pis2017='+str(is2017)
         string_isPromptReco = 'PisPromptReco='+str(isPromptReco)
         string_noLHEinfo = 'PnoLHEinfo='+str(noLHEinfo)
         string_isbbH = 'PisbbH='+str(isbbH)
@@ -231,7 +233,7 @@ if __name__ == '__main__':
                 #config.Data.splitting = 'Automatic'
                 config.Data.unitsPerJob = 100000
             #config.JobType.pyCfgParams = ['runLocal=False']
-            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo]
+            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2017, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo]
             print config
             submit(config)
 
@@ -272,7 +274,7 @@ if __name__ == '__main__':
                 config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
                 #config.Data.splitting = 'Automatic'
                 config.Data.unitsPerJob = 100000
-            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo]
+            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2017, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo]
             print config
         else:
             print "Invalid crab action. Please type: -a submit/status/resubmit/getoutput/kill"
