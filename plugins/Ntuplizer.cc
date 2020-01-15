@@ -405,7 +405,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     HT = theCHSJetAnalyzer->CalculateHT(iEvent,3,15,3.);
 
     if(HT<100) return;//Avoid events with low HT
-    if(isCalo && MET.pt()<200) return;//Avoid events with low MET for calo analysis
+    //if(isCalo && MET.pt()<200) return;//Avoid events with low MET for calo analysis
+    //Cut on MET not applied anymore; signal efficiency can be recovered along MET turn on
 
     // Electrons
     if(isVerbose) std::cout << "Electrons" << std::endl;
