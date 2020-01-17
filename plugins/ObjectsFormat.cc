@@ -1514,6 +1514,7 @@ void ObjectsFormat::FillGenPType(GenPType& I, const reco::GenParticle* R) {
     I.pdgId       = R->pdgId();
     I.status      = R->status();
     I.radius      = R->mother()? sqrt(pow(R->vx() - R->mother()->vx(),2) + pow(R->vy() - R->mother()->vy(),2) + pow(R->vz() - R->mother()->vz(),2)) : -1000.;
+    I.radius2D    = R->mother()? sqrt(pow(R->vx() - R->mother()->vx(),2) + pow(R->vy() - R->mother()->vy(),2)) : -1000.;
     I.motherid    = R->mother()? R->mother()->pdgId() : 0;
     I.vx          = R->vx();
     I.vy          = R->vy();
@@ -1532,6 +1533,7 @@ void ObjectsFormat::ResetGenPType(GenPType& I) {
     I.pdgId       = 0;
     I.status      = 0;
     I.radius      = -1.;
+    I.radius2D    = -1.;
     I.motherid    = 0;
     I.vx          = -99;
     I.vy          = -99;
@@ -1539,7 +1541,7 @@ void ObjectsFormat::ResetGenPType(GenPType& I) {
 
 }
 
-std::string ObjectsFormat::ListGenPType() {return "pt/F:eta/F:rapidity/F:phi/F:mass/F:energy/F:charge/I:pdgId/I:status/I:radius/F:motherid/I:vx/F:vy/F:vz/F";}
+std::string ObjectsFormat::ListGenPType() {return "pt/F:eta/F:rapidity/F:phi/F:mass/F:energy/F:charge/I:pdgId/I:status/I:radius/F:radius2D/F:motherid/I:vx/F:vy/F:vz/F";}
 
 
 
