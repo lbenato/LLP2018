@@ -67,6 +67,7 @@ if __name__ == '__main__':
     parser.add_option("-l", "--lists", action="store", type="string", dest="lists", default="")
     parser.add_option("-g", "--groupofsamples", action="store", type="string", dest="groupofsamples", default="")
     parser.add_option("-c", "--calo", action="store_true", dest="calo", default=False)
+    parser.add_option("-m", "--mode", action="store", type="string", dest="mode", default="VBF")
     (options, args) = parser.parse_args()
 
 
@@ -76,6 +77,13 @@ if __name__ == '__main__':
        isCalo=True
     else:
        isCalo=False
+
+    if options.mode=="VBF":
+        isVBF = True
+        isggH = False
+    elif options.mode=="ggH":
+        isVBF = False
+        isggH = True
 
     folder = ''
     pset = ''
@@ -93,7 +101,26 @@ if __name__ == '__main__':
         folder = "v0_pfXTag_calo_15Jan2020"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        isCalo = True
+        isVBF = True
+    elif options.lists == "v1_gen_production_calo":
+        from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import * 
+        pset = "GenNtuplizer.py"
+        folder = "v1_gen_production_calo_17Jan2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
         isCalo=True
+        config.JobType.inputFiles = ['data_gen']
+    elif options.lists == "v1_pfXTag_puppi_calo":
+        from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import * 
+        pset = "Ntuplizer_puppi.py"
+        folder = "v1_pfXTag_puppi_calo_21Jan2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        isCalo = True
+        isVBF = True
+        isggH = False
+
     else:
         print "No list indicated, aborting!"
         exit()
@@ -136,6 +163,21 @@ if __name__ == '__main__':
         print "***************************************"
         print "***************************************"
         print "\n"
+
+    if isVBF:
+        print "\n"
+        print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        print "Performing analysis for VBF!"
+        print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        print "\n"
+
+    if isggH:
+        print "\n"
+        print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        print "Performing analysis for ggH!"
+        print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        print "\n"
+
     
     for a, j in enumerate(selected_requests):
         print "#"*65
@@ -146,7 +188,7 @@ if __name__ == '__main__':
         isReHLT = False
         isReReco          = True if ('23Sep2016' in j) else False
         isReMiniAod       = True if ('03Feb2017' in j) else False
-        is2017            = True if ('RunIIFall17MiniAODv2' in j) else False
+        #is2017            = True if ('RunIIFall17MiniAODv2' in j) else False
         isPromptReco      = True if ('PromptReco' in j) else False
         theRunBCD = ['Run2016B','Run2016C','Run2016D']    
         theRunEF  = ['Run2016E','Run2016F']
@@ -197,7 +239,7 @@ if __name__ == '__main__':
         string_isREHLT = 'PisReHLT='+str(isReHLT)
         string_isReReco = 'PisReReco='+str(isReReco)
         string_isReMiniAod = 'PisReMiniAod='+str(isReMiniAod)
-        string_is2017 = 'Pis2017='+str(is2017)
+        #string_is2017 = 'Pis2017='+str(is2017)
         string_isPromptReco = 'PisPromptReco='+str(isPromptReco)
         string_noLHEinfo = 'PnoLHEinfo='+str(noLHEinfo)
         string_isbbH = 'PisbbH='+str(isbbH)
@@ -208,7 +250,8 @@ if __name__ == '__main__':
         string_triggerTag = 'PtriggerTag='+str(triggerTag)
         string_filterString = 'PfilterString='+str(filterString)
         string_calo = 'Pcalo=True' if isCalo else 'Pcalo=False'
-
+        string_VBF = 'PVBF=True' if isVBF else 'PVBF=False'
+        string_ggH = 'PggH=True' if isggH else 'PggH=False'
 
         # submission of the python config
         if options.crabaction=="submit":
@@ -233,7 +276,7 @@ if __name__ == '__main__':
                 #config.Data.splitting = 'Automatic'
                 config.Data.unitsPerJob = 100000
             #config.JobType.pyCfgParams = ['runLocal=False']
-            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2017, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo]
+            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH]
             print config
             submit(config)
 
@@ -274,7 +317,7 @@ if __name__ == '__main__':
                 config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
                 #config.Data.splitting = 'Automatic'
                 config.Data.unitsPerJob = 100000
-            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2017, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo]
+            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH]
             print config
         else:
             print "Invalid crab action. Please type: -a submit/status/resubmit/getoutput/kill"
