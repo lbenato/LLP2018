@@ -55,8 +55,70 @@ requests = {
 'VBFH_HToSSTobbbb_MH-125_MS-50_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC' : '/VBFH_HToSSTobbbb_MH-125_MS-50_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
 'VBFH_HToSSTobbbb_MH-125_MS-50_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC' : '/VBFH_HToSSTobbbb_MH-125_MS-50_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
 ###############################
+#############################
+## ggH ###
+#############################
+#ggH, m15
+'GluGluH_HToSSTobbbb_MH-125_MS-15_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-15_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-15_ctauS-500_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-15_ctauS-500_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-15_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-15_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-15_ctauS-2000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-15_ctauS-2000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-15_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-15_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-15_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-15_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+###############################
+#ggH, m20
+'GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-500_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-500_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-2000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-2000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+###############################
+#ggH, m30
+'GluGluH_HToSSTobbbb_MH-125_MS-30_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-30_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-30_ctauS-500_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-30_ctauS-500_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-30_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-30_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-30_ctauS-2000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-30_ctauS-2000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-30_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-30_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-30_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-30_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+###############################
+#ggH, m40
+'GluGluH_HToSSTobbbb_MH-125_MS-40_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-40_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-40_ctauS-500_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-40_ctauS-500_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-40_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-40_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-40_ctauS-2000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-40_ctauS-2000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-40_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-40_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+#################################
+#ggH, m50
+'GluGluH_HToSSTobbbb_MH-125_MS-50_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-50_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-50_ctauS-500_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-50_ctauS-500_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-50_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-50_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-50_ctauS-2000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-50_ctauS-2000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-50_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-50_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+'GluGluH_HToSSTobbbb_MH-125_MS-50_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC' : '/GluGluH_HToSSTobbbb_MH-125_MS-50_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets-1094e4be9b2393641646b907f4de5a1a/USER',
+#############################
+## ZH ###
+#############################
+###############################
+#ZH, m15
+'ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8' : '/ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM',
+'ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8' : '/ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM',
+'ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8' : '/ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM',
+###############################
+###############################
+#ZH, m40
+'ZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8' : '/ZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM',
+'ZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8' : '/ZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM',
+'ZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8' : '/ZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM',
+###############################
+#################################
+#ZH, m55
+###############################
+'ZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8' : '/ZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM',
+'ZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8' : '/ZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM',
+'ZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8' : '/ZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-10000_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM',
 
-##############################
 #QCD
 ###QCD, HT50to100
 #'QCD_HT50to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT50to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM',
