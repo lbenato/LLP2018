@@ -165,16 +165,19 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     bool WriteBtagInfos;
     bool CalculateNsubjettiness;
     bool PerformPreFiringStudies;
+    bool PerformVBF;
+    bool PerformggH;
 
     std::vector<JetType> MatchedCHSJets;
-  //std::vector<JetType> AllBarrelJets;
+    //std::vector<JetType> AllBarrelJets;
     std::vector<JetType> AllJets;
     std::vector<JetType> CHSJets;
     std::vector<JetType> VBFPairJets;
+    std::vector<JetType> ggHJet;
     std::vector<FatJetType> CHSFatJets;
-  //std::vector<CaloJetType> CaloJets;
-  //std::vector<CaloJetType> MatchedCaloJets;
-  //std::vector<CaloJetType> MatchedCaloJetsWithGenJets;
+    //std::vector<CaloJetType> CaloJets;
+    //std::vector<CaloJetType> MatchedCaloJets;
+    //std::vector<CaloJetType> MatchedCaloJetsWithGenJets;
     std::vector<GenPType> GenVBFquarks;
     std::vector<GenPType> GenBquarks;
     std::vector<GenPType> GenLLPs;
@@ -207,6 +210,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //edm::EDGetTokenT<reco::JetTagCollection> BTagToken;
 
     bool isVerbose, isVerboseTrigger, isSignal, isCalo;
+    bool isVBF, isggH;
     bool isMC;
     long int EventNumber, LumiNumber, RunNumber, nPV, nSV;
     bool AtLeastOneTrigger, AtLeastOneL1Filter;
@@ -233,13 +237,15 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     float HT;
     float MinJetMetDPhi;
     float MinJetMetDPhiAllJets;
+    float ggHJetMetDPhi;
     float m_pi, gen_b_radius;
     //MET filters
     bool BadPFMuonFlag, BadChCandFlag;
     //Pre-firing
     bool Prefired;
     //VBF tagging
-    bool isVBF, isTriggerVBF;
+    //bool isVBF;
+    bool isTriggerVBF;
     //Z-W-T CR
     //bool isZtoMM, isZtoEE, isWtoMN, isWtoEN, isTtoEM;
     AddFourMomenta addP4;

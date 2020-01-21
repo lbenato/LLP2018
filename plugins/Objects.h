@@ -113,7 +113,8 @@ matchBquark(-1), matchLL(-1),
     alphaMax(-100.), sigIP2DMedian(-100.), theta2DMedian(-100.), POCA_theta2DMedian(-100.), nPixelHitsMedian(-1.0), nHitsMedian(-1.0),
     hcalE(-100.), ecalE(-100.), FracCal(-100.), flightDist2d(-100.), flightDist2dError(-100.), flightDist3d(-100.), flightDist3dError(-100.), nSV(0), nSVCand(0), nVertexTracks(0), nSelectedTracks(0), dRSVJet(-100.), SV_x(-100.), SV_y(-100.), SV_z(-100.), SV_dx(-100.), SV_dy(-100.), SV_dz(-100.), nTracksSV(0), SV_mass(-100.),  isCaloTag(0),
 //VBF_DisplacedJet40_VTightID_Hadronic_match(0), VBF_DisplacedJet40_VVTightID_Hadronic_match(0),
-    ptJESUp (-1.), ptJESDown (-1.), ptJERUp (-1.), ptJERDown (-1.), tau1(-1.), tau2(-1.), tau3(-1.), nSubJets(-1), tau21(-1.), tau31(-1.), tau32(-1.), tau1_neutral(-1.), tau2_neutral(-1.), tau21_neutral(-1.), tau1_charged(-1.), tau2_charged(-1.), tau21_charged(-1.), TriggerMatched_VBFJet(0), TriggerMatched_DisplacedJet(0), TriggerMatched_TripleJet50(0),
+    ptJESUp (-1.), ptJESDown (-1.), ptJERUp (-1.), ptJERDown (-1.), tau1(-1.), tau2(-1.), tau3(-1.), nSubJets(-1), tau21(-1.), tau31(-1.), tau32(-1.), tau1_neutral(-1.), tau2_neutral(-1.), tau21_neutral(-1.), tau1_charged(-1.), tau2_charged(-1.), tau21_charged(-1.), 
+    //TriggerMatched_VBFJet(0), TriggerMatched_DisplacedJet(0), TriggerMatched_TripleJet50(0),//currently not used
     nConstituents (-1), nTrackConstituents (-1), nTracks0PixelHits(-1), nTracks1PixelHit(-1),nTracks2PixelHits(-1),nTracks3PixelHits(-1),nTracks4PixelHits(-1),nTracks5PixelHits(-1),nTracksAtLeast6PixelHits(-1),
     nTracksValidHitInBPix1(-1),nTracks0LostInnerHits(-1), nTracks1LostInnerHit(-1), nTracksAtLeast2LostInnerHits(-1), nMatchedGenBquarks(-1),
     //Imperial College tagger
@@ -270,9 +271,9 @@ matchBquark(-1), matchLL(-1),
     float tau1_charged;
     float tau2_charged;
     float tau21_charged;
-    int TriggerMatched_VBFJet;
-    int TriggerMatched_DisplacedJet;
-    int TriggerMatched_TripleJet50;
+    //int TriggerMatched_VBFJet;
+    //int TriggerMatched_DisplacedJet;
+    //int TriggerMatched_TripleJet50;
     int nConstituents;
     int nTrackConstituents;
     int nTracks0PixelHits;

@@ -77,6 +77,8 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     WriteBtagInfos(iConfig.getParameter<bool>("writeBtagInfos")),
     CalculateNsubjettiness(iConfig.getParameter<bool>("calculateNsubjettiness")),
     PerformPreFiringStudies(iConfig.getParameter<bool>("performPreFiringStudies")),
+    PerformVBF(iConfig.getParameter<bool>("performVBF")),
+    PerformggH(iConfig.getParameter<bool>("performggH")),
     isVerbose(iConfig.getParameter<bool> ("verbose")),
     isVerboseTrigger(iConfig.getParameter<bool> ("verboseTrigger")),
     isSignal(iConfig.getParameter<bool> ("signal")),
@@ -195,6 +197,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     isMC = false;
     isVBF = isTriggerVBF = false;
+    isggH = false;
     //isZtoMM = isZtoEE = isWtoMN = isWtoEN = isTtoEM = false;
     EventNumber = LumiNumber = RunNumber = nPV = 0;
     AtLeastOneTrigger = AtLeastOneL1Filter = false;
@@ -214,7 +217,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //number_of_b_matched_to_CaloJets = number_of_b_matched_to_CaloJetsWithGenJets = 0;
     GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = LeptonWeight = ZewkWeight = WewkWeight = 1.;
     HT = 0.;
-    MinJetMetDPhi = MinJetMetDPhiAllJets = 10.;
+    MinJetMetDPhi = MinJetMetDPhiAllJets = ggHJetMetDPhi = 10.;
     m_pi = 0.;
     gen_b_radius = -1.;
     Prefired = false;
@@ -233,6 +236,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
     EventWeight *= GenEventWeight;
 
+    if(PerformVBF and PerformggH) throw cms::Exception("Configuration") << "VBF and ggH selections can't be performed together! Please choose one option only!";
 
     // Trigger and MET filters
     if(isVerbose) std::cout << "Trigger and met filters" << std::endl;
@@ -269,49 +273,39 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     //Trigger-dependent standalone objects
     //They will be used for trigger matching
-    std::string VBF_DisplacedJet40_VTightID_Hadronic_string;
-    VBF_DisplacedJet40_VTightID_Hadronic_string = "VBF_DisplacedJet40_VTightID_Hadronic_v";
-    std::vector<pat::TriggerObjectStandAlone> VBF_DisplacedJet40_VTightID_Hadronic_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,VBF_DisplacedJet40_VTightID_Hadronic_string);
-    std::vector<pat::TriggerObjectStandAlone> PotentialTriggerVBFPairJets;
-    std::vector<pat::TriggerObjectStandAlone> PotentialTriggerDisplacedJets;
-
+    //std::string VBF_DisplacedJet40_VTightID_Hadronic_string;
+    //VBF_DisplacedJet40_VTightID_Hadronic_string = "VBF_DisplacedJet40_VTightID_Hadronic_v";
+    //std::vector<pat::TriggerObjectStandAlone> VBF_DisplacedJet40_VTightID_Hadronic_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,VBF_DisplacedJet40_VTightID_Hadronic_string);
+    //std::vector<pat::TriggerObjectStandAlone> PotentialTriggerVBFPairJets;
+    //std::vector<pat::TriggerObjectStandAlone> PotentialTriggerDisplacedJets;
     //Match trigger standalone objects to the filter they fired;
     //this allows to distinguish objects that fired VBF part from Displaced part
-    for(unsigned int r = 0; r<VBF_DisplacedJet40_VTightID_Hadronic_Vec.size(); r++)
-      {
-
-	for (unsigned h = 0; h < VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds().size(); ++h)
-	  //loop over filter Ids
-	  {
-	    if( (VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds()[h])==85 or (VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds()[h])==86)
-	      //objects with filterIds 85 or 86 are jets or b-jets; see our LongLived twiki
-	      {
-
-		for (unsigned l = 0; l < VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels().size(); ++l)
-		  //loop over filter labels
-		  {
-
-		    if(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltVBFFilterDisplacedJets" or VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltVBFFilterDisplacedJetsTight" )
-		      //objects that fired VBF filter are potential VBF jet pair candidates
-		      //still need to check VBF conditions over mjj and dEta
-		      {
-			PotentialTriggerVBFPairJets.push_back(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r));
-		      }
-
-
-		    else if(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltCentralHadronCaloJetpt40VTightID")
-		      //objects that fired displaced filter are potential displaced jet candidates
-		      {
-			PotentialTriggerDisplacedJets.push_back(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r));
-		      }
-
-		  }
-
-	      }
-
-	  }
-
-      }
+    //for(unsigned int r = 0; r<VBF_DisplacedJet40_VTightID_Hadronic_Vec.size(); r++)
+    //{
+    //for (unsigned h = 0; h < VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds().size(); ++h)
+    ////loop over filter Ids
+      //{
+    //if( (VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds()[h])==85 or (VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds()[h])==86)
+    // //objects with filterIds 85 or 86 are jets or b-jets; see our LongLived twiki
+    //{
+    //for (unsigned l = 0; l < VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels().size(); ++l)
+    ////loop over filter labels
+    //{
+    //if(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltVBFFilterDisplacedJets" or VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltVBFFilterDisplacedJetsTight" )
+    ////objects that fired VBF filter are potential VBF jet pair candidates
+      ////still need to check VBF conditions over mjj and dEta
+    //{
+    //PotentialTriggerVBFPairJets.push_back(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r));
+    //}
+    //else if(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltCentralHadronCaloJetpt40VTightID")
+    ////objects that fired displaced filter are potential displaced jet candidates
+    //{
+    //PotentialTriggerDisplacedJets.push_back(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r));
+    //}
+    //}
+    //}
+    //}
+    //}
 
 
     //Pre-firing
@@ -405,8 +399,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     HT = theCHSJetAnalyzer->CalculateHT(iEvent,3,15,3.);
 
     if(HT<100) return;//Avoid events with low HT
-    //if(isCalo && MET.pt()<200) return;//Avoid events with low MET for calo analysis
-    //Cut on MET not applied anymore; signal efficiency can be recovered along MET turn on
+    if(isCalo && MET.pt()<120) return;//Avoid events with low MET for calo analysis
+    //Cut on MET relaxed; signal efficiency can be recovered along MET turn on
 
     // Electrons
     if(isVerbose) std::cout << "Electrons" << std::endl;
@@ -670,6 +664,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
 
+    //Used to understand VBF jets features;
+    
     std::vector<pat::Jet> AllJetsVect = AllJetAnalyzer->FillJetVector(iEvent);//
     nAllJets = AllJetsVect.size();
 
@@ -721,9 +717,6 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 	  }
       }
-
-
-    // CHSJetsVect CHSJetsVect CHSJetsVect CHSJetsVect MatchedCHSJetsVect MatchedCHSJetsVect MatchedCHSJetsVect MatchedCHSJetsVect GenBquarks GenBquarksGenBquarksGenBquarks
 
 
 
@@ -795,79 +788,71 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
 
 
-    //Find the VBF pair among trigger standalone objects
+    //This trigger not used anymore
+    ////Find the VBF pair among trigger standalone objects
+    //pat::CompositeCandidate theTriggerVBF;
+    //std::vector<pat::TriggerObjectStandAlone> TriggerVBFPairJetsVect;
+    //float delta_eta_reco_HLT (0.), curr_delta_eta_reco_HLT(0.) ;
+    //float curr_mjj_HLT (0.);
+    //pat::CompositeCandidate current_VBF_HLT;
+    //int j1_HLT(-1), j2_HLT(-1);
+    //if(PotentialTriggerVBFPairJets.size()>=2) {
+    //for(unsigned int a = 0; a<PotentialTriggerVBFPairJets.size(); a++)
+    //{
+    //for(unsigned int b = 1; b<PotentialTriggerVBFPairJets.size(); b++)
+    //{
+    //if(b!=a and PotentialTriggerVBFPairJets.at(a).pt()>=20 and PotentialTriggerVBFPairJets.at(b).pt()>=20 and (PotentialTriggerVBFPairJets.at(a).eta()*PotentialTriggerVBFPairJets.at(b).eta())<0)//20 GeV threshold is trigger dependent!!!
+	//{
+    //curr_delta_eta_reco_HLT = abs(PotentialTriggerVBFPairJets.at(a).eta() - PotentialTriggerVBFPairJets.at(b).eta());
+    //current_VBF_HLT.clearDaughters();
+    //current_VBF_HLT.addDaughter(PotentialTriggerVBFPairJets.at(a));
+    //current_VBF_HLT.addDaughter(PotentialTriggerVBFPairJets.at(b));
+    //addP4.set(current_VBF_HLT);
+    //curr_mjj_HLT = current_VBF_HLT.mass();
+    //if(curr_delta_eta_reco_HLT>delta_eta_reco_HLT and curr_delta_eta_reco_HLT>DetaVBF and curr_mjj_HLT>InvmassVBF)
+    //{
+    //delta_eta_reco_HLT = curr_delta_eta_reco_HLT;
+    //j1_HLT=std::min(a,b);
+    //j2_HLT=std::max(a,b);
+    //}
+    //}
+    //}
+    //}
+    //if(j1_HLT>=0 && j2_HLT>=0)
+    //{
+    //theTriggerVBF.addDaughter(PotentialTriggerVBFPairJets.at(j1_HLT));
+    //  theTriggerVBF.addDaughter(PotentialTriggerVBFPairJets.at(j2_HLT));
+    //	  addP4.set(theTriggerVBF);
+    //	  TriggerVBFPairJetsVect.push_back(PotentialTriggerVBFPairJets.at(j1_HLT));
+    //	  TriggerVBFPairJetsVect.push_back(PotentialTriggerVBFPairJets.at(j2_HLT));
+    //	}
+    //}
+    //if(theTriggerVBF.pt()>0 && theTriggerVBF.mass()>InvmassVBF && abs(theTriggerVBF.daughter(1)->eta() - theTriggerVBF.daughter(0)->eta())>DetaVBF) {isTriggerVBF = true;}
 
-    pat::CompositeCandidate theTriggerVBF;
-    std::vector<pat::TriggerObjectStandAlone> TriggerVBFPairJetsVect;
+    //    //Find VBF jets that are matched to VBF trigger objects
 
-    float delta_eta_reco_HLT (0.), curr_delta_eta_reco_HLT(0.) ;
-    float curr_mjj_HLT (0.);
-    pat::CompositeCandidate current_VBF_HLT;
-    int j1_HLT(-1), j2_HLT(-1);
+    //float delta_R_VBF = 1000.;
+    //float current_delta_R_VBF = 1000.;
+    //int ch_VBF = -1;
+    //std::vector<pat::Jet> SelectedVBFJetsVect;
 
-    if(PotentialTriggerVBFPairJets.size()>=2) {
-      for(unsigned int a = 0; a<PotentialTriggerVBFPairJets.size(); a++)
-	{
-	  for(unsigned int b = 1; b<PotentialTriggerVBFPairJets.size(); b++)
-	    {
-	      if(b!=a and PotentialTriggerVBFPairJets.at(a).pt()>=20 and PotentialTriggerVBFPairJets.at(b).pt()>=20 and (PotentialTriggerVBFPairJets.at(a).eta()*PotentialTriggerVBFPairJets.at(b).eta())<0)//20 GeV threshold is trigger dependent!!!
-		{
-		  curr_delta_eta_reco_HLT = abs(PotentialTriggerVBFPairJets.at(a).eta() - PotentialTriggerVBFPairJets.at(b).eta());
-		  current_VBF_HLT.clearDaughters();
-		  current_VBF_HLT.addDaughter(PotentialTriggerVBFPairJets.at(a));
-		  current_VBF_HLT.addDaughter(PotentialTriggerVBFPairJets.at(b));
-		  addP4.set(current_VBF_HLT);
-		  curr_mjj_HLT = current_VBF_HLT.mass();
+    //for(unsigned int t1 = 0; t1<TriggerVBFPairJetsVect.size(); t1++)
+    //{
+    //	for(unsigned int s = 0; s<VBFJetsVect.size(); s++)
+    //	  {
+    //	    current_delta_R_VBF = fabs(reco::deltaR(VBFJetsVect.at(s).eta(),VBFJetsVect.at(s).phi(),TriggerVBFPairJetsVect.at(t1).eta(),TriggerVBFPairJetsVect.at(t1).phi()));
+    //	    if(current_delta_R_VBF<0.6 and current_delta_R_VBF<delta_R_VBF)
+    //	      {
+    //		delta_R_VBF=current_delta_R_VBF;
+    //		ch_VBF = s;
+    //	      }
+    //	  }
 
-		  if(curr_delta_eta_reco_HLT>delta_eta_reco_HLT and curr_delta_eta_reco_HLT>DetaVBF and curr_mjj_HLT>InvmassVBF)
-		    {
-		      delta_eta_reco_HLT = curr_delta_eta_reco_HLT;
-		      j1_HLT=std::min(a,b);
-		      j2_HLT=std::max(a,b);
-		    }
-		}
+    //	if(ch_VBF>=0) SelectedVBFJetsVect.push_back(VBFJetsVect.at(ch_VBF));
 
-	    }
-	}
+    //}
 
-      if(j1_HLT>=0 && j2_HLT>=0)
-	{
-	  theTriggerVBF.addDaughter(PotentialTriggerVBFPairJets.at(j1_HLT));
-	  theTriggerVBF.addDaughter(PotentialTriggerVBFPairJets.at(j2_HLT));
-	  addP4.set(theTriggerVBF);
-	  TriggerVBFPairJetsVect.push_back(PotentialTriggerVBFPairJets.at(j1_HLT));
-	  TriggerVBFPairJetsVect.push_back(PotentialTriggerVBFPairJets.at(j2_HLT));
-	}
-
-    }
-
-    if(theTriggerVBF.pt()>0 && theTriggerVBF.mass()>InvmassVBF && abs(theTriggerVBF.daughter(1)->eta() - theTriggerVBF.daughter(0)->eta())>DetaVBF) {isTriggerVBF = true;}
-
-
-    //Find VBF jets that are matched to VBF trigger objects
-
-    float delta_R_VBF = 1000.;
-    float current_delta_R_VBF = 1000.;
-    int ch_VBF = -1;
-    std::vector<pat::Jet> SelectedVBFJetsVect;
-
-    for(unsigned int t1 = 0; t1<TriggerVBFPairJetsVect.size(); t1++)
-      {
-	for(unsigned int s = 0; s<VBFJetsVect.size(); s++)
-	  {
-	    current_delta_R_VBF = fabs(reco::deltaR(VBFJetsVect.at(s).eta(),VBFJetsVect.at(s).phi(),TriggerVBFPairJetsVect.at(t1).eta(),TriggerVBFPairJetsVect.at(t1).phi()));
-	    if(current_delta_R_VBF<0.6 and current_delta_R_VBF<delta_R_VBF)
-	      {
-		delta_R_VBF=current_delta_R_VBF;
-		ch_VBF = s;
-	      }
-	  }
-
-	if(ch_VBF>=0) SelectedVBFJetsVect.push_back(VBFJetsVect.at(ch_VBF));
-
-      }
-
-    //SelectedVBFJetsVect are then the jets matched to trigger objects firing the VBF filter
+    ////SelectedVBFJetsVect are then the jets matched to trigger objects firing the VBF filter
 
     // add VBF Gen matching infos into original jet
     for(unsigned int r = 0; r<VBFPairJetsVect.size(); r++)
@@ -885,6 +870,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     //Clear VBF vector, not needed anymore
     VBFJetsVect.clear();
+
+
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -925,89 +912,89 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 
-    //Find jets that are matched to Displaced trigger objects
-    //First, remove trigger standalone objects marked as VBF trigger pair
-    for(unsigned int s = 0; s<TriggerVBFPairJetsVect.size(); s++)
-      {
-	for(unsigned int r = 0; r<PotentialTriggerDisplacedJets.size(); r++)
-	  {
-	    if(TriggerVBFPairJetsVect.at(s).pt()==PotentialTriggerDisplacedJets.at(r).pt() && isTriggerVBF)//if not tagged as VBF trigger pair, don't remove them
-	      {
-		PotentialTriggerDisplacedJets.erase(PotentialTriggerDisplacedJets.begin()+r);
-	      }
-	  }
-      }
+    ////Find jets that are matched to Displaced trigger objects
+    ////First, remove trigger standalone objects marked as VBF trigger pair
+    //for(unsigned int s = 0; s<TriggerVBFPairJetsVect.size(); s++)
+    //{
+    //	for(unsigned int r = 0; r<PotentialTriggerDisplacedJets.size(); r++)
+    //	  {
+    //	    if(TriggerVBFPairJetsVect.at(s).pt()==PotentialTriggerDisplacedJets.at(r).pt() && isTriggerVBF)//if not tagged as VBF trigger pair, don't remove them
+    //	      {
+    //		PotentialTriggerDisplacedJets.erase(PotentialTriggerDisplacedJets.begin()+r);
+    //	      }
+    //	  }
+    //  }
 
 
-    //Second, loop over potential signal jets (left after removing the VBF pair)
-    float delta_R = 1000.;
-    float current_delta_R = 1000.;
-    int ch = -1;
-    std::vector<pat::Jet> SelectedDisplacedJetVect;
+    ////Second, loop over potential signal jets (left after removing the VBF pair)
+    //float delta_R = 1000.;
+    //float current_delta_R = 1000.;
+    //int ch = -1;
+    //std::vector<pat::Jet> SelectedDisplacedJetVect;
 
-    for(unsigned int s = 0; s<CHSJetsVect.size(); s++)
-      {
-	for(unsigned int t1 = 0; t1<PotentialTriggerDisplacedJets.size(); t1++)
-	  {
-	    current_delta_R = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),PotentialTriggerDisplacedJets.at(t1).eta(),PotentialTriggerDisplacedJets.at(t1).phi()));
-	    if(current_delta_R<0.6 and current_delta_R<delta_R)
-	      {
-		delta_R=current_delta_R;
-		ch = s;
-	      }
+    //for(unsigned int s = 0; s<CHSJetsVect.size(); s++)
+    //{
+    //	for(unsigned int t1 = 0; t1<PotentialTriggerDisplacedJets.size(); t1++)
+    //	  {
+    //	    current_delta_R = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),PotentialTriggerDisplacedJets.at(t1).eta(),PotentialTriggerDisplacedJets.at(t1).phi()));
+    //	    if(current_delta_R<0.6 and current_delta_R<delta_R)
+    //	      {
+    //		delta_R=current_delta_R;
+    //		ch = s;
+    //	      }
+    //
+    //	  }
+    //}
 
-	  }
-      }
+    //if(ch>=0)
+    //{
+    //	SelectedDisplacedJetVect.push_back(CHSJetsVect.at(ch));
+    //}
 
-    if(ch>=0)
-      {
-	SelectedDisplacedJetVect.push_back(CHSJetsVect.at(ch));
-      }
-
-    //Final match to trigger object
-    //First VBF jets
-    for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
-      {
-	//VBF Trigger
-	for(unsigned int a = 0; a<SelectedVBFJetsVect.size(); a++)
-	  {
-	    if(SelectedVBFJetsVect.at(a).pt()==VBFPairJetsVect.at(s).pt())
-	      {
-		if(!VBFPairJetsVect.at(s).hasUserInt("TriggerMatched_VBFJet")) VBFPairJetsVect.at(s).addUserInt("TriggerMatched_VBFJet",1);
-	      }
-	  }
-
-	//Displaced Trigger
-	for(unsigned int b = 0; b<SelectedDisplacedJetVect.size(); b++)
-	  {
-	    if(SelectedDisplacedJetVect.at(b).pt()==VBFPairJetsVect.at(s).pt())
-	      {
-		if(!VBFPairJetsVect.at(s).hasUserInt("TriggerMatched_DisplacedJet")) VBFPairJetsVect.at(s).addUserInt("TriggerMatched_DisplacedJet",1);
-	      }
-	  }
-      }
+    ////Final match to trigger object
+    ////First VBF jets
+    //for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
+    //{
+    //	//VBF Trigger
+    //	for(unsigned int a = 0; a<SelectedVBFJetsVect.size(); a++)
+    //	  {
+    //	    if(SelectedVBFJetsVect.at(a).pt()==VBFPairJetsVect.at(s).pt())
+    //	      {
+    //		if(!VBFPairJetsVect.at(s).hasUserInt("TriggerMatched_VBFJet")) VBFPairJetsVect.at(s).addUserInt("TriggerMatched_VBFJet",1);
+    //	      }
+    //	  }
+    //
+    //	//Displaced Trigger
+    //	for(unsigned int b = 0; b<SelectedDisplacedJetVect.size(); b++)
+    ///	  {
+    //	    if(SelectedDisplacedJetVect.at(b).pt()==VBFPairJetsVect.at(s).pt())
+    //	      {
+    //		if(!VBFPairJetsVect.at(s).hasUserInt("TriggerMatched_DisplacedJet")) VBFPairJetsVect.at(s).addUserInt("TriggerMatched_DisplacedJet",1);
+    //	      }
+    //	  }
+    //}
 
     //Then signal jets
-    for(unsigned int s = 0; s<CHSJetsVect.size(); s++)
-      {
-	//VBF Trigger
-	for(unsigned int a = 0; a<SelectedVBFJetsVect.size(); a++)
-	  {
-	    if(SelectedVBFJetsVect.at(a).pt()==CHSJetsVect.at(s).pt())
-	      {
-		if(!CHSJetsVect.at(s).hasUserInt("TriggerMatched_VBFJet")) CHSJetsVect.at(s).addUserInt("TriggerMatched_VBFJet",1);
-	      }
-	  }
-
-	//Displaced Trigger
-	for(unsigned int b = 0; b<SelectedDisplacedJetVect.size(); b++)
-	  {
-	    if(SelectedDisplacedJetVect.at(b).pt()==CHSJetsVect.at(s).pt())
-	      {
-		if(!CHSJetsVect.at(s).hasUserInt("TriggerMatched_DisplacedJet")) CHSJetsVect.at(s).addUserInt("TriggerMatched_DisplacedJet",1);
-	      }
-	  }
-      }
+    //for(unsigned int s = 0; s<CHSJetsVect.size(); s++)
+    //      {
+    //	//VBF Trigger
+    //	for(unsigned int a = 0; a<SelectedVBFJetsVect.size(); a++)
+    //	  {
+    //	    if(SelectedVBFJetsVect.at(a).pt()==CHSJetsVect.at(s).pt())
+    //	      {
+    //		if(!CHSJetsVect.at(s).hasUserInt("TriggerMatched_VBFJet")) CHSJetsVect.at(s).addUserInt("TriggerMatched_VBFJet",1);
+    //	      }
+    //	  }
+    ///
+    //	//Displaced Trigger
+    //	for(unsigned int b = 0; b<SelectedDisplacedJetVect.size(); b++)
+    //	  {
+    //	    if(SelectedDisplacedJetVect.at(b).pt()==CHSJetsVect.at(s).pt())
+    //	      {
+    //		if(!CHSJetsVect.at(s).hasUserInt("TriggerMatched_DisplacedJet")) CHSJetsVect.at(s).addUserInt("TriggerMatched_DisplacedJet",1);
+    //	      }
+    //	  }
+    //}
 
 
 
@@ -1097,22 +1084,6 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
 
 
-    //Remove jets tagged as VBF from the list of potential signal
-    for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
-      {
-	for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
-	  {
-	    if(VBFPairJetsVect[s].pt()==CHSJetsVect[r].pt() && isVBF) //if jets aren't tagged as VBF jets, don't remove them
-	      {
-		CHSJetsVect.erase(CHSJetsVect.begin()+r);
-	      }
-	  }//VBF jet pair removed
-      }
-
-    //nAllBarrelJets = AllBarrelJetsVect.size();
-    nCHSJets = CHSJetsVect.size();
-
-
     // add b-matching infos into original jet
     if (WriteAllJets){
     for(unsigned int r = 0; r<AllJetsVect.size(); r++)
@@ -1135,8 +1106,76 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //std::cout << "AllBarrelJetsVect size: " << nAllBarrelJets << std::endl;
 
 
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // Gluon fusion tagging
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+
+    std::vector<pat::Jet> ggHJetVect;
+    int ggH_matching_index_CHSJets;
+    ggH_matching_index_CHSJets = -1;
+
+    for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+      {
+        if(CHSJetsVect.at(r).pt()>=30 and CHSJetsVect.at(r).userInt("isTight")>0 and ggH_matching_index_CHSJets<0)//as soon as it finds a gluon-like jet, exit    
+          {
+            ggH_matching_index_CHSJets = r;
+          }
+      }
+
+    if(ggH_matching_index_CHSJets>=0)
+      {
+        ggHJetVect.push_back(CHSJetsVect.at(ggH_matching_index_CHSJets));
+        isggH = true;
+      }
+
+
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // Remove jets tagged as VBF or gluon fusion from the list of potential signal
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+
+    if(PerformVBF)
+      {
+        for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+          {
+            for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
+              {
+                if(VBFPairJetsVect[s].pt()==CHSJetsVect[r].pt() && isVBF) //if jets aren't tagged as VBF jets, don't remove them
+                  {
+                    CHSJetsVect.erase(CHSJetsVect.begin()+r);
+                  }
+              }//VBF jets removed
+          }
+
+      }
+
+    else if(PerformggH)
+      {
+
+        for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+          {
+            for(unsigned int s = 0; s<ggHJetVect.size(); s++)
+              {
+                if(ggHJetVect[s].pt()==CHSJetsVect[r].pt() && isggH) //if jets aren't tagged as ggH jets, don't remove them
+
+                  {
+                    CHSJetsVect.erase(CHSJetsVect.begin()+r);
+                  }
+              }//ggH jet removed    
+          }
+      }
+
+    nCHSJets = CHSJetsVect.size();
+
+
     //QCD killer cut
     for(unsigned int i = 0; i < CHSJetsVect.size(); i++) if(fabs(reco::deltaPhi(CHSJetsVect[i].phi(), MET.phi())) < MinJetMetDPhi) MinJetMetDPhi = fabs(reco::deltaPhi(CHSJetsVect[i].phi(), MET.phi()));
+
+    //QCD killer with ggH jet
+    for(unsigned int i = 0; i < ggHJetVect.size(); i++) if(fabs(reco::deltaPhi(ggHJetVect[i].phi(), MET.phi())) < ggHJetMetDPhi) ggHJetMetDPhi = fabs(reco::deltaPhi(ggHJetVect[i].phi(), MET.phi()));
 
     if (WriteAllJets) for(unsigned int i = 0; i < AllJetsVect.size(); i++) if(fabs(reco::deltaPhi(AllJetsVect[i].phi(), MET.phi())) < MinJetMetDPhiAllJets) MinJetMetDPhiAllJets = fabs(reco::deltaPhi(AllJetsVect[i].phi(), MET.phi()));
 
@@ -1681,6 +1720,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (WriteAllJets) for(unsigned int i = 0; i < AllJetsVect.size(); i++) AllJets.push_back( JetType() );
     for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );
     if (WriteFatJets) for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) CHSFatJets.push_back( FatJetType() );
+    for(unsigned int i = 0; i < ggHJetVect.size(); i++) ggHJet.push_back( JetType() );
 
 
     //------------------------------------------------------------------------------------------
@@ -2179,6 +2219,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       ObjectsFormat::FillJetType(VBFPairJets[i], &VBFPairJetsVect[i], isMC);//nullFloat[i], nullFloat[i], nullFloat[i]);
     }
 
+    for(unsigned int i = 0; i < ggHJetVect.size(); i++) ObjectsFormat::FillJetType(ggHJet[i], &ggHJetVect[i], isMC);
+
     //for(unsigned int i = 0; i < AllBarrelJetsVect.size(); i++){
     //ObjectsFormat::FillJetType(AllBarrelJets[i], &AllBarrelJetsVect[i], isMC, 0., 0., 0.);
     //}
@@ -2385,6 +2427,7 @@ Ntuplizer::beginJob()
     tree -> Branch("Flag_BadPFMuon", &BadPFMuonFlag, "Flag_BadPFMuon/O");
     tree -> Branch("Flag_BadChCand", &BadChCandFlag, "Flag_BadChCand/O");
     tree -> Branch("isVBF" , &isVBF, "isVBF/O");
+    tree -> Branch("isggH" , &isggH, "isggH/O");
     tree -> Branch("isTriggerVBF" , &isTriggerVBF, "isTriggerVBF/O");
     //tree -> Branch("isZtoEE" , &isZtoEE, "isZtoEE/O");
     //tree -> Branch("isZtoMM" , &isZtoMM, "isZtoMM/O");
@@ -2393,6 +2436,7 @@ Ntuplizer::beginJob()
     //tree -> Branch("isTtoEM" , &isTtoEM, "isTtoEM/O");
     tree -> Branch("HT" , &HT , "HT/F");
     tree -> Branch("MinJetMetDPhi", &MinJetMetDPhi, "MinJetMetDPhi/F");
+    tree -> Branch("ggHJetMetDPhi", &ggHJetMetDPhi , "ggHJetMetDPhi/F");
     tree -> Branch("MinJetMetDPhiAllJets", &MinJetMetDPhiAllJets, "MinJetMetDPhiAllJets/F");
     tree -> Branch("gen_b_radius" , &gen_b_radius , "gen_b_radius/F");
     tree -> Branch("m_pi" , &m_pi , "m_pi/F");
@@ -2457,6 +2501,7 @@ Ntuplizer::beginJob()
     tree -> Branch("Jets", &CHSJets);
     //tree -> Branch("CaloJets", &CaloJets);
     tree -> Branch("VBFPairJets", &VBFPairJets);
+    tree -> Branch("ggHJet", &ggHJet);
     //tree -> Branch("AllBarrelJets", &AllBarrelJets);
     if (WriteAllJets) tree -> Branch("AllJets", &AllJets);
     if (WriteFatJets) tree -> Branch("FatJets", &CHSFatJets);
