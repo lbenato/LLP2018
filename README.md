@@ -67,3 +67,11 @@ git clone https://github.com/lbenato/LLP2018.git
 cd LLP2018
 scram b -j 32
 ```
+
+## Install combine
+```
+cd $CMSSW_BASE/src
+git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+cd HiggsAnalysis/CombinedLimit
+scram b
+```
