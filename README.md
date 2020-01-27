@@ -75,3 +75,34 @@ git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsA
 cd HiggsAnalysis/CombinedLimit
 scram b
 ```
+
+## How to produce limits/significance with combine
+Datacards must first be prepared in LLP2018 working area.
+
+This script will set all the needed folders for writing datacards and combine results. Copy and edit your own script, choosing the variables for defining your signal region, your mass and ctau points.
+
+```
+python python/VBFH_DNN_setting.py -c XXX -t YYY -F ZZZ
+```
+where XXX is your channel (i.e. VBFH), YYY is your tag variable (i.e. nTrackConstituents), and YYY is the figure of merit you want to calculate (Limits or Significance).
+
+For writing datacards, adapt the following macro (background, cuts, variables can be different):
+
+```
+python prepare_datacards_VBFH_DNN.py -c XXX -t YYY -F ZZZ -b
+```
+
+Once datacards are written, copy the relevant launching macro and move to combine area:
+
+```
+cp combine_macros/launch_combine.py $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/.
+cd $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit
+python launch_combine.py -c XXX -t YYY -F ZZZ
+```
+
+You can finally plot your results:
+
+```
+cd $CMSSW_BASE/src/Analyzer/LLP2018
+python macro/plot_limits.py -c XXX -t YYY -F ZZZ -b
+```
