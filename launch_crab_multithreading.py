@@ -120,6 +120,24 @@ if __name__ == '__main__':
         isCalo = True
         isVBF = True
         isggH = False
+    elif options.lists == "v2_pfXTag_puppi_calo":
+        from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import * 
+        pset = "Ntuplizer_puppi.py"
+        folder = "v2_pfXTag_puppi_calo_23Jan2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        isCalo = True
+        isVBF = True
+        isggH = False
+    elif options.lists == "v2_pfXTag_puppi_calo_signal_fixed":
+        from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import * 
+        pset = "Ntuplizer_puppi.py"
+        folder = "v2_pfXTag_puppi_calo_signal_fixed_24Jan2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        isCalo = True
+        isVBF = True
+        isggH = False
 
     else:
         print "No list indicated, aborting!"
