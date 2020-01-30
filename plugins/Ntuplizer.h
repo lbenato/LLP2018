@@ -145,6 +145,8 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP0p01Token;
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP1Token;
+    edm::EDGetTokenT<reco::JetTagCollection> JetTagWP10Token;
+    edm::EDGetTokenT<reco::JetTagCollection> JetTagWP100Token;
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP1000Token;
 
     double MinGenBpt, MaxGenBeta;

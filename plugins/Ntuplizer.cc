@@ -125,6 +125,12 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     edm::InputTag JetTagWP1 = edm::InputTag("pfXTags:1:ntuple");
     JetTagWP1Token= consumes<reco::JetTagCollection>(JetTagWP1);
 
+    edm::InputTag JetTagWP10 = edm::InputTag("pfXTags:10:ntuple");
+    JetTagWP10Token= consumes<reco::JetTagCollection>(JetTagWP10);
+
+    edm::InputTag JetTagWP100 = edm::InputTag("pfXTags:100:ntuple");
+    JetTagWP100Token= consumes<reco::JetTagCollection>(JetTagWP100);
+
     edm::InputTag JetTagWP1000 = edm::InputTag("pfXTags:1000:ntuple");
     JetTagWP1000Token= consumes<reco::JetTagCollection>(JetTagWP1000);
 
@@ -1349,6 +1355,14 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     iEvent.getByToken(JetTagWP1Token, pfXTagWP1Handle);
     const reco::JetTagCollection & pfXWP1Tags = *(pfXTagWP1Handle.product());
 
+    edm::Handle<reco::JetTagCollection> pfXTagWP10Handle;
+    iEvent.getByToken(JetTagWP10Token, pfXTagWP10Handle);
+    const reco::JetTagCollection & pfXWP10Tags = *(pfXTagWP10Handle.product());
+
+    edm::Handle<reco::JetTagCollection> pfXTagWP100Handle;
+    iEvent.getByToken(JetTagWP100Token, pfXTagWP100Handle);
+    const reco::JetTagCollection & pfXWP100Tags = *(pfXTagWP100Handle.product());
+
     edm::Handle<reco::JetTagCollection> pfXTagWP1000Handle;
     iEvent.getByToken(JetTagWP1000Token, pfXTagWP1000Handle);
     const reco::JetTagCollection & pfXWP1000Tags = *(pfXTagWP1000Handle.product());
@@ -1375,6 +1389,25 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 		CHSJetsVect[r].addUserFloat("pfXWP1",pfXWP1Tags[s].second);
 	      }
 	  }
+
+
+	for(unsigned int s = 0; s<pfXWP10Tags.size(); s++)
+	  {
+            if( reco::deltaR(pfXWP10Tags[s].first->eta(),pfXWP10Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
+	      {
+		CHSJetsVect[r].addUserFloat("pfXWP10",pfXWP10Tags[s].second);
+	      }
+	  }
+
+	for(unsigned int s = 0; s<pfXWP100Tags.size(); s++)
+	  {
+            if( reco::deltaR(pfXWP100Tags[s].first->eta(),pfXWP100Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
+	      {
+		CHSJetsVect[r].addUserFloat("pfXWP100",pfXWP100Tags[s].second);
+	      }
+	  }
+
+
 
 	for(unsigned int s = 0; s<pfXWP1000Tags.size(); s++)
 	  {
