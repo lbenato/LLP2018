@@ -67,9 +67,9 @@ void ObjectsFormat::FillMuonType(LeptonType& I, const pat::Muon* R, bool isMC) {
     I.miniIso     = R->hasUserFloat("miniIso") ? R->userFloat("miniIso") : -1.;
     I.dxy         = R->hasUserFloat("dxy") ? R->userFloat("dxy") : R->dB();
     I.dz          = R->hasUserFloat("dz") ? R->userFloat("dz") : 0.;
-    I.ip3d        = R->dB(pat::Muon::PV3D);
-    I.sip3d       = R->dB(pat::Muon::PV3D)/R->edB(pat::Muon::PV3D);
-    I.nPixelHits  = R->innerTrack()->hitPattern().numberOfValidPixelHits();
+    I.ip3d        = R->dB(pat::Muon::PV3D);//not working
+    I.sip3d       = R->dB(pat::Muon::PV3D)/R->edB(pat::Muon::PV3D);//not working
+    I.nPixelHits  = -1.;//R->innerTrack()->hitPattern().numberOfValidPixelHits();
     I.dPhi_met    = R->hasUserFloat("dPhi_met") ? R->userFloat("dPhi_met") : -1.;
     I.charge      = R->charge();
     I.pdgId       = R->pdgId();
