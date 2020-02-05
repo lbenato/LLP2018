@@ -6,32 +6,17 @@ import commands
 import math, time
 import sys
 from ROOT import TObject, TFile, TH1, TH1F
-from Analyzer.LLP2018.samples import sample, samples
+from Analyzer.LLP2018.samples import sample
 from array import array
-
-#LUMI        =  35867#36814# in pb-1
-
-#print "Please input the correct lumi!!! Taking lumi for prod v4, SingleMuon dataset"
-#print "Please input the correct lumi!!! Taking lumi for prod v4, displaced jet dataset"
-
-#LUMI = 7478.896#v4, SingleMuonRunG
-#LUMI = 7380.269#v4, DisplacedJetRunG
 
 print "*****************************************************************************"
 print "\n"
 print "Please input the correct lumi!!! Taking lumi for prod v5, SingleMuon dataset"
-#print "Please input the correct lumi!!! Taking lumi for prod v5, displaced jet dataset"
 print "\n"
-#LUMI = 7533.496#v5, SingleMuonRunG
-#LUMI = 7419.796#v5, DisplacedJetRunG
-
-LUMI = 5750.126252897#met_v0_19Aug2019, RunB v2 ver 2
-
-#LUMI        =  35867# full Run 2016#36814# in pb-1
-#LUMI = 0
+#LUMI = 5750.126252897#met_v0_19Aug2019, RunB v2 ver 2
+LUMI        =  35867# full Run 2016 with normtag#36814# in pb-1
 print LUMI, " fb -1"
 print "*****************************************************************************"
-
 
 
 # use the following lists to include/exclude samples to be merged
@@ -73,83 +58,28 @@ parser.add_option("-g", "--groupofsamples", action="store", type="string", dest=
 (options, args) = parser.parse_args()
 
 
-if options.lists == "VBF":
-    from Analyzer.LLP.crab_requests_lists import *
-elif options.lists == "ttbar":
-    from Analyzer.LLP.crab_requests_lists_ttbar import *
-elif options.lists == "additional":
-    from Analyzer.LLP.crab_requests_lists_additional_backgrounds import *
-elif options.lists == "missing":
-    from Analyzer.LLP.crab_requests_lists_missing import *
-elif options.lists == "v2":
-    from Analyzer.LLP.crab_requests_lists_v2 import *
-elif options.lists == "v3":
-    from Analyzer.LLP.crab_requests_lists_v3 import *
-elif options.lists == "DYJetsToLL":
-    from Analyzer.LLP.crab_requests_lists_DYJetsToLL import *
-elif options.lists == "DisplacedJets":
-    from Analyzer.LLP.crab_requests_lists_DisplacedJets import *
-elif options.lists == "v4":
-    from Analyzer.LLP.crab_requests_lists_v4 import *
-elif options.lists == "v5":
-    from Analyzer.LLP.crab_requests_lists_v5 import *
-elif options.lists == "triggerv0":
-    from Analyzer.LLP.crab_requests_lists_v5 import *
-elif options.lists == "triggerv1":
-    from Analyzer.LLP.crab_requests_lists_triggerv1 import *
-elif options.lists == "triggerv2":
-    from Analyzer.LLP.crab_requests_lists_triggerv1 import *
-elif options.lists == "triggerv3":
-    from Analyzer.LLP.crab_requests_lists_triggerv1 import *
-elif options.lists == "triggerv4":
-    from Analyzer.LLP.crab_requests_lists_triggerv1 import *
-elif options.lists == "triggerv5":
-    from Analyzer.LLP.crab_requests_lists_triggerv1 import *
-elif options.lists == "triggerv6":
-    from Analyzer.LLP.crab_requests_lists_triggerv1 import *
-    LUMI = 7570.852545674#SingleMuonRunG
-    #LUMI = 2391.657804102#SingleMuonRunC
-elif options.lists == "v6":
-    from Analyzer.LLP.crab_requests_lists_v5 import *
-    LUMI = 7419.796#WARNING! Lumi from v5, since v6 fails
-elif options.lists == "VBFH_ext":
-    from Analyzer.LLP.crab_requests_lists_VBFH_Tranche2 import *
-    LUMI = 7419.796#WARNING! Lumi from v5, since v6 fails
-elif options.lists == "triggerv7":
-    from Analyzer.LLP.crab_requests_lists_triggerv1 import *
-    LUMI = 7552.828525093#SingleMuonRunG
-elif options.lists == "triggerv8":
-    from Analyzer.LLP.crab_requests_lists_triggerv1 import *
-    LUMI = 7543.233758#SingleMuonRunG
-elif options.lists == "calo_signal":
-    from Analyzer.LLP.crab_requests_lists_calo_signal import *
-    LUMI = 35867#36814# in pb-1 Full 2016
-elif options.lists == "met":
-    from Analyzer.LLP.crab_requests_lists_met import *
-    #LUMI = 35867#36814# in pb-1 Full 2016
-    LUMI = 5750.126252897#met_v0_19Aug2019, RunB v2 ver 2
-elif options.lists == "met_recluster":
-    from Analyzer.LLP.crab_requests_lists_met import *
-    LUMI = 35867#36814# in pb-1 Full 2016
-    #LUMI = 5750.126252897#met_v0_19Aug2019, RunB v2 ver 2
-elif options.lists == "zh":
-    from Analyzer.LLP.crab_requests_lists_zh import *
-    LUMI = 35867#36814# in pb-1 Full 2016
-elif options.lists == "v7_short":
-    from Analyzer.LLP.crab_requests_lists_v7_short import *
+if options.lists == "v0_pfXTag_calo":
+    from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import *
     LUMI = 35867#36814# in pb-1 Full 2016 with normtag
-elif options.lists == "v7_calo":
-    from Analyzer.LLP.crab_requests_lists_v7_calo import *
+elif options.lists == "v1_gen_production_calo":
+    from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import *
     LUMI = 35867#36814# in pb-1 Full 2016 with normtag
-elif options.lists == "v10":
-    from Analyzer.LLP2018.crab_requests_lists_v10 import *
+elif options.lists == "v1_pfXTag_puppi_calo":
+    from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import *
     LUMI = 35867#36814# in pb-1 Full 2016 with normtag
+elif options.lists == "v2_pfXTag_puppi_calo":
+    from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import *
+    LUMI = 35867#36814# in pb-1 Full 2016 with normtag
+elif options.lists == "v2_pfXTag_puppi_calo":
+    from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import *
+    LUMI = 35867#36814# in pb-1 Full 2016 with normtag
+
 else:
     print "No sample list indicated, aborting!"
     exit()
 
 from Analyzer.LLP2018.samples import sample, samples
-list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu","DYJets","WJets","signal_ZH", "QCD_HT50to100","QCD_HT100to200","QCD_HT200to300","QCD_HT300to500","QCD_HT500to700","QCD_HT700to1000","QCD_HT1000to1500","QCD_HT1500to2000","QCD_HT2000toInf"]
+list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed"]
 print "Possible subgroups of samples:"
 for a in list_of_samples:
     print a
@@ -216,10 +146,8 @@ def hadd_outputs(fold,name):
 
 ######################This blocks naf machines
     #print name
-#    os.system('hadd -k -f '+DEST+name+'.root '+fold+'/*/*/*/output_7*.root')# + ' ' +name+'/*/*/*/*_1.root') # work around for full ttbar sample, which is too large
-#    os.system('hadd -k -f '+DEST+name+'.root '+fold+'/*/*/*/output_7*.root'+ ' ' +fold+'/*/*/*/*_1*.root'+ ' ' +fold+'/*/*/*/*_2*.root'+ ' ' +fold+'/*/*/*/*_3*.root'+ ' ' +fold+'/*/*/*/*_4*.root'+ ' ' +fold+'/*/*/*/*_5*.root')#+ ' ' +fold+'/*/*/*/*_6*.root') # for ttbar sample; trigger study v9
-    #os.system('hadd -k -f -O '+DEST+name+'.root ' + fold + "/*/*/*/*.root")#work around if TTree is too large
-    os.system('hadd -k -f '+DEST+name+'.root ' + fold + "/*/*/*/*.root")
+    #os.system('hadd -k -f '+DEST+name+'.root '+fold+'/*/*/*/output_7*.root')# + ' ' +name+'/*/*/*/*_1.root')
+    os.system('hadd -k -f '+DEST+name+'.root ' + fold + "/*/*/*/*.root")#timestamp for calo_signal!
 pass
 
 def weight(name):

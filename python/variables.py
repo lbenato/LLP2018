@@ -1,6 +1,15 @@
 variable = {}
 
 var_template = {
+
+    "sigprob": {
+      "title" : "DNN output score",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1.,
+      "log" : True,
+    },
+
     "EventNumber": {
       "title" : "event number",
       "nbins" : 10000000,
@@ -36,6 +45,51 @@ var_template = {
       "max" : 1.5,
       "log" : False,
     },
+    "isMC": {
+      "title" : "isMC",
+      "nbins" : 2,
+      "min" : -0.5,
+      "max" : 1.5,
+      "log" : False,
+    },
+    # Overall PF Candidates
+    "nPFCandidates": {
+      "title" : "number of particle flow candidates",
+      "nbins" : 100,
+      "min" : -0.5,
+      "max" : 2999.5,
+      "log" : True,
+    },
+    "nPFCandidatesTrack": {
+      "title" : "number of charged particle flow candidates",
+      "nbins" : 100-50,
+      "min" : -0.5,
+      "max" : 1999.5,
+      "log" : True,
+    },
+    "nPFCandidatesHighPurityTrack": {
+      "title" : "number of charged high purity particle flow candidates",
+      "nbins" : 100,
+      "min" : -0.5,
+      "max" : 1999.5,
+      "log" : True,
+    },
+
+    "nPFCandidatesFullTrackInfo": {
+      "title" : "number of particle flow candidates with full track info",
+      "nbins" : 50,
+      "min" : -0.5,
+      "max" : 499.5,
+      "log" : True,
+    },
+    # Number of jets
+    "nJets": {
+      "title" : "number of CHS jets",
+      "nbins" : 50,
+      "min" : -0.5,
+      "max" : 49.5,
+      "log" : True,
+    },
     "nCHSJets": {
       "title" : "number of CHS jets",
       "nbins" : 50,
@@ -43,40 +97,1774 @@ var_template = {
       "max" : 49.5,
       "log" : True,
     },
-    "nAllJets": {
-      "title" : "number of CHS jets up to |#eta|=5.2",
-      "nbins" : 17,
-      "min" : -0.5,
-      "max" : 16.5,
-      "log" : True,
-    },
     "nCaloJets": {
       "title" : "number of calo jets",
-      "nbins" : 17,
+      "nbins" : 20,
       "min" : -0.5,
-      "max" : 16.5,
+      "max" : 19.5,
       "log" : True,
     },
-    "nJets": {
-      "title" : "number of jets",
-      "nbins" : 17,
+    "nCaloTagJets70": {
+      "title" : "number of calo jets 0.70 pfXWP1000",
+      "nbins" : 20,
       "min" : -0.5,
-      "max" : 16.5,
+      "max" : 19.5,
       "log" : True,
     },
-    "nCaloTagJets": {
-      "title" : "number of calo tagged jets",#from v3
-      "nbins" : 5,
+    "nCaloTagJets75": {
+      "title" : "number of calo jets 0.75 pfXWP1000",
+      "nbins" : 20,
       "min" : -0.5,
-      "max" : 4.5,
+      "max" : 19.5,
       "log" : True,
     },
+    "nCaloTagJets80": {
+      "title" : "number of calo jets 0.80 pfXWP1000",
+      "nbins" : 20,
+      "min" : -0.5,
+      "max" : 19.5,
+      "log" : True,
+    },
+    "nCaloTagJets85": {
+      "title" : "number of calo jets 0.85 pfXWP1000",
+      "nbins" : 20,
+      "min" : -0.5,
+      "max" : 19.5,
+      "log" : True,
+    },
+    "nCaloTagJets90": {
+      "title" : "number of calo jets 0.90 pfXWP1000",
+      "nbins" : 20,
+      "min" : -0.5,
+      "max" : 19.5,
+      "log" : True,
+    },
+    "nCaloTagJets95": {
+      "title" : "number of calo jets 0.95 pfXWP1000",
+      "nbins" : 20,
+      "min" : -0.5,
+      "max" : 19.5,
+      "log" : True,
+    },
+
     "nCHSFatJets": {
       "title" : "number of AK8 jets",
-      "nbins" : 10,
+      "nbins" : 5,
       "min" : 0.5,
+      "max" : 5.5,
+      "log" : True,
+    },
+    # HT and MinDPhi
+    "HT": {
+      "title" : "H_{T} (GeV)",
+      "nbins" : 50,#45,
+      "min" : 0,#100,
+      "max" : 2000,
+      "log" : True,
+    },
+    "ggHJetMetDPhi": {
+      "title" : "#Delta #varphi (ggH jet, MET)",
+      "nbins" : 32,#10,
+      "min" : 0,
+      "max" : 3.14,
+      "log" : True,
+    },
+    "MinJetMetDPhi": {
+      "title" : "MinJetMetDPhi",
+      "nbins" : 32,#10,
+      "min" : 0,
+      "max" : 3.14,
+      "log" : True,
+    },
+    "MinJetMetDPhiAllJets": {
+      "title" : "MinJetMetDPhi all jets up to |#eta|=5.2",
+      "nbins" : 64,#10,
+      "min" : 0,
+      "max" : 3.14,
+      "log" : True,
+    },
+
+    #Jets variables
+    #Jets kinematics
+    "Jets[[N]].pt": {
+      "title" : "jet [[N]] p_{T} (GeV)",
+      "nbins" : 40,#40
+      "min" : 0,
+      "max" : 400,
+      "log" : True,
+    },
+    "Jets[[N]].eta": {
+      "title" : "jet [[N]] #eta",
+      "nbins" : 50,
+      "min" : -5.2,#-3,
+      "max" : 5.2,#3,
+      "log" : True,
+    },
+    "Jets[[N]].phi": {
+      "title" : "jet [[N]] #varphi",
+      "nbins" : 60,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+    "Jets[[N]].mass": {
+      "title" : "jet [[N]] mass (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 100,
+      "log" : True,
+    },
+    "Jets[[N]].CSV": {
+      "title" : "jet [[N]] CSV",
+      "nbins" : 25,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "Jets[[N]].alphaMax": {
+      "title" : "jet [[N]] #alpha_{max}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    "Jets[[N]].sigIP2DMedian": {
+      "title" : "jet [[N]] sigIP2DMedian",
+      "nbins" : 50,
+      "min" : -5,#-50,
+      "max" : 7,#50,
+      "log" : True,
+    },
+    "-log(abs(Jets[[N]].sigIP2DMedian))": {
+      "title" : "jet [[N]] sigIP2DMedian",
+      "nbins" : 100,
+      "min" : -50,
+      "max" : 50,
+      "log" : True,
+    },
+    "Jets[[N]].theta2DMedian": {
+      "title" : "jet [[N]] theta2DMedian",
+      "nbins" : 100,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "Jets[[N]].flavour": {
+      "title" : "jet [[N]] flavour",
+      "nbins" : 25,
+      "min" : -0.5,
+      "max" : 24.5,
+      "log" : False,
+    },
+    "Jets[[N]].FracCal": {
+      "title" : "jet [[N]] ECAL energy/HCAL energy",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 10,
+      "log" : True,
+    },
+    "Jets[[N]].hcalE": {
+      "title" : "jet [[N]] HCAL energy",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+    "Jets[[N]].ecalE": {
+      "title" : "jet [[N]] ECAL energy",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 200,
+      "log" : True,
+    },
+    #Jet constituents
+    "Jets[[N]].nConstituents": {
+      "title" : "jet [[N]] number of jet constituents",
+      "nbins" : 100,
+      "min" : -0.5,
+      "max" : 99.5,
+      "log" : True,
+    },
+    "Jets[[N]].nTrackConstituents": {
+      "title" : "jet [[N]] number of jet constituents with tracks",
+      #"title" : "Leading jet: n. of constituents with tracks",
+      "nbins" : 50-20,
+      "min" : -0.5,
+      "max" : 49.5-20,#+50,
+      "log" : True,
+    },
+    "(Jets[[N]].nTrackConstituents)/(Jets[[N]].nConstituents)": {
+      "title" : "percentage of jet [[N]] constituents with tracks",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    #Jet energies
+    "Jets[[N]].cHadE": {
+      "title" : "jet [[N]] charged hadron energy",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 200,
+      "log" : True,
+    },
+    "Jets[[N]].nHadE": {
+      "title" : "jet [[N]] neutral hadron energy",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 200,
+      "log" : True,
+    },
+    "Jets[[N]].muE": {
+      "title" : "jet [[N]] #mu energy",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 20,
+      "log" : True,
+    },
+    "Jets[[N]].eleE": {
+      "title" : "jet [[N]] electron energy",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 50,
+      "log" : True,
+    },
+    "Jets[[N]].photonE": {
+      "title" : "jet [[N]] photon energy",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 200,
+      "log" : True,
+    },
+    #Jet energy fractions
+    "Jets[[N]].cHadEFrac": {
+      "title" : "jet [[N]] charged hadron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "Jets[[N]].nHadEFrac": {
+      "title" : "jet [[N]] neutral hadron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "Jets[[N]].muEFrac": {
+      "title" : "jet [[N]] #mu energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 0.1,
+      "log" : True,
+    },
+    "Jets[[N]].eleEFrac": {
+      "title" : "jet [[N]] electron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 0.1,
+      "log" : True,
+    },
+    "Jets[[N]].photonEFrac": {
+      "title" : "jet [[N]] photon energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    #Jet multiplicities
+    "Jets[[N]].eleMulti": {
+      "title" : "jet [[N]] electron multiplicity",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 20,
+      "log" : True,
+    },
+    "Jets[[N]].muMulti": {
+      "title" : "jet [[N]] #mu multiplicity",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 20,
+      "log" : True,
+    },
+    "Jets[[N]].photonMulti": {
+      "title" : "jet [[N]] photon multiplicity",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 50,
+      "log" : True,
+    },
+    "Jets[[N]].cHadMulti": {
+      "title" : "jet [[N]] charged hadron multiplicity",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 50,
+      "log" : True,
+    },
+    "Jets[[N]].nHadMulti": {
+      "title" : "jet [[N]] neutral hadron multiplicity",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 50,
+      "log" : True,
+    },
+    "Jets[[N]].cMulti": {
+      "title" : "jet [[N]] charged multiplicity",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 50,
+      "log" : True,
+    },
+    "Jets[[N]].nMulti": {
+      "title" : "jet [[N]] neutral multiplicity",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 50,
+      "log" : True,
+    },
+    "Jets[[N]].npr": {
+      "title" : "jet [[N]] number of components",
+      "nbins" : 100,
+      "min" : 0,
+      "max" : 100,
+      "log" : True,
+    },
+    #Jet multiplicity fractions
+    "Jets[[N]].eleMultiFrac": {
+      "title" : "jet [[N]] electron multiplicity fraction",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "Jets[[N]].muMultiFrac": {
+      "title" : "jet [[N]] #mu multiplicity fraction",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "Jets[[N]].photonMultiFrac": {
+      "title" : "jet [[N]] photon multiplicity fraction",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "Jets[[N]].cHadMultiFrac": {
+      "title" : "jet [[N]] charged hadron multiplicity fraction",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "Jets[[N]].nHadMultiFrac": {
+      "title" : "jet [[N]] neutral hadron multiplicity fraction",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "Jets[[N]].cMultiFrac": {
+      "title" : "jet [[N]] charged multiplicity fraction",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "Jets[[N]].nMultiFrac": {
+      "title" : "jet [[N]] neutral multiplicity fraction",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    #Imperial College tagger
+    "Jets[[N]].pfXWP0p01": {
+      "title" : "jet [[N]] pfXWP0p01",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "Jets[[N]].pfXWP1": {
+      "title" : "jet [[N]] pfXWP1",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "Jets[[N]].pfXWP1000": {
+      "title" : "jet [[N]] pfXWP1000",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    #Jet substructure
+    "Jets[[N]].tau1": {
+      "title" : "jet [[N]] #tau_{1}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : False,
+    },
+    "Jets[[N]].tau2": {
+      "title" : "jet [[N]] #tau_{2}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : False,
+    },
+    "Jets[[N]].tau21": {
+      "title" : "jet [[N]] #tau_{2}/#tau_{1}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : False,
+    },
+    #Jets tracks hits
+    "Jets[[N]].nPixelHitsMedian": {
+      "title" : "jet [[N]] median number of pixel hits",
+      "nbins" : 10,
+      "min" : -0.5,
+      "max" : 9.5,
+      "log" : True,
+    },
+    "Jets[[N]].nHitsMedian": {
+      "title" : "jet [[N]] median number of tracker hits",
+      "nbins" : 20+5,
+      "min" : -0.5,
+      "max" : 19.5+5,
+      "log" : True,
+    },
+    "Jets[[N]].nTracks0PixelHits": {
+      "title" : "jet [[N]] number of tracks with 0 pixel hits",
+      "nbins" : 20,
+      "min" : -0.5,
+      "max" : 19.5,
+      "log" : True,
+    },
+    "Jets[[N]].nTracks1PixelHit": {
+      "title" : "jet [[N]] number of tracks with 1 pixel hits",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "Jets[[N]].nTracks2PixelHits": {
+      "title" : "jet [[N]] number of tracks with 2 pixel hits",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "Jets[[N]].nTracks3PixelHits": {
+      "title" : "jet [[N]] number of tracks with 3 pixel hits",
+      #"title" : "Leading jet: n. of tracks with 3 pixel hits",
+      "nbins" : 40-10,
+      "min" : -0.5,
+      "max" : 39.5-10,
+      "log" : True,
+    },
+    "Jets[[N]].nTracks4PixelHits": {
+      "title" : "jet [[N]] number of tracks with 4 pixel hits",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "Jets[[N]].nTracks5PixelHits": {
+      "title" : "jet [[N]] number of tracks with 5 pixel hits",
+      "nbins" : 10,
+      "min" : -0.5,
+      "max" : 9.5,
+      "log" : True,
+    },
+    "Jets[[N]].nTracks6PixelHits": {
+      "title" : "jet [[N]] number of tracks with 6 pixel hits",
+      "nbins" : 10,
+      "min" : -0.5,
+      "max" : 9.5,
+      "log" : True,
+    },
+    "Jets[[N]].nTracksLarger5PixelHits": {
+      "title" : "jet [[N]] number of tracks with more than 5 pixel hits",
+      "nbins" : 10,
+      "min" : -0.5,
+      "max" : 9.5,
+      "log" : True,
+    },
+    "Jets[[N]].nTracksLarger6PixelHits": {
+      "title" : "jet [[N]] number of tracks with more than 6 pixel hits",
+      "nbins" : 10,
+      "min" : -0.5,
+      "max" : 9.5,
+      "log" : True,
+    },
+    "Jets[[N]].nTracks0LostInnerHits": {
+      "title" : "jet [[N]] number of tracks with 0 lost inner hits",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "Jets[[N]].nTracks1LostInnerHit": {
+      "title" : "jet [[N]] number of tracks with 1 lost inner hit",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "Jets[[N]].nTracks2LostInnerHits": {
+      "title" : "jet [[N]] number of tracks with 2 lost inner hits",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "Jets[[N]].nTracksLarger2LostInnerHits": {
+      "title" : "jet [[N]] number of tracks with more than 2 lost inner hits",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+
+    #Calo jets
+    "CaloJets[[N]].pt": {
+      "title" : "calo jet [[N]] p_{T} (GeV)",
+      "nbins" : 40,#40
+      "min" : 0,
+      "max" : 400,
+      "log" : True,
+    },
+    "CaloJets[[N]].emEnergyFraction": {
+      "title" : "calo jet [[N]] ECAL energy fraction",
+      "nbins" : 40,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    "CaloJets[[N]].energyFractionHadronic": {
+      "title" : "calo jet [[N]] HCAL energy fraction",
+      "nbins" : 40,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+
+    #ggH jet
+    "ggHJet[[N]].pt": {
+      "title" : "ggH jet p_{T} (GeV)",
+      "nbins" : 40,#40
+      "min" : 0,
+      "max" : 400,
+      "log" : True,
+    },
+    "ggHJet[[N]].nTrackConstituents": {
+      "title" : "ggH jet number of jet constituents with tracks",
+      #"title" : "Leading jet: n. of constituents with tracks",
+      "nbins" : 50-20,
+      "min" : -0.5,
+      "max" : 49.5-20,#+50,
+      "log" : True,
+    },
+    "ggHJet[[N]].cMulti": {
+      "title" : "ggH jet number of jet constituents with tracks",
+      #"title" : "Leading jet: n. of constituents with tracks",
+      "nbins" : 50-20,
+      "min" : -0.5,
+      "max" : 49.5-20,#+50,
+      "log" : True,
+    },
+    "ggHJet[[N]].nHadEFrac": {
+      "title" : "ggH jet neutral hadron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    #######################
+    #Higgs masses
+    "HDiCHS": {
+      "title" : "dijet mass CHS (GeV)",
+      "nbins" : 20,
+      "min" : 0.5,
+      "max" : 500.5,
+      "log" : True,
+    },
+    "HTriCHS": {
+      "title" : "trijet mass CHS (GeV)",
+      "nbins" : 100,
+      "min" : 0.5,
+      "max" : 500.5,
+      "log" : True,
+    },
+    "HQuadCHS": {
+      "title" : "quadjet mass CHS (GeV)",
+      "nbins" : 100,
+      "min" : 0.5,
+      "max" : 500.5,
+      "log" : True,
+    },
+    "HDiCHSMatched": {
+      "title" : "Matched dijet mass CHS (GeV)",
+      "nbins" : 100,
+      "min" : 0.5,
+      "max" : 500.5,
+      "log" : True,
+    },
+    "HTriCHSMatched": {
+      "title" : "Matched trijet mass CHS (GeV)",
+      "nbins" : 100,
+      "min" : 0.5,
+      "max" : 500.5,
+      "log" : True,
+    },
+    "HQuadCHSMatched": {
+      "title" : "Matched quadjet mass CHS (GeV)",
+      "nbins" : 100,
+      "min" : 0.5,
+      "max" : 500.5,
+      "log" : True,
+    },
+
+    "HDiCalo": {
+      "title" : "dijet mass Calo (GeV)",
+      "nbins" : 100,
+      "min" : 0.5,
+      "max" : 500.5,
+      "log" : True,
+    },
+    "HTriCalo": {
+      "title" : "trijet mass Calo (GeV)",
+      "nbins" : 100,
+      "min" : 0.5,
+      "max" : 500.5,
+      "log" : True,
+    },
+    "HQuadCalo": {
+      "title" : "quadjet mass Calo (GeV)",
+      "nbins" : 100,
+      "min" : 0.5,
+      "max" : 500.5,
+      "log" : True,
+    },
+    "HDiCaloMatched": {
+      "title" : "Matched dijet mass Calo (GeV)",
+      "nbins" : 100,
+      "min" : 0.5,
+      "max" : 500.5,
+      "log" : True,
+    },
+    "HTriCaloMatched": {
+      "title" : "Matched trijet mass Calo (GeV)",
+      "nbins" : 100,
+      "min" : 0.5,
+      "max" : 500.5,
+      "log" : True,
+    },
+    "HQuadCaloMatched": {
+      "title" : "Matched quadjet mass Calo (GeV)",
+      "nbins" : 100,
+      "min" : 0.5,
+      "max" : 500.5,
+      "log" : True,
+    },
+
+    #######################
+    # Trigger variables
+    "VBFPairJets.VBFPairJets[[N]].pt": {
+      "title" : "VBF pair jet [[N]] p_{T} (GeV)",
+      "nbins" : 40,
+      "min" : 0,
+      "max" : 800,
+      "log" : True,
+    },
+    "VBFPairJets.VBFPairJets[[N]].eta": {
+      "title" : "VBF pair jet [[N]] #eta",
+      "nbins" : 40,
+      "min" : -5.2,
+      "max" : 5.2,
+      "log" : True,
+    },
+    "DisplacedJets.DisplacedJets[[N]].nHadEFrac": {
+      "title" : "displaced jet [[N]] neutral hadron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "DisplacedJets.DisplacedJets[[N]].pt": {
+      "title" : "displaced jet [[N]] p_{T} (GeV)",
+      "nbins" : 40,
+      "min" : 0,
+      "max" : 800,
+      "log" : True,
+    },
+    "DisplacedJets.DisplacedJets[[N]].nTrackConstituents": {
+      "title" : "Number of constituents with tracks per displaced jet [[N]]",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 49,
+      "log" : False,
+    },
+
+    # b-tagging variables
+    "Jets[[N]].nSV": {
+        "title" : "Number of SV per jet",
+        "nbins" : 10,
+        "min" : -0.5,
+        "max" : 9.5,
+        "log" : False,
+    },
+    "Jets[[N]].nSVCand": {
+        "title" : "Number of SV candidates per jet [[N]]",
+        "nbins" : 10,
+        "min" : 0,
+        "max" : 9,
+        "log" : False,
+    },
+    "Jets[[N]].nVertexTracks": {
+        "title" : "Number of tracks per vertex",
+        "nbins" : 21,
+        "min" : 0,"max" : 20,
+        "log" : False,
+    },
+    "Jets[[N]].nSelectedTracks": {
+        "title" : "Number of selected tracks per jet [[N]]",
+        "nbins" : 20,
+        "min" : 0,
+        "max" : 20,
+        "log" : False,
+    },
+    "Jets[[N]].dRSVJet": {
+        "title" : "dR between SV and jet",
+        "nbins" : 51,
+        "min" : 0,
+        "max" : 1,
+        "log" : False,
+    },
+    "Jets[[N]].flightDist2d": {
+        "title" : "Flight distance vertex [[N]] 2D (cm)",
+        "nbins" : 150,
+        "min" : 0,
+        "max" : 10,
+        "log" : False,
+    },
+    "Jets[[N]].flightDist3d": {
+        "title" : "Flight distance vertex [[N]] 3D (cm)",
+        "nbins" : 150,
+        "min" : 0,
+        "max" : 10,
+        "log" : False,
+    },
+    "Jets[[N]].nTracksSV": {
+        "title" : "Number of selected tracks per vertex [[N]]",
+        "nbins" : 21,
+        "min" : 0,
+        "max" : 20,
+        "log" : False,
+    },
+    "Jets[[N]].SV_mass": {
+        "title" : "Mass of vertex [[N]] (GeV)",
+        "nbins" : 31,
+        "min" : 0,
+        "max" : 30,
+        "log" : False,
+    },
+
+    #VBF Pair jets
+    "VBFPairJets.VBFPairJets[[N]].pt": {
+      "title" : "VBF pair jet [[N]] p_{T} (GeV)",
+      "nbins" : 40,
+      "min" : 0,
+      "max" : 800,
+      "log" : True,
+    },
+
+
+    # JetConstits vector
+    "JetConstits.JetConstits.pt": {
+      "title" : "jet constituents p_{T} (GeV)",
+      "nbins" : 40,
+      "min" : 0,
+      "max" : 200,
+      "log" : True,
+    },
+    "JetConstits.JetConstits[[N]].pt": {
+      "title" : "jet constituent [[N]] p_{T} (GeV)",
+      "nbins" : 40,
+      "min" : 0,
+      "max" : 200,
+      "log" : True,
+    },
+
+
+    # MatchedCHSJets
+    "MatchedCHSJet[N].pt": {
+      "title" : "jet [N] p_{T} (GeV)",
+      "nbins" : 40,
+      "min" : 0,
+      "max" : 800,
+      "log" : True,
+    },
+    "MatchedCHSJet[N].eta": {
+      "title" : "jet [N] #eta",
+      "nbins" : 30,
+      "min" : -3,
+      "max" : 3,
+      "log" : False,
+    },
+    "MatchedCHSJet[N].phi": {
+      "title" : "jet [N] #varphi",
+      "nbins" : 60,
+      "min" : -3.15,
+      "max" : 3.15,
+      "log" : False,
+    },
+    "MatchedCHSJet[N].mass": {
+      "title" : "jet [N] mass (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 150,
+      "log" : False,
+    },
+    "MatchedCHSJet[N].CSV": {
+      "title" : "jet [N] CSV",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : False,
+    },
+    "MatchedCHSJet[N].flavour": {
+      "title" : "jet [N] flavour",
+      "nbins" : 25,
+      "min" : -0.5,
+      "max" : 24.5,
+      "log" : False,
+    },
+    "MatchedCHSJet[N].chf": {
+      "title" : "jet [N] charged hadron fraction",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 1,
+      "log" : False,
+    },
+    "MatchedCHSJet[N].nhf": {
+      "title" : "jet [N] neutral hadron fraction",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 1,
+      "log" : False,
+    },
+    "MatchedCHSJet[N].phf": {
+      "title" : "jet [N] photon fraction",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 1,
+      "log" : False,
+    },
+    "MatchedCHSJet[N].elf": {
+      "title" : "jet [N] electron fraction",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 1,
+      "log" : False,
+    },
+    "MatchedCHSJet[N].muf": {
+      "title" : "jet [N] muon fraction",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 1,
+      "log" : False,
+    },
+    "MatchedCHSJet[N].chm": {
+      "title" : "jet [N] charged multiplicity",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 50,
+      "log" : False,
+    },
+    
+    # Z Control Region
+    "Z.mass": {
+      "title" : "Z->ll mass (GeV)",
+      "nbins" : 40,
+      "min" : 69.5,
+      "max" : 109.5,
+      "log" : True,
+    },
+    "Z.pt": {
+      "title" : "Z p_{T} (GeV)",
+      "nbins" : 50,
+      "min" : 50,
+      "max" : 550,
+      "log" : True,
+    },
+
+    # VBFPair
+    "VBFPair.mass": {
+      "title" : "VBF pair mass (GeV)",
+      "nbins" : 50,
+      "min" : 400,
+      "max" : 2400,
+      "log" : True,
+    },
+    "VBFPair.dEta": {
+      "title" : "VBF pair #Delta #eta",
+      "nbins" : 50,
+      "min" : 2.5,
       "max" : 10.5,
       "log" : True,
+    },
+
+    # FatJets variables
+    "FatJets.FatJets[[N]].isGenMatched": {
+      "title" : "AK8 jet [[N]] is gen matched",
+      "nbins" : 2,
+      "min" : -0.5,
+      "max" : 1.5,
+      "log" : True,
+    },
+    #FatJets kinematics
+    "FatJets.FatJets[[N]].pt": {
+      "title" : "AK8 jet [[N]] p_{T} (GeV)",
+      "nbins" : 40,#40
+      "min" : 0,
+      "max" : 400,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].eta": {
+      "title" : "AK8 jet [[N]] #eta",
+      "nbins" : 50,
+      "min" : -3,
+      "max" : 3,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].phi": {
+      "title" : "AK8 jet [[N]] #varphi",
+      "nbins" : 60,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].mass": {
+      "title" : "AK8 jet [[N]] mass (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 100,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].CSV": {
+      "title" : "AK8 jet [[N]] CSV",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].pfBoostedDoubleSVAK8": {
+      "title" : "AK8 jet [[N]] pfBoostedDoubleSVAK8",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].alphaMax": {
+      "title" : "AK8 jet [[N]] #alpha_{max}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].sigIP2DMedian": {
+      "title" : "AK8 jet [[N]] sigIP2DMedian",
+      "nbins" : 50,
+      "min" : -5,#-50,
+      "max" : 7,#50,
+      "log" : True,
+    },
+    "-log(abs(FatJets.FatJets[[N]].sigIP2DMedian))": {
+      "title" : "AK8 jet [[N]] sigIP2DMedian",
+      "nbins" : 100,
+      "min" : -50,
+      "max" : 50,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].theta2DMedian": {
+      "title" : "AK8 jet [[N]] theta2DMedian",
+      "nbins" : 100,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].flavour": {
+      "title" : "AK8 jet [[N]] flavour",
+      "nbins" : 25,
+      "min" : -0.5,
+      "max" : 24.5,
+      "log" : False,
+    },
+#    "FatJets.FatJets[[N]].FracCal": {
+#      "title" : "AK8 jet [[N]] ECAL energy/HCAL energy",
+#      "nbins" : 50,
+#      "min" : 0,
+#      "max" : 10,
+#      "log" : True,
+#    },
+#    "FatJets.FatJets[[N]].hcalE": {
+#      "title" : "AK8 jet [[N]] HCAL energy",
+#      "nbins" : 50,
+#      "min" : 0,
+#      "max" : 500,
+#      "log" : True,
+#    },
+#    "FatJets.FatJets[[N]].ecalE": {
+#      "title" : "AK8 jet [[N]] ECAL energy",
+#      "nbins" : 50,
+#      "min" : 0,
+#      "max" : 200,
+#      "log" : True,
+#    },
+    #FatJets constituents
+    "FatJets.FatJets[[N]].nConstituents": {
+      "title" : "AK8 jet [[N]] number of jet constituents",
+      "nbins" : 50,
+      "min" : -0.5,
+      "max" : 99.5+50,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nTrackConstituents": {
+      "title" : "AK8 jet [[N]] number of jet constituents with tracks",
+      #"title" : "Leading jet: n. of constituents with tracks",
+      "nbins" : 50,
+      "min" : -0.5,
+      "max" : 49.5+50,
+      "log" : True,
+    },
+    "(FatJets.FatJets[[N]].nTrackConstituents)/(FatJets.FatJets[[N]].nConstituents)": {
+      "title" : "percentage of jet [[N]] constituents with tracks",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    #FatJets energies
+    "FatJets.FatJets[[N]].cHadE": {
+      "title" : "AK8 jet [[N]] charged hadron energy",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 200,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nHadE": {
+      "title" : "AK8 jet [[N]] neutral hadron energy",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 200,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].muE": {
+      "title" : "AK8 jet [[N]] #mu energy",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 20,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].eleE": {
+      "title" : "AK8 jet [[N]] electron energy",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 50,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].photonE": {
+      "title" : "AK8 jet [[N]] photon energy",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 200,
+      "log" : True,
+    },
+    #FatJets energy fractions
+    "FatJets.FatJets[[N]].cHadEFrac": {
+      "title" : "AK8 jet [[N]] charged hadron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nHadEFrac": {
+      "title" : "AK8 jet [[N]] neutral hadron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].muEFrac": {
+      "title" : "AK8 jet [[N]] #mu energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 0.1,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].eleEFrac": {
+      "title" : "AK8 jet [[N]] electron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 0.1,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].photonEFrac": {
+      "title" : "AK8 jet [[N]] photon energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    #FatJets multiplicities
+    "FatJets.FatJets[[N]].eleMulti": {
+      "title" : "AK8 jet [[N]] electron multiplicity",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 20,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].muMulti": {
+      "title" : "AK8 jet [[N]] #mu multiplicity",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 20,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].photonMulti": {
+      "title" : "AK8 jet [[N]] photon multiplicity",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 50,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].cHadMulti": {
+      "title" : "AK8 jet [[N]] charged hadron multiplicity",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 50,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nHadMulti": {
+      "title" : "AK8 jet [[N]] neutral hadron multiplicity",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 50,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].cMulti": {
+      "title" : "AK8 jet [[N]] charged multiplicity",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 50,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nMulti": {
+      "title" : "AK8 jet [[N]] neutral multiplicity",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 50,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].npr": {
+      "title" : "AK8 jet [[N]] number of components",
+      "nbins" : 100,
+      "min" : 0,
+      "max" : 100,
+      "log" : True,
+    },
+    #FatJets multiplicity fractions
+    "FatJets.FatJets[[N]].eleMultiFrac": {
+      "title" : "AK8 jet [[N]] electron multiplicity fraction",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].muMultiFrac": {
+      "title" : "AK8 jet [[N]] #mu multiplicity fraction",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].photonMultiFrac": {
+      "title" : "AK8 jet [[N]] photon multiplicity fraction",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].cHadMultiFrac": {
+      "title" : "AK8 jet [[N]] charged hadron multiplicity fraction",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nHadMultiFrac": {
+      "title" : "AK8 jet [[N]] neutral hadron multiplicity fraction",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].cMultiFrac": {
+      "title" : "AK8 jet [[N]] charged multiplicity fraction",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nMultiFrac": {
+      "title" : "AK8 jet [[N]] neutral multiplicity fraction",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    #FatJets substructure
+    "FatJets.FatJets[[N]].chsTau21": {
+      "title" : "AK8 jet [[N]] CHS #tau_{2}/#tau_{1}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nSoftDropSubJets": {
+      "title" : "AK8 jet [[N]] : n. CHS softdrop sub-jets",
+      "nbins" : 4,
+      "min" : -0.5,
+      "max" : 3.5,
+      "log" : True,
+    },
+    #FatJets tracks hits
+    "FatJets.FatJets[[N]].nPixelHitsMedian": {
+      "title" : "AK8 jet [[N]] median number of pixel hits",
+      "nbins" : 10,
+      "min" : -0.5,
+      "max" : 9.5,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nHitsMedian": {
+      "title" : "AK8 jet [[N]] median number of tracker hits",
+      "nbins" : 20+5,
+      "min" : -0.5,
+      "max" : 19.5+5,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nTracks0PixelHits": {
+      "title" : "AK8 jet [[N]] number of tracks with 0 pixel hits",
+      "nbins" : 20,
+      "min" : -0.5,
+      "max" : 19.5,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nTracks1PixelHit": {
+      "title" : "AK8 jet [[N]] number of tracks with 1 pixel hits",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nTracks2PixelHits": {
+      "title" : "AK8 jet [[N]] number of tracks with 2 pixel hits",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nTracks3PixelHits": {
+      "title" : "AK8 jet [[N]] number of tracks with 3 pixel hits",
+      #"title" : "Leading jet: n. of tracks with 3 pixel hits",
+      "nbins" : 40-10,
+      "min" : -0.5,
+      "max" : 39.5-10,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nTracks4PixelHits": {
+      "title" : "AK8 jet [[N]] number of tracks with 4 pixel hits",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nTracks5PixelHits": {
+      "title" : "AK8 jet [[N]] number of tracks with 5 pixel hits",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nTracks6PixelHits": {
+      "title" : "AK8 jet [[N]] number of tracks with 6 pixel hits",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nTracksLarger5PixelHits": {
+      "title" : "AK8 jet [[N]] number of tracks with more than 5 pixel hits",
+      "nbins" : 10,
+      "min" : -0.5,
+      "max" : 9.5,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nTracksLarger6PixelHits": {
+      "title" : "AK8 jet [[N]] number of tracks with more than 6 pixel hits",
+      "nbins" : 10,
+      "min" : -0.5,
+      "max" : 9.5,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nTracks0LostInnerHits": {
+      "title" : "AK8 jet [[N]] number of tracks with 0 lost inner hits",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nTracks1LostInnerHit": {
+      "title" : "AK8 jet [[N]] number of tracks with 1 lost inner hit",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nTracks2LostInnerHits": {
+      "title" : "AK8 jet [[N]] number of tracks with 2 lost inner hits",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].nTracksLarger2LostInnerHits": {
+      "title" : "AK8 jet [[N]] number of tracks with more than 2 lost inner hits",
+      "nbins" : 40,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+
+    "FatJets.FatJets[[N]].CHSsoftdropMass": {
+      "title" : "AK8 jet [[N]] CHS softdrop mass (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 100,
+      "log" : True,
+    },
+    "FatJets.FatJets[[N]].CHSsoftdropMassCorr": {
+      "title" : "AK8 jet [[N]] CHS softdrop mass corr  (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 100,
+      "log" : True,
+    },
+#    "FatJets.FatJets[N].pt": {
+#      "title" : "AK8 jet [[N]] p_{T} (GeV)",
+#      "nbins" : 40,
+#      "min" : 200,
+#      "max" : 1000,
+#      "log" : True,
+#    },
+    # Vertices
+    # .....
+
+    # Tracks
+    # .....
+
+    # CSCSegments
+    "@CSCSegments.size()": {
+      "title" : "number of CSC segments",
+      "nbins" : 50,
+      "min" : -0.5,
+      "max" : 99.5,
+      "log" : True,
+    },
+    "nCSCSegments": {
+      "title" : "number of CSC segments",
+      "nbins" : 25,
+      "min" : -0.5,
+      "max" : 99.5,
+      "log" : True,
+    },
+
+    # DTSegments
+    "nDTSegments": {
+      "title" : "number of DT segments",
+      "nbins" : 20,#55,
+      "min" : -0.5,
+      "max" : 99.5,
+      "log" : True,
+    },
+    "nDTSegmentsStation1": {
+      "title" : "number of DT segments in station 1",
+      "nbins" : 20,#55,
+      "min" : -0.5,
+      "max" : 79.5,
+      "log" : True,
+    },
+    "nDTSegmentsStation2": {
+      "title" : "number of DT segments in station 2",
+      "nbins" : 20,#55,
+      "min" : -0.5,
+      "max" : 79.5,#54.5,
+      "log" : True,
+    },
+    "nDTSegmentsStation3": {
+      "title" : "number of DT segments in station 3",
+      "nbins" : 20,#55,
+      "min" : -0.5,
+      "max" : 39.5,
+      "log" : True,
+    },
+    "nDTSegmentsStation4": {
+      "title" : "number of DT segments in station 4",
+      "nbins" : 20,#55,
+      "min" : -0.5,
+      "max" : 19.5,#54.5,
+      "log" : True,
+    },
+
+    # Standalone muons
+    "nStandAloneMuons": {
+      "title" : "number of standalone muons",
+      "nbins" : 15,
+      "min" : -0.5,
+      "max" : 14.5,
+      "log" : True,
+    },
+    "StandAloneMuons[[N]].pt": {
+      "title" : "standalone muon [[N]] p_{T} (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+    "StandAloneMuons[[N]].dxy": {
+      "title" : "standalone muon [[N]] dxy (cm)",
+      "nbins" : 50,
+      "min" : -10,
+      "max" : 10,
+      "log" : True,
+    },
+    "StandAloneMuons[[N]].dxyError": {
+      "title" : "standalone muon [[N]] dxy error (cm)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+    "StandAloneMuons[[N]].dz": {
+      "title" : "standalone muon [[N]] dz (cm)",
+      "nbins" : 50,
+      "min" : -10,
+      "max" : 10,
+      "log" : True,
+    },
+    "StandAloneMuons[[N]].dzError": {
+      "title" : "standalone muon [[N]] dz error (cm)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+    "StandAloneMuons.dxy/StandAloneMuons.dxyError": {
+      "title" : "standalone muons dxy sign.",
+      "nbins" : 50,
+      "min" : -50,
+      "max" : 50,
+      "log" : True,
+    },
+    "StandAloneMuons.dz/StandAloneMuons.dzError": {
+      "title" : "standalone muons dz sign.",
+      "nbins" : 50,
+      "min" : -50,
+      "max" : 50,
+      "log" : True,
+    },
+
+    "StandAloneMuons[[N]].dz/StandAloneMuons[[N]].dzError": {
+      "title" : "standalone muon [[N]] dz sign.",
+      "nbins" : 50,
+      "min" : -50,
+      "max" : 50,
+      "log" : True,
+    },
+    "StandAloneMuons[[N]].dxy/StandAloneMuons[[N]].dxyError": {
+      "title" : "standalone muon [[N]] dxy sign.",
+      "nbins" : 50,
+      "min" : -50,
+      "max" : 50,
+      "log" : True,
+    },
+    "StandAloneMuons[[N]].d0/StandAloneMuons[[N]].d0Error": {
+      "title" : "standalone muon [[N]] d0 sign.",
+      "nbins" : 50,
+      "min" : -100,
+      "max" : 100,
+      "log" : True,
+    },
+    "StandAloneMuons[[N]].d0": {
+      "title" : "standalone muon [[N]] d0 (cm)",
+      "nbins" : 50,
+      "min" : -100,
+      "max" : 100,
+      "log" : True,
+    },
+    "StandAloneMuons[[N]].dsz": {
+      "title" : "standalone muon [[N]] dsz (cm)",
+      "nbins" : 50,
+      "min" : -100,
+      "max" : 100,
+      "log" : True,
+    },
+    "StandAloneMuons[[N]].numberOfValidHits": {
+      "title" : "standalone muon [[N]] n. valid hits",
+      "nbins" : 50,
+      "min" : -0.5,
+      "max" : 49.5,
+      "log" : True,
+    },
+    "StandAloneMuons[[N]].numberOfLostHits": {
+      "title" : "standalone muon [[N]] n. lost hits",
+      "nbins" : 50,
+      "min" : -0.5,
+      "max" : 49.5,
+      "log" : True,
+    },
+    "StandAloneMuons[[N]].recHitsSize": {
+      "title" : "standalone muon [[N]] n. hits",
+      "nbins" : 50,
+      "min" : -0.5,
+      "max" : 49.5,
+      "log" : True,
+    },
+    "StandAloneMuons[[N]].ndof": {
+      "title" : "standalone muon [[N]] n. d.o.f.",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 50,
+      "log" : True,
+    },
+    "StandAloneMuons[[N]].validFraction": {
+      "title" : "standalone muon [[N]] validFraction",
+      "nbins" : 10,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    # displaced standalone muons
+    "nDisplacedStandAloneMuons": {
+      "title" : "number of displaced standalone muons",
+      "nbins" : 25,
+      "min" : -0.5,
+      "max" : 24.5,
+      "log" : True,
+    },
+    "DisplacedStandAloneMuons[[N]].pt": {
+      "title" : "standalone muon [[N]] p_{T} (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+    "DisplacedStandAloneMuons[[N]].dxy": {
+      "title" : "standalone muon [[N]] dxy (cm)",
+      "nbins" : 50,
+      "min" : -10,
+      "max" : 10,
+      "log" : True,
+    },
+    "DisplacedStandAloneMuons[[N]].dxyError": {
+      "title" : "standalone muon [[N]] dxy error (cm)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+    "DisplacedStandAloneMuons[[N]].dz": {
+      "title" : "standalone muon [[N]] dz (cm)",
+      "nbins" : 50,
+      "min" : -10,
+      "max" : 10,
+      "log" : True,
+    },
+    "DisplacedStandAloneMuons[[N]].dzError": {
+      "title" : "standalone muon [[N]] dz error (cm)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+    "DisplacedStandAloneMuons[[N]].dz/DisplacedStandAloneMuons[[N]].dzError": {
+      "title" : "standalone muon [[N]] dz sign.",
+      "nbins" : 50,
+      "min" : -100,
+      "max" : 100,
+      "log" : True,
+    },
+    "DisplacedStandAloneMuons[[N]].d0": {
+      "title" : "standalone muon [[N]] d0 (cm)",
+      "nbins" : 50,
+      "min" : -100,
+      "max" : 100,
+      "log" : True,
+    },
+    "DisplacedStandAloneMuons[[N]].dsz": {
+      "title" : "standalone muon [[N]] dsz (cm)",
+      "nbins" : 50,
+      "min" : -100,
+      "max" : 100,
+      "log" : True,
+    },
+    "DisplacedStandAloneMuons[[N]].numberOfValidHits": {
+      "title" : "standalone muon [[N]] n. valid hits",
+      "nbins" : 50,
+      "min" : -0.5,
+      "max" : 49.5,
+      "log" : True,
+    },
+    "DisplacedStandAloneMuons[[N]].numberOfLostHits": {
+      "title" : "standalone muon [[N]] n. lost hits",
+      "nbins" : 50,
+      "min" : -0.5,
+      "max" : 49.5,
+      "log" : True,
+    },
+    "DisplacedStandAloneMuons[[N]].recHitsSize": {
+      "title" : "standalone muon [[N]] n. hits",
+      "nbins" : 50,
+      "min" : -0.5,
+      "max" : 49.5,
+      "log" : True,
+    },
+    "DisplacedStandAloneMuons[[N]].ndof": {
+      "title" : "standalone muon [[N]] n. d.o.f.",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 50,
+      "log" : True,
+    },
+    "DisplacedStandAloneMuons[[N]].validFraction": {
+      "title" : "standalone muon [[N]] validFraction",
+      "nbins" : 10,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+
+
+    # Leptons
+    "nMuons": {
+      "title" : "number of loose muons",
+      "nbins" : 6,
+      "min" : -0.5,
+      "max" : 5.5,
+      "log" : True,
+    },
+    "nTightMuons": {
+      "title" : "number of tight muons",
+      "nbins" : 6,
+      "min" : -0.5,
+      "max" : 5.5,
+      "log" : True,
+    },
+    "nElectrons": {
+      "title" : "number of veto electrons",
+      "nbins" : 6,
+      "min" : -0.5,
+      "max" : 5.5,
+      "log" : True,
+    },
+    "nTaus": {
+      "title" : "number of loose taus",
+      "nbins" : 6,
+      "min" : -0.5,
+      "max" : 5.5,
+      "log" : True,
+    },
+    "nPhotons": {
+      "title" : "number of loose photons",
+      "nbins" : 6,
+      "min" : -0.5,
+      "max" : 5.5,
+      "log" : True,
+    },
+
+    #Leptons (vectors)
+    "Lepton[N].pt": {
+      "title" : "lepton[N] p_{T} (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1000,
+      "log" : True,
+    },
+
+    "Muon1_pt": {
+      "title" : "#mu_{1} p_{T} (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1000,
+      "log" : True,
+    },
+    "Muon1_phi": {
+      "title" : "#mu_{1} #varphi",
+      "nbins" : 60,
+      "min" : -3.2,#15,
+      "max" : 3.2,#15,
+      "log" : True,
+    },
+    "Muon1_eta": {
+      "title" : "#mu_{1} #eta",
+      "nbins" : 50,
+      "min" : -2.5,#-3,
+      "max" : 2.5,#3,
+      "log" : True,
+    },
+
+    "isZtoEE": {
+      "title" : "is Z->ee",
+      "nbins" : 2,
+      "min" : -0.5,
+      "max" : 1.5,
+      "log" : True,
+    },
+
+    "isZtoMM": {
+      "title" : "is Z->#mu #mu",
+      "nbins" : 2,
+      "min" : -0.5,
+      "max" : 1.5,
+      "log" : True,
+    },
+    # MET
+    "MEt.pt": {
+      "title" : "E_{T}^{miss} (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1000,
+      "log" : True,
+    },
+    "MEt.sign": {
+      "title" : "#slash{E}_{T} significance (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+    "MEt.phi": {
+      "title" : "#slash{E}_{T} #varphi",
+      "nbins" : 50,
+      "min" : -3.15,
+      "max" : 3.15,
+      "log" : False,
     },
     "MEt_pt": {
       "title" : "E^{T}_{miss} (GeV)",
@@ -92,29 +1880,162 @@ var_template = {
       "max" : 1000,
       "log" : True,
     },
-    "HT": {
-      "title" : "H_{T} (GeV)",
-      "nbins" : 50,#45,
-      "min" : 0,#100,
-      "max" : 2000,
+
+    # GenBquarks
+    "GenBquarks[[N]].pt": {
+      "title" : "gen b-quark p_{T} (GeV)",
+      "nbins" : 30,
+      "min" : 0,
+      "max" : 150,
       "log" : True,
     },
-    "MinJetMetDPhi": {
-      "title" : "MinJetMetDPhi",
-      "nbins" : 64,#10,
+    "GenBquarks[[N]].radius": {
+      "title" : "gen b-quark 3D radius (cm)",
+      #"bins" : [0,0.0001,0.001,0.01,0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000],
+      "bins" : [0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000,100000],
+      "nbins" : 0,#100,
+      "min" : 0.000001,
+      "max" : 1000,
+      "log" : True,
+      "logx" : True,
+    },
+    "GenBquarks[[N]].radius2D": {
+      "title" : "gen b-quark transverse decay length (cm)",
+      "bins" : [0,0.0001,0.001,0.01,0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000],
+      "nbins" : 100,
+      "min" : 0.000001,
+      "max" : 1000,
+      "log" : True,
+      "logx" : True,
+    },
+    "GenLLPs[[N]].pt": {
+      "title" : "gen #pi p_{T} (GeV)",
+      "nbins" : 40,
       "min" : 0,
-      "max" : 3.14,
+      "max" : 200,
       "log" : True,
     },
-    "MinJetMetDPhiAllJets": {
-      "title" : "MinJetMetDPhi all jets up to |#eta|=5.2",
-      "nbins" : 64,#10,
+    "GenHiggs.pt": {
+      "title" : "gen Higgs p_{T} (GeV)",
+      "nbins" : 40,
       "min" : 0,
-      "max" : 3.14,
+      "max" : 400,
       "log" : True,
     },
 
 
+}
+
+
+for n, v in var_template.iteritems():
+    if '[N]' in n:
+        for i in range(0, 5):
+            ni = n.replace('[N]', "%d" % i)
+            variable[ni] = v.copy()
+            variable[ni]['title'] = variable[ni]['title'].replace('[N]', "%d" % i)
+    else:
+        variable[n] = v
+
+# Custom settings
+#variable['CHSJets.CHSJets[2].pt']['max'] = 500
+#variable['CHSJets.CHSJets[3].pt']['max'] = 400
+#variable['CHSJet2.pt']['max'] = 400
+#variable['CHSJet3.pt']['max'] = 200
+#variable['CHSJet4.pt']['max'] = 200
+
+
+
+#Unused:
+#######################
+# Trigger
+#######################
+#    "TripleJet50TriggerObjects.TripleJet50TriggerObjects[[N]].pt": {
+#      "title" : "trigger object firing hltTripleJet50 [[N]] p_{T} (GeV)",
+#      "nbins" : 40,#40
+#      "min" : 0,
+#      "max" : 400,
+#      "log" : True,
+#    },
+#    "nAllJets": {
+#      "title" : "number of CHS jets up to |#eta|=5.2",
+#      "nbins" : 17,
+#      "min" : -0.5,
+#      "max" : 16.5,
+#      "log" : True,
+#    },
+
+########################
+    #"Jets.Jets[[N]].nEmE": {
+    #  "title" : "jet [[N]] neutral ECAL energy",
+    #  "nbins" : 50,
+    #  "min" : 0,
+    #  "max" : 200,
+    #  "log" : True,
+    #},
+    #"Jets.Jets[[N]].nEmEFrac": {
+    #  "title" : "jet [[N]] neutral ECAL energy fraction",
+    #  "nbins" : 50,
+    #  "min" : 0,
+    #  "max" : 1,
+    #  "log" : True,
+    #},
+    #"Jets.Jets[[N]].cEmE": {
+    #  "title" : "jet [[N]] charged ECAL energy",
+    #  "nbins" : 50,
+    #  "min" : 0,
+    #  "max" : 20,
+    #  "log" : True,
+    #},
+    #"Jets.Jets[[N]].cEmEFrac": {
+    #  "title" : "jet [[N]] charged ECAL energy fraction",
+    #  "nbins" : 50,
+    #  "min" : 0,
+    #  "max" : 0.1,
+    #  "log" : True,
+    #},
+    #"Jets.Jets[[N]].cmuE": {
+    #  "title" : "jet [[N]] charged #mu energy",
+    #  "nbins" : 20,
+    #  "min" : 0,
+    #  "max" : 20,
+    #  "log" : True,
+    #},
+    #"Jets.Jets[[N]].cmuEFrac": {
+    #  "title" : "jet [[N]] charged #mu energy fraction",
+    #  "nbins" : 50,
+    #  "min" : 0,
+    #  "max" : 0.1,
+    #  "log" : True,
+    #},
+#    "Jets.Jets[[N]].isMatchedToMatchedCHSJet": {
+#      "title" : "jet [[N]] matched to signal jet n...",
+#      "nbins" : 6,
+#      "min" : -1.5,
+#      "max" : 4.5,
+#      "log" : False,
+#    },
+#    "nCaloJets": {
+#      "title" : "number of calo jets",
+#      "nbins" : 17,
+#      "min" : -0.5,
+#      "max" : 16.5,
+#      "log" : True,
+#    },
+#    "nJets": {
+#      "title" : "number of jets",
+#      "nbins" : 17,
+#      "min" : -0.5,
+#      "max" : 16.5,
+#      "log" : True,
+#    },
+#    "nCaloTagJets": {
+#      "title" : "number of calo tagged jets",#from v3
+#      "nbins" : 5,
+#      "min" : -0.5,
+#      "max" : 4.5,
+#      "log" : True,
+#    },
+'''
     # Jets vector
     #all jets together
     "Jets.pt": {
@@ -263,353 +2184,6 @@ var_template = {
         "max" : 30,
         "log" : False,
         },
-    
-
-    "Jets.ptMin": {
-      "title" : "6 jets min p_{T} (GeV)",
-      "nbins" : 40,#40
-      "min" : 0,
-      "max" : 400,
-      "log" : True,
-    },
-    "Jets.CSVmax": {
-      "title" : "6 jets max CSV",
-      "nbins" : 20,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "maxCSV6Jets": {
-      "title" : "6 jets max CSV",
-      "nbins" : 20,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "maxSecondCSV6Jets": {
-      "title" : "6 jets second max CSV",
-      "nbins" : 20,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "nCSVgr0p84": {
-      "title" : "Number of jets with CSV > 0.84",
-      "nbins" : 10,
-      "min" : -0.5,
-      "max" : 9.5,
-      "log" : True,
-    },
-    
-
-    #1 jet at a time
-    "Jets.Jets[[N]].pt": {
-      "title" : "jet [[N]] p_{T} (GeV)",
-      "nbins" : 40,#40
-      "min" : 0,
-      "max" : 400,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].energy": {
-      "title" : "jet [[N]] energy (GeV)",
-      "nbins" : 40,#40
-      "min" : 0,
-      "max" : 400,
-      "log" : True,
-    },
-    "TripleJet50TriggerObjects.TripleJet50TriggerObjects[[N]].pt": {
-      "title" : "trigger object firing hltTripleJet50 [[N]] p_{T} (GeV)",
-      "nbins" : 40,#40
-      "min" : 0,
-      "max" : 400,
-      "log" : True,
-    },
-
-    "Jets.Jets[[N]].eta": {
-      "title" : "jet [[N]] #eta",
-      "nbins" : 50,
-      "min" : -5.2,#-3,
-      "max" : 5.2,#3,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].phi": {
-      "title" : "jet [[N]] #varphi",
-      "nbins" : 60,
-      "min" : -3.2,
-      "max" : 3.2,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].mass": {
-      "title" : "jet [[N]] mass (GeV)",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 100,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].CSV": {
-      "title" : "jet [[N]] CSV",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].pfXWP0p01": {
-      "title" : "jet [[N]] pfXWP0p01",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].pfXWP1": {
-      "title" : "jet [[N]] pfXWP1",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].pfXWP1000": {
-      "title" : "jet [[N]] pfXWP1000",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-
-    "Jets.Jets[[N]].isMatchedToMatchedCHSJet": {
-      "title" : "jet [[N]] matched to signal jet n...",
-      "nbins" : 6,
-      "min" : -1.5,
-      "max" : 4.5,
-      "log" : False,
-    },
-    "Jets.Jets[[N]].alphaMax": {
-      "title" : "jet [[N]] #alpha_{max}",
-      "nbins" : 50,
-      "min" : 0.,
-      "max" : 1.,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].sigIP2DMedian": {
-      "title" : "jet [[N]] sigIP2DMedian",
-      "nbins" : 50,
-      "min" : -5,#-50,
-      "max" : 7,#50,
-      "log" : True,
-    },
-
-    "-log(abs(Jets.Jets[[N]].sigIP2DMedian))": {
-      "title" : "jet [[N]] sigIP2DMedian",
-      "nbins" : 100,
-      "min" : -50,
-      "max" : 50,
-      "log" : True,
-    },
-
-
-    "Jets.Jets[[N]].theta2DMedian": {
-      "title" : "jet [[N]] theta2DMedian",
-      "nbins" : 100,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].flavour": {
-      "title" : "jet [[N]] flavour",
-      "nbins" : 25,
-      "min" : -0.5,
-      "max" : 24.5,
-      "log" : False,
-    },
-    "Jets.Jets[[N]].FracCal": {
-      "title" : "jet [[N]] ECAL energy/HCAL energy",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 10,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].hcalE": {
-      "title" : "jet [[N]] HCAL energy",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 500,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].ecalE": {
-      "title" : "jet [[N]] ECAL energy",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 200,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].cHadE": {
-      "title" : "jet [[N]] charged hadron energy",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 200,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].nHadE": {
-      "title" : "jet [[N]] neutral hadron energy",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 200,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].cHadEFrac": {
-      "title" : "jet [[N]] charged hadron energy fraction",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].nHadEFrac": {
-      "title" : "jet [[N]] neutral hadron energy fraction",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "Jets.nHadEFrac": {
-      "title" : "all jets neutral hadron energy fraction",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-
-    "Jets.Jets[[N]].nEmE": {
-      "title" : "jet [[N]] neutral ECAL energy",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 200,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].nEmEFrac": {
-      "title" : "jet [[N]] neutral ECAL energy fraction",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].cEmE": {
-      "title" : "jet [[N]] charged ECAL energy",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 20,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].cEmEFrac": {
-      "title" : "jet [[N]] charged ECAL energy fraction",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 0.1,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].cmuE": {
-      "title" : "jet [[N]] charged #mu energy",
-      "nbins" : 20,
-      "min" : 0,
-      "max" : 20,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].cmuEFrac": {
-      "title" : "jet [[N]] charged #mu energy fraction",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 0.1,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].muE": {
-      "title" : "jet [[N]] #mu energy",
-      "nbins" : 20,
-      "min" : 0,
-      "max" : 20,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].muEFrac": {
-      "title" : "jet [[N]] #mu energy fraction",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 0.1,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].eleE": {
-      "title" : "jet [[N]] electron energy",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 50,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].eleEFrac": {
-      "title" : "jet [[N]] electron energy fraction",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 0.1,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].eleMulti": {
-      "title" : "jet [[N]] electron multiplicity",
-      "nbins" : 20,
-      "min" : 0,
-      "max" : 20,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].photonE": {
-      "title" : "jet [[N]] photon energy",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 200,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].photonEFrac": {
-      "title" : "jet [[N]] photon energy fraction",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].photonMulti": {
-      "title" : "jet [[N]] photon multiplicity",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 50,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].cHadMulti": {
-      "title" : "jet [[N]] charged hadron multiplicity",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 50,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].nHadMulti": {
-      "title" : "jet [[N]] neutral hadron multiplicity",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 50,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].cMulti": {
-      "title" : "jet [[N]] charged multiplicity",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 50,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].nMulti": {
-      "title" : "jet [[N]] neutral multiplicity",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 50,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].npr": {
-      "title" : "jet [[N]] number of components",
-      "nbins" : 100,
-      "min" : 0,
-      "max" : 100,
-      "log" : True,
-    },
 
     "Jets.Jets[[N]].isCaloTag": {
       "title" : "jet [[N]] calo tag",
@@ -618,62 +2192,6 @@ var_template = {
       "max" : 1.5,
       "log" : False,
     },
-#####################
-# jet substructure
-
-    "Jets.Jets[[N]].tau1": {
-      "title" : "jet [[N]] #tau_{1}",
-      "nbins" : 50,
-      "min" : 0.,
-      "max" : 1.,
-      "log" : False,
-    },
-
-    "Jets.Jets[[N]].tau2": {
-      "title" : "jet [[N]] #tau_{2}",
-      "nbins" : 50,
-      "min" : 0.,
-      "max" : 1.,
-      "log" : False,
-    },
-
-    "Jets.Jets[[N]].tau21": {
-      "title" : "jet [[N]] #tau_{2}/#tau_{1}",
-      "nbins" : 50,
-      "min" : 0.,
-      "max" : 1.,
-      "log" : False,
-    },
-
-
-
-#####################
-
-    "Jets.Jets[[N]].nConstituents": {
-      "title" : "jet [[N]] number of jet constituents",
-      "nbins" : 100,
-      "min" : -0.5,
-      "max" : 99.5,
-      "log" : True,
-    },
-
-    "Jets.Jets[[N]].nTrackConstituents": {
-      #"title" : "jet [[N]] number of jet constituents with tracks",
-      "title" : "Leading jet: n. of constituents with tracks",
-      "nbins" : 50+40,
-      "min" : -0.5,
-      "max" : 49.5+40,
-      "log" : True,
-    },
-
-    "(Jets.Jets[[N]].nTrackConstituents)/(Jets.Jets[[N]].nConstituents)": {
-      "title" : "percentage of jet [[N]] constituents with tracks",
-      "nbins" : 50,
-      "min" : 0.,
-      "max" : 1.,
-      "log" : True,
-    },
-
 
     "Jets.nTrackConstituents": {
       "title" : "number of jet constituents with tracks",
@@ -705,86 +2223,6 @@ var_template = {
       "log" : True,
     },
 
-
-    "Jets.Jets[[N]].nTracks0PixelHits": {
-      "title" : "jet [[N]] number of tracks with 0 pixel hits",
-      "nbins" : 40,
-      "min" : -0.5,
-      "max" : 39.5,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].nTracks1PixelHits": {
-      "title" : "jet [[N]] number of tracks with 1 pixel hits",
-      "nbins" : 40,
-      "min" : -0.5,
-      "max" : 39.5,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].nTracks2PixelHits": {
-      "title" : "jet [[N]] number of tracks with 2 pixel hits",
-      "nbins" : 40,
-      "min" : -0.5,
-      "max" : 39.5,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].nTracks3PixelHits": {
-      #"title" : "jet [[N]] number of tracks with 3 pixel hits",
-      "title" : "Leading jet: n. of tracks with 3 pixel hits",
-      "nbins" : 40+10,
-      "min" : -0.5,
-      "max" : 39.5+10,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].nTracks4PixelHits": {
-      "title" : "jet [[N]] number of tracks with 4 pixel hits",
-      "nbins" : 40,
-      "min" : -0.5,
-      "max" : 39.5,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].nTracks5PixelHits": {
-      "title" : "jet [[N]] number of tracks with 5 pixel hits",
-      "nbins" : 40,
-      "min" : -0.5,
-      "max" : 39.5,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].nTracksLarger5PixelHits": {
-      "title" : "jet [[N]] number of tracks with more than 5 pixel hits",
-      "nbins" : 10,
-      "min" : -0.5,
-      "max" : 9.5,
-      "log" : True,
-    },
-
-    "Jets.Jets[[N]].nTracks0LostInnerHits": {
-      "title" : "jet [[N]] number of tracks with 0 lost inner hits",
-      "nbins" : 40,
-      "min" : -0.5,
-      "max" : 39.5,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].nTracks1LostInnerHits": {
-      "title" : "jet [[N]] number of tracks with 1 lost inner hits",
-      "nbins" : 40,
-      "min" : -0.5,
-      "max" : 39.5,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].nTracks2LostInnerHits": {
-      "title" : "jet [[N]] number of tracks with 2 lost inner hits",
-      "nbins" : 40,
-      "min" : -0.5,
-      "max" : 39.5,
-      "log" : True,
-    },
-    "Jets.Jets[[N]].nTracksLarger2LostInnerHits": {
-      "title" : "jet [[N]] number of tracks with more than 2 lost inner hits",
-      "nbins" : 40,
-      "min" : -0.5,
-      "max" : 39.5,
-      "log" : True,
-    },
     "Jets.nTracksLarger2LostInnerHits": {
       "title" : "number of tracks in all jets with more than 2 lost inner hits",
       "nbins" : 40,
@@ -793,774 +2231,18 @@ var_template = {
       "log" : True,
     },
 
-
-#######################
-#Higgs masses
-    "HDiCHS": {
-      "title" : "dijet mass CHS (GeV)",
-      "nbins" : 20,
-      "min" : 0.5,
-      "max" : 500.5,
-      "log" : True,
-    },
-    "HTriCHS": {
-      "title" : "trijet mass CHS (GeV)",
-      "nbins" : 100,
-      "min" : 0.5,
-      "max" : 500.5,
-      "log" : True,
-    },
-    "HQuadCHS": {
-      "title" : "quadjet mass CHS (GeV)",
-      "nbins" : 100,
-      "min" : 0.5,
-      "max" : 500.5,
-      "log" : True,
-    },
-    "HDiCHSMatched": {
-      "title" : "Matched dijet mass CHS (GeV)",
-      "nbins" : 100,
-      "min" : 0.5,
-      "max" : 500.5,
-      "log" : True,
-    },
-    "HTriCHSMatched": {
-      "title" : "Matched trijet mass CHS (GeV)",
-      "nbins" : 100,
-      "min" : 0.5,
-      "max" : 500.5,
-      "log" : True,
-    },
-    "HQuadCHSMatched": {
-      "title" : "Matched quadjet mass CHS (GeV)",
-      "nbins" : 100,
-      "min" : 0.5,
-      "max" : 500.5,
-      "log" : True,
-    },
-
-    "HDiCalo": {
-      "title" : "dijet mass Calo (GeV)",
-      "nbins" : 100,
-      "min" : 0.5,
-      "max" : 500.5,
-      "log" : True,
-    },
-    "HTriCalo": {
-      "title" : "trijet mass Calo (GeV)",
-      "nbins" : 100,
-      "min" : 0.5,
-      "max" : 500.5,
-      "log" : True,
-    },
-    "HQuadCalo": {
-      "title" : "quadjet mass Calo (GeV)",
-      "nbins" : 100,
-      "min" : 0.5,
-      "max" : 500.5,
-      "log" : True,
-    },
-    "HDiCaloMatched": {
-      "title" : "Matched dijet mass Calo (GeV)",
-      "nbins" : 100,
-      "min" : 0.5,
-      "max" : 500.5,
-      "log" : True,
-    },
-    "HTriCaloMatched": {
-      "title" : "Matched trijet mass Calo (GeV)",
-      "nbins" : 100,
-      "min" : 0.5,
-      "max" : 500.5,
-      "log" : True,
-    },
-    "HQuadCaloMatched": {
-      "title" : "Matched quadjet mass Calo (GeV)",
-      "nbins" : 100,
-      "min" : 0.5,
-      "max" : 500.5,
-      "log" : True,
-    },
-
-    "CaloJets.emEnergyFraction": {
-      "title" : "calo jet ECAL energy fraction",
-      "nbins" : 100,
-      "min" : 0.,
-      "max" : 1.,
-      "log" : True,
-    },
-    "CaloJets.energyFractionHadronic": {
-      "title" : "calo jet HCAL energy fraction",
-      "nbins" : 100,
-      "min" : 0.,
-      "max" : 1.,
-      "log" : True,
-    },
-#######################
-
-
-
-
-    # Trigger variables
-    "VBFPairJets.VBFPairJets[[N]].pt": {
-      "title" : "VBF pair jet [[N]] p_{T} (GeV)",
-      "nbins" : 40,
-      "min" : 0,
-      "max" : 800,
-      "log" : True,
-    },
-    "DisplacedJets.DisplacedJets[[N]].nHadEFrac": {
-      "title" : "displaced jet [[N]] neutral hadron energy fraction",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "DisplacedJets.DisplacedJets[[N]].pt": {
-      "title" : "displaced jet [[N]] p_{T} (GeV)",
-      "nbins" : 40,
-      "min" : 0,
-      "max" : 800,
-      "log" : True,
-    },
-    "DisplacedJets.DisplacedJets[[N]].nTrackConstituents": {
-      "title" : "Number of constituents with tracks per displaced jet [[N]]",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 49,
-      "log" : False,
-    },
-
-    # b-tagging variables
-    "Jets.Jets[[N]].nSV": {
-        "title" : "Number of SV per jet",
-        "nbins" : 10,
-        "min" : -0.5,
-        "max" : 9.5,
-        "log" : False,
-    },
-    "Jets.Jets[[N]].nSVCand": {
-        "title" : "Number of SV candidates per jet [[N]]",
-        "nbins" : 10,
-        "min" : 0,
-        "max" : 9,
-        "log" : False,
-    },
-    "Jets.Jets[[N]].nVertexTracks": {
-        "title" : "Number of tracks per vertex",
-        "nbins" : 21,
-        "min" : 0,"max" : 20,
-        "log" : False,
-    },
-    "Jets.Jets[[N]].nSelectedTracks": {
-        "title" : "Number of selected tracks per jet [[N]]",
-        "nbins" : 51,
-        "min" : 0,
-        "max" : 50,
-        "log" : False,
-    },
-    "Jets.Jets[[N]].dRSVJet": {
-        "title" : "dR between SV and jet",
-        "nbins" : 51,
-        "min" : 0,
-        "max" : 1,
-        "log" : False,
-    },
-    "Jets.Jets[[N]].flightDist2d": {
-        "title" : "Flight distance vertex [[N]] 2D (cm)",
-        "nbins" : 150,
-        "min" : 0,
-        "max" : 10,
-        "log" : False,
-    },
-    "Jets.Jets[[N]].flightDist3d": {
-        "title" : "Flight distance vertex [[N]] 3D (cm)",
-        "nbins" : 150,
-        "min" : 0,
-        "max" : 10,
-        "log" : False,
-    },
-    "Jets.Jets[[N]].nTracksSV": {
-        "title" : "Number of selected tracks per vertex [[N]]",
-        "nbins" : 21,
-        "min" : 0,
-        "max" : 20,
-        "log" : False,
-    },
-    "Jets.Jets[[N]].SV_mass": {
-        "title" : "Mass of vertex [[N]] (GeV)",
-        "nbins" : 31,
-        "min" : 0,
-        "max" : 30,
-        "log" : False,
-    },
-
-    #VBF Pair jets
-    "VBFPairJets.VBFPairJets[[N]].pt": {
-      "title" : "VBF pair jet [[N]] p_{T} (GeV)",
-      "nbins" : 40,
-      "min" : 0,
-      "max" : 800,
-      "log" : True,
-    },
-
-
-    # JetConstits vector
-    "JetConstits.JetConstits.pt": {
-      "title" : "jet constituents p_{T} (GeV)",
-      "nbins" : 40,
-      "min" : 0,
-      "max" : 200,
-      "log" : True,
-    },
-    "JetConstits.JetConstits[[N]].pt": {
-      "title" : "jet constituent [[N]] p_{T} (GeV)",
-      "nbins" : 40,
-      "min" : 0,
-      "max" : 200,
-      "log" : True,
-    },
-
-
-    # MatchedCHSJets
-    "MatchedCHSJet[N].pt": {
-      "title" : "jet [N] p_{T} (GeV)",
-      "nbins" : 40,
-      "min" : 0,
-      "max" : 800,
-      "log" : True,
-    },
-    "MatchedCHSJet[N].eta": {
-      "title" : "jet [N] #eta",
-      "nbins" : 30,
-      "min" : -3,
-      "max" : 3,
-      "log" : False,
-    },
-    "MatchedCHSJet[N].phi": {
-      "title" : "jet [N] #varphi",
-      "nbins" : 60,
-      "min" : -3.15,
-      "max" : 3.15,
-      "log" : False,
-    },
-    "MatchedCHSJet[N].mass": {
-      "title" : "jet [N] mass (GeV)",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 150,
-      "log" : False,
-    },
-    "MatchedCHSJet[N].CSV": {
-      "title" : "jet [N] CSV",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : False,
-    },
-    "MatchedCHSJet[N].flavour": {
-      "title" : "jet [N] flavour",
-      "nbins" : 25,
-      "min" : -0.5,
-      "max" : 24.5,
-      "log" : False,
-    },
-    "MatchedCHSJet[N].chf": {
-      "title" : "jet [N] charged hadron fraction",
-      "nbins" : 20,
-      "min" : 0,
-      "max" : 1,
-      "log" : False,
-    },
-    "MatchedCHSJet[N].nhf": {
-      "title" : "jet [N] neutral hadron fraction",
-      "nbins" : 20,
-      "min" : 0,
-      "max" : 1,
-      "log" : False,
-    },
-    "MatchedCHSJet[N].phf": {
-      "title" : "jet [N] photon fraction",
-      "nbins" : 20,
-      "min" : 0,
-      "max" : 1,
-      "log" : False,
-    },
-    "MatchedCHSJet[N].elf": {
-      "title" : "jet [N] electron fraction",
-      "nbins" : 20,
-      "min" : 0,
-      "max" : 1,
-      "log" : False,
-    },
-    "MatchedCHSJet[N].muf": {
-      "title" : "jet [N] muon fraction",
-      "nbins" : 20,
-      "min" : 0,
-      "max" : 1,
-      "log" : False,
-    },
-    "MatchedCHSJet[N].chm": {
-      "title" : "jet [N] charged multiplicity",
-      "nbins" : 20,
-      "min" : 0,
-      "max" : 50,
-      "log" : False,
-    },
-    
-    # Z Control Region
-    "Z.mass": {
-      "title" : "Z->ll mass (GeV)",
-      "nbins" : 40,
-      "min" : 69.5,
-      "max" : 109.5,
-      "log" : True,
-    },
-    "Z.pt": {
-      "title" : "Z p_{T} (GeV)",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1000,
-      "log" : True,
-    },
-
-    # VBFPair
-    "VBFPair.mass": {
-      "title" : "VBF pair mass (GeV)",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 2000,
-      "log" : True,
-    },
-    "VBFPair.dEta": {
-      "title" : "VBF pair #Delta #eta",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 10,
-      "log" : True,
-    },
-
-    "Lepton[N].pt": {
-      "title" : "lepton[N] p_{T} (GeV)",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1000,
-      "log" : True,
-    },
-
-    "Muon1_pt": {
-      "title" : "#mu_{1} p_{T} (GeV)",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1000,
-      "log" : True,
-    },
-    "Muon1_phi": {
-      "title" : "#mu_{1} #varphi",
-      "nbins" : 60,
-      "min" : -3.2,#15,
-      "max" : 3.2,#15,
-      "log" : True,
-    },
-    "Muon1_eta": {
-      "title" : "#mu_{1} #eta",
-      "nbins" : 50,
-      "min" : -2.5,#-3,
-      "max" : 2.5,#3,
-      "log" : True,
-    },
-
-    "isZtoEE": {
-      "title" : "is Z->ee",
-      "nbins" : 2,
-      "min" : -0.5,
-      "max" : 1.5,
-      "log" : True,
-    },
-
-    "isZtoMM": {
-      "title" : "is Z->#mu #mu",
-      "nbins" : 2,
-      "min" : -0.5,
-      "max" : 1.5,
-      "log" : True,
-    },
-
-
-    # Fatjets
-    "FatJets.CSV": {
-      "title" : "all fat jets CSV",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "FatJets.CSV1": {
-      "title" : "all fat jets subjet 1 CSV",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "FatJets.CSV2": {
-      "title" : "all fat jets subjet 2 CSV",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "FatJets.CMVA1": {
-      "title" : "all fat jets subjet 1 CMVA",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "FatJets.CMVA2": {
-      "title" : "all fat jets subjet 2 CMVA",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "FatJets.pfBoostedDoubleSVAK8": {
-      "title" : "all jets boosted double SV discriminator",
-      "nbins" : 30,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    # .....
-    "FatJets.CHSsoftdropMass": {
-      "title" : "AK8 jet CHS soft drop mass  (GeV)",
-      "nbins" : 90,
-      "min" : 0,
-      "max" : 150,
-      "log" : True,
-    },
-    "FatJets.dR": {
-      "title" : "AK8 jets dR ",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "FatJets.muMulti": {
-      "title" : "AK8 jets muon multiplicity ",
-      "nbins" : 15,
-      "min" : 0,
-      "max" : 15,
-      "log" : True,
-    },
-    "FatJets.chsTau21": {
-      "title" : "AK8 jets #tau_{2}/#tau_{1} ",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-
-    "FatJets.FatJets[[N]].pt": {
-      "title" : "AK8 jet [N] p_{T} (GeV)",
-      "nbins" : 40,
-      "min" : 200,
-      "max" : 1000,
-      "log" : True,
-    },
-    "FatJets.FatJets[[N]].nMatchedGenBquarks": {
-      "title" : "AK8 jet [N] number of matched b quarks",
-      "nbins" : 5,
-      "min" : -0.5,
-      "max" : 4.5,
-      "log" : True,
-    },
-    "FatJets.FatJets[[N]].CSV": {
-      "title" : "all fat jet [N] CSV",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "FatJets.FatJets[[N]].CSV1": {
-      "title" : "all fat jet [N] subjet 1 CSV",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "FatJets.FatJets[[N]].CSV2": {
-      "title" : "all fat jet [N] subjet 2 CSV",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "FatJets.FatJets[[N]].CMVA1": {
-      "title" : "all fat jet [N] subjet 1 CMVA",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "FatJets.FatJets[[N]].CMVA2": {
-      "title" : "all fat jet [N] subjet 2 CMVA",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "FatJets.FatJets[[N]].pfBoostedDoubleSVAK8": {
-      "title" : "fat jet [N] boosted double SV discriminator",
-      "nbins" : 30,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    # .....
-    "FatJets.FatJets[[N]].CHSsoftdropMass": {
-      "title" : "AK8 jet [N] CHS soft drop mass  (GeV)",
-      "nbins" : 90,
-      "min" : 0,
-      "max" : 150,
-      "log" : True,
-    },
-    "FatJets.FatJets[[N]].dR": {
-      "title" : "AK8 jet [N] dR ",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "FatJets.FatJets[[N]].muMulti": {
-      "title" : "AK8 jet [N] muon multiplicity ",
-      "nbins" : 15,
-      "min" : 0,
-      "max" : 15,
-      "log" : True,
-    },
-    "FatJets.FatJets[[N]].chsTau21": {
-      "title" : "AK8 jet [N] #tau_{2}/#tau_{1} ",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "FatJets.FatJets[[N]].nSV1": {
-        "title" : "Number of SV of subjet 1 of fat jet [N]",
-        "nbins" : 10,
-        "min" : -0.5,
-        "max" : 9.5,
-        "log" : True,
-    },
-    "FatJets.FatJets[[N]].nVertexTracks1": {
-        "title" : "Number of tracks per vertex of subjet 1 in fat jet [N]",
-        "nbins" : 21,
-        "min" : 0,
-        "max" : 20,
-        "log" : True,
-    },
-
-    "FatJets.FatJets[[N]].nSV2": {
-        "title" : "Number of SV of subjet 2 of fat jet [N]",
-        "nbins" : 10,
-        "min" : -0.5,
-        "max" : 9.5,
-        "log" : True,
-    },
-    "FatJets.FatJets[[N]].nVertexTracks2": {
-        "title" : "Number of tracks per vertex of subjet 2 in fat jet [N]",
-        "nbins" : 21,
-        "min" : 0,
-        "max" : 20,
-        "log" : True,
-    },
-
-
-
-    # Vertices
-    # .....
-    "BTagVertices.chi2": {
-       "title" : "Chi^2 of vertex",
-       "nbins" : 100,
-        "min" : 0,
-        "max" : 100,
-        "log" : True, 
-},
-    "BTagVertices.ndof": {
-       "title" : "Number degrees of freedom of vertex",
-       "nbins" : 20,
-        "min" : 0,
-        "max" : 20,
-        "log" : True, 
-},    "BTagVertices.mass": {
-       "title" : "Mass of vertex",
-       "nbins" : 50,
-        "min" : 0,
-        "max" : 10,
-        "log" : True,
-},    "BTagVertices.pt": {
-       "title" : "p_{T} of vertex",
-       "nbins" : 100,
-        "min" : 0,
-        "max" : 100,
-        "log" : True,
-},    "BTagVertices.flightDist2D": {
-       "title" : "Flight distance 2D of vertex (cm)",
-       "nbins" : 30,
-        "min" : 0,
-        "max" : 3,
-        "log" : True,
-},    "BTagVertices.flightDist2DErr": {
-       "title" : "Error flight distance 2D of vertex (cm)",
-       "nbins" : 20,
-        "min" : 0,
-        "max" : 10,
-        "log" : True,
-},    "BTagVertices.flightDist2DSig": {
-       "title" : "Significance flight distance 2D of vertex",
-       "nbins" : 30,
-        "min" : 0,
-        "max" : 150,
-        "log" : True,
-},    "BTagVertices.flightDist3D": {
-       "title" : "Flight distance 3D of vertex (cm)",
-       "nbins" : 30,
-        "min" : 0,
-        "max" : 3,
-        "log" : True,
-},    "BTagVertices.flightDist3DErr": {
-       "title" : "Error flight distance 3D of vertex (cm)",
-       "nbins" : 20,
-        "min" : 0,
-        "max" : 10,
-        "log" : True,
-},    "BTagVertices.flightDist3DSig": {
-       "title" : "Significance flight distance 3D of vertex",
-       "nbins" : 30,
-        "min" : 0,
-        "max" : 150,
-        "log" : True,
-},
-    "BTagVertices.BTagVertices[[N]].nVertexTracks": {
-        "title" : "Number of tracks per vertex",
-        "nbins" : 21,
-        "min" : 0,
-        "max" : 20,
-        "log" : False,
-    },
-
-
-    "BTagVertices.BTagVertices[[N]].chi2": {
-       "title" : "Chi^2 of vertex [N]",
-       "nbins" : 100,
-        "min" : 0,
-        "max" : 100,
-        "log" : True, 
-},
-
-
-
-
-
-    # Tracks
-    # .....
-
-    # Leptons
-    "nMuons": {
-      "title" : "number of loose muons",
-      "nbins" : 6,
-      "min" : -0.5,
-      "max" : 5.5,
-      "log" : True,
-    },
-    "nTightMuons": {
-      "title" : "number of tight muons",
-      "nbins" : 6,
-      "min" : -0.5,
-      "max" : 5.5,
-      "log" : True,
-    },
-    "nElectrons": {
-      "title" : "number of veto electrons",
-      "nbins" : 6,
-      "min" : -0.5,
-      "max" : 5.5,
-      "log" : True,
-    },
-    "nTaus": {
-      "title" : "number of loose taus",
-      "nbins" : 6,
-      "min" : -0.5,
-      "max" : 5.5,
-      "log" : True,
-    },
-    "nPhotons": {
-      "title" : "number of loose photons",
-      "nbins" : 6,
-      "min" : -0.5,
-      "max" : 5.5,
-      "log" : True,
-    },
-
-
-    # MET
-    "MEt.pt": {
-      "title" : "E_{T}^{miss} (GeV)",
-      "nbins" : 50,
-      "min" : 200,
-      "max" : 1200,
-      "log" : True,
-    },
-    "MEt.sign": {
-      "title" : "#slash{E}_{T} significance (GeV)",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1000,
-      "log" : True,
-    },
-    "MEt.phi": {
-      "title" : "#slash{E}_{T} #varphi",
-      "nbins" : 50,
-      "min" : -3.15,
-      "max" : 3.15,
-      "log" : False,
-    },
-
-    # GenBquarks
-    "GenBquark[N].pt": {
-      "title" : "gen b-quark [N] p_{T} (GeV)",
-      "nbins" : 40,
-      "min" : 0,
-      "max" : 800,
-      "log" : True,
-    },
-    "GenBquark[N].radius": {
-      "title" : "gen b-quark [N] radius (mm)",
-      "bins" : [0,0.0001,0.001,0.01,0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000],
-      "nbins" : 100,
-      "min" : 0.000001,
-      "max" : 100000,
-      "log" : True,
-      "logx" : True,
-    },
-}
-
-
-for n, v in var_template.iteritems():
-    if '[N]' in n:
-        for i in range(0, 5):
-            ni = n.replace('[N]', "%d" % i)
-            variable[ni] = v.copy()
-            variable[ni]['title'] = variable[ni]['title'].replace('[N]', "%d" % i)
-    else:
-        variable[n] = v
-
-# Custom settings
-#variable['Jets.Jets[2].pt']['max'] = 500
-#variable['Jets.Jets[3].pt']['max'] = 400
-#variable['CHSJet2.pt']['max'] = 400
-#variable['CHSJet3.pt']['max'] = 200
-#variable['CHSJet4.pt']['max'] = 200
-
-
-
+'''
+#    "CaloJets.emEnergyFraction": {
+#      "title" : "calo jet ECAL energy fraction",
+#      "nbins" : 100,
+#      "min" : 0.,
+#      "max" : 1.,
+#      "log" : True,
+#    },
+#    "CaloJets.energyFractionHadronic": {
+#      "title" : "calo jet HCAL energy fraction",
+#      "nbins" : 100,
+#      "min" : 0.,
+#      "max" : 1.,
+#      "log" : True,
+#    },

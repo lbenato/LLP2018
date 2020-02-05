@@ -13,124 +13,12 @@ from ROOT import TLegend, TLatex, TText, TLine, TBox, TGaxis
 
 from Analyzer.LLP2018.samples import sample, samples
 from Analyzer.LLP2018.variables import *
-from Analyzer.LLP2018.variables import *
 #from Analyzer.LLP2018.skimmed_variables import *
-
-#from Analyzer.LLP2018.selections import *
-
-
-#selections as string in different file?
-#project and draw functions in different files?
-
-
-'''
-def plot(var, cut, cut_s, norm=False):
-    ### Preliminary Operations ###
-    
-    # Substitute cut
-    pd = ""
-    channel = ""
-    plotdir = ""
-    shortcut = cut
-    shortcut_s = cut_s
-    longcut = longcut_s = ""
-    if cut in selection:
-        plotdir = cut
-        longcut = selection[cut]
-    if cut_s in selection:
-        #The function does not work.
-        ################longcut_s = "Jets.Jets[0].pt>30 && Jets.Jets[0].eta<2 && Jets.Jets[0].isGenMatched>-5 && Jets.Jets[0].isMatchedToMatchedCHSJet>-2 && Jets.Jets[0].isMatchedToMatchedCHSJet<=1 "#Jets.Jets[0].isMatchedToMatchedCHSJet"#selection[cut_s] #+ " && Jets.Jets[0].isMatchedToMatchedCHSJet "# + signal_matching_string(var)
-        #longcut_s = selection[cut_s] + signal_matching_string(var)
-        #print "VERIFY: " , longcut_s
-        longcut_s = selection[cut_s]
-
-    # Determine Primary Dataset
-    pd = getPrimaryDataset(longcut)
-    if len(data)>0 and len(pd)==0: raw_input("Warning: Primary Dataset not recognized, continue?")
-    
-    # Determine weight
-    weight = "EventWeight"
-    print weight
-
-    print "Considered ntuples: ", NTUPLEDIR
-    print "Plotting", var#, "in", channel, "channel with:"
-    print "  dataset:", pd
-    print "  weight :", weight
-    print "  cut    :", longcut
-    print "  cut on signal    :", longcut_s
-    suffix = ""
-
-    for i, s in enumerate(back):
-        print "back sample: ", s
-
-
-    ### Create and fill MC histograms ###
-    print "doing project . . . "
-    hist = project(var, longcut, longcut_s, weight, data+back+sign, pd, NTUPLEDIR)
-    
-    # Background sum
-    if len(back)>0:
-        if options.blind: RATIO = False
-        else: RATIO = 4
-        hist['BkgSum'] = hist['data_obs'].Clone("BkgSum") if 'data_obs' in hist else hist[back[0]].Clone("BkgSum")
-        hist['BkgSum'].Reset("MICES")
-        hist['BkgSum'].SetFillStyle(3003)
-        hist['BkgSum'].SetFillColor(1)
-        for i, s in enumerate(back):
-            hist['BkgSum'].Add(hist[s])
-    
-    if len(back)==0 and len(data)==0:
-        suffix = ''
-        RATIO = False
-        for i, s in enumerate(sign):
-            hist[s].Scale(1./hist[s].Integral())
-            hist[s].SetFillStyle(0)
-    
-    if norm:
-        sfnorm = hist['data_obs'].Integral()/hist['BkgSum'].Integral()
-        for i, s in enumerate(back+['BkgSum']): hist[s].Scale(sfnorm)
-        
-    ### Plot ###
-
-    if len(data+back)>0:
-        if options.blind: RATIO = 0
-        else: RATIO = 4
-        out = draw(hist, data if not options.blind else [], back, sign, SIGNAL, RATIO, POISSON, variable[var]['log'])
-    else:
-        out = drawSignal(hist, sign)
-
-    # Other plot operations
-    out[0].cd(1)
-    drawCMS(LUMI, "Preliminary")
-    drawRegion(shortcut)
-    drawAnalysis("LL")
-    out[0].Update()
-    
-    # Save
-    SAVE = True
-    pathname = PLOTDIR+plotdir
-    #if gROOT.IsBatch() and SAVE:
-    if SAVE:
-        if not os.path.exists(pathname): os.makedirs(pathname)
-        suffix+= "_"+str(options.region)
-        if len(data+back)>0:
-            out[0].Print(pathname+"/"+var.replace('.', '_')+suffix+".png")
-            out[0].Print(pathname+"/"+var.replace('.', '_')+suffix+".pdf")
-        else:
-            out[0].Print(pathname+"/"+var.replace('.', '_')+suffix+"_signal.png")
-            out[0].Print(pathname+"/"+var.replace('.', '_')+suffix+"_signal.pdf")    
-    ### Other operations ###
-    # Print table
-    if len(data+back)>0: printTable(hist, sign)
-    
-    if not gROOT.IsBatch(): raw_input("Press Enter to continue...")
-'''
-
+from Analyzer.LLP2018.selections import *
 
 ##################
 #    PROJECT     #
 ##################
-
 
 def project(var, cut, cut_s, weight, samplelist, pd, ntupledir, treename="ntuple/tree", formula=""):
 #def project(var, cut, cut_s, weight, samplelist, pd, ntupledir, treename="trigger/tree"):
@@ -284,7 +172,6 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=False):
         
     # Draw
     bkg.Draw("HIST") # stack
-#    hist['BkgSum'].GetYaxis().SetRangeUser(0.1, 5.e+6)
     hist['BkgSum'].Draw("SAME, E2") # sum of bkg
     if poisson: data_graph.Draw("SAME, PE")
     elif len(data) > 0: hist['data_obs'].Draw("SAME, PE")
@@ -303,10 +190,8 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=False):
         bkg.SetMinimum(5.e-1 if log else 0.)
     if log:
         bkg.GetYaxis().SetNoExponent(bkg.GetMaximum() < 1.e4)
-#        bkg.GetYaxis().SetMoreLogLabels(True)
-
-#    bkg.SetMaximum(3.e+6)
-
+        bkg.GetYaxis().SetMoreLogLabels(True)
+    
     leg.Draw()
     #drawCMS(LUMI, "Preliminary")
     #drawRegion(channel)
@@ -355,11 +240,11 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=False):
 
 
 
-def drawSignal(hist, sign, log=False):
+def drawSignal(hist, sign, log=False, logx=False):
     
     # Legend
     n = len(sign)
-    leg = TLegend(0.7, 0.9-0.05*n, 0.95, 0.9)
+    leg = TLegend(0.6, 0.9-0.05*n, 0.9, 0.9)
     leg.SetBorderSize(0)
     leg.SetFillStyle(0) #1001
     leg.SetFillColor(0)
@@ -375,15 +260,23 @@ def drawSignal(hist, sign, log=False):
     c1.GetPad(0).SetTicks(1, 1)
     if log:
         c1.GetPad(0).SetLogy()
-        
+
     # Draw
+    for i, s in enumerate(sign): 
+        hist[s+'Err'] = hist[s].Clone(s+'Err')
+        hist[s+'Err'].Reset("MICES")
+        hist[s+'Err'].Add(hist[s])
+        hist[s+'Err'].SetMarkerStyle(0)
+        hist[s+'Err'].SetFillStyle(3003)
+        hist[s+'Err'].SetFillColor(samples[s]['fillcolor'])
+
     max_val = 0
     for i, s in enumerate(sign): 
         hist[s].SetLineWidth(3)
         hist[s].Draw("SAME, HIST" if i>0 else "HIST") # signals
         max_val = max(max_val,hist[s].GetMaximum())
         addOverflow(hist[s], True) # Add overflow
-
+        hist[s+'Err'].Draw("SAMES,E2")
     
     #?#hist[sign[0]].GetXaxis().SetRangeUser(0., 1500)
     #?hist[sign[0]].GetYaxis().SetTitleOffset(hist[sign[-1]].GetYaxis().GetTitleOffset()*1.075)
@@ -396,10 +289,12 @@ def drawSignal(hist, sign, log=False):
     
     if log:
         hist[sign[0]].GetYaxis().SetNoExponent(hist[sign[0]].GetMaximum() < 1.e4)
-#        hist[sign[0]].GetYaxis().SetMoreLogLabels(True)
+        hist[sign[0]].GetYaxis().SetMoreLogLabels(True)
 
     if log:
         c1.GetPad(0).SetLogy()
+    if logx:
+        c1.GetPad(0).SetLogx()
 
     
     leg.Draw()
@@ -533,13 +428,14 @@ def drawCMS(LUMI, text, onTop=False, left_marg_CMS=0.15,data_obs=[]):
     if not onTop: latex.SetTextAlign(11)
     latex.SetTextFont(62)
     latex.SetTextSize(0.05 if len(text)>0 else 0.06)
-    if not onTop: latex.DrawLatex(left_marg_CMS, 0.87 if len(text)>0 else 0.84, "CMS")
+    if not onTop:
+        latex.DrawLatex(left_marg_CMS, 0.8 if len(text)>0 else 0.84, "CMS")
     else:
         latex.DrawLatex(0.20, 0.9, "CMS")#DCMS
     latex.SetTextSize(0.045)
     latex.SetTextFont(52)
     if not onTop:
-        latex.DrawLatex(left_marg_CMS, 0.83, text)
+        latex.DrawLatex(left_marg_CMS, 0.75, text)
     else:
         #latex.DrawLatex(0.40, 0.98, text)
         latex.DrawLatex(0.35, 0.89, text)#DCMS
@@ -553,8 +449,7 @@ def drawCMS(LUMI, text, onTop=False, left_marg_CMS=0.15,data_obs=[]):
         elif "DisplacedJet" in (samples[data_obs[0]]['files'][0]):
             dat = "DisplacedJet dataset"
         elif "MET" in (samples[data_obs[0]]['files'][0]):
-#            dat = "MET dataset"
-            dat = ""
+            dat = "MET dataset"
         print "dat: ", dat
         latex2 = TLatex()
         latex2.SetNDC()
@@ -567,6 +462,9 @@ def drawAnalysis(s, center=False):
     analyses = {
         "LL" : "VBF H #rightarrow #pi #pi #rightarrow b#bar{b} b#bar{b}",
         "LLZH" : "ZH #rightarrow #pi #pi #rightarrow b#bar{b} b#bar{b}",
+        "LLVBF" : "VBF H #rightarrow #pi #pi #rightarrow b#bar{b} b#bar{b}",
+        "LLVBFH" : "VBF H #rightarrow #pi #pi #rightarrow b#bar{b} b#bar{b}",
+        "LLggH" : "ggH #rightarrow #pi #pi #rightarrow b#bar{b} b#bar{b}",
         }
     latex = TLatex()
     latex.SetNDC()
@@ -575,7 +473,7 @@ def drawAnalysis(s, center=False):
     #latex.SetTextAlign(33)
     latex.DrawLatex(0.15 if not center else 0.3, 0.95, s if not s in analyses else analyses[s])
 
-def drawRegion(channel, left=False, left_marg_CMS=0.15):
+def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75):
     region = {
         "VBFtrigger": "VBF triggers",
         "VBF": "VBF",
@@ -602,17 +500,6 @@ def drawRegion(channel, left=False, left_marg_CMS=0.15):
         "hltTripleJet50" : "IsoMu24 + 1#mu + L1seed + TripleJet50",
         "VBFplusPFMETNoMuTrigger" : "VBF + PFMETNoMu120 trigger",
         "VBFplusDisplacedHadronicTrigger" : "VBF + Displaced jet trigger",
-        "VBFplusPFMETNoMuTriggerPlateau" : "VBF + PFMETNoMu120 trigger + MET>250 + HT>100",
-        "VBFplusPFMETNoMuTriggerPlateauAtLeast1Jet" : "VBF + PFMETNoMu120 trigger + MET>250 + HT>100 + nJets>=1",
-        "VBFplusPFMETNoMuTriggerPlateauAtLeast2Jets" : "VBF + PFMETNoMu120 trigger + MET>250 + HT>100 + nJets>=2",
-        "VBFplusPFMETNoMuTriggerANDDisplacedHadronicTrigger" : "VBF + PFMETNoMu120 AND Displaced jet + HT>100",
-        "VBFplusPFMETNoMuTriggerXORDisplacedHadronicTrigger" : "VBF + PFMETNoMu120 XOR Displaced jet + HT>100",
-        "VBFplusPFMETNoMuTriggerNOTDisplacedHadronicTrigger" : "VBF + PFMETNoMu120 NOT Displaced jet + HT>100",
-        "VBFplusNOTPFMETNoMuTriggerDisplacedHadronicTrigger" : "VBF + NOT PFMETNoMu120 Displaced jet + HT>100",
-        "VBFplusPFMETNoMuTriggerANDDisplacedHadronicTriggerSignal" : "#splitline{VBF + PFMETNoMu120 AND Displaced jet}{+ HT>100, gen matched}",
-        "VBFplusPFMETNoMuTriggerXORDisplacedHadronicTriggerSignal" : "#splitline{VBF + PFMETNoMu120 XOR Displaced jet}{+ HT>100, gen matched}",
-        "VBFplusPFMETNoMuTriggerNOTDisplacedHadronicTriggerSignal" : "#splitline{VBF + PFMETNoMu120 NOT Displaced jet}{+ HT>100, genmatched}",
-        "VBFplusNOTPFMETNoMuTriggerDisplacedHadronicTriggerSignal" : "#splitline{VBF + NOT PFMETNoMu120 Displaced jet}{+ HT>100, gen matched}",
         "ZtoMM": "ZH #rightarrow #mu#mu H",
         "ZtoEE": "ZH #rightarrow ee H",
         "ZHMM": "ZH #rightarrow #mu#mu H",
@@ -623,6 +510,7 @@ def drawRegion(channel, left=False, left_marg_CMS=0.15):
         "METHT": "E_{T}^{miss}>200 GeV & H_{T}>200 GeV",
         "METHTVeto": "E_{T}^{miss}>200 GeV & H_{T}>200 GeV & veto #l, #gamma",
         "METHTNoVeto": "MEt.pt>200 & HT>100, no veto",
+        "METPreSel": "E_{T}^{miss}>200 GeV & H_{T}>100 GeV & veto #l, #gamma",
         }
     
     text = ""
@@ -634,11 +522,11 @@ def drawRegion(channel, left=False, left_marg_CMS=0.15):
     latex.SetNDC()
     latex.SetTextFont(72) #52
     latex.SetTextSize(0.035)
-    if left: latex.DrawLatex(left_marg_CMS, 0.75, text)
+    if left: latex.DrawLatex(left_marg_CMS, top, text)
     else:
         latex.SetTextAlign(10)
         #latex.DrawLatex(0.12, 0.75, text)
-        latex.DrawLatex(0.15, 0.8, text)#DCMS
+        latex.DrawLatex(0.15, top, text)#DCMS
 
 def drawTagVar(tagvar, left=False, left_marg_CMS=0.15):
     tagvarlist = ["nCaloTagJets","nLooseCaloTagJets","nCaloTagJetsRebuilt","nHardCaloTagJets","nLeadingCaloTagJets","nGenMatchedJets","1Loose1Tight"]
