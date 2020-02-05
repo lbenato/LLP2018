@@ -393,7 +393,7 @@ TriggerGenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     Muons.clear();
     // Muons
     //if(isVerbose) std::cout << "Muons" << std::endl;
-    //    std::vector<pat::Muon> MuonVect = theMuonAnalyzer->FillMuonVector(iEvent);
+    //std::vector<pat::Muon> MuonVect = theMuonAnalyzer->FillMuonVector(iEvent);
     
     // for(unsigned int a = 0; a<MuonVect.size(); a++)
     //   {
@@ -415,7 +415,7 @@ TriggerGenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
     //   }
 
-    // nMuons = MuonVect.size();
+    //nMuons = MuonVect.size();
     // //    for(unsigned int i = 0; i < MuonVect.size(); i++) Muons.push_back( LeptonType() );
 
 

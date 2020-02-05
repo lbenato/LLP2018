@@ -80,7 +80,8 @@ void ObjectsFormat::FillMuonType(LeptonType& I, const pat::Muon* R, bool isMC) {
     I.isMedium    = R->hasUserInt("isMedium") ? R->userInt("isMedium") : false;
     I.isTight     = R->hasUserInt("isTight") ? R->userInt("isTight") : false;
     I.isHighPt    = R->hasUserInt("isHighPt") ? R->userInt("isHighPt") : false;
-    I.isTrackerHighPt = R->hasUserInt("isTrackerHighPt") ? R->userInt("isTrackerHighPt") : false;
+    //I.isTrackerHighPt = R->hasUserInt("isTrackerHighPt") ? R->userInt("isTrackerHighPt") : false;
+    I.isPFMuon    = R->hasUserInt("isPFMuon") ? R->userInt("isPFMuon") : false;
 
     if(isMC && R->genLepton()) I.isMatched = false;//(Utilities::FindMotherId(dynamic_cast<const reco::Candidate*>(R->genLepton()))==23);
 }
@@ -111,7 +112,8 @@ void ObjectsFormat::ResetLeptonType(LeptonType& I) {
     I.isMedium    = false;
     I.isTight     = false;
     I.isHighPt    = false;
-    I.isTrackerHighPt = false;
+    //I.isTrackerHighPt = false;
+    I.isPFMuon    = false;
 //    I.isMVANonTrigMedium = false;
 //    I.isMVANonTrigTight = false;
 //    I.isMVATrigMedium = false;
@@ -133,7 +135,7 @@ void ObjectsFormat::ResetLeptonType(LeptonType& I) {
     I.isMatched   = false;
 }
 
-std::string ObjectsFormat::ListLeptonType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:inTrkPt/F:pfIso03/F:pfIso04/F:trkIso/F:miniIso/F:dxy/F:dz/F:ip3d/F:sip3d/F:nPixelHits/F:dPhi_met/F:charge/I:pdgId/I:isElectron/O:isMuon/O:isVeto/O:isLoose/O:isMedium/O:isTight/O:isHighPt/O:isTrackerHighPt/O:SSscale/F:SSsigma/F:SSscaleUnc/F:SSsigmaUncUp/F:SSsigmaUncDown/F:SScorr/F:energySScorr/F:energySScorrUncUp/F:energySScorrUncDown/F:ptSScorr/F:ptSScorrUncUp/F:ptSScorrUncDown/F:isMatched/O";} // isHEEP/O:isMVANonTrigMedium/O:isMVANonTrigTight/O:isMVATrigMedium/O:isMVATrigTight/O:
+std::string ObjectsFormat::ListLeptonType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:inTrkPt/F:pfIso03/F:pfIso04/F:trkIso/F:miniIso/F:dxy/F:dz/F:ip3d/F:sip3d/F:nPixelHits/F:dPhi_met/F:charge/I:pdgId/I:isElectron/O:isMuon/O:isVeto/O:isLoose/O:isMedium/O:isTight/O:isHighPt/O:isPFMuon/O:SSscale/F:SSsigma/F:SSscaleUnc/F:SSsigmaUncUp/F:SSsigmaUncDown/F:SScorr/F:energySScorr/F:energySScorrUncUp/F:energySScorrUncDown/F:ptSScorr/F:ptSScorrUncUp/F:ptSScorrUncDown/F:isMatched/O";} // isHEEP/O:isMVANonTrigMedium/O:isMVANonTrigTight/O:isMVATrigMedium/O:isMVATrigTight/O:
 
 //********************//
 //    Photons         //

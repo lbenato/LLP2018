@@ -400,12 +400,12 @@ process.ntuple = cms.EDAnalyzer('TriggerGenNtuplizer',
         muonTrkHighptFileName = cms.string('data_gen/tkhighpt_2016full_absetapt.root'),
         muonTriggerFileName = cms.string('data_gen/MuonTrigEfficienciesAndSF_MORIOND17.root'),
         doubleMuonTriggerFileName = cms.string('data_gen/MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2.root'),#FIXME -> obsolete
-        muon1id = cms.int32(-1), # 0: tracker high pt muon id, 1: loose, 2: medium, 3: tight, 4: high pt
-        muon2id = cms.int32(-1),
+        muon1id = cms.int32(0), # 0: pass PF ID, 1: loose, 2: medium, 3: tight, 4: high pt
+        muon2id = cms.int32(0),
         muon1iso = cms.int32(-1), # 0: trk iso (<0.1), 1: loose (<0.25), 2: tight (<0.15) (pfIso in cone 0.4)
         muon2iso = cms.int32(-1),
-        muon1pt = cms.double(3.),
-        muon2pt = cms.double(3.),
+        muon1pt = cms.double(5.),
+        muon2pt = cms.double(5.),
         useTuneP = cms.bool(False),
         doRochester = cms.bool(False),
     ),
