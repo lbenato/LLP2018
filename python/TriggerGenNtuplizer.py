@@ -128,7 +128,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 500
+process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
 ## Input files
 if len(options.inputFiles) == 0:
@@ -358,7 +358,8 @@ process.ntuple = cms.EDAnalyzer('TriggerGenNtuplizer',
 ##others:
 'HLT_DiPFJet40_DEta3p5_MJJ600_PFMETNoMu140_v','HLT_PFHT200_DiPFJetAve90_PFAlphaT0p63_v','HLT_PFHT300_PFMET110_v','HLT_RsqMR270_Rsq0p09_MR200_v','HLT_RsqMR270_Rsq0p09_MR200_4jet_v','HLT_HT650_v',
 ### b-like
-'HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v', 'HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v', 'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v', 'HLT_QuadJet45_TripleBTagCSV_p087_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v',
+'HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v', 'HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v', 'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v', 'HLT_QuadJet45_TripleBTagCSV_p087_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v','HLT_AK8DiPFJet280_200_TrimMass30_BTagCSV_p20_v', 'HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v',
+'HLT_PFHT400_SixJet30_DoubleBTagCSV_p056_v'
 ### displaced tracks
 'HLT_VBF_DisplacedJet40_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_DisplacedTrack_2TrackIP2DSig5_v', 'HLT_HT350_DisplacedDijet40_DisplacedTrack_v', 'HLT_HT350_DisplacedDijet80_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_VTightID_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_VVTightID_DisplacedTrack_v', 'HLT_HT350_DisplacedDijet80_Tight_DisplacedTrack_v', 'HLT_HT650_DisplacedDijet80_Inclusive_v', 'HLT_HT750_DisplacedDijet80_Inclusive_v',
 ### calo lifetimes
@@ -374,6 +375,9 @@ process.ntuple = cms.EDAnalyzer('TriggerGenNtuplizer',
 ###TEST
 ##'HLT_AK8PFJet450_v',###########TEST
 #'HLT_VBF_DisplacedJet40_VTightID_Hadronic_v', 'HLT_VBF_DisplacedJet40_VVTightID_Hadronic_v'#,'HLT_AK4PFJet30_v7'
+### Displaced Muons
+'HLT_DoubleMu23NoFiltersNoVtxDisplaced_v', 'HLT_DoubleMu28NoFiltersNoVtxDisplaced_v', 'HLT_DoubleMu4_LowMassNonResonantTrk_Displaced_v',
+'HLT_L2Mu10_NoVertex_NoBPTX3BX_v2','HLT_L2Mu10_NoVertex_NoBPTX_v3','HLT_L2Mu40_NoVertex_3Sta_NoBPTX3BX_v2','HLT_L2Mu45_NoVertex_3Sta_NoBPTX3BX_v1',
 ]
         ),
         metfilters = cms.InputTag('TriggerResults', '', filterString),
@@ -419,7 +423,7 @@ process.ntuple = cms.EDAnalyzer('TriggerGenNtuplizer',
     AlgInputTag = cms.InputTag("gtStage2Digis"),
     l1tAlgBlkInputTag = cms.InputTag("gtStage2Digis"),
     l1tExtBlkInputTag = cms.InputTag("gtStage2Digis"),
-    l1Seeds = cms.vstring("L1_TripleJet_84_68_48_VBF","L1_TripleJet_88_72_56_VBF","L1_TripleJet_92_76_64_VBF","L1_HTT300"),
+    l1Seeds = cms.vstring("L1_TripleJet_84_68_48_VBF","L1_TripleJet_88_72_56_VBF","L1_TripleJet_92_76_64_VBF","L1_HTT280","L1_HTT300","L1_HTT320","L1_SingleJet170","L1_SingleJet180","L1_SingleJet200","L1_DoubleJetC100","L1_DoubleJetC112","L1_DoubleJetC120","L1_QuadJetC50", "L1_QuadJetC60", "L1_ETM100", "L1_ETM105", "L1_ETM110", "L1_ETM115", "L1_ETM120", "L1_DoubleMu_13_6", "L1_DoubleMu_12_5", "L1_DoubleMu0er1p4_dEta_Max1p8_OS","L1_SingleMuOpen_NotBptxOR_3BX","L1_SingleMuOpen_NotBptxOR","L1_SingleMuOpen_NotBptxOR_3BX","L1_SingleMuOpen_NotBptxOR_3BX"),
     ReadPrescalesFromFile = cms.bool(True),
 )
 

@@ -258,6 +258,10 @@ TriggerGenNtuplizer::~TriggerGenNtuplizer()
 void
 TriggerGenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
+  // std::cout << "USE ONLY ONE EVENT FOR DEBUGGING!!!" << std::endl;
+  // if (iEvent.id().event() != 696){
+  //     return;
+  //   }
 
     auto start = std::chrono::system_clock::now();//time!
     using namespace edm;
@@ -389,30 +393,30 @@ TriggerGenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     Muons.clear();
     // Muons
     //if(isVerbose) std::cout << "Muons" << std::endl;
-    std::vector<pat::Muon> MuonVect = theMuonAnalyzer->FillMuonVector(iEvent);
+    //    std::vector<pat::Muon> MuonVect = theMuonAnalyzer->FillMuonVector(iEvent);
     
-    for(unsigned int a = 0; a<MuonVect.size(); a++)
-      {
+    // for(unsigned int a = 0; a<MuonVect.size(); a++)
+    //   {
 
-	if(MuonVect.at(a).isPFMuon())//tight iso for muons
-	  {
-	    nVetoMuons++;
-	  }
+    // 	if(MuonVect.at(a).isPFMuon())//tight iso for muons
+    // 	  {
+    // 	    nVetoMuons++;
+    // 	  }
 
-	if(MuonVect.at(a).hasUserInt("isLoose") && MuonVect.at(a).userInt("isLoose")>0)//tight iso for muons
-	  {
-	    nLooseMuons++;
-	  }
+    // 	if(MuonVect.at(a).hasUserInt("isLoose") && MuonVect.at(a).userInt("isLoose")>0)//tight iso for muons
+    // 	  {
+    // 	    nLooseMuons++;
+    // 	  }
 
-	if(MuonVect.at(a).hasUserInt("isTight") && MuonVect.at(a).userInt("isTight")>0)//tight iso for muons
-	  {
-	    nTightMuons++;
-	  }
+    // 	if(MuonVect.at(a).hasUserInt("isTight") && MuonVect.at(a).userInt("isTight")>0)//tight iso for muons
+    // 	  {
+    // 	    nTightMuons++;
+    // 	  }
 
-      }
+    //   }
 
-    nMuons = MuonVect.size();
-    for(unsigned int i = 0; i < MuonVect.size(); i++) Muons.push_back( LeptonType() );
+    // nMuons = MuonVect.size();
+    // //    for(unsigned int i = 0; i < MuonVect.size(); i++) Muons.push_back( LeptonType() );
 
 
     //-----------------------------------------------------------------------------------------
@@ -438,9 +442,7 @@ TriggerGenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillGenPType(GenHiggs, &GenHiggsVect[i]);
     if (WriteGenLLPs) for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillGenPType(GenLLPs[i], &GenLongLivedVect[i]);
     if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillGenPType(GenBquarks[i], &GenBquarksVect[i]);
-
-    for(unsigned int i = 0; i < MuonVect.size() && i<Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &MuonVect[i], isMC);//not working?BadRefCore RefCore: Request to resolve a null or invalid reference to a product of type 'std::vector<reco::Track>'
-
+    //    for(unsigned int i = 0; i < MuonVect.size() && i<Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &MuonVect[i], isMC);//not working?BadRefCore RefCore: Request to resolve a null or invalid reference to a product of type 'std::vector<reco::Track>'
 
     if(isVerbose) {
       //Write a summary, in verbose mode
@@ -507,7 +509,7 @@ TriggerGenNtuplizer::beginJob()
    tree -> Branch("GenHiggs", &GenHiggs.pt, ObjectsFormat::ListGenPType().c_str());
    tree -> Branch("GenLLPs", &GenLLPs);
    tree -> Branch("GenBquarks", &GenBquarks);
-   tree -> Branch("Muons", &Muons);
+   //   tree -> Branch("Muons", &Muons);
 
 }
 
