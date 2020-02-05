@@ -171,7 +171,8 @@ std::vector<pat::Muon> MuonAnalyzer::FillMuonVector(const edm::Event& iEvent) {
         }
         if(mu.pt()<PtTh || fabs(mu.eta())>2.4) continue;
         // Muon Quality ID 2015-2016: see https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonIdRun2
-        if(IdTh==0 && !IsTrackerHighPtMuon(mu, vertex)) continue;
+        //if(IdTh==0 && !IsTrackerHighPtMuon(mu, vertex)) continue;//not very useful for displacement
+        if(IdTh==0 && !mu.isPFMuon()) continue;
         if(IdTh==1 && !mu.isLooseMuon()) continue;
         if(IdTh==2 && !mu.isMediumMuon()) continue;
         if(IdTh==3 && !mu.isTightMuon(*vertex)) continue;
@@ -198,7 +199,8 @@ std::vector<pat::Muon> MuonAnalyzer::FillMuonVector(const edm::Event& iEvent) {
         mu.addUserFloat("pfIso04", pfIso04);
         mu.addUserFloat("dxy", mu.muonBestTrack()->dxy(vertex->position()));
         mu.addUserFloat("dz", mu.muonBestTrack()->dz(vertex->position()));
-        mu.addUserInt("isTrackerHighPt", IsTrackerHighPtMuon(mu, vertex) ? 1 : 0);
+        //mu.addUserInt("isTrackerHighPt", IsTrackerHighPtMuon(mu, vertex) ? 1 : 0);
+        mu.addUserInt("isPFMuon", mu.isPFMuon() ? 1 : 0);
         mu.addUserInt("isLoose", mu.isLooseMuon() ? 1 : 0);
         mu.addUserInt("isMedium", mu.isMediumMuon() ? 1 : 0);
         mu.addUserInt("isTight", mu.isTightMuon(*vertex) ? 1 : 0);
@@ -255,7 +257,8 @@ std::vector<float> MuonAnalyzer::FixTrackerIsolation(pat::Muon& mu1, pat::Muon& 
 
 
 std::string MuonAnalyzer::GetMuon1Id(pat::Muon& mu){
-    if(Muon1Id==0) return "isTrackerHighPt";
+  //if(Muon1Id==0) return "isTrackerHighPt";
+    if(Muon1Id==0) return "isPFMuon";
     if(Muon1Id==1) return "isLoose";
     if(Muon1Id==2) return "isMedium";
     if(Muon1Id==3) return "isTight";
