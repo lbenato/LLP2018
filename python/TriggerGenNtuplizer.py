@@ -168,6 +168,7 @@ if RunLocal:
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
     isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0]) else False
     isCalo            = False #HERE for calo analyses!!!
+    isHeavyHiggs      = True
 
 else:
     isData            = options.PisData
@@ -179,6 +180,7 @@ else:
     isbbH             = options.PisbbH
     isSignal          = options.PisSignal
     isCalo            = options.Pcalo
+    isHeavyHiggs      = True
 
 theRunBCD = ['Run2016B','Run2016C','Run2016D']
 theRunEF  = ['Run2016E','Run2016F']
@@ -410,6 +412,9 @@ process.ntuple = cms.EDAnalyzer('TriggerGenNtuplizer',
         useTuneP = cms.bool(False),
         doRochester = cms.bool(False),
     ),
+    idLLP = cms.int32(6000113 if isHeavyHiggs else 9000006),
+    idHiggs = cms.int32(35),
+    statusHiggs = cms.int32(62 if isHeavyHiggs else 22),
     minGenBpt = cms.double(0.),#(15.),#gen b quarks in acceptance
     maxGenBeta = cms.double(999.),#(2.4),#gen b quarks in acceptance
     minGenBradius2D = cms.double(129.),#new!! in cm

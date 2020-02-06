@@ -187,6 +187,7 @@ if RunLocal:
     isCalo            = True #HERE for calo analyses!!!
     isVBF             = True
     isggH             = False
+    isHeavyHiggs      = True
 
 else:
     isData            = options.PisData
@@ -201,6 +202,7 @@ else:
     isCalo            = options.Pcalo
     isVBF             = options.PVBF
     isggH             = options.PggH
+    isHeavyHiggs      = True
 
 
 theRunBCD = ['Run2016B','Run2016C','Run2016D']
@@ -214,6 +216,13 @@ print 'isReReco',isReReco
 print 'isReMiniAod',isReMiniAod
 print 'isPromptReco',isPromptReco
 print 'isSignal', isSignal
+
+if isHeavyHiggs:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing HEAVY HIGGS analysis!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
 
 if isVBF:
     print "\n"
@@ -286,24 +295,10 @@ if RunLocal:
     if isData:
         filterString = "RECO"
     else:
-        filterString = "PAT"
+        filterString = "RECO"#"PAT"
 else:
     triggerTag = options.PtriggerTag
     filterString = options.PfilterString
-
-
-# MET filters
-#process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
-#process.BadPFMuonFilter.muons = cms.InputTag('slimmedMuons')
-#process.BadPFMuonFilter.PFCandidates = cms.InputTag('packedPFCandidates')
-
-#process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
-#process.BadChargedCandidateFilter.muons = cms.InputTag('slimmedMuons')
-#process.BadChargedCandidateFilter.PFCandidates = cms.InputTag('packedPFCandidates')
-
-#task.add(process.BadPFMuonFilter)
-#task.add(process.BadChargedCandidateFilter)
-
 
 #########################################################
 
@@ -536,6 +531,7 @@ else:
 
 
 ## Output
+'''
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoCleaning
 process.out = cms.OutputModule(
   "PoolOutputModule"
@@ -568,27 +564,7 @@ process.out.outputCommands += [
 process.outpath = cms.EndPath(
   process.out, patAlgosToolsTask
 )
-
-
-
-# make patCandidates
-#from PhysicsTools.PatAlgos.producersLayer1.patCandidates_cff import *
-
-# make selectedPatCandidates
-#from PhysicsTools.PatAlgos.selectionLayer1.selectedPatCandidates_cff import *
-
-# make cleanPatCandidates
-#from PhysicsTools.PatAlgos.cleaningLayer1.cleanPatCandidates_cff import *
-
-# count cleanPatCandidates (including total number of leptons)
-#from PhysicsTools.PatAlgos.selectionLayer1.countPatCandidates_cff import *
-
-#patDefaultSequence = cms.Sequence(
-    #patCandidates #*
-    #selectedPatCandidates *
-    #cleanPatCandidates #*
-    #countPatCandidates
-#)
+'''
 
 #########################################################
 #-----------------------#
@@ -605,6 +581,22 @@ process.outpath = cms.EndPath(
 #task.add(process.primaryVertexFilter)
 
 #-----------------------#
+#     MET FILTERS       #
+#-----------------------#
+
+## MET filters, not available on AOD? TODO
+process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
+process.BadPFMuonFilter.muons = cms.InputTag('slimmedMuons')
+process.BadPFMuonFilter.PFCandidates = cms.InputTag('packedPFCandidates')
+
+process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
+process.BadChargedCandidateFilter.muons = cms.InputTag('slimmedMuons')
+process.BadChargedCandidateFilter.PFCandidates = cms.InputTag('packedPFCandidates')
+
+task.add(process.BadPFMuonFilter)
+task.add(process.BadChargedCandidateFilter)
+
+#-----------------------#
 #       COUNTER         #
 #-----------------------#
 process.counter = cms.EDAnalyzer('CounterAnalyzer',
@@ -617,17 +609,133 @@ process.counter = cms.EDAnalyzer('CounterAnalyzer',
 #       TEST            #
 #-----------------------#
 
-process.test = cms.EDAnalyzer('LLP2018',
-    electrons = cms.untracked.InputTag('slimmedElectrons'),
-    eleVetoIdMap = cms.untracked.string('cutBasedElectronID-Fall17-94X-V2-veto'),
+#process.test = cms.EDAnalyzer('LLP2018',
+#    electrons = cms.untracked.InputTag('slimmedElectrons'),
+#    eleVetoIdMap = cms.untracked.string('cutBasedElectronID-Fall17-94X-V2-veto'),
+#)
+
+#-----------------------#
+#  Particle List Drawer #
+#-----------------------#
+
+process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
+process.ParticleListDrawer = cms.EDAnalyzer('ParticleListDrawer',
+                                            maxEventsToPrint = cms.untracked.int32(1),
+                                            src = cms.InputTag('prunedGenParticles'),#collection of particles being considered: prunedGenParticles works for miniaod
+##                                            src = cms.InputTag('genParticles'),#genParticles works for aod
+                                            printOnlyHardInteraction = cms.untracked.bool(False),
+                                            useMessageLogger = cms.untracked.bool(False)
+                                            )
+
+
+#-----------------------#
+#       ANALYZER        #
+#-----------------------#
+
+process.ntuple = cms.EDAnalyzer('TriggerGenNtuplizer',
+    genSet = cms.PSet(
+        genProduct = cms.InputTag('generator'),
+        lheProduct = cms.InputTag('externalLHEProducer'),
+        genParticles = cms.InputTag('prunedGenParticles'),
+        pdgId = cms.vint32(5,9000006,6000113,23,24,25),#(1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 21, 23, 24, 25, 36, 39, 1000022, 9100000, 9000001, 9000002, 9100012, 9100022, 9900032, 1023),
+        status = cms.vint32(22,23),
+        samplesDYJetsToLL = cms.vstring(),
+        samplesZJetsToNuNu = cms.vstring(),
+        samplesWJetsToLNu = cms.vstring(),
+        samplesDir = cms.string('data_gen/Stitch/'),
+        sample = cms.string("" ), #( sample )
+        ewkFile = cms.string('data_gen/scalefactors_v4.root'),
+        applyEWK = cms.bool(False),#(True if sample.startswith('DYJets') or sample.startswith('WJets') else False),
+        applyTopPtReweigth = cms.bool(False),#(True if sample.startswith('TT_') else False),
+        pythiaLOSample = cms.bool(True if noLHEinfo else False),#(True if isDibosonInclusive else False),
+    ),
+    triggerSet = cms.PSet(
+        trigger = cms.InputTag('TriggerResults', '', triggerTag),
+        paths = cms.vstring(
+*[
+##single lepton
+'HLT_IsoMu24_v','HLT_Ele27_WPTight_Gsf_v',
+##others:
+'HLT_DiPFJet40_DEta3p5_MJJ600_PFMETNoMu140_v','HLT_PFHT200_DiPFJetAve90_PFAlphaT0p63_v','HLT_PFHT300_PFMET110_v','HLT_RsqMR270_Rsq0p09_MR200_v','HLT_RsqMR270_Rsq0p09_MR200_4jet_v','HLT_HT650_v',
+### b-like
+'HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v', 'HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v', 'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v', 'HLT_QuadJet45_TripleBTagCSV_p087_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v','HLT_AK8DiPFJet280_200_TrimMass30_BTagCSV_p20_v', 'HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v',
+'HLT_PFHT400_SixJet30_DoubleBTagCSV_p056_v'
+### displaced tracks
+'HLT_VBF_DisplacedJet40_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_DisplacedTrack_2TrackIP2DSig5_v', 'HLT_HT350_DisplacedDijet40_DisplacedTrack_v', 'HLT_HT350_DisplacedDijet80_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_VTightID_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_VVTightID_DisplacedTrack_v', 'HLT_HT350_DisplacedDijet80_Tight_DisplacedTrack_v', 'HLT_HT650_DisplacedDijet80_Inclusive_v', 'HLT_HT750_DisplacedDijet80_Inclusive_v',
+### calo lifetimes
+'HLT_VBF_DisplacedJet40_VTightID_Hadronic_v', 'HLT_VBF_DisplacedJet40_VVTightID_Hadronic_v',
+###
+#'HLT_CaloMHTNoPU90_PFMET90_PFMHT90_IDTight_BTagCSV_p067_v', 'HLT_MET200_v', 'HLT_MET250_v', 'HLT_MET75_IsoTrk50_v', 'HLT_MET90_IsoTrk50_v', 'HLT_MonoCentralPFJet80_PFMETNoMu110_PFMHTNoMu110_IDTight_v', 'HLT_MonoCentralPFJet80_PFMETNoMu120_PFMHTNoMu120_IDTight_v', 'HLT_PFMET110_PFMHT110_IDTight_v', 'HLT_PFMET120_PFMHT120_IDTight_v', 'HLT_PFMET170_HBHECleaned_v', 'HLT_PFMET300_v', 'HLT_PFMETNoMu110_PFMHTNoMu110_IDTight_v', 'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
+###production for MET
+'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
+'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
+'HLT_PFMETNoMu1240_PFMHTNoMu140_IDTight_v',
+### All studied triggers:
+#
+###Control paths for VBF, prescaled
+#'HLT_L1_TripleJet_VBF_v', 'HLT_QuadPFJet_VBF_v','HLT_DiPFJetAve40_v','HLT_DiPFJetAve60_v','HLT_DiPFJetAve80_v','HLT_PFJet40_v','HLT_PFJet60_v','HLT_PFJet80_v',
+###TEST
+##'HLT_AK8PFJet450_v',###########TEST
+#'HLT_VBF_DisplacedJet40_VTightID_Hadronic_v', 'HLT_VBF_DisplacedJet40_VVTightID_Hadronic_v'#,'HLT_AK4PFJet30_v7'
+### Displaced Muons
+'HLT_DoubleMu23NoFiltersNoVtxDisplaced_v', 'HLT_DoubleMu28NoFiltersNoVtxDisplaced_v', 'HLT_DoubleMu4_LowMassNonResonantTrk_Displaced_v',
+'HLT_L2Mu10_NoVertex_NoBPTX3BX_v2','HLT_L2Mu10_NoVertex_NoBPTX_v3','HLT_L2Mu40_NoVertex_3Sta_NoBPTX3BX_v2','HLT_L2Mu45_NoVertex_3Sta_NoBPTX3BX_v1',
+]
+        ),
+        metfilters = cms.InputTag('TriggerResults', '', filterString),
+        metpaths = cms.vstring('Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter','Flag_badMuons','Flag_duplicateMuons','Flag_noBadMuons') if isReMiniAod else cms.vstring('Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter'),
+        prescales = cms.InputTag('patTrigger','','ntuple'),
+        l1Minprescales = cms.InputTag('patTrigger','l1min','ntuple'),
+        l1Maxprescales = cms.InputTag('patTrigger','l1max','ntuple'),
+        objects = cms.InputTag('selectedPatTrigger','','ntuple'),
+        badPFMuonFilter = cms.InputTag("BadPFMuonFilter"),
+        badChCandFilter = cms.InputTag("BadChargedCandidateFilter"),
+        l1Gt = cms.InputTag("gtStage2Digis"),
+        l1filters = cms.vstring('hltL1sTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBFIorHTT300','hltL1sDoubleJetC112','hltL1sQuadJetC50IorQuadJetC60IorHTT280IorHTT300IorHTT320IorTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBF','hltL1sTripleJetVBFIorHTTIorDoubleJetCIorSingleJet','hltL1sSingleMu22','hltL1sV0SingleMu22IorSingleMu25','hltL1sZeroBias','hltL1sSingleJet60','hltL1sSingleJet35','hltTripleJet50','hltDoubleJet65','hltSingleJet80','hltVBFFilterDisplacedJets'),
+    ),
+    muonSet = cms.PSet(
+        muons = cms.InputTag('slimmedMuons'),#let's be inclusive!
+        vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
+        muonTrkFileName = cms.string('data_gen/MuonTrkEfficienciesAndSF_MORIOND17.root'),
+        muonIdFileName = cms.string('data_gen/MuonIdEfficienciesAndSF_MORIOND17.root'),
+        muonIsoFileName = cms.string('data_gen/MuonIsoEfficienciesAndSF_MORIOND17.root'),
+        muonTrkHighptFileName = cms.string('data_gen/tkhighpt_2016full_absetapt.root'),
+        muonTriggerFileName = cms.string('data_gen/MuonTrigEfficienciesAndSF_MORIOND17.root'),
+        doubleMuonTriggerFileName = cms.string('data_gen/MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2.root'),#FIXME -> obsolete
+        muon1id = cms.int32(0), # 0: pass PF ID, 1: loose, 2: medium, 3: tight, 4: high pt
+        muon2id = cms.int32(0),
+        muon1iso = cms.int32(-1), # 0: trk iso (<0.1), 1: loose (<0.25), 2: tight (<0.15) (pfIso in cone 0.4)
+        muon2iso = cms.int32(-1),
+        muon1pt = cms.double(5.),
+        muon2pt = cms.double(5.),
+        useTuneP = cms.bool(False),
+        doRochester = cms.bool(False),
+    ),
+    idLLP = cms.int32(6000113 if isHeavyHiggs else 9000006),
+    idHiggs = cms.int32(35),
+    statusHiggs = cms.int32(62 if isHeavyHiggs else 22),
+    minGenBpt = cms.double(0.),#(15.),#gen b quarks in acceptance
+    maxGenBeta = cms.double(999.),#(2.4),#gen b quarks in acceptance
+    minGenBradius2D = cms.double(129.),#new!! in cm
+    maxGenBradius2D = cms.double(402.),#new!! in cm
+    minGenBetaAcc = cms.double(0.),#(2.4),#
+    maxGenBetaAcc = cms.double(1.1),#(2.4),#
+    ###writeGenVBFquarks = cms.bool(True),
+    writeGenHiggs = cms.bool(True),
+    writeGenBquarks = cms.bool(True), #Acceptance cuts a few lines above!
+    writeGenLLPs = cms.bool(True),
+    verbose = cms.bool(False),
+    AlgInputTag = cms.InputTag("gtStage2Digis"),
+    l1tAlgBlkInputTag = cms.InputTag("gtStage2Digis"),
+    l1tExtBlkInputTag = cms.InputTag("gtStage2Digis"),
+    l1Seeds = cms.vstring("L1_TripleJet_84_68_48_VBF","L1_TripleJet_88_72_56_VBF","L1_TripleJet_92_76_64_VBF","L1_HTT280","L1_HTT300","L1_HTT320","L1_SingleJet170","L1_SingleJet180","L1_SingleJet200","L1_DoubleJetC100","L1_DoubleJetC112","L1_DoubleJetC120","L1_QuadJetC50", "L1_QuadJetC60", "L1_ETM100", "L1_ETM105", "L1_ETM110", "L1_ETM115", "L1_ETM120", "L1_DoubleMu_13_6", "L1_DoubleMu_12_5", "L1_DoubleMu0er1p4_dEta_Max1p8_OS","L1_SingleMuOpen_NotBptxOR_3BX","L1_SingleMuOpen_NotBptxOR","L1_SingleMuOpen_NotBptxOR_3BX","L1_SingleMuOpen_NotBptxOR_3BX"),
+    ReadPrescalesFromFile = cms.bool(True),
 )
-
-
 
 process.seq = cms.Sequence(
     process.counter *
-    process.test
-    #process.slimmedJets
+    #process.ParticleListDrawer #*
+    process.ntuple
 )
 
 process.p = cms.Path(process.seq)

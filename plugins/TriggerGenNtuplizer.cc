@@ -128,6 +128,7 @@ class TriggerGenNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResource
     TriggerAnalyzer* theTriggerAnalyzer;
     MuonAnalyzer* theMuonAnalyzer;
 
+    int idLLP, idHiggs, statusHiggs;
     double MinGenBpt, MaxGenBeta, MinGenBradius2D, MaxGenBradius2D, MinGenBetaAcc, MaxGenBetaAcc;
     //bool WriteGenVBFquarks, 
     bool WriteGenHiggs, WriteGenBquarks, WriteGenLLPs;
@@ -192,6 +193,9 @@ TriggerGenNtuplizer::TriggerGenNtuplizer(const edm::ParameterSet& iConfig):
     //PileupPSet(iConfig.getParameter<edm::ParameterSet>("pileupSet")),
     TriggerPSet(iConfig.getParameter<edm::ParameterSet>("triggerSet")),
     MuonPSet(iConfig.getParameter<edm::ParameterSet>("muonSet")),
+    idLLP(iConfig.getParameter<int>("idLLP")),
+    idHiggs(iConfig.getParameter<int>("idHiggs")),
+    statusHiggs(iConfig.getParameter<int>("statusHiggs")),
     MinGenBpt(iConfig.getParameter<double>("minGenBpt")),
     MaxGenBeta(iConfig.getParameter<double>("maxGenBeta")),
     MinGenBradius2D(iConfig.getParameter<double>("minGenBradius2D")),
@@ -305,8 +309,8 @@ TriggerGenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     GenBquarks.clear();
 
     //std::vector<reco::GenParticle> GenVBFVect = theGenAnalyzer->FillVBFGenVector(iEvent);
-    std::vector<reco::GenParticle> GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,25,22);
-    std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,9000006,22);
+    std::vector<reco::GenParticle> GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idHiggs,statusHiggs);
+    std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idLLP,22);
     std::vector<reco::GenParticle> GenBquarksVect;
 
     nGenLL = GenLongLivedVect.size();
@@ -316,7 +320,7 @@ TriggerGenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     if(nGenLL>0)
       {
 	//GenBquarksVect = theGenAnalyzer->FillGenVectorByIdStatusAndMotherAndKinAndRadius2D(iEvent,5,23,9000006,float(MinGenBpt),float(MaxGenBeta),float(MinGenBradius2D),float(MaxGenBradius2D));
-	GenBquarksVect = theGenAnalyzer->FillGenVectorByIdStatusAndMotherAndKin(iEvent,5,23,9000006,float(MinGenBpt),float(MaxGenBeta));
+	GenBquarksVect = theGenAnalyzer->FillGenVectorByIdStatusAndMotherAndKin(iEvent,5,23,idLLP,float(MinGenBpt),float(MaxGenBeta));
       }
     else
       {
