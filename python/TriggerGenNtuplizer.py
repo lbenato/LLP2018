@@ -128,15 +128,15 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 1
+process.MessageLogger.cerr.FwkReport.reportEvery = 500
 
 ## Input files
 if len(options.inputFiles) == 0:
 
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
-            #'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-1000_Summer16_MINIAODSIM_calojets/GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets/181203_140031/0000/miniaod_1.root'
-            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_Summer16_MINIAODSIM_calojets_Tranche2/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets/181218_125055/0000/miniaod_1.root',
+          'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-1000_Summer16_MINIAODSIM_calojets/GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets/181203_140031/0000/miniaod_1.root'
+#            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_Summer16_MINIAODSIM_calojets_Tranche2/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets/181218_125055/0000/miniaod_1.root',
             #'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-5000_Summer16_AODSIM_Tranche2/VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_AODSIM/181214_110243/0000/aodsim_1.root'
             #'/store/mc/RunIISummer16DR80Premix/ZJetsToNuNu_HT-800To1200_13TeV-madgraph/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/FE57DDB4-DDBA-E611-A344-0025905A6064.root',
             #'file:/pnfs/desy.de/cms/tier2/store/data/Run2016G/MET/AOD/07Aug17-v1/110000/3C4239F2-E9A0-E711-82F7-02163E014117.root' 
@@ -167,7 +167,7 @@ if RunLocal:
     noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
     isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0]) else False
-    isCalo            = True #HERE for calo analyses!!!
+    isCalo            = False #HERE for calo analyses!!!
 
 else:
     isData            = options.PisData
@@ -377,7 +377,8 @@ process.ntuple = cms.EDAnalyzer('TriggerGenNtuplizer',
 #'HLT_VBF_DisplacedJet40_VTightID_Hadronic_v', 'HLT_VBF_DisplacedJet40_VVTightID_Hadronic_v'#,'HLT_AK4PFJet30_v7'
 ### Displaced Muons
 'HLT_DoubleMu23NoFiltersNoVtxDisplaced_v', 'HLT_DoubleMu28NoFiltersNoVtxDisplaced_v', 'HLT_DoubleMu4_LowMassNonResonantTrk_Displaced_v',
-'HLT_L2Mu10_NoVertex_NoBPTX3BX_v2','HLT_L2Mu10_NoVertex_NoBPTX_v3','HLT_L2Mu40_NoVertex_3Sta_NoBPTX3BX_v2','HLT_L2Mu45_NoVertex_3Sta_NoBPTX3BX_v1',
+'HLT_L2Mu10_NoVertex_NoBPTX3BX_v','HLT_L2Mu10_NoVertex_NoBPTX_v','HLT_L2Mu40_NoVertex_3Sta_NoBPTX3BX_v','HLT_L2Mu45_NoVertex_3Sta_NoBPTX3BX_v',
+'HLT_DoubleMu3_PFMET50_v', 'HLT_DoubleMu0_v', 'HLT_DoubleMu18NoFiltersNoVtx_v','HLT_Mu17_Mu8_v', 'HLT_Mu17_v', 'HLT_Mu8_v','HLT_TripleMu_12_10_5_v', 'HLT_IsoMu20_v', 'HLT_IsoMu24_v','HLT_IsoTkMu24_v', 'HLT_Mu20_v', 'HLT_Mu27_v','HLT_TkMu17_v', 'HLT_TkMu20_v', 'HLT_TkMu27_v5',
 ]
         ),
         metfilters = cms.InputTag('TriggerResults', '', filterString),
@@ -423,7 +424,7 @@ process.ntuple = cms.EDAnalyzer('TriggerGenNtuplizer',
     AlgInputTag = cms.InputTag("gtStage2Digis"),
     l1tAlgBlkInputTag = cms.InputTag("gtStage2Digis"),
     l1tExtBlkInputTag = cms.InputTag("gtStage2Digis"),
-    l1Seeds = cms.vstring("L1_TripleJet_84_68_48_VBF","L1_TripleJet_88_72_56_VBF","L1_TripleJet_92_76_64_VBF","L1_HTT280","L1_HTT300","L1_HTT320","L1_SingleJet170","L1_SingleJet180","L1_SingleJet200","L1_DoubleJetC100","L1_DoubleJetC112","L1_DoubleJetC120","L1_QuadJetC50", "L1_QuadJetC60", "L1_ETM100", "L1_ETM105", "L1_ETM110", "L1_ETM115", "L1_ETM120", "L1_DoubleMu_13_6", "L1_DoubleMu_12_5", "L1_DoubleMu0er1p4_dEta_Max1p8_OS","L1_SingleMuOpen_NotBptxOR_3BX","L1_SingleMuOpen_NotBptxOR","L1_SingleMuOpen_NotBptxOR_3BX","L1_SingleMuOpen_NotBptxOR_3BX"),
+    l1Seeds = cms.vstring("L1_TripleJet_84_68_48_VBF","L1_TripleJet_88_72_56_VBF","L1_TripleJet_92_76_64_VBF","L1_HTT280","L1_HTT300","L1_HTT320","L1_SingleJet170","L1_SingleJet180","L1_SingleJet200","L1_DoubleJetC100","L1_DoubleJetC112","L1_DoubleJetC120","L1_QuadJetC50", "L1_QuadJetC60", "L1_ETM100", "L1_ETM105", "L1_ETM110", "L1_ETM115", "L1_ETM120", "L1_DoubleMu_13_6", "L1_DoubleMu_12_5", "L1_DoubleMu_11_4", "L1_DoubleMu0er1p4_dEta_Max1p8_OS","L1_SingleMuOpen_NotBptxOR_3BX","L1_SingleMuOpen_NotBptxOR","L1_SingleMuOpen_NotBptxOR_3BX","L1_SingleMuOpen_NotBptxOR_3BX", "L1_Mu3_JetC16_dEta_Max0p4_dPhi_Max0p4",  "L1_Mu3_JetC60_dEta_Max0p4_dPhi_Max0p4", "L1_Mu3_JetC120_dEta_Max0p4_dPhi_Max0p4", "L1_TripleMu_5_0_0", "L1_TripleMu0", "L1_TripleMu_5_5_3", "L1_Mu8_HTT150", "L1_QuadMu0", "L1_SingleMu7", "L1_SingleMu14", "L1_SingleMu16", "L1_SingleMu18", "L1_DoubleMu0_ETM55", "L1_DoubleMu0_ETM65", "L1_Mu3_JetC16"),
     ReadPrescalesFromFile = cms.bool(True),
 )
 
