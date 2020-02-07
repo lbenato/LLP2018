@@ -945,8 +945,8 @@ process.pfXTagInfos = cms.EDProducer("XTagInfoProducer",
 process.pfXTags = cms.EDProducer("XTagProducer",
     graph_path=cms.FileInPath("LLPReco/XTagProducer/data/da.pb"),
     src=cms.InputTag("pfXTagInfos"),
-    ctau_values=cms.vdouble(-2., 0., 1., 2., 3.), # provide log(ctau/1mm) to be evaluated: i.e. 10 mum, 1 mm and 1 m here
-    ctau_descriptors=cms.vstring("0p01", "1", "10", "100", "1000") # provide log(ctau/1mm) to be evaluated: i.e. 1 mum, 1 mm and 1 m here
+    ctau_values=cms.vdouble(-2., -1., 0., 1., 2., 3.), # provide log(ctau/1mm) to be evaluated: i.e. 10 mum, 1 mm and 1 m here
+    ctau_descriptors=cms.vstring("0p01", "0p1", "1", "10", "100", "1000") # provide log(ctau/1mm) to be evaluated: i.e. 1 mum, 1 mm and 1 m here
 )
 
 #task.add(process.patJetCorrFactors)

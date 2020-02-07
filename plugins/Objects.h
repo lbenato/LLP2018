@@ -118,7 +118,7 @@ matchBquark(-1), matchLL(-1),
     nConstituents (-1), nTrackConstituents (-1), nTracks0PixelHits(-1), nTracks1PixelHit(-1),nTracks2PixelHits(-1),nTracks3PixelHits(-1),nTracks4PixelHits(-1),nTracks5PixelHits(-1),nTracksAtLeast6PixelHits(-1),
     nTracksValidHitInBPix1(-1),nTracks0LostInnerHits(-1), nTracks1LostInnerHit(-1), nTracksAtLeast2LostInnerHits(-1), nMatchedGenBquarks(-1),
     //Imperial College tagger
-    pfXWP0p01(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP1000(-1.){}
+    pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP1000(-1.), deepCSV_probudsg(-99.), deepCSV_probb(-99.), deepCSV_probc(-99.), deepCSV_probbb(-99.), deepJet_probuds(-99.),deepJet_probg(-99.), deepJet_problepb(-99.), deepJet_probb(-99.), deepJet_probc(-99.), deepJet_probbb(-99.){}
     float pt;
     float eta;
     float phi;
@@ -289,10 +289,21 @@ matchBquark(-1), matchLL(-1),
     int nTracksAtLeast2LostInnerHits;
     int nMatchedGenBquarks;
     float pfXWP0p01; 
+    float pfXWP0p1;
     float pfXWP1; 
     float pfXWP10; 
     float pfXWP100; 
     float pfXWP1000;
+    float deepCSV_probudsg;
+    float deepCSV_probb;
+    float deepCSV_probc;
+    float deepCSV_probbb;
+    float deepJet_probuds;
+    float deepJet_probg;
+    float deepJet_problepb;
+    float deepJet_probb;
+    float deepJet_probc;
+    float deepJet_probbb;
 };
 
 

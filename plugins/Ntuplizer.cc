@@ -122,6 +122,9 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     edm::InputTag JetTagWP0p01 = edm::InputTag("pfXTags:0p01:ntuple");
     JetTagWP0p01Token= consumes<reco::JetTagCollection>(JetTagWP0p01);
 
+    edm::InputTag JetTagWP0p1 = edm::InputTag("pfXTags:0p1:ntuple");
+    JetTagWP0p1Token= consumes<reco::JetTagCollection>(JetTagWP0p1);
+
     edm::InputTag JetTagWP1 = edm::InputTag("pfXTags:1:ntuple");
     JetTagWP1Token= consumes<reco::JetTagCollection>(JetTagWP1);
 
@@ -1351,6 +1354,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     iEvent.getByToken(JetTagWP0p01Token, pfXTagWP0p01Handle);
     const reco::JetTagCollection & pfXWP0p01Tags = *(pfXTagWP0p01Handle.product());
 
+    edm::Handle<reco::JetTagCollection> pfXTagWP0p1Handle;
+    iEvent.getByToken(JetTagWP0p1Token, pfXTagWP0p1Handle);
+    const reco::JetTagCollection & pfXWP0p1Tags = *(pfXTagWP0p1Handle.product());
+
     edm::Handle<reco::JetTagCollection> pfXTagWP1Handle;
     iEvent.getByToken(JetTagWP1Token, pfXTagWP1Handle);
     const reco::JetTagCollection & pfXWP1Tags = *(pfXTagWP1Handle.product());
@@ -1379,6 +1386,16 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 		CHSJetsVect[r].addUserFloat("pfXWP0p01",pfXWP0p01Tags[s].second);
 	      }
 	  }
+
+	for(unsigned int s = 0; s<pfXWP0p1Tags.size(); s++)
+          {
+            //if(pfXWP0p1Tags[s].first->eta()==CHSJetsVect[r].eta())
+            if( reco::deltaR(pfXWP0p1Tags[s].first->eta(),pfXWP0p1Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
+              {
+                //std::cout << "CHS Jets n. " << r << " and pfXWP0p1 n. " << s << "are matching!" << std::endl;
+                CHSJetsVect[r].addUserFloat("pfXWP0p1",pfXWP0p1Tags[s].second);
+              }
+          }
 
 	for(unsigned int s = 0; s<pfXWP1Tags.size(); s++)
 	  {
