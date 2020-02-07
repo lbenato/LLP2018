@@ -143,7 +143,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -159,8 +159,8 @@ if len(options.inputFiles) == 0:
             #'/store/mc/RunIIAutumn18DRPremix/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/3017154C-F483-964E-855B-E06F2590FD6B.root'#2018 MC with muons!  #
             #'/store/mc/RunIISummer16MiniAODv2/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/E65DC503-55C9-E611-9A11-02163E019C7F.root',
             #'file:/afs/desy.de/user/e/eichm/public/forLisa/VBFH_m20_ctau500.root'
-            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_Summer16_MINIAODSIM_calojets_Tranche2/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets/181218_125055/0000/miniaod_1.root',
-            
+#            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_Summer16_MINIAODSIM_calojets_Tranche2/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets/181218_125055/0000/miniaod_1.root',
+          '/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MINIAODSIM_24May2018/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_24May2018/180529_093853/0000/miniaod_15.root'
         )
     )
 
@@ -188,7 +188,7 @@ if RunLocal:
     noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
     isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0]) else False
-    isCalo            = True #HERE for calo analyses!!!
+    isCalo            = False #HERE for calo analyses!!!
     isVBF             = True
     isggH             = False
 
@@ -771,10 +771,10 @@ bTagDiscriminators = set([
    ,'pfNegativeCombinedCvsLJetTags'
    ,'pfPositiveCombinedCvsLJetTags'
   #   # DeepCSV # From here not available for 2016
-  # , 'pfDeepCSVJetTags:probudsg'
-  # , 'pfDeepCSVJetTags:probb'
-  # , 'pfDeepCSVJetTags:probc'
-  # , 'pfDeepCSVJetTags:probbb'
+  , 'pfDeepCSVJetTags:probudsg'
+  , 'pfDeepCSVJetTags:probb'
+  , 'pfDeepCSVJetTags:probc'
+  , 'pfDeepCSVJetTags:probbb'
   # , 'pfNegativeDeepCSVJetTags:probudsg'
   # , 'pfNegativeDeepCSVJetTags:probb'
   # , 'pfNegativeDeepCSVJetTags:probc'
@@ -784,12 +784,12 @@ bTagDiscriminators = set([
   # , 'pfPositiveDeepCSVJetTags:probc'
   # , 'pfPositiveDeepCSVJetTags:probbb'
   #   # DeepFlavour
-  # , 'pfDeepFlavourJetTags:probb'
-  # , 'pfDeepFlavourJetTags:probbb'
-  # , 'pfDeepFlavourJetTags:problepb'
-  # , 'pfDeepFlavourJetTags:probc'
-  # , 'pfDeepFlavourJetTags:probuds'
-  # , 'pfDeepFlavourJetTags:probg'
+  , 'pfDeepFlavourJetTags:probb'
+  , 'pfDeepFlavourJetTags:probbb'
+  , 'pfDeepFlavourJetTags:problepb'
+  , 'pfDeepFlavourJetTags:probc'
+  , 'pfDeepFlavourJetTags:probuds'
+  , 'pfDeepFlavourJetTags:probg'
   # , 'pfNegativeDeepFlavourJetTags:probb'
   # , 'pfNegativeDeepFlavourJetTags:probbb'
   # , 'pfNegativeDeepFlavourJetTags:problepb'
