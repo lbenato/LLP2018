@@ -384,9 +384,9 @@ bTagInfos = [
 ]
 
 bTagDiscriminators = [
-   'pfCombinedInclusiveSecondaryVertexV2BJetTags',
-   'pfCombinedSecondaryVertexV2BJetTags',
-   'pfBoostedDoubleSecondaryVertexAK8BJetTags'
+   'pfCombinedInclusiveSecondaryVertexV2BJetTags'
+   ,'pfCombinedSecondaryVertexV2BJetTags'
+   ,'pfBoostedDoubleSecondaryVertexAK8BJetTags'
    ]
 
 # # taken from here: https://github.com/cms-sw/cmssw/blob/02d4198c0b6615287fd88e9a8ff650aea994412e/RecoBTag/ImpactParameter/python/impactParameterTagInfos_cfi.py
@@ -933,12 +933,13 @@ chosen_AK8 = "packedPatJetsAK8" # including SoftDrop info
 #    Imperial Tagger    #
 #-----------------------#
 
-
 process.pfXTagInfos = cms.EDProducer("XTagInfoProducer",
     jets = cms.InputTag(jets_after_btag_tools),
     shallow_tag_infos = cms.InputTag('pfDeepCSVTagInfosFinal'),
     vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
-    secondary_vertices = cms.InputTag("slimmedSecondaryVertices")
+    secondary_vertices = cms.InputTag("slimmedSecondaryVertices"),
+    muonSrc  = cms.InputTag("slimmedMuons"),
+    electronSrc = cms.InputTag("slimmedElectrons")
 )
 
 process.pfXTags = cms.EDProducer("XTagProducer",
