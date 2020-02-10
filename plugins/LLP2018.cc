@@ -51,7 +51,9 @@
 #include "DataFormats/DetId/interface/DetId.h"
 #include "DataFormats/EcalDetId/interface/EBDetId.h"
 #include "DataFormats/EcalDetId/interface/EEDetId.h"
-
+#include "DataFormats/JetReco/interface/GenJet.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
+#include "DataFormats/PatCandidates/interface/MET.h"
 
 //
 // class declaration
@@ -81,6 +83,10 @@ class LLP2018 : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       // ----------member data ---------------------------
       //edm::EDGetTokenT<TrackCollection> tracksToken_;  //used to select what tracks to read from configuration file
       edm::EDGetTokenT<std::vector<pat::Electron>> electronToken_;  //used to select what tracks to read from configuration file
+      edm::EDGetTokenT< std::vector<reco::GenJet> > GenJetToken_;
+      edm::EDGetTokenT< std::vector<pat::Jet> > JetToken_;
+      edm::EDGetTokenT< std::vector<pat::Jet> > Jet2Token_;
+      edm::EDGetTokenT< std::vector<pat::MET> > MetToken_;
       std::string EleVetoIdMapToken;
 };
 
@@ -99,6 +105,10 @@ LLP2018::LLP2018(const edm::ParameterSet& iConfig)
  :
   //tracksToken_(consumes<TrackCollection>(iConfig.getUntrackedParameter<edm::InputTag>("tracks"))),
   electronToken_(consumes< std::vector<pat::Electron> >(iConfig.getUntrackedParameter<edm::InputTag>("electrons"))),
+  GenJetToken_(consumes<std::vector<reco::GenJet>>(iConfig.getParameter <edm::InputTag>("genjets"))),
+  JetToken_(consumes<std::vector<pat::Jet>>(iConfig.getParameter <edm::InputTag>("jets"))),
+  Jet2Token_(consumes<std::vector<pat::Jet>>(iConfig.getParameter <edm::InputTag>("jets2"))),
+  MetToken_(consumes<std::vector<pat::MET>>(iConfig.getParameter <edm::InputTag>("met"))),
   EleVetoIdMapToken(iConfig.getUntrackedParameter<std::string>("eleVetoIdMap"))
 {
    //now do what ever initialization is needed
@@ -153,6 +163,43 @@ LLP2018::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //el.addUserInt("isVeto", isPassVeto ? 1 : 0);
       std::cout<<"el is veto: " << el.electronID(EleVetoIdMapToken) << std::endl;
     }
+
+
+    
+    edm::Handle<std::vector<reco::GenJet> > GenJetsCollection;
+    iEvent.getByToken(GenJetToken_,GenJetsCollection);
+
+    //Fill Jet vector
+    //manually; otherwise we always need mutiple psets
+    std::vector<reco::GenJet> GenJetsVect;
+    for(std::vector<reco::GenJet>::const_iterator it=GenJetsCollection->begin(); it!=GenJetsCollection->end(); ++it) {
+      reco::GenJet jet=*it;
+      if(jet.pt()<8) continue;
+      std::cout << "Gen jet pt: " << jet.pt() << std::endl; 
+      GenJetsVect.push_back(jet);
+    }
+    //nGenJets = GenJetsVect.size();
+      
+    edm::Handle<std::vector<pat::Jet> > JetsCollection;
+    iEvent.getByToken(JetToken_,JetsCollection);
+    for(std::vector<pat::Jet>::const_iterator it=JetsCollection->begin(); it!=JetsCollection->end(); ++it) {
+      pat::Jet jet=*it;
+      std::cout << "Pat jet collection 1 pt: " << jet.pt() << std::endl; 
+    }
+
+    edm::Handle<std::vector<pat::Jet> > Jets2Collection;
+    iEvent.getByToken(Jet2Token_,Jets2Collection);
+    for(std::vector<pat::Jet>::const_iterator it=Jets2Collection->begin(); it!=Jets2Collection->end(); ++it) {
+      pat::Jet jet2=*it;
+      std::cout << "Pat jet collection 2 pt: " << jet2.pt() << std::endl; 
+    }
+
+    //Fill Jet vector
+    //manually; otherwise we always need mutiple psets
+    edm::Handle<std::vector<pat::MET> > MetCollection;
+    iEvent.getByToken(MetToken_, MetCollection);
+    pat::MET MEt = MetCollection->front();   
+    std::cout << "MET pt: " << MEt.pt() << std::endl; 
 
 
 #ifdef THIS_IS_AN_EVENT_EXAMPLE
