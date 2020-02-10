@@ -339,9 +339,9 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     I.isCSVM      = R->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")>0.8484 ? true : false;
     I.isCSVT      = R->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")>0.9535 ? true : false;
     I.PUId           = R->hasUserInt("pileupJetId:fullId") ? R->userInt("pileupJetId:fullId") : -1;
-    I.PUIdLoose      = bool(R->userInt("pileupJetId:fullId") & (1 << 2))? true : false;
-    I.PUIdMedium     = bool(R->userInt("pileupJetId:fullId") & (1 << 1))? true : false;
-    I.PUIdTight      = bool(R->userInt("pileupJetId:fullId") & (1 << 0))? true : false;
+    I.PUIdLoose      = R->hasUserInt("pileupJetId:fullId") ? (bool(R->userInt("pileupJetId:fullId") & (1 << 2))? true : false) : false;
+    I.PUIdMedium     = R->hasUserInt("pileupJetId:fullId") ? (bool(R->userInt("pileupJetId:fullId") & (1 << 1))? true : false) : false;
+    I.PUIdTight      = R->hasUserInt("pileupJetId:fullId") ? (bool(R->userInt("pileupJetId:fullId") & (1 << 0))? true : false) : false;
     I.PUDiscriminant = R->hasUserFloat("pileupJetId:fullDiscriminant") ? R->userFloat("pileupJetId:fullDiscriminant") : -2.;
     //I.isMatched   = false;
     //I.dR_q1       = R->hasUserFloat("dR_q1") ? R->userFloat("dR_q1") : 1000;
