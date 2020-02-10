@@ -993,10 +993,10 @@ bTagDiscriminators = set([
    ,'pfNegativeCombinedCvsLJetTags'
    ,'pfPositiveCombinedCvsLJetTags'
   #   # DeepCSV # From here not available for 2016
-  # , 'pfDeepCSVJetTags:probudsg'
-  # , 'pfDeepCSVJetTags:probb'
-  # , 'pfDeepCSVJetTags:probc'
-  # , 'pfDeepCSVJetTags:probbb'
+   , 'pfDeepCSVJetTags:probudsg'
+   , 'pfDeepCSVJetTags:probb'
+   , 'pfDeepCSVJetTags:probc'
+   , 'pfDeepCSVJetTags:probbb'
   # , 'pfNegativeDeepCSVJetTags:probudsg'
   # , 'pfNegativeDeepCSVJetTags:probb'
   # , 'pfNegativeDeepCSVJetTags:probc'
@@ -1006,12 +1006,12 @@ bTagDiscriminators = set([
   # , 'pfPositiveDeepCSVJetTags:probc'
   # , 'pfPositiveDeepCSVJetTags:probbb'
   #   # DeepFlavour
-  # , 'pfDeepFlavourJetTags:probb'
-  # , 'pfDeepFlavourJetTags:probbb'
-  # , 'pfDeepFlavourJetTags:problepb'
-  # , 'pfDeepFlavourJetTags:probc'
-  # , 'pfDeepFlavourJetTags:probuds'
-  # , 'pfDeepFlavourJetTags:probg'
+   , 'pfDeepFlavourJetTags:probb'
+   , 'pfDeepFlavourJetTags:probbb'
+   , 'pfDeepFlavourJetTags:problepb'
+   , 'pfDeepFlavourJetTags:probc'
+   , 'pfDeepFlavourJetTags:probuds'
+   , 'pfDeepFlavourJetTags:probg'
   # , 'pfNegativeDeepFlavourJetTags:probb'
   # , 'pfNegativeDeepFlavourJetTags:probbb'
   # , 'pfNegativeDeepFlavourJetTags:problepb'
@@ -1163,14 +1163,16 @@ process.pfXTagInfos = cms.EDProducer("XTagInfoProducer",
     jets = cms.InputTag(jets_after_btag_tools),
     shallow_tag_infos = cms.InputTag('pfDeepCSVTagInfosFinal'),
     vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
-    secondary_vertices = cms.InputTag("slimmedSecondaryVertices")
+    secondary_vertices = cms.InputTag("slimmedSecondaryVertices"),
+    muonSrc  = cms.InputTag("slimmedMuons"),
+    electronSrc = cms.InputTag("slimmedElectrons")
 )
 
 process.pfXTags = cms.EDProducer("XTagProducer",
     graph_path=cms.FileInPath("LLPReco/XTagProducer/data/da.pb"),
     src=cms.InputTag("pfXTagInfos"),
-    ctau_values=cms.vdouble(-2., 0., 1., 2., 3.), # provide log(ctau/1mm) to be evaluated: i.e. 10 mum, 1 mm and 1 m here
-    ctau_descriptors=cms.vstring("0p01", "1", "10", "100", "1000") # provide log(ctau/1mm) to be evaluated: i.e. 1 mum, 1 mm and 1 m here
+    ctau_values=cms.vdouble(-2., -1., 0., 1., 2., 3.), # provide log(ctau/1mm) to be evaluated: i.e. 10 mum, 1 mm and 1 m here
+    ctau_descriptors=cms.vstring("0p01", "0p1", "1", "10", "100", "1000") # provide log(ctau/1mm) to be evaluated: i.e. 1 mum, 1 mm and 1 m here
 )
 
 #task.add(process.patJetCorrFactors)
