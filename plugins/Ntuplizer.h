@@ -144,6 +144,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     PFCandidateAnalyzer* thePFCandidateAnalyzer;
 
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP0p01Token;
+    edm::EDGetTokenT<reco::JetTagCollection> JetTagWP0p1Token;
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP1Token;
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP10Token;
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP100Token;
