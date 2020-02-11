@@ -115,8 +115,8 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     for(unsigned int i = 0; i < TriggerList.size(); i++) PrescalesTriggerMap[ TriggerList[i] ] = -1;
     std::vector<std::string> MetFiltersList(TriggerPSet.getParameter<std::vector<std::string> >("metpaths"));
     for(unsigned int i = 0; i < MetFiltersList.size(); i++) MetFiltersMap[ MetFiltersList[i] ] = false;
-    std::vector<std::string> L1FiltersList(TriggerPSet.getParameter<std::vector<std::string> >("l1filters"));
-    for(unsigned int i = 0; i < L1FiltersList.size(); i++) L1FiltersMap[ L1FiltersList[i] ] = false;
+    //std::vector<std::string> L1FiltersList(TriggerPSet.getParameter<std::vector<std::string> >("l1filters"));//commented
+    //for(unsigned int i = 0; i < L1FiltersList.size(); i++) L1FiltersMap[ L1FiltersList[i] ] = false;//commented
 
     //Imperial College Tagger
     edm::InputTag JetTagWP0p01 = edm::InputTag("pfXTags:0p01:ntuple");
@@ -253,7 +253,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     theTriggerAnalyzer->FillMetFiltersMap(iEvent, MetFiltersMap);
     BadPFMuonFlag = theTriggerAnalyzer->GetBadPFMuonFlag(iEvent);
     BadChCandFlag = theTriggerAnalyzer->GetBadChCandFlag(iEvent);
-    theTriggerAnalyzer->FillL1FiltersMap(iEvent, L1FiltersMap);
+    //theTriggerAnalyzer->FillL1FiltersMap(iEvent, L1FiltersMap);//commented; filters are treated differently in 2016 w.r.t. 2017/2018
 
     // 27 Sep 2018: saving only events that fired at least one trigger, to reduce output size
     for(auto it = TriggerMap.begin(); it != TriggerMap.end(); it++)
@@ -270,13 +270,14 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(!AtLeastOneTrigger && WriteOnlyTriggerEvents) return;
 
     // 10 Dec 2018: saving only events that fired at least one L1 seed
-    for(auto it = L1FiltersMap.begin(); it != L1FiltersMap.end(); it++)
-      {
-	if(it->second)
-	  {
-	    AtLeastOneL1Filter = true;
-	  }
-      }
+    // 11 Feb 2020: commented, filters treated differently in 2016 w.r.t. 2017-2018
+    //for(auto it = L1FiltersMap.begin(); it != L1FiltersMap.end(); it++)
+    //{
+    //if(it->second)
+    //{
+    //AtLeastOneL1Filter = true;
+    //}
+    //}
 
     if(!AtLeastOneL1Filter && WriteOnlyL1FilterEvents) return;
 
@@ -2500,7 +2501,7 @@ Ntuplizer::beginJob()
 	    }
         }
     for(auto it = MetFiltersMap.begin(); it != MetFiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());
-    for(auto it = L1FiltersMap.begin(); it != L1FiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());
+    //for(auto it = L1FiltersMap.begin(); it != L1FiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());//commented, filters treated differently in 2016/2017-8
 
     tree -> Branch("HDiCHS", &HDiCHS, "HDiCHS/F");
     tree -> Branch("HTriCHS", &HTriCHS, "HTriCHS/F");

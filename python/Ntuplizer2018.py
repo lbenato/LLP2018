@@ -48,10 +48,10 @@ options.register(
     "isPromptReco parser flag"
 )
 options.register(
-    "Pis2017", False,
+    "Pis2016", False,
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
-    "is2017 parser flag"
+    "is2016 parser flag"
 )
 options.register(
     "PnoLHEinfo", False,
@@ -154,13 +154,14 @@ if len(options.inputFiles) == 0:
 
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
+            'file:/nfs/dust/cms/user/lbenato/HTo2LongLivedTo4b_MH-1000_MFF-450_CTau-10000mm_privateMC_102X_RECO_v1_generation_forMS_output_100_MINIAOD.root'
             #test 2017 MC:
             #'/store/mc/RunIIFall17MiniAODv2/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/40000/D0CB832F-0742-E811-87A1-0CC47A4D76AC.root'
             #'/store/mc/RunIIAutumn18DRPremix/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/3017154C-F483-964E-855B-E06F2590FD6B.root'#2018 MC with muons!  #
             #'/store/mc/RunIISummer16MiniAODv2/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/E65DC503-55C9-E611-9A11-02163E019C7F.root',
             #'file:/afs/desy.de/user/e/eichm/public/forLisa/VBFH_m20_ctau500.root'
 #            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_Summer16_MINIAODSIM_calojets_Tranche2/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets/181218_125055/0000/miniaod_1.root',
-          '/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MINIAODSIM_24May2018/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_24May2018/180529_093853/0000/miniaod_15.root'
+            #'/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MINIAODSIM_24May2018/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_24May2018/180529_093853/0000/miniaod_15.root'
         )
     )
 
@@ -183,7 +184,7 @@ if RunLocal:
     isReHLT           = ('_reHLT_' in process.source.fileNames[0])
     isReReco          = ('23Sep2016' in process.source.fileNames[0])
     isReMiniAod       = ('03Feb2017' in process.source.fileNames[0])
-    is2017            = ('RunIIFall17MiniAODv2' in process.source.fileNames[0])
+    is2016            = False#('RunIISummer16' in process.source.fileNames[0])
     isPromptReco      = ('PromptReco' in process.source.fileNames[0])
     noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
@@ -197,7 +198,7 @@ else:
     isReHLT           = options.PisReHLT
     isReReco          = options.PisReReco
     isReMiniAod       = options.PisReMiniAod
-    is2017            = options.Pis2017
+    is2016            = options.Pis2016
     isPromptReco      = options.PisPromptReco
     noLHEinfo         = options.PnoLHEinfo
     isbbH             = options.PisbbH
@@ -1102,7 +1103,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         prescales = cms.InputTag('patTrigger','','PAT'),
         l1Minprescales = cms.InputTag('patTrigger','l1min','PAT'),
         l1Maxprescales = cms.InputTag('patTrigger','l1max','PAT'),
-        objects = cms.InputTag('slimmedPatTrigger' if is2017 else 'selectedPatTrigger','','PAT'),
+        objects = cms.InputTag('selectedPatTrigger' if is2016 else 'slimmedPatTrigger','','PAT'),
         badPFMuonFilter = cms.InputTag("BadPFMuonFilter"),
         badChCandFilter = cms.InputTag("BadChargedCandidateFilter"),
         l1Gt = cms.InputTag("gtStage2Digis"),
@@ -1115,7 +1116,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         jet2pt = cms.double(15.),
         jeteta = cms.double(5.2),
         addQGdiscriminator = cms.bool(False),
-        recalibrateJets = cms.bool(False if is2017 else True),
+        recalibrateJets = cms.bool(True if is2016 else False),
         recalibrateMass = cms.bool(False),
         recalibratePuppiMass = cms.bool(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
@@ -1165,7 +1166,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         jet2pt = cms.double(pt_AK4),
         jeteta = cms.double(2.4),
         addQGdiscriminator = cms.bool(False),
-        recalibrateJets = cms.bool(False if is2017 else True),
+        recalibrateJets = cms.bool(True if is2016 else False),
         recalibrateMass = cms.bool(False),
         recalibratePuppiMass = cms.bool(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
@@ -1219,7 +1220,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         jet2pt = cms.double(20.),
         jeteta = cms.double(5.2),
         addQGdiscriminator = cms.bool(False),
-        recalibrateJets = cms.bool(False if is2017 else True),
+        recalibrateJets = cms.bool(True if is2016 else False),
         recalibrateMass = cms.bool(False),
         recalibratePuppiMass = cms.bool(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
@@ -1269,8 +1270,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         jet2pt = cms.double(pt_AK8),
         jeteta = cms.double(2.4),
         addQGdiscriminator = cms.bool(False),
-        recalibrateJets = cms.bool(False if is2017 else True),
-        recalibrateMass = cms.bool(False if is2017 else True),#(False),
+        recalibrateJets = cms.bool(True if is2016 else False),
+        recalibrateMass = cms.bool(True if is2016 else False),#(False),
         recalibratePuppiMass = cms.bool(True),#(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
         smearJets = cms.bool(True),
