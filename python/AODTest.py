@@ -48,10 +48,10 @@ options.register(
     "isPromptReco parser flag"
 )
 options.register(
-    "Pis2017", False,
+    "Pis2016", False,
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
-    "is2017 parser flag"
+    "is2016 parser flag"
 )
 options.register(
     "PnoLHEinfo", False,
@@ -179,7 +179,7 @@ if RunLocal:
     isReHLT           = ('_reHLT_' in process.source.fileNames[0])
     isReReco          = ('23Sep2016' in process.source.fileNames[0])
     isReMiniAod       = ('03Feb2017' in process.source.fileNames[0])
-    is2017            = ('RunIIFall17MiniAODv2' in process.source.fileNames[0])
+    is2016            = False#('RunIISummer16' in process.source.fileNames[0])
     isPromptReco      = ('PromptReco' in process.source.fileNames[0])
     noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
@@ -194,7 +194,7 @@ else:
     isReHLT           = options.PisReHLT
     isReReco          = options.PisReReco
     isReMiniAod       = options.PisReMiniAod
-    is2017            = options.Pis2017
+    is2016            = options.Pis2016
     isPromptReco      = options.PisPromptReco
     noLHEinfo         = options.PnoLHEinfo
     isbbH             = options.PisbbH
@@ -1454,7 +1454,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         prescales = cms.InputTag('patTrigger','',''),
         l1Minprescales = cms.InputTag('patTrigger','l1min',''),
         l1Maxprescales = cms.InputTag('patTrigger','l1max',''),
-        objects = cms.InputTag('slimmedPatTrigger' if is2017 else 'selectedPatTrigger','',''),
+        objects = cms.InputTag('selectedPatTrigger' if is2016 else 'slimmedPatTrigger','','PAT'),
         badPFMuonFilter = cms.InputTag("BadPFMuonFilter"),
         badChCandFilter = cms.InputTag("BadChargedCandidateFilter"),
         l1Gt = cms.InputTag("gtStage2Digis"),
