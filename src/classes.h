@@ -1,5 +1,6 @@
 #include <vector>
 #include "Analyzer/LLP2018/plugins/Objects.h"
+#include "Analyzer/LLP2018/plugins/RecoObjects.h"
 
 namespace { 
   struct dictionary {
@@ -14,6 +15,8 @@ namespace {
     SimplifiedJetType dummy6;
     LeptonType dummy7;
     GenPType dummy8;
+    DT4DSegmentType dummy9;
+    CSCSegmentType dummy10;
 
     //Vector of structures
     std::vector<JetType> dummyVector0;
@@ -25,5 +28,7 @@ namespace {
     std::vector<SimplifiedJetType> dummyVector6;
     std::vector<LeptonType> dummyVector7;
     std::vector<GenPType> dummyVector8;
+    std::vector<DT4DSegmentType> dummyVector9;
+    std::vector<CSCSegmentType> dummyVector10;
   };
 }

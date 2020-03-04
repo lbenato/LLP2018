@@ -9,6 +9,8 @@
   <class name="SimplifiedJetType"/>
   <class name="LeptonType"/>
   <class name="GenPType"/>
+  <class name="DT4DSegmentType"/>
+  <class name="CSCSegmentType"/>
   <class name="std::vector<JetType>"/>
   <class name="std::vector<FatJetType>"/>
   <class name="std::vector<VertexType>"/>
@@ -18,4 +20,6 @@
   <class name="std::vector<SimplifiedJetType>"/>
   <class name="std::vector<LeptonType>"/>
   <class name="std::vector<GenPType>"/>
+  <class name="std::vector<DT4DSegmentType>"/>
+  <class name="std::vector<CSCSegmentType>"/>
 </lcgdict>
