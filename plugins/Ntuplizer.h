@@ -150,6 +150,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP100Token;
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP1000Token;
 
+    int idLLP, idHiggs, idMotherB, statusLLP, statusHiggs;
     double MinGenBpt, MaxGenBeta;
     double InvmassVBF, DetaVBF;//VBF tagging
     //int WriteNJets, WriteNFatJets;//unused, we have vectors now
@@ -157,7 +158,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //int WriteNGenBquarks, WriteNGenLongLiveds;//unused, we have vectors now
     bool WriteGenVBFquarks, WriteGenHiggs, WriteGenBquarks, WriteGenLLPs;
     int  WriteNMatchedJets;
-    int WriteNLeptons;
+    int  WriteNLeptons;
     bool WriteOnlyTriggerEvents, WriteOnlyL1FilterEvents, WriteOnlyisVBFEvents;
     bool WriteFatJets;
     bool WriteAllJets;
@@ -184,7 +185,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     std::vector<GenPType> GenVBFquarks;
     std::vector<GenPType> GenBquarks;
     std::vector<GenPType> GenLLPs;
-    GenPType GenHiggs;
+    std::vector<GenPType> GenHiggs;
     std::vector<VertexType> PrimVertices;
     std::vector<VertexType> SecVertices;
     std::vector<VertexType> SecVerticesVert;
