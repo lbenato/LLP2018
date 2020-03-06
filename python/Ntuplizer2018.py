@@ -54,6 +54,18 @@ options.register(
     "is2016 parser flag"
 )
 options.register(
+    "Pis2017", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "is2017 parser flag"
+)
+options.register(
+    "Pis2018", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "is2018 parser flag"
+)
+options.register(
     "PnoLHEinfo", False,
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
@@ -119,6 +131,24 @@ options.register(
     VarParsing.varType.bool,
     "ggH parser flag"
 )
+options.register(
+    "PTwinHiggs", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "TwinHiggs parser flag"
+)
+options.register(
+    "PHeavyHiggs", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "HeavyHiggs parser flag"
+)
+options.register(
+    "PSUSY", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "SUSY parser flag"
+)
 
 
 options.parseArguments()
@@ -143,7 +173,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -154,14 +184,25 @@ if len(options.inputFiles) == 0:
 
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
-            'file:/nfs/dust/cms/user/lbenato/HTo2LongLivedTo4b_MH-1000_MFF-450_CTau-10000mm_privateMC_102X_RECO_v1_generation_forMS_output_100_MINIAOD.root'
+            #JiaJing's
+            #'/store/group/phys_exotica/jmao/aodsim/RunIISummer16/MINIAODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh300_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi300_pl1000_ev100000_MINIAODSIM_CaltechT2/200222_061026/0000/SUS-RunIIFall17DRPremix-00183_MINIAOD_9.root'
+            #'/store/user/kjpena/miniAODv3_08Feb2020/VBFH_HToSSTobbbb_MH-125_MS-50_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3_MINIAODSIM/200209_083121/0000/output_1.root'
+            #'file:/nfs/dust/cms/user/lbenato/HTo2LongLivedTo4b_MH-1000_MFF-450_CTau-10000mm_privateMC_102X_RECO_v1_generation_forMS_output_100_MINIAOD.root'
             #test 2017 MC:
             #'/store/mc/RunIIFall17MiniAODv2/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/40000/D0CB832F-0742-E811-87A1-0CC47A4D76AC.root'
             #'/store/mc/RunIIAutumn18DRPremix/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/3017154C-F483-964E-855B-E06F2590FD6B.root'#2018 MC with muons!  #
+            #2016 background
             #'/store/mc/RunIISummer16MiniAODv2/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/E65DC503-55C9-E611-9A11-02163E019C7F.root',
+            #2018 background
+            'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/270000/FFB1D063-1653-9441-BCE5-088A8DB0086D.root'
+            #'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/WW_TuneCP5_13TeV-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v2/80000/7639FB10-DF53-8242-89D8-7A5E5817A3E4.root'
             #'file:/afs/desy.de/user/e/eichm/public/forLisa/VBFH_m20_ctau500.root'
 #            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_Summer16_MINIAODSIM_calojets_Tranche2/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets/181218_125055/0000/miniaod_1.root',
             #'/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MINIAODSIM_24May2018/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_24May2018/180529_093853/0000/miniaod_15.root'
+
+            #2018 data:
+            #'file:/pnfs/desy.de/cms/tier2//store/data/Run2018C/MET/MINIAOD/17Sep2018-v1/60000/ED1603BC-E2EC-D042-8262-6FF525FA0CA5.root'
+
         )
     )
 
@@ -185,13 +226,18 @@ if RunLocal:
     isReReco          = ('23Sep2016' in process.source.fileNames[0])
     isReMiniAod       = ('03Feb2017' in process.source.fileNames[0])
     is2016            = False#('RunIISummer16' in process.source.fileNames[0])
+    is2017            = False#('RunIISummer16' in process.source.fileNames[0])
+    is2018            = True#('RunIISummer16' in process.source.fileNames[0])
     isPromptReco      = ('PromptReco' in process.source.fileNames[0])
-    noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
+    noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8' or 'WW_TuneCP5_13TeV-pythia8' or 'WZ_TuneCP5_13TeV-pythia8' or 'ZZ_TuneCP5_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
     isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0]) else False
-    isCalo            = False #HERE for calo analyses!!!
-    isVBF             = True
+    isCalo            = True #HERE for calo analyses!!!
+    isVBF             = False
     isggH             = False
+    isTwinHiggs       = False
+    isHeavyHiggs      = False
+    isSUSY            = True
 
 else:
     isData            = options.PisData
@@ -199,6 +245,8 @@ else:
     isReReco          = options.PisReReco
     isReMiniAod       = options.PisReMiniAod
     is2016            = options.Pis2016
+    is2017            = options.Pis2017
+    is2018            = options.Pis2018
     isPromptReco      = options.PisPromptReco
     noLHEinfo         = options.PnoLHEinfo
     isbbH             = options.PisbbH
@@ -206,19 +254,75 @@ else:
     isCalo            = options.Pcalo
     isVBF             = options.PVBF
     isggH             = options.PggH
+    isTwinHiggs       = options.PTwinHiggs
+    isHeavyHiggs      = options.PHeavyHiggs
+    isSUSY            = options.PSUSY
 
+theRunBCD2016 = ['Run2016B','Run2016C','Run2016D']
+theRunEF2016  = ['Run2016E','Run2016F']
+theRunG2016   = ['Run2016G']
+theRunH2016   = ['Run2016H']
 
-theRunBCD = ['Run2016B','Run2016C','Run2016D']
-theRunEF  = ['Run2016E','Run2016F']
-theRunG   = ['Run2016G']
-theRunH   = ['Run2016H']
+theRun2018ABC = ['Run2018A','Run2018B','Run2018C']
+theRun2018D   = ['Run2018D']
 
+print "\n"
+print 'Data era: '
+if is2016: print "2016"
+if is2017: print "2017"
+if is2018: print "2018"
+print "\n"
 print 'isData',isData
 print 'isReHLT',isReHLT
 print 'isReReco',isReReco
 print 'isReMiniAod',isReMiniAod
 print 'isPromptReco',isPromptReco
 print 'isSignal', isSignal
+
+if(int(isTwinHiggs) + int(isHeavyHiggs) + int(isSUSY)>1):
+   print "More than one theoretical model selected! Aborting...."
+   exit()
+
+if isTwinHiggs:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing TWIN HIGGS analysis!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+    idLLP       = 9000006
+    idHiggs     = 25
+    idMotherB   = 9000006
+    statusLLP   = 22
+    statusHiggs = 62
+
+if isHeavyHiggs:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing HEAVY HIGGS analysis!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+    idLLP       = 6000113
+    idHiggs     = 35
+    idMotherB   = 6000113
+    statusLLP   = 22
+    statusHiggs = 62
+
+if isSUSY:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing SUSY analysis!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+    idLLP       = 1000023
+    #Warning! There is also 1000025!!
+    idHiggs     = 25
+    idMotherB   = 25
+    statusLLP   = 62
+    statusHiggs = 22
+    #isVBF = False
+    #isggH = False
+    #Jet pt seems higher. Do not recluster
+    #isCalo = False
 
 if isVBF:
     print "\n"
@@ -247,6 +351,10 @@ if isCalo:
     print "***************************************"
     print "\n"
 
+if(isTwinHiggs and isCalo):
+    pt_AK4 = 5
+else:
+    pt_AK4 = 15
 #-----------------------#
 #     GLOBAL TAG        #
 #-----------------------#
@@ -260,10 +368,21 @@ GT = ''
 
 if RunLocal:
     if isData:
-        if isReMiniAod and any(s in process.source.fileNames[0] for s in theRunH): GT = '80X_dataRun2_Prompt_v16'
-        else: GT = '80X_dataRun2_2016SeptRepro_v7'#'auto:run2_data'#'80X_dataRun2_2016LegacyRepro_v4'#
+        if is2016:
+            if isReMiniAod and any(s in process.source.fileNames[0] for s in theRunH2016): GT = '80X_dataRun2_Prompt_v16'
+            else: GT = '94X_dataRun2_v10'
+        elif is2017:
+            GT = '94X_dataRun2_v11'
+        elif is2018:
+            if theRun2018ABC: GT = '102X_dataRun2_v12'
+            if theRun2018D:   GT = '102X_dataRun2_Prompt_v15'
     elif not(isData):
-        GT = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'#Moriond17 GT
+        if is2016:
+            GT = '94X_mcRun2_asymptotic_v3'
+        elif is2017:
+            GT = '94X_mc2017_realistic_v17'
+        elif is2018:
+            GT = '102X_upgrade2018_realistic_v20'
 else:
     GT = options.PGT
 
@@ -311,18 +430,21 @@ process.load('JetMETCorrections.Configuration.JetCorrectors_cff')
 JECstring = ''
 if RunLocal:
     if isData and (isReReco or isReMiniAod):
-      if any(s in process.source.fileNames[0] for s in theRunBCD):
+      if any(s in process.source.fileNames[0] for s in theRunBCD2016):
         JECstring = "Summer16_23Sep2016BCDV3_DATA" #if isReMiniAod else "Summer16_23Sep2016BCDV3_DATA"
-      if any(s in process.source.fileNames[0] for s in theRunEF):
+      if any(s in process.source.fileNames[0] for s in theRunEF2016):
         JECstring = "Summer16_23Sep2016EFV3_DATA" #if isReMiniAod else "Summer16_23Sep2016EFV3_DATA"
-      if any(s in process.source.fileNames[0] for s in theRunG):
+      if any(s in process.source.fileNames[0] for s in theRunG2016):
         JECstring = "Summer16_23Sep2016GV3_DATA" #if isReMiniAod else "Summer16_23Sep2016GV3_DATA"
-      if any(s in process.source.fileNames[0] for s in theRunH):
+      if any(s in process.source.fileNames[0] for s in theRunH2016):
         JECstring = "Summer16_23Sep2016HV3_DATA" #if isReMiniAod else "Summer16_23Sep2016HV3_DATA"
     elif isData and isPromptReco:
         JECstring = "Spring16_25nsV6_DATA"
     elif not isData:
         JECstring = "Summer16_23Sep2016V3_MC"
+    else:#dummy!
+       print "WARNING! Dummy JEC for other run eras!!!!!!!!!!!"
+       JECstring = "Summer16_23Sep2016HV3_DATA" 
 
 else:
     JECstring = options.PJECstring
@@ -335,7 +457,12 @@ print "JEC ->",JECstring
 # JSON filter
 if isData:
     import FWCore.PythonUtilities.LumiList as LumiList
-    jsonName = "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON"#"Cert_294927-305364_13TeV_PromptReco_Collisions17_JSON"#"Cert_294927-301567_13TeV_PromptReco_Collisions17_JSON" #golden json
+    if is2016:
+        jsonName = "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON"#"Cert_294927-305364_13TeV_PromptReco_Collisions17_JSON"#"Cert_294927-301567_13TeV_PromptReco_Collisions17_JSON" #golden json
+    elif is2017:
+        jsonName = "Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON"
+    elif is2018:
+        jsonName = "Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON"
     process.source.lumisToProcess = LumiList.LumiList(filename = 'data/JSON/'+jsonName+'.txt').getVLuminosityBlockRange()
     print "JSON file loaded: ", jsonName
 
@@ -450,35 +577,45 @@ process.load('RecoBTag/SoftLepton/softPFElectronTagInfos_cfi')
 #-----------------------#
 
 #Jet labels
-if isCalo:
+print "pt_AK4: ", pt_AK4
+if isCalo and pt_AK4<10:
+   print "\n"
+   print "AK4 will be reclustered!"
+   print "pt_AK4 = ", pt_AK4
    chosen_JEC = "AK4PFchs"
    chosen_jet_source = 'ak4PFJetsCHSCustom'
    chosen_label = 'Reclustered'
    chosen_pfcand = 'pfCHS'
    chosen_jets = "patJets"+ chosen_label
-   pt_AK4 = 5
+   #pt_AK4 = 5
 else:
+   print "\n"
+   print "AK4 won't be reclustered!"
+   print "pt_AK4 = ", pt_AK4
+   print "\n"
    chosen_jets = "slimmedJets"
-   pt_AK4 = 15
+   #pt_AK4 = 15
 
 ## packedPFCandidates with CHS are used by both AK4 and AK8
 process.pfCHS = cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedPFCandidates"), cut = cms.string("fromPV"))
 task.add(process.pfCHS)
 
 ## Filter out neutrinos from packed GenParticles
-process.packedGenParticlesForJetsNoNu = cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedGenParticles"), cut = cms.string("abs(pdgId) != 12 && abs(pdgId) != 14 && abs(pdgId) != 16"))
-task.add(process.packedGenParticlesForJetsNoNu)
+if not isData:
+   process.packedGenParticlesForJetsNoNu = cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedGenParticles"), cut = cms.string("abs(pdgId) != 12 && abs(pdgId) != 14 && abs(pdgId) != 16"))
+   task.add(process.packedGenParticlesForJetsNoNu)
 
 ## Define GenJets
-from RecoJets.JetProducers.ak4GenJets_cfi import ak4GenJets
-process.ak4GenJetsNoNu = ak4GenJets.clone(src = 'packedGenParticlesForJetsNoNu')
-task.add(process.ak4GenJetsNoNu)
+if not isData:
+   from RecoJets.JetProducers.ak4GenJets_cfi import ak4GenJets
+   process.ak4GenJetsNoNu = ak4GenJets.clone(src = 'packedGenParticlesForJetsNoNu')
+   task.add(process.ak4GenJetsNoNu)
 
 #-----------------------#
 #    AK4 only for CALO  # #NEW
 #-----------------------#
 
-if isCalo:
+if isCalo and pt_AK4<10:
 
    print "% % % % % % % % % % % % % % % % % % % % % % % % % %"
    print "Performing AK4PFchs jet reclustering, pT = "+str(pt_AK4)+" GeV"
@@ -523,9 +660,10 @@ if isCalo:
 pt_AK8 = 40
 
 ### Gen jets
-from RecoJets.JetProducers.ak4GenJets_cfi import ak4GenJets
-process.ak8GenJetsNoNu = ak4GenJets.clone(src = 'packedGenParticlesForJetsNoNu', rParam = 0.8)
-task.add(process.ak8GenJetsNoNu)
+if not isData:
+   from RecoJets.JetProducers.ak4GenJets_cfi import ak4GenJets
+   process.ak8GenJetsNoNu = ak4GenJets.clone(src = 'packedGenParticlesForJetsNoNu', rParam = 0.8)
+   task.add(process.ak8GenJetsNoNu)
 
 ### Reco AK8 CHS jets
 from RecoJets.JetProducers.ak4PFJets_cfi import ak4PFJets
@@ -870,6 +1008,7 @@ task.add(process.updatedPatJetsTransientCorrectedFinal)
 #---------------------------------------#
 #   B Tag info for softdrop sub jets    #
 #---------------------------------------#
+
 jetSourceSoftDrop = "selectedPatJetsAK8CHSSoftDropSubjets"
 postfixSoftDrop = "SoftDropSubjets"
 
@@ -1043,6 +1182,17 @@ jets_to_be_used = "updatedJetsPUID" #Test, is this readable?
 #       ANALYZER        #
 #-----------------------#
 
+#PU files
+if is2016:
+    data_era = "2016"
+    scenario = "2016_25ns_UltraLegacy_PoissonOOTPU"
+elif is2017:
+    data_era = "2017"
+    scenario = "2017_25ns_UltraLegacy_PoissonOOTPU"
+elif is2018:
+    data_era = "2018"
+    scenario = "2018_25ns_UltraLegacy_PoissonOOTPU"
+
 process.ntuple = cms.EDAnalyzer('Ntuplizer',
     genSet = cms.PSet(
         genProduct = cms.InputTag('generator'),
@@ -1063,17 +1213,18 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     pileupSet = cms.PSet(
         pileup = cms.InputTag('slimmedAddPileupInfo'),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
-        dataFileName     = cms.string('data/PU_69200_ReReco.root'),#updated
-        dataFileNameUp   = cms.string('data/PU_72380_ReReco.root'),#updated
-        dataFileNameDown = cms.string('data/PU_66020_ReReco.root'),#updated
-        mcFileName = cms.string('data/PU_MC_Moriond17.root'),#updated
+        dataFileName     = cms.string('data/PU_69200_%s.root' % (data_era)),#updated
+        dataFileNameUp   = cms.string('data/PU_72380_%s.root' % (data_era)),#updated
+        dataFileNameDown = cms.string('data/PU_66020_%s.root' % (data_era)),#updated
+        mcFileName = cms.string('data/PU_MC_%s.root' % (scenario)),#updated
         dataName = cms.string('pileup'),
-        mcName = cms.string('2016_25ns_Moriond17MC_PoissonOOTPU'),#updated
+        mcName = cms.string(scenario),#updated
     ),
     triggerSet = cms.PSet(
         trigger = cms.InputTag('TriggerResults', '', triggerTag),
         paths = cms.vstring(
 *[
+#2016 menu!!!:
 ### b-like
 #'HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v', 'HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v', 'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v', 'HLT_QuadJet45_TripleBTagCSV_p087_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v',
 
@@ -1086,7 +1237,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
 #'HLT_CaloMHTNoPU90_PFMET90_PFMHT90_IDTight_BTagCSV_p067_v', 'HLT_MET200_v', 'HLT_MET250_v', 'HLT_MET75_IsoTrk50_v', 'HLT_MET90_IsoTrk50_v', 'HLT_MonoCentralPFJet80_PFMETNoMu110_PFMHTNoMu110_IDTight_v', 'HLT_MonoCentralPFJet80_PFMETNoMu120_PFMHTNoMu120_IDTight_v', 'HLT_PFMET110_PFMHT110_IDTight_v', 'HLT_PFMET120_PFMHT120_IDTight_v', 'HLT_PFMET170_HBHECleaned_v', 'HLT_PFMET300_v', 'HLT_PFMETNoMu110_PFMHTNoMu110_IDTight_v', 'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
 
 ###production for MET
-'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v'
+#'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v'
 
 ### All studied triggers:
 # 'HLT_Ele27_WPTight_Gsf_v',  'HLT_Ele25_eta2p1_WPTight_Gsf_v',  'HLT_Ele27_eta2p1_WPTight_Gsf_v',  'HLT_Ele32_eta2p1_WPTight_Gsf_v',  'HLT_Ele27_WPLoose_Gsf_WHbbBoost_v',  'HLT_Ele115_CaloIdVT_GsfTrkIdT_v',  'HLT_IsoMu24_v',  'HLT_IsoMu22_eta2p1_v',  'HLT_IsoTkMu24_v',  'HLT_IsoMu27_v',  'HLT_IsoTkMu22_eta2p1_v',  'HLT_IsoTkMu27_v',  'HLT_Mu50_v',  'HLT_TkMu50_v',  'HLT_Mu55_v',  'HLT_MonoCentralPFJet80_PFMETNoMu120_PFMHTNoMu120_IDTight_v',  'HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v',  'HLT_Mu6_PFHT200_PFMET100_v',  'HLT_Mu15_IsoVVVL_PFHT400_v',  'HLT_Ele15_IsoVVVL_PFHT400_v',  'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165_v',  'HLT_Mu50_IsoVVVL_PFHT400_v',  'HLT_Ele50_IsoVVVL_PFHT400_v',  'HLT_Mu8_Ele8_CaloIdM_TrackIdM_Mass8_PFHT300_v',  'HLT_Mu30_eta2p1_PFJet150_PFJet50_v',  'HLT_DoubleMu3_PFMET50_v',  'HLT_Mu15_IsoVVVL_PFHT400_PFMET50_v',  'HLT_Ele15_IsoVVVL_PFHT400_PFMET50_v',  'HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v',  'HLT_Mu38NoFiltersNoVtx_DisplacedJet60_Loose_v',  'HLT_LooseIsoPFTau50_Trk30_eta2p1_MET90_v',  'HLT_LooseIsoPFTau50_Trk30_eta2p1_MET110_v',  'HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120_v',  'HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1_v',  'HLT_IsoMu19_eta2p1_LooseIsoPFTau20_v',  'HLT_IsoMu21_eta2p1_LooseIsoPFTau20_SingleL1_v',  'HLT_Ele27_WPTight_Gsf_L1JetTauSeeded_v',  'HLT_VLooseIsoPFTau140_Trk50_eta2p1_v',  'HLT_Mu30_TkMu11_v',  'HLT_Mu17_Mu8_SameSign_DZ_v',  'HLT_Mu40_TkMu11_v',  'HLT_Mu20_Mu10_SameSign_DZ_v',  'HLT_DoubleMu8_Mass8_PFHT300_v',  'HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v',  'HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v',  'HLT_AK8DiPFJet280_200_TrimMass30_BTagCSV_p20_v',  'HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v',  'HLT_AK8PFJet360_TrimMass30_v',  'HLT_AK8PFJet450_v',  'HLT_AK8PFJet500_v',  'HLT_BTagMu_AK8Jet300_Mu5_v',  'HLT_BTagMu_Jet300_Mu5_v',  'HLT_CaloJet500_NoJetID_v',  'HLT_DiCentralPFJet170_CFMax0p1_v',  'HLT_DiCentralPFJet330_CFMax0p5_v',  'HLT_DoubleEle8_CaloIdM_TrackIdM_Mass8_PFHT300_v',  'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v',  'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v',  'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v',  'HLT_DoubleMu3_PFMET50_v',  'HLT_DoubleMu8_Mass8_PFHT300_v',  'HLT_Ele115_CaloIdVT_GsfTrkIdT_v',  'HLT_Ele15_IsoVVVL_PFHT400_v',  'HLT_HT350_DisplacedDijet40_DisplacedTrack_v',  'HLT_HT350_DisplacedDijet80_DisplacedTrack_v',  'HLT_HT350_DisplacedDijet80_Tight_DisplacedTrack_v',  'HLT_HT650_DisplacedDijet80_Inclusive_v',  'HLT_HT650_v',  'HLT_HT750_DisplacedDijet80_Inclusive_v',  'HLT_LooseIsoPFTau50_Trk30_eta2p1_MET110_v',  'HLT_LooseIsoPFTau50_Trk30_eta2p1_MET120_v',  'HLT_LooseIsoPFTau50_Trk30_eta2p1_MET90_v',  'HLT_MET300_v',  'HLT_Mu10_TrkIsoVVL_DiPFJet40_DEta3p5_MJJ750_HTT350_PFMETNoMu60_v',  'HLT_Mu15_IsoVVVL_PFHT400_PFMET50_v',  'HLT_Mu15_IsoVVVL_PFHT400_v',  'HLT_Mu15_IsoVVVL_PFHT600_v',  'HLT_Mu17_Mu8_SameSign_DZ_v',  'HLT_Mu25_TkMu0_dEta18_Onia_v',  'HLT_Mu30_TkMu11_v',  'HLT_Mu38NoFiltersNoVtx_DisplacedJet60_Loose_v',  'HLT_Mu38NoFiltersNoVtxDisplaced_DisplacedJet60_Loose_v',  'HLT_Mu38NoFiltersNoVtxDisplaced_DisplacedJet60_Tight_v',  'HLT_Mu40_eta2p1_PFJet200_PFJet50_v',  'HLT_Mu6_PFHT200_PFMET100_v',  'HLT_Mu8_Ele8_CaloIdM_TrackIdM_Mass8_PFHT300_v',  'HLT_Mu8_TrkIsoVVL_DiPFJet40_DEta3p5_MJJ750_HTT300_PFMETNoMu60_v',  'HLT_PFHT350_DiPFJetAve90_PFAlphaT0p53_v',  'HLT_PFHT400_DiPFJetAve90_PFAlphaT0p52_v',  'HLT_PFHT400_SixJet30_DoubleBTagCSV_p056_v',  'HLT_PFHT450_SixJet40_BTagCSV_p056_v',  'HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v',  'HLT_PFHT650_WideJetMJJ950DEtaJJ1p5_v',  'HLT_PFHT900_v',  'HLT_PFJet450_v',  'HLT_PFJet500_v',  'HLT_PFMET400_v',  'HLT_PFMET500_v',  'HLT_PFMET600_v',  'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',  'HLT_QuadJet45_TripleBTagCSV_p087_v',  'HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v',  'HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v',  'HLT_Rsq0p25_v',  'HLT_Rsq0p30_v',  'HLT_RsqMR270_Rsq0p09_MR200_4jet_v',  'HLT_TkMu50_v',  'HLT_TrkMu17_DoubleTrkMu8NoFiltersNoVtx_v',  'HLT_VBF_DisplacedJet40_DisplacedTrack_2TrackIP2DSig5_v',  'HLT_VBF_DisplacedJet40_DisplacedTrack_v',  'HLT_VBF_DisplacedJet40_VTightID_DisplacedTrack_v',  'HLT_VBF_DisplacedJet40_VTightID_Hadronic_v',  'HLT_VBF_DisplacedJet40_VVTightID_DisplacedTrack_v',  'HLT_VBF_DisplacedJet40_VVTightID_Hadronic_v',  'HLT_VLooseIsoPFTau140_Trk50_eta2p1_v',  'HLT_PFMETNoMu110_PFMHTNoMu110_IDTight_v',  'HLT_PFMET110_PFMHT110_IDTight_v',  'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',  'HLT_PFMET120_PFMHT120_IDTight_v',  'HLT_MonoCentralPFJet80_PFMETNoMu110_PFMHTNoMu110_IDTight_v',  'HLT_MonoCentralPFJet80_PFMETNoMu120_PFMHTNoMu120_IDTight_v',  'HLT_PFMET170_HBHECleaned_v',  'HLT_PFHT300_PFMET110_v',  'HLT_CaloMHTNoPU90_PFMET90_PFMHT90_IDTight_BTagCSV_p067_v',  'HLT_DiPFJet40_DEta3p5_MJJ600_PFMETNoMu140_v',  'HLT_MET200_v',  'HLT_RsqMR270_Rsq0p09_MR200_v',  'HLT_PFHT250_DiPFJetAve90_PFAlphaT0p55_v',  'HLT_PFHT200_DiPFJetAve90_PFAlphaT0p63_v',  'HLT_MET250_v',  'HLT_PFHT250_DiPFJetAve90_PFAlphaT0p58_v',   'HLT_PFHT300_DiPFJetAve90_PFAlphaT0p54_v',  'HLT_PFMET300_v',  'HLT_MET75_IsoTrk50_v',  'HLT_MET90_IsoTrk50_v',
@@ -1096,6 +1247,93 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
 ###TEST
 ##'HLT_AK8PFJet450_v',###########TEST
 #'HLT_VBF_DisplacedJet40_VTightID_Hadronic_v', 'HLT_VBF_DisplacedJet40_VVTightID_Hadronic_v'#,'HLT_AK4PFJet30_v7'
+
+#2018 menu
+#'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',
+#'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',
+#'HLT_HT500_DisplacedDijet40_DisplacedTrack_v',
+#'HLT_HT650_DisplacedDijet60_Inclusive_v',
+#'HLT_AK8PFHT800_TrimMass50_v',
+#'HLT_AK8PFHT850_TrimMass50_v',
+#'HLT_AK8PFHT900_TrimMass50_v',
+#'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p17_v',
+#'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p1_v',
+#'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2_v',
+#'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np4_v',
+#'HLT_AK8PFJet360_TrimMass30_v',
+#'HLT_AK8PFJet380_TrimMass30_v',
+#'HLT_AK8PFJet400_TrimMass30_v',
+#'HLT_AK8PFJet420_TrimMass30_v',
+#'HLT_AK8PFJet500_v',
+#'HLT_AK8PFJet550_v',
+#'HLT_AK8PFJetFwd500_v',
+#'HLT_CaloJet500_NoJetID_v',
+#'HLT_CaloJet550_NoJetID_v',
+#'HLT_DoublePFJets116MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
+#'HLT_DoublePFJets128MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
+#'HLT_Mu12_DoublePFJets40MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
+#'HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5_v',
+#'HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5_v',
+#'HLT_PFHT400_FivePFJet_120_120_60_30_30_DoublePFBTagDeepCSV_4p5_v',
+#'HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94_v',
+#'HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59_v',
+#'HLT_PFHT500_PFMET100_PFMHT100_IDTight_v',
+#'HLT_PFHT500_PFMET110_PFMHT110_IDTight_v',
+#'HLT_PFHT700_PFMET85_PFMHT85_IDTight_v',
+#'HLT_PFHT700_PFMET95_PFMHT95_IDTight_v',
+#'HLT_PFHT800_PFMET75_PFMHT75_IDTight_v',
+#'HLT_PFHT800_PFMET85_PFMHT85_IDTight_v',
+#'HLT_PFJet500_v',
+#'HLT_PFJet550_v',
+#'HLT_PFJetFwd450_v',
+#'HLT_PFJetFwd500_v',
+#'HLT_QuadPFJet103_88_75_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
+#'HLT_QuadPFJet103_88_75_15_PFBTagDeepCSV_1p3_VBF2_v',
+#'HLT_QuadPFJet105_88_76_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
+#'HLT_QuadPFJet105_88_76_15_PFBTagDeepCSV_1p3_VBF2_v',
+#'HLT_QuadPFJet111_90_80_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
+#'HLT_QuadPFJet111_90_80_15_PFBTagDeepCSV_1p3_VBF2_v',
+#'HLT_QuadPFJet98_83_71_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
+#'HLT_QuadPFJet98_83_71_15_PFBTagDeepCSV_1p3_VBF2_v',
+#'HLT_Rsq0p35_v',
+#'HLT_Rsq0p40_v',
+#'HLT_RsqMR300_Rsq0p09_MR200_4jet_v',
+#'HLT_RsqMR300_Rsq0p09_MR200_v',
+#'HLT_RsqMR320_Rsq0p09_MR200_4jet_v',
+#'HLT_RsqMR320_Rsq0p09_MR200_v',
+#'HLT_CaloMET350_HBHECleaned_v',
+#'HLT_DiJet110_35_Mjj650_PFMET110_v',
+#'HLT_DiJet110_35_Mjj650_PFMET120_v',
+#'HLT_DiJet110_35_Mjj650_PFMET130_v',
+#'HLT_MET105_IsoTrk50_v',
+#'HLT_MET120_IsoTrk50_v',
+#'HLT_MonoCentralPFJet80_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
+#'HLT_MonoCentralPFJet80_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
+#'HLT_MonoCentralPFJet80_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
+#'HLT_PFMET110_PFMHT110_IDTight_CaloBTagDeepCSV_3p1_v',
+#'HLT_PFMET120_PFMHT120_IDTight_CaloBTagDeepCSV_3p1_v',
+#'HLT_PFMET120_PFMHT120_IDTight_PFHT60_v',
+#'HLT_PFMET120_PFMHT120_IDTight_v',
+#'HLT_PFMET130_PFMHT130_IDTight_CaloBTagDeepCSV_3p1_v',
+#'HLT_PFMET130_PFMHT130_IDTight_v',
+#'HLT_PFMET140_PFMHT140_IDTight_CaloBTagDeepCSV_3p1_v',
+#'HLT_PFMET140_PFMHT140_IDTight_v',
+#'HLT_PFMET200_HBHE_BeamHaloCleaned_v',
+#'HLT_PFMET250_HBHECleaned_v',
+#'HLT_PFMET300_HBHECleaned_v',
+'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v',
+'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
+'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
+'HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
+#'HLT_PFMETTypeOne140_PFMHT140_IDTight_v',
+#'HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v',
+#'HLT_TripleJet110_35_35_Mjj650_PFMET110_v',
+#'HLT_TripleJet110_35_35_Mjj650_PFMET120_v',
+#'HLT_TripleJet110_35_35_Mjj650_PFMET130_v',
+###production for MET
+#'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
+#'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
+#'HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
 ]
         ),
         metfilters = cms.InputTag('TriggerResults', '', filterString),
@@ -1428,6 +1666,13 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         pfCandidates = cms.InputTag('packedPFCandidates'),
         lostTracks = cms.InputTag('lostTracks'),
     ),
+    #Define gen decay:
+    idLLP = cms.int32(idLLP),
+    idHiggs = cms.int32(idHiggs),
+    idMotherB = cms.int32(idMotherB),
+    statusLLP = cms.int32(statusLLP),
+    statusHiggs = cms.int32(statusHiggs),
+
     minGenBpt = cms.double(0.),#gen b quarks in acceptance
     maxGenBeta = cms.double(999),#gen b quarks in acceptance
     #invmassVBF = cms.double(300.),#https://indico.desy.de/indico/event/20983/contribution/0/material/slides/0.pdf
@@ -1449,7 +1694,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     ##
     writeOnlyTriggerEvents = cms.bool(True),#slims down ntuples a lot
     writeOnlyL1FilterEvents = cms.bool(False),#slims down ntuples a lot
-    writeOnlyisVBFEvents = cms.bool(True),#slims down ntuples a lot
+    writeOnlyisVBFEvents = cms.bool(isVBF),#slims down ntuples a lot
     writeAllJets = cms.bool(False),#used for trigger studies
     writeFatJets = cms.bool(True),#not needed now
     ## PFCandidates:
@@ -1465,12 +1710,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     performPreFiringStudies = cms.bool(True if ('unprefirable' in process.source.fileNames[0]) else False),
     performVBF = cms.bool(isVBF),
     performggH = cms.bool(isggH),
-    ##
-    ##btagToken = cms.untracked.InputTag("pfTrackCountingHighEffBJetTagsFinal","","ntuple"),
     verbose = cms.bool(False),
     verboseTrigger  = cms.bool(False),
-    svTagInfoProducer = cms.untracked.InputTag("inclusiveSecondaryVertexFinderTagInfos"),
-    updatedPatJets = cms.untracked.InputTag("updatedPatJet"),
     signal = cms.bool(isSignal),
     iscalo = cms.bool(isCalo),
 )
