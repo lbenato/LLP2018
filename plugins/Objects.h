@@ -761,7 +761,7 @@ CustomFatJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), ptRaw(-
 
 
 struct CaloJetType {
-CaloJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), emEnergyFraction(-1.), emEnergyInEB(-1.), emEnergyInEE(-1.), emEnergyInHF(-1.), energyFractionHadronic(-1.), hadEnergyInHB(-1.), hadEnergyInHE(-1.), hadEnergyInHF(-1.), hadEnergyInHO(-1.), longLived(false), maxEInEmTowers(-1.), maxEInHadTowers(-1.), n60(-1), n90(-1), nConstituents(-1), nPasses(-1), isGenMatched(false)  {}
+CaloJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), emEnergyFraction(-1.), emEnergyInEB(-1.), emEnergyInEE(-1.), emEnergyInHF(-1.), energyFractionHadronic(-1.), hadEnergyInHB(-1.), hadEnergyInHE(-1.), hadEnergyInHF(-1.), hadEnergyInHO(-1.), longLived(false), maxEInEmTowers(-1.), maxEInHadTowers(-1.), n60(-1), n90(-1), nConstituents(-1), nPasses(-1), isGenMatched(false), genbRadius2D (-1000.), genbEta (-999.)  {}
 
     float pt;
     float eta;
@@ -785,6 +785,8 @@ CaloJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), emEnergyFrac
     int nConstituents;
     int nPasses;
     bool isGenMatched;
+    float genbRadius2D;
+    float genbEta;
 };
 
 
@@ -957,5 +959,28 @@ SimplifiedJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.),cHadE(-
 
 };
 
+struct DT4DSegmentType {
+DT4DSegmentType(): eta(-9.), phi(-9.), wheel(-9), sector(-9), station(-9){}
+
+    float eta;
+    float phi;
+    int wheel;
+    int sector;
+    int station;
+
+};
+
+struct CSCSegmentType {
+CSCSegmentType(): eta(-9.), phi(-9.), time(-9.), layer(-9), ring(-9) , station(-9), endcap(-9){}
+
+    float eta;
+    float phi;
+    float time;
+    int layer;
+    int ring;
+    int station;
+    int endcap;
+
+};
 
 #endif

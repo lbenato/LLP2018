@@ -1606,7 +1606,7 @@ std::string ObjectsFormat::ListTriggerObjectType() {return "pt/F:eta/F:phi/F:mas
 //    Calo Jets      //
 //*******************//
 
-void ObjectsFormat::FillCaloJetType(CaloJetType& I, const reco::CaloJet* R, bool isMC, bool isMatched) {
+void ObjectsFormat::FillCaloJetType(CaloJetType& I, const reco::CaloJet* R, bool isMC, bool isMatched, float genbRadius2D, float genbEta) {
     if(!R) return;
     I.pt          = R->pt();
     I.eta         = R->eta();
@@ -1630,6 +1630,8 @@ void ObjectsFormat::FillCaloJetType(CaloJetType& I, const reco::CaloJet* R, bool
     I.nConstituents    = R->nConstituents();
     I.nPasses          = R->nPasses();
     I.isGenMatched     = isMatched;
+    I.genbRadius2D     = genbRadius2D;
+    I.genbEta          = genbEta;
 }
 
 void ObjectsFormat::ResetCaloJetType(CaloJetType& I) {
@@ -1654,10 +1656,13 @@ void ObjectsFormat::ResetCaloJetType(CaloJetType& I) {
     I.n90              = -1;
     I.nConstituents    = -1;
     I.nPasses          = -1;
-    I.isGenMatched        = false;
+    I.isGenMatched     = false;
+    I.genbRadius2D     = -1000.;
+    I.genbEta          = -999.;
 }
 
-std::string ObjectsFormat::ListCaloJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:emEnergyFraction/F:emEnergyInEB/F:emEnergyInEE/F:emEnergyInHF/F:energyFractionHadronic/F:hadEnergyInHB/F:hadEnergyInHE/F:hadEnergyInHF/F:hadEnergyInHO/F:longLived/O:maxEInEmTowers/F:maxEInHadTowers/F:n60/I:n90/I:nConstituents/I:nPasses/I:isGenMatched/O";}
+std::string ObjectsFormat::ListCaloJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:emEnergyFraction/F:emEnergyInEB/F:emEnergyInEE/F:emEnergyInHF/F:energyFractionHadronic/F:hadEnergyInHB/F:hadEnergyInHE/F:hadEnergyInHF/F:hadEnergyInHO/F:longLived/O:maxEInEmTowers/F:maxEInHadTowers/F:n60/I:n90/I:nConstituents/I:nPasses/I:isGenMatched/O:genbRadius2D/F:genbEta/F";}
+
 
 
 //**************************//
@@ -1990,3 +1995,58 @@ void ObjectsFormat::ResetSimplifiedJetType(SimplifiedJetType& I) {
 }
 
 std::string ObjectsFormat::ListSimplifiedJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:cHadE/F:nHadE/F:cHadEFrac/F:nHadEFrac/F:nEmE/F:nEmEFrac/F:cEmE/F:cEmEFrac/F:cmuE/F:cmuEFrac/F:muE/F:muEFrac/F:eleE/F:eleEFrac/F:eleMulti/F:photonE/F:photonEFrac/F:photonMulti/F:cHadMulti/F:nHadMulti/F:npr/F:cMulti/F:nMulti/F:isLoose/O:isMedium/O:isTight/O:isGenMatched/I:nSelectedTracks/I:nConstituents/I:TriggerMatched_VBFJet/I:TriggerMatched_DisplacedJet/I:TriggerMatched_TripleJet50/I";}
+
+
+//*****************************//
+////        DT4DSegments         //
+////*****************************//
+
+
+void ObjectsFormat::FillDT4DSegmentType(DT4DSegmentType& I, const DTRecSegment4D* R, const GlobalPoint* P) {
+    if(!R) return;
+    I.eta         = P->eta();
+    I.phi         = P->phi();
+    I.sector      = R->chamberId().sector();
+    I.station      = R->chamberId().station();
+    I.wheel      = R->chamberId().wheel();
+
+
+}
+
+void ObjectsFormat::ResetDT4DSegmentType(DT4DSegmentType& I) {
+    I.eta         = -9.;
+    I.phi         = -9.;
+    I.sector      = -9;
+    I.station      = -9;
+    I.wheel      = -9;
+
+}
+
+std::string ObjectsFormat::ListDT4DSegmentType() {return "eta/F:phi/F:sector/I:station/I:wheel/I";}
+
+
+
+void ObjectsFormat::FillCSCSegmentType(CSCSegmentType& I, const CSCSegment* R, const GlobalPoint* P) {
+    if(!R) return;
+    I.eta         = P->eta();
+    I.phi         = P->phi();
+    I.time        = R->time();
+    I.layer       = R->cscDetId().layer();
+    I.ring        = R->cscDetId().ring();
+    I.station     = R->cscDetId().station();
+    I.endcap       = R->cscDetId().endcap();
+
+}
+
+void ObjectsFormat::ResetCSCSegmentType(CSCSegmentType& I) {
+    I.eta         = -9.;
+    I.phi         = -9.;
+    I.time        = -9.;
+    I.layer       = -9;
+    I.ring        = -9;
+    I.station     = -9;
+    I.endcap      = -9;
+
+}
+
+std::string ObjectsFormat::ListCSCSegmentType() {return "eta/F:phi/F:time/F:layer/I:ring/I:station/I:endcap/I";}
