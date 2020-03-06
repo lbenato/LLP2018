@@ -48,7 +48,11 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     PFCandidatePSet(iConfig.getParameter<edm::ParameterSet>("pfCandidateSet")),
 
     //JetTagToken(CColl.consumes<reco::JetTagCollection>(iConfig.getParameter<edm::InputTag>("jetTagToken"))),//here????
-
+    idLLP(iConfig.getParameter<int>("idLLP")),
+    idHiggs(iConfig.getParameter<int>("idHiggs")),
+    idMotherB(iConfig.getParameter<int>("idMotherB")),
+    statusLLP(iConfig.getParameter<int>("statusLLP")),
+    statusHiggs(iConfig.getParameter<int>("statusHiggs")),
     MinGenBpt(iConfig.getParameter<double>("minGenBpt")),
     MaxGenBeta(iConfig.getParameter<double>("maxGenBeta")),
     InvmassVBF(iConfig.getParameter<double>("invmassVBF")),
@@ -190,16 +194,16 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     // Initialize types
     ObjectsFormat::ResetMEtType(MEt);
-    //for(int i = 0; i < WriteNJets; i++) ObjectsFormat::ResetJetType(CHSJets[i]);
-    //    for(int i = 0; i < WriteNFatJets; i++) ObjectsFormat::ResetFatJetType(CHSFatJets[i]);
-    for(int i = 0; i < WriteNMatchedJets; i++) ObjectsFormat::ResetJetType(MatchedCHSJets[i]);
-    //for(int i = 0; i < WriteNMatchedJets; i++) ObjectsFormat::ResetCaloJetType(MatchedCaloJets[i]);
-    //for(int i = 0; i < WriteNGenBquarks; i++) ObjectsFormat::ResetGenPType(GenBquarks[i]);
-    //for(int i = 0; i < WriteNGenLongLiveds; i++) ObjectsFormat::ResetGenPType(GenLongLiveds[i]);
-    ////for(int i = 0; i < WriteNLeptons; i++) ObjectsFormat::ResetLeptonType(Leptons[i]);
-    //for(int i = 0; i < WriteNLeptons; i++) ObjectsFormat::ResetLeptonType(Muons[i]);
-    //for(int i = 0; i < WriteNLeptons; i++) ObjectsFormat::ResetLeptonType(Electrons[i]);
-    ObjectsFormat::ResetGenPType(GenHiggs);
+    ////for(int i = 0; i < WriteNJets; i++) ObjectsFormat::ResetJetType(CHSJets[i]);
+    ////    for(int i = 0; i < WriteNFatJets; i++) ObjectsFormat::ResetFatJetType(CHSFatJets[i]);
+    //for(int i = 0; i < WriteNMatchedJets; i++) ObjectsFormat::ResetJetType(MatchedCHSJets[i]);
+    ////for(int i = 0; i < WriteNMatchedJets; i++) ObjectsFormat::ResetCaloJetType(MatchedCaloJets[i]);
+    ////for(int i = 0; i < WriteNGenBquarks; i++) ObjectsFormat::ResetGenPType(GenBquarks[i]);
+    ////for(int i = 0; i < WriteNGenLongLiveds; i++) ObjectsFormat::ResetGenPType(GenLongLiveds[i]);
+    //////for(int i = 0; i < WriteNLeptons; i++) ObjectsFormat::ResetLeptonType(Leptons[i]);
+    ////for(int i = 0; i < WriteNLeptons; i++) ObjectsFormat::ResetLeptonType(Muons[i]);
+    ////for(int i = 0; i < WriteNLeptons; i++) ObjectsFormat::ResetLeptonType(Electrons[i]);
+    ////ObjectsFormat::ResetGenPType(GenHiggs);
     ObjectsFormat::ResetCandidateType(VBF);
     ObjectsFormat::ResetCandidateType(Z);
     ObjectsFormat::ResetCandidateType(W);
@@ -246,6 +250,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     EventWeight *= GenEventWeight;
 
     if(PerformVBF and PerformggH) throw cms::Exception("Configuration") << "VBF and ggH selections can't be performed together! Please choose one option only!";
+
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // Trigger and MET filters
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
 
     // Trigger and MET filters
     if(isVerbose) std::cout << "Trigger and met filters" << std::endl;
@@ -333,19 +343,20 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "Gen Particles" << std::endl;
 
     GenVBFquarks.clear();
+    GenHiggs.clear();
     GenLLPs.clear();
     GenBquarks.clear();
 
     std::vector<reco::GenParticle> GenVBFVect = theGenAnalyzer->FillVBFGenVector(iEvent);
-    std::vector<reco::GenParticle> GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,25,22);
-    std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,9000006,22);
+    std::vector<reco::GenParticle> GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idHiggs,statusHiggs);
+    std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idLLP,statusLLP);
     std::vector<reco::GenParticle> GenBquarksVect;
 
     nGenLL = GenLongLivedVect.size();
 
     if(nGenLL>0)
       {
-	GenBquarksVect = theGenAnalyzer->FillGenVectorByIdStatusAndMotherAndKin(iEvent,5,23,9000006,float(MinGenBpt),float(MaxGenBeta));
+	GenBquarksVect = theGenAnalyzer->FillGenVectorByIdStatusAndMotherAndKin(iEvent,5,23,idMotherB,float(MinGenBpt),float(MaxGenBeta));
       }
     else
       {
@@ -355,6 +366,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     nGenBquarks = GenBquarksVect.size();
 
     for(unsigned int i = 0; i < GenVBFVect.size(); i++) GenVBFquarks.push_back( GenPType() );
+    for(unsigned int i = 0; i < GenHiggsVect.size(); i++) GenHiggs.push_back( GenPType() );
     for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) GenLLPs.push_back( GenPType() );
     for(unsigned int i = 0; i < GenBquarksVect.size(); i++) GenBquarks.push_back( GenPType() );
 
@@ -390,7 +402,11 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     EventWeight *= ZewkWeight * WewkWeight;
 
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
     // Pu weight and number of vertices
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
     if(isVerbose) std::cout << "Pile-up" << std::endl;
     PUWeight     = thePileupAnalyzer->GetPUWeight(iEvent);//calculates pileup weights
     PUWeightUp   = thePileupAnalyzer->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
@@ -399,20 +415,28 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     EventWeight *= PUWeight;
 
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
     // Missing Energy
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
     if(isVerbose) std::cout << "MET" << std::endl;
     pat::MET MET = theCHSJetAnalyzer->FillMetVector(iEvent);
     pat::MET Neutrino(MET);
 
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
     // HT
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
     if(isVerbose) std::cout << "HT" << std::endl;
     HT = theCHSJetAnalyzer->CalculateHT(iEvent,3,15,3.);
 
-    if(HT<100) return;//Avoid events with low HT
-    if(isCalo && MET.pt()<120) return;//Avoid events with low MET for calo analysis
-    //Cut on MET relaxed; signal efficiency can be recovered along MET turn on
-
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
     // Electrons
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
     if(isVerbose) std::cout << "Electrons" << std::endl;
     std::vector<pat::Electron> ElecVect = theElectronAnalyzer->FillElectronVector(iEvent);
     std::vector<pat::Electron> TightElecVect;
@@ -427,7 +451,11 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
     nElectrons = ElecVect.size();
 
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
     // Muons
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
     if(isVerbose) std::cout << "Muons" << std::endl;
     std::vector<pat::Muon> MuonVect = theMuonAnalyzer->FillMuonVector(iEvent);
     std::vector<pat::Muon> TightMuonVect;
@@ -441,17 +469,38 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
     nMuons = MuonVect.size();
 
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
     // Taus
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
     if(isVerbose) std::cout << "Taus" << std::endl;
     std::vector<pat::Tau> TauVect = theTauAnalyzer->FillTauVector(iEvent);
     theTauAnalyzer->CleanTausFromMuons(TauVect, MuonVect, 0.4);
     theTauAnalyzer->CleanTausFromElectrons(TauVect, ElecVect, 0.4);
     nTaus = TauVect.size();
 
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
     // Photons
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
     if(isVerbose) std::cout << "Photons" << std::endl;
     std::vector<pat::Photon> PhotonVect = thePhotonAnalyzer->FillPhotonVector(iEvent);
     nPhotons = PhotonVect.size();
+
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // Preselections
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    //if(EventNumber!=44169) return;
+    if(HT<100) return;//Avoid events with low HT//WAIT!!
+    if(isCalo && MET.pt()<120) return;//Avoid events with very low MET for calo analysis
+    if(isCalo && nMuons>0) return;//Veto leptons and photons!
+    if(isCalo && nTaus>0) return;//Veto leptons and photons!
+    if(isCalo && nElectrons>0) return;//Veto leptons and photons!
+    if(isCalo && nPhotons>0) return;//Veto leptons and photons!
 
 
     //------------------------------------------------------------------------------------------
@@ -692,7 +741,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	for(unsigned int a = 0; a<AllJetsVect.size(); a++)
 	  {
 	    VBF_current_delta_R_AllJets = fabs(reco::deltaR(AllJetsVect[a].eta(),AllJetsVect[a].phi(),GenVBFVect[b].eta(),GenVBFVect[b].phi()));
-	    //if(VBF_current_delta_R_AllJets<0.4 && VBF_current_delta_R_AllJets<delta_R_AllJets && AllJetsVect[a].genParton() && (fabs(AllJetsVect[a].hadronFlavour())==5 || fabs(AllJetsVect[a].partonFlavour())==5) && abs( Utilities::FindMotherId(AllJetsVect[a].genParton()) )==9000006)//removed gen parton 5
+	    //if(VBF_current_delta_R_AllJets<0.4 && VBF_current_delta_R_AllJets<delta_R_AllJets && AllJetsVect[a].genParton() && (fabs(AllJetsVect[a].hadronFlavour())==5 || fabs(AllJetsVect[a].partonFlavour())==5) && abs( Utilities::FindMotherId(AllJetsVect[a].genParton()) )==idMotherB)//removed gen parton 5
 	    if(VBF_current_delta_R_AllJets<0.4 && VBF_current_delta_R_AllJets<VBF_delta_R_AllJets)
 	      //this implements all the reasonable possibilities!
 	      {
@@ -1025,7 +1074,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	for(unsigned int a = 0; a<CHSJetsVect.size(); a++)
 	  {
 	    current_delta_R_CHSJets = fabs(reco::deltaR(CHSJetsVect[a].eta(),CHSJetsVect[a].phi(),GenBquarksVect[b].eta(),GenBquarksVect[b].phi()));
-	    if(current_delta_R_CHSJets<0.4 && current_delta_R_CHSJets<delta_R_CHSJets && CHSJetsVect[a].genParton() && (fabs(CHSJetsVect[a].hadronFlavour())==5 || fabs(CHSJetsVect[a].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==9000006)
+	    if(current_delta_R_CHSJets<0.4 && current_delta_R_CHSJets<delta_R_CHSJets && CHSJetsVect[a].genParton() && (fabs(CHSJetsVect[a].hadronFlavour())==5 || fabs(CHSJetsVect[a].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB)
 	      //this implements all the reasonable possibilities!
 	      {
 	      delta_R_CHSJets = min(delta_R_CHSJets,current_delta_R_CHSJets);
@@ -1069,7 +1118,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	int number_bs_matched_to_CHSJet = 0;
 	for (unsigned int b = 0; b<GenBquarksVect.size(); b++){
 	  current_delta_R_CHSJets = fabs(reco::deltaR(CHSJetsVect[r].eta(),CHSJetsVect[r].phi(),GenBquarksVect[b].eta(),GenBquarksVect[b].phi()));
-	  if(current_delta_R_CHSJets<0.4 && CHSJetsVect[r].genParton() && (fabs(CHSJetsVect[r].hadronFlavour())==5 || fabs(CHSJetsVect[r].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[r].genParton()) )==9000006)
+	  if(current_delta_R_CHSJets<0.4 && CHSJetsVect[r].genParton() && (fabs(CHSJetsVect[r].hadronFlavour())==5 || fabs(CHSJetsVect[r].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[r].genParton()) )==idMotherB)
 	    //this implements all the reasonable possibilities!
 	    {
 	      number_bs_matched_to_CHSJet += 1;
@@ -1655,7 +1704,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	      {
 		current_delta_R_CHSAK8Jets = fabs(reco::deltaR(CHSFatJetsVect[a].eta(),CHSFatJetsVect[a].phi(),GenBquarksVect[b].eta(),GenBquarksVect[b].phi()));
 		//		std::cout << "gen info " << CHSFatJetsVect[a].genParton() << "  " << fabs(CHSFatJetsVect[a].hadronFlavour()) << "  " << fabs(CHSFatJetsVect[a].partonFlavour()) << "  " << abs( Utilities::FindMotherId(CHSFatJetsVect[a].genParton()) ) << std::endl;
-		if(current_delta_R_CHSAK8Jets<0.8 && current_delta_R_CHSAK8Jets<delta_R_CHSAK8Jets && CHSFatJetsVect[a].genParton() && (fabs(CHSFatJetsVect[a].hadronFlavour())==5 || fabs(CHSFatJetsVect[a].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSFatJetsVect[a].genParton()) )==9000006)
+		if(current_delta_R_CHSAK8Jets<0.8 && current_delta_R_CHSAK8Jets<delta_R_CHSAK8Jets && CHSFatJetsVect[a].genParton() && (fabs(CHSFatJetsVect[a].hadronFlavour())==5 || fabs(CHSFatJetsVect[a].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSFatJetsVect[a].genParton()) )==idMotherB)
 		  //this implements all the reasonable possibilities, is also working for AK8 jets!
 		  {
 		    delta_R_CHSAK8Jets = min(delta_R_CHSAK8Jets,current_delta_R_CHSAK8Jets);
@@ -1699,7 +1748,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	    int number_bs_matched_to_FatJet = 0;
 	    for (unsigned int b = 0; b<GenBquarksVect.size(); b++){
 	      current_delta_R_CHSJets = fabs(reco::deltaR(CHSFatJetsVect[r].eta(),CHSFatJetsVect[r].phi(),GenBquarksVect[b].eta(),GenBquarksVect[b].phi()));
-	      if(current_delta_R_CHSJets<0.8 && CHSFatJetsVect[r].genParton() && (fabs(CHSFatJetsVect[r].hadronFlavour())==5 || fabs(CHSFatJetsVect[r].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSFatJetsVect[r].genParton()) )==9000006)
+	      if(current_delta_R_CHSJets<0.8 && CHSFatJetsVect[r].genParton() && (fabs(CHSFatJetsVect[r].hadronFlavour())==5 || fabs(CHSFatJetsVect[r].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSFatJetsVect[r].genParton()) )==idMotherB)
 		//this implements all the reasonable possibilities!
 		{
 		  number_bs_matched_to_FatJet += 1;
@@ -1743,6 +1792,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //wait//std::cout << "VBF jets pair:  " << VBFPairJetsVect.size() << std::endl;
       //wait//if(isVBF) std::cout << "VBF conditions satisfied" << std::endl;
       //wait//or(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) std::cout << "  VBF jet  [" << i << "]\tpt: " << VBFPairJetsVect[i].pt() << "\teta: " << VBFPairJetsVect[i].eta() << "\tphi: " << VBFPairJetsVect[i].phi() << "\tmass: " << VBFPairJetsVect[i].mass() << std::endl;
+
+      std::cout << "Missing ET:  " << std::endl;
+      std::cout << "  pt: " << MET.pt() << "\tphi: " << MET.phi() << std::endl;
 
       std::cout << "number of Gen B quarks:  " << GenBquarksVect.size() << std::endl;
       for(unsigned int i = 0; i < GenBquarksVect.size(); i++) std::cout << "  Gen B quark  [" << i << "]\tpt: " << GenBquarksVect[i].pt() << "\teta: " << GenBquarksVect[i].eta() << "\tphi: " << GenBquarksVect[i].phi() << "\tmass: " << GenBquarksVect[i].mass() << std::endl;
@@ -2288,7 +2340,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(unsigned int i = 0; i < MatchedCHSJets.size() && i < MatchedCHSJetsVect.size(); i++) ObjectsFormat::FillJetType(MatchedCHSJets[i], &MatchedCHSJetsVect[i], isMC);// List/Reset JetType functions missing several attributes. Please check before using!
     //for(unsigned int i = 0; i < MatchedCaloJets.size() && i < MatchedCaloJetsVect.size(); i++) ObjectsFormat::FillCaloJetType(MatchedCaloJets[i], &MatchedCaloJetsVect[i], isMC, true);
     if (WriteGenVBFquarks) for(unsigned int i = 0; i < GenVBFVect.size(); i++) ObjectsFormat::FillGenPType(GenVBFquarks[i], &GenVBFVect[i]);
-    if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillGenPType(GenHiggs, &GenHiggsVect[i]);
+    if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillGenPType(GenHiggs[i], &GenHiggsVect[i]);
     if (WriteGenLLPs) for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillGenPType(GenLLPs[i], &GenLongLivedVect[i]);
     if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillGenPType(GenBquarks[i], &GenBquarksVect[i]);
     //if(isZtoMM || isWtoMN) for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
@@ -2519,26 +2571,26 @@ Ntuplizer::beginJob()
 
     tree->Branch("MEt", &MEt.pt, ObjectsFormat::ListMEtType().c_str());
 
-    //for(int i = 0; i < WriteNJets; i++) CHSJets.push_back( JetType() );
-    //    for(int i = 0; i < WriteNFatJets; i++) CHSFatJets.push_back( FatJetType() );
-    for(int i = 0; i < WriteNMatchedJets; i++) MatchedCHSJets.push_back( JetType() );
-    //for(int i = 0; i < WriteNMatchedJets; i++) MatchedCaloJets.push_back( CaloJetType() );
-    //for(int i = 0; i < WriteNGenBquarks; i++) GenBquarks.push_back( GenPType() );
-    //for(int i = 0; i < WriteNGenLongLiveds; i++) GenLongLiveds.push_back( GenPType() );
-    //for(int i = 0; i < WriteNLeptons; i++) Leptons.push_back( LeptonType() );
-    //for(int i = 0; i < WriteNLeptons; i++) Muons.push_back( LeptonType() );
-    //for(int i = 0; i < WriteNLeptons; i++) Electrons.push_back( LeptonType() );
+    ////for(int i = 0; i < WriteNJets; i++) CHSJets.push_back( JetType() );
+    ////    for(int i = 0; i < WriteNFatJets; i++) CHSFatJets.push_back( FatJetType() );
+    //for(int i = 0; i < WriteNMatchedJets; i++) MatchedCHSJets.push_back( JetType() );
+    ////for(int i = 0; i < WriteNMatchedJets; i++) MatchedCaloJets.push_back( CaloJetType() );
+    ////for(int i = 0; i < WriteNGenBquarks; i++) GenBquarks.push_back( GenPType() );
+    ////for(int i = 0; i < WriteNGenLongLiveds; i++) GenLongLiveds.push_back( GenPType() );
+    ////for(int i = 0; i < WriteNLeptons; i++) Leptons.push_back( LeptonType() );
+    ////for(int i = 0; i < WriteNLeptons; i++) Muons.push_back( LeptonType() );
+    ////for(int i = 0; i < WriteNLeptons; i++) Electrons.push_back( LeptonType() );
 
     //Set branches for objects
     //!! We save only MatchedJets for cross-checks with vectors
-    //for(int i = 0; i < WriteNJets; i++) tree->Branch(("CHSJet"+std::to_string(i+1)).c_str(), &(CHSJets[i].pt), ObjectsFormat::ListJetType().c_str());
-    //    for(int i = 0; i < WriteNFatJets; i++) tree->Branch(("CHSFatJet"+std::to_string(i+1)).c_str(), &(CHSFatJets[i].pt), ObjectsFormat::ListFatJetType().c_str());
-    for(int i = 0; i < WriteNMatchedJets; i++) tree->Branch(("MatchedCHSJet"+std::to_string(i+1)).c_str(), &(MatchedCHSJets[i].pt), ObjectsFormat::ListJetType().c_str());
-    //for(int i = 0; i < WriteNMatchedJets; i++) tree->Branch(("MatchedCaloJet"+std::to_string(i+1)).c_str(), &(MatchedCaloJets[i].pt), ObjectsFormat::ListCaloJetType().c_str());
-    //for(int i = 0; i < WriteNGenBquarks; i++) tree->Branch(("GenBquark"+std::to_string(i+1)).c_str(), &(GenBquarks[i].pt), ObjectsFormat::ListGenPType().c_str());
-    //for(int i = 0; i < WriteNGenLongLiveds; i++) tree->Branch(("GenLongLived"+std::to_string(i+1)).c_str(), &(GenLongLiveds[i].pt), ObjectsFormat::ListGenPType().c_str());
+    ////for(int i = 0; i < WriteNJets; i++) tree->Branch(("CHSJet"+std::to_string(i+1)).c_str(), &(CHSJets[i].pt), ObjectsFormat::ListJetType().c_str());
+    ////    for(int i = 0; i < WriteNFatJets; i++) tree->Branch(("CHSFatJet"+std::to_string(i+1)).c_str(), &(CHSFatJets[i].pt), ObjectsFormat::ListFatJetType().c_str());
+    //for(int i = 0; i < WriteNMatchedJets; i++) tree->Branch(("MatchedCHSJet"+std::to_string(i+1)).c_str(), &(MatchedCHSJets[i].pt), ObjectsFormat::ListJetType().c_str());
+    ////for(int i = 0; i < WriteNMatchedJets; i++) tree->Branch(("MatchedCaloJet"+std::to_string(i+1)).c_str(), &(MatchedCaloJets[i].pt), ObjectsFormat::ListCaloJetType().c_str());
+    ////for(int i = 0; i < WriteNGenBquarks; i++) tree->Branch(("GenBquark"+std::to_string(i+1)).c_str(), &(GenBquarks[i].pt), ObjectsFormat::ListGenPType().c_str());
+    ////for(int i = 0; i < WriteNGenLongLiveds; i++) tree->Branch(("GenLongLived"+std::to_string(i+1)).c_str(), &(GenLongLiveds[i].pt), ObjectsFormat::ListGenPType().c_str());
     tree -> Branch("GenVBFquarks", &GenVBFquarks);
-    tree -> Branch("GenHiggs", &GenHiggs.pt, ObjectsFormat::ListGenPType().c_str());
+    tree -> Branch("GenHiggs", &GenHiggs);
     tree -> Branch("GenLLPs", &GenLLPs);
     tree -> Branch("GenBquarks", &GenBquarks);
     ////for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Lepton"+std::to_string(i+1)).c_str(), &(Leptons[i].pt), ObjectsFormat::ListLeptonType().c_str());
