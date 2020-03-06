@@ -67,7 +67,10 @@ void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::str
                 unsigned int index = trigNames.triggerIndex(trigNames.triggerName(j));
                 if(hltTriggerResults->accept(index)) Map[TriggerList[i]] = true;
                 //if(hltTriggerResults->accept(index)) PrescalesMap[TriggerList[i]] = triggerPrescales->getPrescaleForIndex(index);
-                PrescalesMap[TriggerList[i]] = triggerPrescales->getPrescaleForIndex(index); //they must be filled even if the trigger is not fired!!!!
+
+		//This is not necessary, can be commented because it gives errors
+                //PrescalesMap[TriggerList[i]] = triggerPrescales->getPrescaleForIndex(index); //they must be filled even if the trigger is not fired!!!!
+
 		//if(verbosity) std::cout << "Trigger: " << TriggerList[i] << " , prescale: " << triggerPrescales->getPrescaleForIndex(index) << std::endl;
 		//std::cout << "L1 Min prescale: " << l1MinTriggerPrescales->getPrescaleForIndex(index) << " , L1 Max prescale: " << l1MaxTriggerPrescales->getPrescaleForIndex(index) << std::endl;
             }
