@@ -34,13 +34,13 @@
 #include "CommonTools/CandUtils/interface/AddFourMomenta.h"
 
 //Trigger
-#include "FWCore/Common/interface/TriggerNames.h"
-#include "DataFormats/Common/interface/TriggerResults.h"
-#include "DataFormats/HLTReco/interface/TriggerObject.h"
-#include "DataFormats/HLTReco/interface/TriggerEvent.h"
-#include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
-#include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
-#include "DataFormats/PatCandidates/interface/PackedCandidate.h"
+//#include "FWCore/Common/interface/TriggerNames.h"
+//#include "DataFormats/Common/interface/TriggerResults.h"
+//#include "DataFormats/HLTReco/interface/TriggerObject.h"
+//#include "DataFormats/HLTReco/interface/TriggerEvent.h"
+//#include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
+//#include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
+//#include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 
 //Reco Jet classes
 #include "DataFormats/JetReco/interface/PFJet.h"
@@ -67,7 +67,7 @@
 #include "GenAnalyzer.h"
 //#include "PileupAnalyzer.h"
 //#include "RecoTriggerAnalyzer.h"
-#include "TriggerAnalyzer.h"
+//#include "TriggerAnalyzer.h"
 //#include "PFCandidateAnalyzer.h"
 //#include "VertexAnalyzer.h"
 //#include "ElectronAnalyzer.h"
@@ -110,12 +110,13 @@ class GenNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     // ----------member data ---------------------------
     edm::ParameterSet GenPSet;
     //edm::ParameterSet PileupPSet;
-    edm::ParameterSet TriggerPSet;
+    //edm::ParameterSet TriggerPSet;
 
     GenAnalyzer* theGenAnalyzer;
     //PileupAnalyzer* thePileupAnalyzer;
-    TriggerAnalyzer* theTriggerAnalyzer;
+    //TriggerAnalyzer* theTriggerAnalyzer;
 
+    int idLLP, idHiggs, idMotherB, statusLLP, statusHiggs;
     double MinGenBpt, MaxGenBeta, MinGenBradius2D, MaxGenBradius2D, MinGenBetaAcc, MaxGenBetaAcc;
     //bool WriteGenVBFquarks, 
     bool WriteGenHiggs, WriteGenBquarks, WriteGenLLPs;
@@ -123,22 +124,22 @@ class GenNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //std::vector<GenPType> GenVBFquarks;
     std::vector<GenPType> GenBquarks;
     std::vector<GenPType> GenLLPs;
-    GenPType GenHiggs;
+    std::vector<GenPType> GenHiggs;
 
-    std::map<std::string, bool> TriggerMap;
-    std::map<std::string, int> PrescalesTriggerMap;
-    std::map<std::string, bool> MetFiltersMap;
+  //std::map<std::string, bool> TriggerMap;
+  //std::map<std::string, int> PrescalesTriggerMap;
+  //std::map<std::string, bool> MetFiltersMap;
 
-    bool isVerbose, isVerboseTrigger;
+    bool isVerbose;//, isVerboseTrigger;
     bool isMC;
     long int EventNumber, LumiNumber, RunNumber;//, nPV, nSV;
     float EventWeight;
     float GenEventWeight;
     //float PUWeight, PUWeightUp, PUWeightDown;
     
-    float m_pi, gen_b_radius, gen_b_radius_2D;
+    float m_pi;//, gen_b_radius, gen_b_radius_2D;
     //MET filters
-    bool BadPFMuonFlag, BadChCandFlag;
+    //bool BadPFMuonFlag, BadChCandFlag;
     //Pre-firing
     long int nGenBquarks, nGenLL;
     //Initialize tree                                                                                                                     
@@ -162,7 +163,12 @@ class GenNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 GenNtuplizer::GenNtuplizer(const edm::ParameterSet& iConfig):
     GenPSet(iConfig.getParameter<edm::ParameterSet>("genSet")),
     //PileupPSet(iConfig.getParameter<edm::ParameterSet>("pileupSet")),
-    TriggerPSet(iConfig.getParameter<edm::ParameterSet>("triggerSet")),
+    //TriggerPSet(iConfig.getParameter<edm::ParameterSet>("triggerSet")),
+    idLLP(iConfig.getParameter<int>("idLLP")),
+    idHiggs(iConfig.getParameter<int>("idHiggs")),
+    idMotherB(iConfig.getParameter<int>("idMotherB")),
+    statusLLP(iConfig.getParameter<int>("statusLLP")),
+    statusHiggs(iConfig.getParameter<int>("statusHiggs")),
     MinGenBpt(iConfig.getParameter<double>("minGenBpt")),
     MaxGenBeta(iConfig.getParameter<double>("maxGenBeta")),
     MinGenBradius2D(iConfig.getParameter<double>("minGenBradius2D")),
@@ -179,13 +185,13 @@ GenNtuplizer::GenNtuplizer(const edm::ParameterSet& iConfig):
 
     theGenAnalyzer          = new GenAnalyzer(GenPSet, consumesCollector());
     //thePileupAnalyzer       = new PileupAnalyzer(PileupPSet, consumesCollector());
-    theTriggerAnalyzer      = new TriggerAnalyzer(TriggerPSet, consumesCollector());
+    //theTriggerAnalyzer      = new TriggerAnalyzer(TriggerPSet, consumesCollector());
 
-    std::vector<std::string> TriggerList(TriggerPSet.getParameter<std::vector<std::string> >("paths"));
-    for(unsigned int i = 0; i < TriggerList.size(); i++) TriggerMap[ TriggerList[i] ] = false;
-    for(unsigned int i = 0; i < TriggerList.size(); i++) PrescalesTriggerMap[ TriggerList[i] ] = -1;
-    std::vector<std::string> MetFiltersList(TriggerPSet.getParameter<std::vector<std::string> >("metpaths"));
-    for(unsigned int i = 0; i < MetFiltersList.size(); i++) MetFiltersMap[ MetFiltersList[i] ] = false;
+    //std::vector<std::string> TriggerList(TriggerPSet.getParameter<std::vector<std::string> >("paths"));
+    //for(unsigned int i = 0; i < TriggerList.size(); i++) TriggerMap[ TriggerList[i] ] = false;
+    //for(unsigned int i = 0; i < TriggerList.size(); i++) PrescalesTriggerMap[ TriggerList[i] ] = -1;
+    //std::vector<std::string> MetFiltersList(TriggerPSet.getParameter<std::vector<std::string> >("metpaths"));
+    //for(unsigned int i = 0; i < MetFiltersList.size(); i++) MetFiltersMap[ MetFiltersList[i] ] = false;
 
     //now do what ever initialization is needed
 
@@ -206,7 +212,7 @@ GenNtuplizer::~GenNtuplizer()
 
     delete theGenAnalyzer;
     //delete thePileupAnalyzer;
-    delete theTriggerAnalyzer;
+    //delete theTriggerAnalyzer;
 }
 
 
@@ -225,18 +231,18 @@ GenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     using namespace std;
 
     // Initialize types
-    ObjectsFormat::ResetGenPType(GenHiggs);
+    //ObjectsFormat::ResetGenPType(GenHiggs);
 
     isMC = false;
-    isVerboseTrigger = false;
+    //isVerboseTrigger = false;
     EventNumber = LumiNumber = RunNumber = 0;
     //nPV = 0;
     GenEventWeight = EventWeight = 1.;
     //PUWeight = PUWeightDown = PUWeightUp = 1.;
     nGenBquarks = nGenLL = 0;
     m_pi = 0.;
-    gen_b_radius = -1.;
-    gen_b_radius_2D = -1.;
+    //gen_b_radius = -1.;
+    //gen_b_radius_2D = -1.;
 
     //Event info                                                                
     isMC = !iEvent.isRealData();
@@ -257,11 +263,12 @@ GenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     
     //GenVBFquarks.clear();
     GenLLPs.clear();
+    GenHiggs.clear();
     GenBquarks.clear();
 
     //std::vector<reco::GenParticle> GenVBFVect = theGenAnalyzer->FillVBFGenVector(iEvent);
-    std::vector<reco::GenParticle> GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,25,22);
-    std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,9000006,22);
+    std::vector<reco::GenParticle> GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idHiggs,statusHiggs);
+    std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idLLP,statusLLP);
     std::vector<reco::GenParticle> GenBquarksVect;
 
     nGenLL = GenLongLivedVect.size();
@@ -270,8 +277,7 @@ GenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     if(nGenLL>0)
       {
-	//GenBquarksVect = theGenAnalyzer->FillGenVectorByIdStatusAndMotherAndKinAndRadius2D(iEvent,5,23,9000006,float(MinGenBpt),float(MaxGenBeta),float(MinGenBradius2D),float(MaxGenBradius2D));
-	GenBquarksVect = theGenAnalyzer->FillGenVectorByIdStatusAndMotherAndKin(iEvent,5,23,9000006,float(MinGenBpt),float(MaxGenBeta));
+	GenBquarksVect = theGenAnalyzer->FillGenVectorByIdStatusAndMotherAndKin(iEvent,5,23,idMotherB,float(MinGenBpt),float(MaxGenBeta));
       }
     else
       {
@@ -292,10 +298,11 @@ GenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     //for(unsigned int i = 0; i < GenVBFVect.size(); i++) GenVBFquarks.push_back( GenPType() );
     for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) GenLLPs.push_back( GenPType() );
-    for(unsigned int i = 0; i < GenBquarksVect.size(); i++) GenBquarks.push_back( GenPType() );
+    for(unsigned int i = 0; i < GenHiggsVect.size(); i++)     GenHiggs.push_back( GenPType() );
+    for(unsigned int i = 0; i < GenBquarksVect.size(); i++)   GenBquarks.push_back( GenPType() );
     
-    if(nGenBquarks>0) gen_b_radius = GenBquarksVect.at(0).mother()? sqrt(pow(GenBquarksVect.at(0).vx() - GenBquarksVect.at(0).mother()->vx(),2) + pow(GenBquarksVect.at(0).vy() - GenBquarksVect.at(0).mother()->vy(),2) + pow(GenBquarksVect.at(0).vz() - GenBquarksVect.at(0).mother()->vz(),2)) : -1.;
-    if(nGenBquarks>0) gen_b_radius_2D = GenBquarksVect.at(0).mother()? sqrt(pow(GenBquarksVect.at(0).vx() - GenBquarksVect.at(0).mother()->vx(),2) + pow(GenBquarksVect.at(0).vy() - GenBquarksVect.at(0).mother()->vy(),2)) : -1.;
+    //if(nGenBquarks>0) gen_b_radius = GenBquarksVect.at(0).mother()? sqrt(pow(GenBquarksVect.at(0).vx() - GenBquarksVect.at(0).mother()->vx(),2) + pow(GenBquarksVect.at(0).vy() - GenBquarksVect.at(0).mother()->vy(),2) + pow(GenBquarksVect.at(0).vz() - GenBquarksVect.at(0).mother()->vz(),2)) : -1.;
+    //if(nGenBquarks>0) gen_b_radius_2D = GenBquarksVect.at(0).mother()? sqrt(pow(GenBquarksVect.at(0).vx() - GenBquarksVect.at(0).mother()->vx(),2) + pow(GenBquarksVect.at(0).vy() - GenBquarksVect.at(0).mother()->vy(),2)) : -1.;
     if(nGenLL>0) m_pi = GenLongLivedVect.at(0).mass();
 
     //------------------------------------------------------------------------------------------
@@ -318,10 +325,10 @@ GenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
 
     //if(isVerbose) std::cout << "Trigger and met filters" << std::endl;
-    theTriggerAnalyzer->FillTriggerMap(iEvent, TriggerMap, PrescalesTriggerMap, isVerboseTrigger);
-    theTriggerAnalyzer->FillMetFiltersMap(iEvent, MetFiltersMap);
-    BadPFMuonFlag = theTriggerAnalyzer->GetBadPFMuonFlag(iEvent);
-    BadChCandFlag = theTriggerAnalyzer->GetBadChCandFlag(iEvent);
+    //theTriggerAnalyzer->FillTriggerMap(iEvent, TriggerMap, PrescalesTriggerMap, isVerboseTrigger);
+    //theTriggerAnalyzer->FillMetFiltersMap(iEvent, MetFiltersMap);
+    //BadPFMuonFlag = theTriggerAnalyzer->GetBadPFMuonFlag(iEvent);
+    //BadChCandFlag = theTriggerAnalyzer->GetBadChCandFlag(iEvent);
     //theTriggerAnalyzer->FillL1FiltersMap(iEvent, L1FiltersMap);
 
     //-----------------------------------------------------------------------------------------
@@ -344,7 +351,7 @@ GenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << " - Filling objects" << std::endl;
     
     //if (WriteGenVBFquarks) for(unsigned int i = 0; i < GenVBFVect.size(); i++) ObjectsFormat::FillGenPType(GenVBFquarks[i], &GenVBFVect[i]);
-    if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillGenPType(GenHiggs, &GenHiggsVect[i]);
+    if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillGenPType(GenHiggs[i], &GenHiggsVect[i]);
     if (WriteGenLLPs) for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillGenPType(GenLLPs[i], &GenLongLivedVect[i]);
     if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillGenPType(GenBquarks[i], &GenBquarksVect[i]);
 
@@ -396,17 +403,17 @@ GenNtuplizer::beginJob()
    //tree -> Branch("PUWeightDown", &PUWeightDown, "PUWeightDown/F");
    tree -> Branch("nGenBquarks" , &nGenBquarks , "nGenBquarks/L");
    tree -> Branch("nGenLL" , &nGenLL , "nGenLL/L");
-   tree -> Branch("gen_b_radius" , &gen_b_radius , "gen_b_radius/F");
-   tree -> Branch("gen_b_radius_2D" , &gen_b_radius_2D , "gen_b_radius_2D/F");
+   //tree -> Branch("gen_b_radius" , &gen_b_radius , "gen_b_radius/F");
+   //tree -> Branch("gen_b_radius_2D" , &gen_b_radius_2D , "gen_b_radius_2D/F");
    tree -> Branch("m_pi" , &m_pi , "m_pi/F");
-   tree -> Branch("Flag_BadPFMuon", &BadPFMuonFlag, "Flag_BadPFMuon/O");
-   tree -> Branch("Flag_BadChCand", &BadChCandFlag, "Flag_BadChCand/O");
+   //tree -> Branch("Flag_BadPFMuon", &BadPFMuonFlag, "Flag_BadPFMuon/O");
+   //tree -> Branch("Flag_BadChCand", &BadChCandFlag, "Flag_BadChCand/O");
    // Set trigger branches
-   for(auto it = TriggerMap.begin(); it != TriggerMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());
-   for(auto it = MetFiltersMap.begin(); it != MetFiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());
+   //for(auto it = TriggerMap.begin(); it != TriggerMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());
+   //for(auto it = MetFiltersMap.begin(); it != MetFiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());
    //for(auto it = L1FiltersMap.begin(); it != L1FiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());
 
-   tree -> Branch("GenHiggs", &GenHiggs.pt, ObjectsFormat::ListGenPType().c_str());
+   tree -> Branch("GenHiggs", &GenHiggs);//, ObjectsFormat::ListGenPType().c_str());
    tree -> Branch("GenLLPs", &GenLLPs);
    tree -> Branch("GenBquarks", &GenBquarks);
 
