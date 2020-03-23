@@ -128,7 +128,7 @@ class TriggerGenNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResource
     TriggerAnalyzer* theTriggerAnalyzer;
     MuonAnalyzer* theMuonAnalyzer;
 
-    int idLLP, idHiggs, statusHiggs;
+    int idLLP, idHiggs, idMotherB, statusLLP, statusHiggs;
     double MinGenBpt, MaxGenBeta, MinGenBradius2D, MaxGenBradius2D, MinGenBetaAcc, MaxGenBetaAcc;
     //bool WriteGenVBFquarks, 
     bool WriteGenHiggs, WriteGenBquarks, WriteGenLLPs;
@@ -147,7 +147,7 @@ class TriggerGenNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResource
     //std::vector<GenPType> GenVBFquarks;
     std::vector<GenPType> GenBquarks;
     std::vector<GenPType> GenLLPs;
-    GenPType GenHiggs;
+    std::vector<GenPType>  GenHiggs;
 
     std::vector<LeptonType> Muons;
 
@@ -195,6 +195,8 @@ TriggerGenNtuplizer::TriggerGenNtuplizer(const edm::ParameterSet& iConfig):
     MuonPSet(iConfig.getParameter<edm::ParameterSet>("muonSet")),
     idLLP(iConfig.getParameter<int>("idLLP")),
     idHiggs(iConfig.getParameter<int>("idHiggs")),
+    idMotherB(iConfig.getParameter<int>("idMotherB")),
+    statusLLP(iConfig.getParameter<int>("statusLLP")),
     statusHiggs(iConfig.getParameter<int>("statusHiggs")),
     MinGenBpt(iConfig.getParameter<double>("minGenBpt")),
     MaxGenBeta(iConfig.getParameter<double>("maxGenBeta")),
@@ -273,7 +275,7 @@ TriggerGenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     using namespace std;
 
     // Initialize types
-    ObjectsFormat::ResetGenPType(GenHiggs);
+    //ObjectsFormat::ResetGenPType(GenHiggs);
 
     isMC = false;
     isVerboseTrigger = false;
@@ -304,13 +306,13 @@ TriggerGenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     
-    //GenVBFquarks.clear();
     GenLLPs.clear();
+    GenHiggs.clear();
     GenBquarks.clear();
 
     //std::vector<reco::GenParticle> GenVBFVect = theGenAnalyzer->FillVBFGenVector(iEvent);
     std::vector<reco::GenParticle> GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idHiggs,statusHiggs);
-    std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idLLP,22);
+    std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idLLP,statusLLP);
     std::vector<reco::GenParticle> GenBquarksVect;
 
     nGenLL = GenLongLivedVect.size();
@@ -319,8 +321,7 @@ TriggerGenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
     if(nGenLL>0)
       {
-	//GenBquarksVect = theGenAnalyzer->FillGenVectorByIdStatusAndMotherAndKinAndRadius2D(iEvent,5,23,9000006,float(MinGenBpt),float(MaxGenBeta),float(MinGenBradius2D),float(MaxGenBradius2D));
-	GenBquarksVect = theGenAnalyzer->FillGenVectorByIdStatusAndMotherAndKin(iEvent,5,23,idLLP,float(MinGenBpt),float(MaxGenBeta));
+	GenBquarksVect = theGenAnalyzer->FillGenVectorByIdStatusAndMotherAndKin(iEvent,5,23,idMotherB,float(MinGenBpt),float(MaxGenBeta));
       }
     else
       {
@@ -341,7 +342,8 @@ TriggerGenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
     //for(unsigned int i = 0; i < GenVBFVect.size(); i++) GenVBFquarks.push_back( GenPType() );
     for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) GenLLPs.push_back( GenPType() );
-    for(unsigned int i = 0; i < GenBquarksVect.size(); i++) GenBquarks.push_back( GenPType() );
+    for(unsigned int i = 0; i < GenHiggsVect.size(); i++)     GenHiggs.push_back( GenPType() );
+    for(unsigned int i = 0; i < GenBquarksVect.size(); i++)   GenBquarks.push_back( GenPType() );
     
     if(nGenBquarks>0) gen_b_radius = GenBquarksVect.at(0).mother()? sqrt(pow(GenBquarksVect.at(0).vx() - GenBquarksVect.at(0).mother()->vx(),2) + pow(GenBquarksVect.at(0).vy() - GenBquarksVect.at(0).mother()->vy(),2) + pow(GenBquarksVect.at(0).vz() - GenBquarksVect.at(0).mother()->vz(),2)) : -1.;
     if(nGenBquarks>0) gen_b_radius_2D = GenBquarksVect.at(0).mother()? sqrt(pow(GenBquarksVect.at(0).vx() - GenBquarksVect.at(0).mother()->vx(),2) + pow(GenBquarksVect.at(0).vy() - GenBquarksVect.at(0).mother()->vy(),2)) : -1.;
@@ -443,7 +445,7 @@ TriggerGenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     if(isVerbose) std::cout << " - Filling objects" << std::endl;
     
     //if (WriteGenVBFquarks) for(unsigned int i = 0; i < GenVBFVect.size(); i++) ObjectsFormat::FillGenPType(GenVBFquarks[i], &GenVBFVect[i]);
-    if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillGenPType(GenHiggs, &GenHiggsVect[i]);
+    if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillGenPType(GenHiggs[i], &GenHiggsVect[i]);
     if (WriteGenLLPs) for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillGenPType(GenLLPs[i], &GenLongLivedVect[i]);
     if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillGenPType(GenBquarks[i], &GenBquarksVect[i]);
     //    for(unsigned int i = 0; i < MuonVect.size() && i<Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &MuonVect[i], isMC);//not working?BadRefCore RefCore: Request to resolve a null or invalid reference to a product of type 'std::vector<reco::Track>'
@@ -510,7 +512,7 @@ TriggerGenNtuplizer::beginJob()
    //for(auto it = L1FiltersMap.begin(); it != L1FiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());
    for(auto it = L1BitsMap.begin(); it != L1BitsMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());
 
-   tree -> Branch("GenHiggs", &GenHiggs.pt, ObjectsFormat::ListGenPType().c_str());
+   tree -> Branch("GenHiggs", &GenHiggs);//, ObjectsFormat::ListGenPType().c_str());
    tree -> Branch("GenLLPs", &GenLLPs);
    tree -> Branch("GenBquarks", &GenBquarks);
    //   tree -> Branch("Muons", &Muons);

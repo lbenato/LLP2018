@@ -14,6 +14,7 @@
 #include "DataFormats/HLTReco/interface/TriggerEvent.h"
 #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
 #include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
+#include "CondFormats/DataRecord/interface/L1TGlobalPrescalesVetosRcd.h"
 #include "DataFormats/L1TGlobal/interface/GlobalAlgBlk.h" //Pre-firing
 #include "L1Trigger/L1TGlobal/interface/L1TGlobalUtil.h"
 
