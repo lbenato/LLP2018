@@ -20,15 +20,15 @@ config.General.requestName = 'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MIN
 
 config.Data.inputDataset =  '/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_standard_mixing-Moriond17_80X_mcRun2_2016_MINIAOD-28028af67189b3de7224b79195bd0e1d/USER'
 config.Data.inputDBS = 'global'
-#config.Data.splitting = 'EventAwareLumiBased'
-config.Data.splitting = 'Automatic'
+config.Data.splitting = 'EventAwareLumiBased'
+config.Data.unitsPerJob = 10000
+#config.Data.splitting = 'Automatic'
 
-#config.Data.unitsPerJob = 10000
 config.Data.outLFNDirBase = '/store/user/lbenato/choose_a_folder_name'
 config.Data.publication = False
 
 config.Site.storageSite = 'T2_DE_DESY'
-config.Site.whitelist   = ['T2_DE_DESY']
+#config.Site.whitelist   = ['T2_DE_DESY']
 #config.Site.blacklist   = ['T2_FR_IPHC']
             
 #enable multi-threading
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     # Selection of samples via python lists
     import os
 
-    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY"]#,"data_obs"
+    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs"]#,"data_obs"
     print "Possible subgroups of samples:"
     for a in list_of_samples:
         print a
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     usage = "usage: %prog [options]"
     parser = optparse.OptionParser(usage)
     parser.add_option("-a", "--crabaction", action="store", type="string", dest="crabaction", default="test")
-    parser.add_option("-l", "--lists", action="store", type="string", dest="lists", default="v0_SUSY_calo_AOD_2018")
+    parser.add_option("-l", "--lists", action="store", type="string", dest="lists", default="v0_SUSY_calo_AOD_gen")
     parser.add_option("-g", "--groupofsamples", action="store", type="string", dest="groupofsamples", default="")
     parser.add_option("-c", "--calo", action="store_true", dest="calo", default=False)
     parser.add_option("-d", "--datatier", action="store", type="string", dest="datatier", default="AOD")
@@ -200,8 +200,9 @@ if __name__ == '__main__':
     elif options.lists == "v0_SUSY_calo_MINIAOD_2018":
         from Analyzer.LLP2018.crab_requests_lists_calo_MINIAOD_2018 import *
         from Analyzer.LLP2018.samplesMINIAOD2018 import samples, sample
+        config.Data.totalUnits = 2000000 #maximum amount of processed events
         pset = "Ntuplizer2018.py"
-        folder = "v0_SUSY_calo_MINIAOD_2018_03Mar2020"#CHANGE here your crab folder name
+        folder = "v0_SUSY_calo_MINIAOD_2018_11Mar2020"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
         is2018 = True
@@ -216,9 +217,59 @@ if __name__ == '__main__':
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
         from Analyzer.LLP2018.samplesAOD2018 import samples, sample
         pset = "AODNtuplizer2018.py"
-        folder = "v0_SUSY_calo_AOD_2018_06Mar2020"#CHANGE here your crab folder name
+        folder = "v0_SUSY_calo_AOD_2018_10Mar2020"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        is2018 = True
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False
+        isSUSY = True
+    elif options.lists == "v0_ggHeavyHiggs_calo_AOD_2018":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+        from Analyzer.LLP2018.samplesAOD2018 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        folder = "v0_ggHeavyHiggs_calo_AOD_2018_18Mar2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        is2018 = True
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = True
+        isSUSY = False
+    elif options.lists == "v0_ggHeavyHiggs_calo_AOD_gen":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+        from Analyzer.LLP2018.samplesAOD2018 import samples, sample
+        pset = "TriggerGenNtuplizer.py"
+        folder = "v0_ggHeavyHiggs_calo_AOD_gen_19Mar2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['data_gen']
+        is2018 = True
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = True
+        isSUSY = False
+    elif options.lists == "v0_SUSY_calo_AOD_gen":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+        from Analyzer.LLP2018.samplesAOD2018 import samples, sample
+        pset = "TriggerGenNtuplizer.py"
+        folder = "v0_SUSY_calo_AOD_gen_20Mar2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['data_gen']
         is2018 = True
         isMINIAOD = False
         isAOD  = True
@@ -252,6 +303,10 @@ if __name__ == '__main__':
                 selected_requests[k] = requests[k]
         elif options.groupofsamples=="SUSY":
             if "n3n2-n1-hbb-hbb" in k:
+                print k
+                selected_requests[k] = requests[k]
+        elif options.groupofsamples=="ggHeavyHiggs":
+            if "GluGluH2_H2ToSSTobb" in k:
                 print k
                 selected_requests[k] = requests[k]
         elif options.groupofsamples=="all":
@@ -411,7 +466,7 @@ if __name__ == '__main__':
             filterString = "RECO"
         else:
             if isMINIAOD: filterString = "PAT"
-            if isAOD: filterString = "AOD"
+            if isAOD: filterString = "RECO"
 
         #Prepare inputstrings for pyCfg
         string_runLocal = 'runLocal=False'
@@ -447,6 +502,9 @@ if __name__ == '__main__':
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
             elif "n3n2-n1-hbb-hbb" in j:
+                #automatic implementation of the choice bewteen inputDBS global/phys03
+                config.Data.inputDBS = "phys03"
+            elif "GluGluH2_H2ToSSTobb" in j:
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
             else:
@@ -497,6 +555,9 @@ if __name__ == '__main__':
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
             elif "n3n2-n1-hbb-hbb" in j:
+                #automatic implementation of the choice bewteen inputDBS global/phys03
+                config.Data.inputDBS = "phys03"
+            elif "GluGluH2_H2ToSSTobb" in j:
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
             else:

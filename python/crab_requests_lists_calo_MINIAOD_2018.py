@@ -85,7 +85,7 @@ requests = {
 ##############################
 ### WJets
 #WJetsToLNu
-'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v2' : '/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM',#T2_DESY_DE
+'WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8-v2' : '/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM',#T2_DESY_DE
 #WJetsToQQ
 'WJetsToQQ_HT180_13TeV-madgraphMLM-pythia8-v1' : '',
 
