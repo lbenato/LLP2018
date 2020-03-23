@@ -11,6 +11,8 @@ selection = {
     ##Comment: including only triggers from BTagCSV, DisplacedJet and MET datasets, as per: https://docs.google.com/spreadsheets/d/1oBxzCCM1XP_dfezelrlamR6sfuAdnWm3cHTcaKbt1xA/edit?usp=sharing
     "METfilters" : "(isMC?Flag_eeBadScFilter:1) && (Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_globalTightHalo2016Filter && Flag_goodVertices && Flag_BadPFMuon && Flag_BadChCand)",
     "PFMETNoMuTrigger" : "(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v) && (isMC?Flag_eeBadScFilter:1) && (Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_globalTightHalo2016Filter && Flag_goodVertices && Flag_BadPFMuon && Flag_BadChCand)",
+
+    "PFMETNoMuTriggerAOD" : "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v",
     "VBFDisplHadTrigger" : "(HLT_VBF_DisplacedJet40_VTightID_Hadronic_v || HLT_VBF_DisplacedJet40_VVTightID_Hadronic_v) && (isMC?1:Flag_EcalDeadCellTriggerPrimitiveFilter) && (isMC?1:Flag_HBHENoiseFilter) && (isMC?1:Flag_HBHENoiseIsoFilter) && (isMC?1:Flag_globalTightHalo2016Filter) && (isMC?1:Flag_goodVertices) && Flag_BadPFMuon && Flag_BadChCand",
     "VetoLeptons" : "nMuons==0 && nElectrons==0 && nPhotons==0 && nTaus==0",#enriches in QCD
     "L" : "(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v) && Flag_HBHENoiseIsoFilter",
@@ -30,6 +32,10 @@ selection["METPreSel"] = selection["PFMETNoMuTrigger"] + " && " + selection["Vet
 selection["METPreSel200"] = selection["PFMETNoMuTrigger"] + " && " + selection["VetoLeptons"] + " && HT>100 && isVBF && MEt.pt>200"
 
 selection["METPreSel120"] = selection["PFMETNoMuTrigger"] + " && " + selection["VetoLeptons"] + " && HT>100 && isVBF && MEt.pt>120"
+
+selection["METPreSelSUSYAOD"] = selection["PFMETNoMuTriggerAOD"] + " && " + selection["VetoLeptons"] + " && HT>100 && MEt.pt>120"
+selection["METPreSelSUSY"] = selection["PFMETNoMuTrigger"] + " && " + selection["VetoLeptons"] + " && HT>100 && MEt.pt>120"
+
 
 selection["METPreSel120QCDKiller"] = selection["PFMETNoMuTrigger"] + " && " + selection["VetoLeptons"] + " && HT>100 && isVBF && MEt.pt>120 && MinJetMetDPhi>0.5"
 

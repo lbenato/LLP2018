@@ -55,16 +55,16 @@ var_template = {
     # Overall PF Candidates
     "nPFCandidates": {
       "title" : "number of particle flow candidates",
-      "nbins" : 100,
+      "nbins" : 50,
       "min" : -0.5,
-      "max" : 2999.5,
+      "max" : 3999.5,
       "log" : True,
     },
     "nPFCandidatesTrack": {
       "title" : "number of charged particle flow candidates",
       "nbins" : 100-50,
       "min" : -0.5,
-      "max" : 1999.5,
+      "max" : 2999.5,
       "log" : True,
     },
     "nPFCandidatesHighPurityTrack": {
@@ -85,16 +85,30 @@ var_template = {
     # Number of jets
     "nJets": {
       "title" : "number of CHS jets",
-      "nbins" : 50,
+      "nbins" : 50-20,
       "min" : -0.5,
-      "max" : 49.5,
+      "max" : 49.5-20,
       "log" : True,
     },
     "nCHSJets": {
       "title" : "number of CHS jets",
-      "nbins" : 50,
+      "nbins" : 50-20,
       "min" : -0.5,
-      "max" : 49.5,
+      "max" : 49.5-20,
+      "log" : True,
+    },
+    "nMatchedCHSJets": {
+      "title" : "number of CHS jets matched to at least 1 b quark",
+      "nbins" : 5,
+      "min" : -0.5,
+      "max" : 4.5,
+      "log" : True,
+    },
+    "number_of_b_matched_to_CHSJets": {
+      "title" : "number of b quarks matched to at least 1 CHS jet",
+      "nbins" : 5,
+      "min" : -0.5,
+      "max" : 4.5,
       "log" : True,
     },
     "nCaloJets": {
@@ -157,9 +171,9 @@ var_template = {
     # HT and MinDPhi
     "HT": {
       "title" : "H_{T} (GeV)",
-      "nbins" : 50,#45,
+      "nbins" : 25,#45,
       "min" : 0,#100,
-      "max" : 2000,
+      "max" : 2500,
       "log" : True,
     },
     "ggHJetMetDPhi": {
@@ -188,9 +202,9 @@ var_template = {
     #Jets kinematics
     "Jets[[N]].pt": {
       "title" : "jet [[N]] p_{T} (GeV)",
-      "nbins" : 40,#40
+      "nbins" : 50,#40
       "min" : 0,
-      "max" : 400,
+      "max" : 1000,
       "log" : True,
     },
     "Jets[[N]].eta": {
@@ -277,6 +291,20 @@ var_template = {
       "max" : 200,
       "log" : True,
     },
+    "Jets[[N]].ecalE/Jets[[N]].energyRaw": {
+      "title" : "jet [[N]] ECAL energy fraction",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "Jets[[N]].hcalE/Jets[[N]].energyRaw": {
+      "title" : "jet [[N]] HCAL energy fraction",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
     #Jet constituents
     "Jets[[N]].nConstituents": {
       "title" : "jet [[N]] number of jet constituents",
@@ -288,9 +316,9 @@ var_template = {
     "Jets[[N]].nTrackConstituents": {
       "title" : "jet [[N]] number of jet constituents with tracks",
       #"title" : "Leading jet: n. of constituents with tracks",
-      "nbins" : 50-20,
+      "nbins" : 50-20+20,
       "min" : -0.5,
-      "max" : 49.5-20,#+50,
+      "max" : 49.5-20+20,
       "log" : True,
     },
     "(Jets[[N]].nTrackConstituents)/(Jets[[N]].nConstituents)": {
@@ -489,6 +517,13 @@ var_template = {
     },
     "Jets[[N]].pfXWP1": {
       "title" : "jet [[N]] pfXWP1",
+      "nbins" : 51,
+      "min" : -0.01,
+      "max" : 1.01,
+      "log" : True,
+    },
+    "Jets[[N]].pfXWP100": {
+      "title" : "jet [[N]] pfXWP100",
       "nbins" : 51,
       "min" : -0.01,
       "max" : 1.01,
@@ -837,7 +872,7 @@ var_template = {
         "nbins" : 20,
         "min" : 0,
         "max" : 20,
-        "log" : False,
+        "log" : True,
     },
     "Jets[[N]].dRSVJet": {
         "title" : "dR between SV and jet",
@@ -1498,7 +1533,7 @@ var_template = {
     # DTSegments
     "nDTSegments": {
       "title" : "number of DT segments",
-      "nbins" : 20,#55,
+      "nbins" : 10,#55,
       "min" : -0.5,
       "max" : 99.5,
       "log" : True,
@@ -1884,9 +1919,9 @@ var_template = {
     # GenBquarks
     "GenBquarks[[N]].pt": {
       "title" : "gen b-quark p_{T} (GeV)",
-      "nbins" : 30,
+      "nbins" : 50,#SUSY: 50,
       "min" : 0,
-      "max" : 150,
+      "max" : 500,#SUSY: 250,
       "log" : True,
     },
     "GenBquarks[[N]].radius": {
@@ -1901,18 +1936,19 @@ var_template = {
     },
     "GenBquarks[[N]].radius2D": {
       "title" : "gen b-quark transverse decay length (cm)",
-      "bins" : [0,0.0001,0.001,0.01,0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000],
-      "nbins" : 100,
+      #"bins" : [0,0.0001,0.001,0.01,0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000],
+      "bins" : [0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000,100000],#HeavyHiggs
+      "nbins" : 0,#100,
       "min" : 0.000001,
       "max" : 1000,
       "log" : True,
       "logx" : True,
     },
     "GenLLPs[[N]].pt": {
-      "title" : "gen #pi p_{T} (GeV)",
+      "title" : "gen long lived particle p_{T} (GeV)",
       "nbins" : 40,
       "min" : 0,
-      "max" : 200,
+      "max" : 1000,
       "log" : True,
     },
     "GenHiggs.pt": {
@@ -1922,8 +1958,33 @@ var_template = {
       "max" : 400,
       "log" : True,
     },
-
-
+    "GenHiggs[[N]].pt": {
+      "title" : "gen Higgs p_{T} (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+    "GenHiggs[[N]].radius": {
+      "title" : "gen Higgs radius (cm)",
+      #"bins" : [0,0.0001,0.001,0.01,0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000],
+      "bins" : [0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000,100000],#HeavyHiggs
+      "nbins" : 0,#100,
+      "min" : 0.000001,
+      "max" : 1000,
+      "log" : True,
+      "logx" : True,
+    },    
+    "GenHiggs[[N]].radius2D": {
+      "title" : "gen Higgs transverse decay length (cm)",
+      #"bins" : [0,0.0001,0.001,0.01,0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000],
+      "bins" : [0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000,100000],#HeavyHiggs
+      "nbins" : 0,#100,
+      "min" : 0.000001,
+      "max" : 1000,
+      "log" : True,
+      "logx" : True,
+    }, 
 }
 
 

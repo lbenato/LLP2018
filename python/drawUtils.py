@@ -11,7 +11,7 @@ from ROOT import TLegend, TLatex, TText, TLine, TBox, TGaxis
 
 #### IMPORT SAMPLES AND VARIABLES DICTIONARIES ####
 
-from Analyzer.LLP2018.samples import sample, samples
+#from Analyzer.LLP2018.samplesAOD2018 import sample, samples
 from Analyzer.LLP2018.variables import *
 #from Analyzer.LLP2018.skimmed_variables import *
 from Analyzer.LLP2018.selections import *
@@ -20,7 +20,7 @@ from Analyzer.LLP2018.selections import *
 #    PROJECT     #
 ##################
 
-def project(var, cut, cut_s, weight, samplelist, pd, ntupledir, treename="ntuple/tree", formula=""):
+def project(samples,var, cut, cut_s, weight, samplelist, pd, ntupledir, treename="ntuple/tree", formula="", alpha=1.):
 #def project(var, cut, cut_s, weight, samplelist, pd, ntupledir, treename="trigger/tree"):
     # Create dict
     file = {}
@@ -78,7 +78,7 @@ def project(var, cut, cut_s, weight, samplelist, pd, ntupledir, treename="ntuple
                 #print "Is it empty?"
                 #print s, hist[s].Integral()
 
-        hist[s].SetFillColor(samples[s]['fillcolor'])
+        hist[s].SetFillColorAlpha(samples[s]['fillcolor'],alpha)
         hist[s].SetFillStyle(samples[s]['fillstyle'])
         hist[s].SetLineColor(samples[s]['linecolor'])
         hist[s].SetLineStyle(samples[s]['linestyle'])
@@ -91,7 +91,7 @@ def project(var, cut, cut_s, weight, samplelist, pd, ntupledir, treename="ntuple
 #      DRAW      #
 ##################
 
-def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=False):
+def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=False):
     # If not present, create BkgSum
     if not 'BkgSum' in hist.keys():
         hist['BkgSum'] = hist['data_obs'].Clone("BkgSum") if 'data_obs' in hist else hist[back[0]].Clone("BkgSum")
@@ -240,7 +240,7 @@ def draw(hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=False):
 
 
 
-def drawSignal(hist, sign, log=False, logx=False):
+def drawSignal(samples, hist, sign, log=False, logx=False):
     
     # Legend
     n = len(sign)
@@ -293,6 +293,7 @@ def drawSignal(hist, sign, log=False, logx=False):
 
     if log:
         c1.GetPad(0).SetLogy()
+        c1.GetPad(0).SetLogx()
     if logx:
         c1.GetPad(0).SetLogx()
 
@@ -329,7 +330,7 @@ def drawKolmogorov(data, bkg, fontsize=0.085):
     latex.SetTextSize(fontsize)
     latex.DrawLatex(0.55, 0.85, "#chi^{2}/ndf = %.2f,   K-S = %.3f" % (data.Chi2Test(bkg, "CHI2/NDF"), data.KolmogorovTest(bkg)))
 
-def printTable(hist, sign=[], SIGNAL=1):
+def printTable(samples, hist, sign=[], SIGNAL=1):
     samplelist = [x for x in hist.keys() if not 'data' in x and not 'BkgSum' in x and not x in sign and not x=="files"]
     print "Sample                  Events          Entries         %"
     print "-"*80
@@ -350,7 +351,7 @@ def printTable(hist, sign=[], SIGNAL=1):
 #     OTHERS     #
 ##################
 
-def getPrimaryDataset(cut):
+def getPrimaryDataset(samples, cut):
     pd = []
 #    if 'HLT_PFMET' in cut: pd += [x for x in samples['data_obs']['files'] if "MET" in x]
 #    if 'HLT_' in cut: pd += [x for x in samples['data_obs']['files'] if "MET" in x]
@@ -416,7 +417,7 @@ def setBotStyle(h, r=4, fixRange=True, miny=0., maxy=2.):
 ### DRAW UTILS ###
 ##################
 
-def drawCMS(LUMI, text, onTop=False, left_marg_CMS=0.15,data_obs=[]):
+def drawCMS(samples, LUMI, text, onTop=False, left_marg_CMS=0.15,data_obs=[]):
     latex = TLatex()
     latex.SetNDC()
     latex.SetTextSize(0.04)
@@ -465,6 +466,8 @@ def drawAnalysis(s, center=False):
         "LLVBF" : "VBF H #rightarrow #pi #pi #rightarrow b#bar{b} b#bar{b}",
         "LLVBFH" : "VBF H #rightarrow #pi #pi #rightarrow b#bar{b} b#bar{b}",
         "LLggH" : "ggH #rightarrow #pi #pi #rightarrow b#bar{b} b#bar{b}",
+        "LLSUSY" : " #chi #chi #rightarrow  #tilde{G} h #tilde{G} h #rightarrow b#bar{b} b#bar{b}",
+        "LLggHeavyHiggs" : "gg H2 #rightarrow S S #rightarrow b#bar{b} b#bar{b}",
         }
     latex = TLatex()
     latex.SetNDC()
