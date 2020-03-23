@@ -4440,6 +4440,109 @@ samples = {
         'plot': True,
     },
 
+
+######################################
+#
+#  JiaJing's AOD
+'''
+    'SUSY_mh400_pl1000' : {
+        'files' : ['n3n2-n1-hbb-hbb_mh400_pl1000'],
+        'mass' : 400,
+        'ctau' : 1000,
+        'fillcolor' : 826,
+        'fillstyle' : 0,
+        'linecolor' : 826,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{#chi} = 400 GeV, c#tau_{0} = 1 mm",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'SUSY_mh300_pl1000' : {
+        'files' : ['n3n2-n1-hbb-hbb_mh300_pl1000'],
+        'mass' : 300,
+        'ctau' : 1000,
+        'fillcolor' : 826,
+        'fillstyle' : 0,
+        'linecolor' : 826,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{#chi} = 300 GeV, c#tau_{0} = 1 mm",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'SUSY_mh250_pl1000' : {
+        'files' : ['n3n2-n1-hbb-hbb_mh250_pl1000'],
+        'mass' : 250,
+        'ctau' : 1000,
+        'fillcolor' : 826,
+        'fillstyle' : 0,
+        'linecolor' : 826,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{#chi} = 250 GeV, c#tau_{0} = 1 mm",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'SUSY_mh200_pl1000' : {
+        'files' : ['n3n2-n1-hbb-hbb_mh200_pl1000'],
+        'mass' : 200,
+        'ctau' : 1000,
+        'fillcolor' : 826,
+        'fillstyle' : 0,
+        'linecolor' : 826,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{#chi} = 200 GeV, c#tau_{0} = 1 mm",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'SUSY_mh175_pl1000' : {
+        'files' : ['n3n2-n1-hbb-hbb_mh175_pl1000'],
+        'mass' : 175,
+        'ctau' : 1000,
+        'fillcolor' : 826,
+        'fillstyle' : 0,
+        'linecolor' : 826,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{#chi} = 175 GeV, c#tau_{0} = 1 mm",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'SUSY_mh150_pl1000' : {
+        'files' : ['n3n2-n1-hbb-hbb_mh150_pl1000'],
+        'mass' : 150,
+        'ctau' : 1000,
+        'fillcolor' : 826,
+        'fillstyle' : 0,
+        'linecolor' : 826,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{#chi} = 150 GeV, c#tau_{0} = 1 mm",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'SUSY_mh127_pl1000' : {
+        'files' : ['n3n2-n1-hbb-hbb_mh127_pl1000'],
+        'mass' : 127,
+        'ctau' : 1000,
+        'fillcolor' : 826,
+        'fillstyle' : 0,
+        'linecolor' : 826,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{#chi} = 127 GeV, c#tau_{0} = 1 mm",
+        'weight': 1.,
+        'plot': True,
+    },
+'''
 ######################################
 ## ZH -> ll 4b
     'ZH_M15_ctau100' : {
