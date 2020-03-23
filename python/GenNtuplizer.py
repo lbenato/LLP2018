@@ -48,6 +48,24 @@ options.register(
     "isPromptReco parser flag"
 )
 options.register(
+    "Pis2016", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "is2016 parser flag"
+)
+options.register(
+    "Pis2017", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "is2017 parser flag"
+)
+options.register(
+    "Pis2018", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "is2018 parser flag"
+)
+options.register(
     "PnoLHEinfo", False,
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
@@ -100,6 +118,36 @@ options.register(
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
     "calo parser flag"
+)
+options.register(
+    "PVBF", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "VBF parser flag"
+)
+options.register(
+    "PggH", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "ggH parser flag"
+)
+options.register(
+    "PTwinHiggs", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "TwinHiggs parser flag"
+)
+options.register(
+    "PHeavyHiggs", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "HeavyHiggs parser flag"
+)
+options.register(
+    "PSUSY", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "SUSY parser flag"
 )
 
 options.parseArguments()
@@ -243,8 +291,11 @@ if RunLocal:
     isReHLT           = ('_reHLT_' in process.source.fileNames[0])
     isReReco          = ('23Sep2016' in process.source.fileNames[0])
     isReMiniAod       = ('03Feb2017' in process.source.fileNames[0])
+    is2016            = ('RunIISummer16' in process.source.fileNames[0])
+    is2017            = ('RunIIFall17' in process.source.fileNames[0])
+    is2018            = ('RunIIAutumn18' in process.source.fileNames[0]) or ('n3n2-n1-hbb-hbb' in process.source.fileNames[0])
     isPromptReco      = ('PromptReco' in process.source.fileNames[0])
-    noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
+    noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8' or 'WW_TuneCP5_13TeV-pythia8' or 'WZ_TuneCP5_13TeV-pythia8' or 'ZZ_TuneCP5_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
     isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0]) else False
     isCalo            = True #HERE for calo analyses!!!
@@ -259,6 +310,9 @@ else:
     isReHLT           = options.PisReHLT
     isReReco          = options.PisReReco
     isReMiniAod       = options.PisReMiniAod
+    is2016            = options.Pis2016
+    is2017            = options.Pis2017
+    is2018            = options.Pis2018
     isPromptReco      = options.PisPromptReco
     noLHEinfo         = options.PnoLHEinfo
     isbbH             = options.PisbbH
@@ -266,16 +320,24 @@ else:
     isCalo            = options.Pcalo
     isVBF             = options.PVBF
     isggH             = options.PggH
-    isTwinHiggs       = False
-    isHeavyHiggs      = False
-    isSUSY            = True
+    isTwinHiggs       = options.PTwinHiggs
+    isHeavyHiggs      = options.PHeavyHiggs
+    isSUSY            = options.PSUSY
 
+theRunBCD2016 = ['Run2016B','Run2016C','Run2016D']
+theRunEF2016  = ['Run2016E','Run2016F']
+theRunG2016   = ['Run2016G']
+theRunH2016   = ['Run2016H']
 
-theRunBCD = ['Run2016B','Run2016C','Run2016D']
-theRunEF  = ['Run2016E','Run2016F']
-theRunG   = ['Run2016G']
-theRunH   = ['Run2016H']
+theRun2018ABC = ['Run2018A','Run2018B','Run2018C']
+theRun2018D   = ['Run2018D']
 
+print "\n"
+print 'Data era: '
+if is2016: print "2016"
+if is2017: print "2017"
+if is2018: print "2018"
+print "\n"
 print 'isData',isData
 print 'isReHLT',isReHLT
 print 'isReReco',isReReco
@@ -284,9 +346,7 @@ print 'isPromptReco',isPromptReco
 print 'isSignal', isSignal
 
 if(int(isTwinHiggs) + int(isHeavyHiggs) + int(isSUSY)>1):
-   print "\n"
-   print "More than one theoretical model selected! Aborting . . ."
-   print "\n"
+   print "More than one theoretical model selected! Aborting...."
    exit()
 
 if isTwinHiggs:
@@ -320,13 +380,47 @@ if isSUSY:
     print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     print "\n"
     idLLP       = 1000023
-    #Warning! There is also 1000025!!                                                                                                                                                   
+    #Warning! There is also 1000025!!
     idHiggs     = 25
     idMotherB   = 25
     statusLLP   = 62
     statusHiggs = 22
-    isVBF = False
-    isggH = False
+    #isVBF = False
+    #isggH = False
+    #Jet pt seems higher. Do not recluster
+    #isCalo = False
+
+if isVBF:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing analysis for VBF!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+
+if isggH:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing analysis for ggH!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+
+if isCalo:
+    print "\n"
+    print "***************************************"
+    print "***************************************"
+    print "***************************************"
+    print "\n"
+    print "Performing analysis for CALO LIFETIMES!"
+    print "\n"
+    print "***************************************"
+    print "***************************************"
+    print "***************************************"
+    print "\n"
+
+if(isTwinHiggs and isCalo):
+    pt_AK4 = 5
+else:
+    pt_AK4 = 15
 
 #-----------------------#
 #     GLOBAL TAG        #
@@ -341,15 +435,26 @@ GT = ''
 
 if RunLocal:
     if isData:
-        if isReMiniAod and any(s in process.source.fileNames[0] for s in theRunH): GT = '80X_dataRun2_Prompt_v16'
-        else: GT = '80X_dataRun2_2016SeptRepro_v7'#'auto:run2_data'#'80X_dataRun2_2016LegacyRepro_v4'#
+        if is2016:
+            GT = '80X_dataRun2_2016SeptRepro_v7'
+        elif is2017:
+            GT = '94X_dataRun2_v11'
+        elif is2018:
+            if theRun2018ABC: GT = '102X_dataRun2_v12'
+            if theRun2018D:   GT = '102X_dataRun2_Prompt_v15'
     elif not(isData):
-        GT = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'#Moriond17 GT
+        if is2016:
+            GT = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
+        elif is2017:
+            GT = '94X_mc2017_realistic_v17'
+        elif is2018:
+            GT = '102X_upgrade2018_realistic_v20'
 else:
     GT = options.PGT
 
 process.GlobalTag = GlobalTag(process.GlobalTag, GT)
 print 'GlobalTag loaded: ', GT
+
 
 #-----------------------#
 #       COUNTER         #

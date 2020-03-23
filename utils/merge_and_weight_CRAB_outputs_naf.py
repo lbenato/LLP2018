@@ -6,7 +6,7 @@ import commands
 import math, time
 import sys
 from ROOT import TObject, TFile, TH1, TH1F
-from Analyzer.LLP2018.samples import sample
+#from Analyzer.LLP2018.samples import sample
 from array import array
 
 print "*****************************************************************************"
@@ -59,27 +59,47 @@ parser.add_option("-g", "--groupofsamples", action="store", type="string", dest=
 
 
 if options.lists == "v0_pfXTag_calo":
+    from Analyzer.LLP2018.samples import sample, samples
     from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import *
     LUMI = 35867#36814# in pb-1 Full 2016 with normtag
 elif options.lists == "v1_gen_production_calo":
+    from Analyzer.LLP2018.samples import sample, samples
     from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import *
     LUMI = 35867#36814# in pb-1 Full 2016 with normtag
 elif options.lists == "v1_pfXTag_puppi_calo":
+    from Analyzer.LLP2018.samples import sample, samples
     from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import *
     LUMI = 35867#36814# in pb-1 Full 2016 with normtag
 elif options.lists == "v2_pfXTag_puppi_calo":
+    from Analyzer.LLP2018.samples import sample, samples
     from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import *
     LUMI = 35867#36814# in pb-1 Full 2016 with normtag
 elif options.lists == "v2_pfXTag_puppi_calo":
+    from Analyzer.LLP2018.samples import sample, samples
     from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_calo import *
     LUMI = 35867#36814# in pb-1 Full 2016 with normtag
-
+elif options.lists == "v0_SUSY_calo_AOD_2018":
+    from Analyzer.LLP2018.samplesAOD2018 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+    LUMI = 35867#36814# in pb-1 Full 2016 with normtag
+elif options.lists == "v0_SUSY_calo_MINIAOD_2018":
+    from Analyzer.LLP2018.samplesMINIAOD2018 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_calo_MINIAOD_2018 import *
+    LUMI = 35867#36814# in pb-1 Full 2016 with normtag
+elif options.lists == "v0_ggHeavyHiggs_calo_AOD_2018":
+    from Analyzer.LLP2018.samplesAOD2018 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+    LUMI = 35867#36814# in pb-1 Full 2016 with normtag
+elif options.lists == "v0_gen_studies_calo_AOD_HeavyHiggsSUSY":
+    from Analyzer.LLP2018.samplesAOD2018 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+    LUMI = 35867#36814# in pb-1 Full 2016 with normtag
+    
 else:
     print "No sample list indicated, aborting!"
     exit()
 
-from Analyzer.LLP2018.samples import sample, samples
-list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed"]
+list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","SUSY","TTbarSemiLep","TTbarNu","ggHeavyHiggs"]
 print "Possible subgroups of samples:"
 for a in list_of_samples:
     print a
@@ -104,6 +124,14 @@ for b, k in enumerate(requests.keys()):
             selected_requests[k] = requests[k]
     elif options.groupofsamples=="signal_ZH":
         if "ZH_HToSSTobb" in k:
+            print k
+            selected_requests[k] = requests[k]
+    elif options.groupofsamples=="SUSY":
+        if "n3n2-n1-hbb-hbb" in k:
+            print k
+            selected_requests[k] = requests[k]
+    elif options.groupofsamples=="ggHeavyHiggs":
+        if "GluGluH2_H2ToSSTobb" in k:
             print k
             selected_requests[k] = requests[k]
     elif options.groupofsamples=="all":
@@ -146,7 +174,7 @@ def hadd_outputs(fold,name):
 
 ######################This blocks naf machines
     #print name
-    #os.system('hadd -k -f '+DEST+name+'.root '+fold+'/*/*/*/output_7*.root')# + ' ' +name+'/*/*/*/*_1.root')
+    #os.system('hadd -k -f '+DEST+name+'.root '+fold+'/*/*/*/output_2*.root')# + ' ' +name+'/*/*/*/*_1.root')
     os.system('hadd -k -f '+DEST+name+'.root ' + fold + "/*/*/*/*.root")#timestamp for calo_signal!
 pass
 
@@ -170,6 +198,12 @@ def weight(name):
         elif('ZH_HToSSTobbbb') in name:
             #We take into account ZH Higgs production x-sec times branching fraction into leptons
             xs = 0.8839*(3.3658/100.)
+        elif('n3n2-n1-hbb-hbb') in name:
+            #Don't know this x-sec actually...
+            xs = 1.
+        elif('GluGluH2_H2ToSSTobbbb') in name:
+            #We do not take into account ggH Higgs production x-sec! Absolute x-sec needed!
+            xs = 1.#48.58
         else:
             xs = sample[name]['xsec'] * sample[name]['kfactor']#to correct MET phase-space
         weight = LUMI * xs / nevents
@@ -187,13 +221,18 @@ def weight(name):
 subdirs = [x for x in os.listdir(options.input_folder) if os.path.isdir(os.path.join(options.input_folder, x))]
 #subdirs have the names of the samples without v1, etc
 
+print "PRE: ", selected_requests.keys()
+
 #for naming purposes, we have to include v1, etc. Additional loop###
-#print os.listdir(args.folder)
 os.chdir(options.input_folder)
 
 crab_subdirs = []
 for l in subdirs:
     crab_subdirs += [x[5:] for x in os.listdir(l) if os.path.isdir(os.path.join(l, x))]
+
+print subdirs
+print crab_subdirs
+#exit()
 #here they have the proper names, including v1
 
 os.chdir(options.input_folder)
@@ -203,7 +242,7 @@ for l in subdirs:
     name = ""
     for a in crab_subdirs:
         #if l in a:
-        if l in a and a in selected_requests.keys():
+        if (l in a or a in l) and a in selected_requests.keys():
             fold = l
             name = a
             #print fold
@@ -212,6 +251,16 @@ for l in subdirs:
             #print "Not being added...."
             hadd_outputs(fold,name)
             print "##################################"
+        #if a=="WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v2" and l=="WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8":
+        #    print "NAMING MISTAKE!!!"
+        #    fold = l
+        #    name = a
+        #    #print fold
+        #    print "Being added...."
+        #    print name
+        #    #print "Not being added...."
+        #    hadd_outputs(fold,name)
+        #    print "##################################"
 
 ######################
 #
