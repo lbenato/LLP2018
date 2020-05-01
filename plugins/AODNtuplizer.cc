@@ -686,10 +686,10 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //if(EventNumber!=44169) return;
     if(HT<100) return;//Avoid events with low HT//WAIT!!
     if(isCalo && MET.pt()<120) return;//Avoid events with very low MET for calo analysis
-    //if(isCalo && nMuons>0) return;//Veto leptons and photons!
-    //if(isCalo && nTaus>0) return;//Veto leptons and photons!
-    //if(isCalo && nElectrons>0) return;//Veto leptons and photons!
-    //if(isCalo && nPhotons>0) return;//Veto leptons and photons!
+    if(isCalo && nMuons>0) return;//Veto leptons and photons!
+    if(isCalo && nTaus>0) return;//Veto leptons and photons!
+    if(isCalo && nElectrons>0) return;//Veto leptons and photons!
+    if(isCalo && nPhotons>0) return;//Veto leptons and photons!
 
 
     //------------------------------------------------------------------------------------------
