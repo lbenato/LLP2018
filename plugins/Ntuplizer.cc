@@ -725,7 +725,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     //Used to understand VBF jets features;
     
-    std::vector<pat::Jet> AllJetsVect = AllJetAnalyzer->FillJetVector(iEvent);//
+    std::vector<pat::Jet> AllJetsVect = AllJetAnalyzer->FillJetVector(iEvent,iSetup);//
     nAllJets = AllJetsVect.size();
 
     std::vector<pat::Jet> VBFGenMatchedJetsVect;
@@ -787,7 +787,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     if(isVerbose) std::cout << "VBF tagging" << std::endl;
 
-    std::vector<pat::Jet> VBFJetsVect = theVBFJetAnalyzer->FillJetVector(iEvent);
+    std::vector<pat::Jet> VBFJetsVect = theVBFJetAnalyzer->FillJetVector(iEvent,iSetup);
 
     pat::CompositeCandidate theVBF;
     //pat::CompositeCandidate theVBFJECUp;
@@ -941,7 +941,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //Fill a vector of AK4 CHS Jets, with kinematical cuts defined in the config file (pT, eta, eventually JetID or b-tagging)
     if(isVerbose) std::cout << "AK4 CHS" << std::endl;
 
-    std::vector<pat::Jet> CHSJetsVect = theCHSJetAnalyzer->FillJetVector(iEvent);
+    std::vector<pat::Jet> CHSJetsVect = theCHSJetAnalyzer->FillJetVector(iEvent,iSetup);
     //std::vector<pat::Jet> AllBarrelJetsVect = theCHSJetAnalyzer->FillJetVector(iEvent);//without VBF removal
 
     //Clear the vector of structures at every event, because we are not using a fixed number of jets and not using the Reset/List function //#### Johannes
@@ -1686,7 +1686,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(WriteFatJets)
       //if(WriteNFatJets>0)
       {
-	CHSFatJetsVect = theCHSFatJetAnalyzer->FillJetVector(iEvent);
+	CHSFatJetsVect = theCHSFatJetAnalyzer->FillJetVector(iEvent,iSetup);
 
       	std::vector<pat::Jet> MatchedCHSAK8JetsVect;
 
