@@ -44,6 +44,31 @@
 
 #include "FWCore/Utilities/interface/transform.h"
 
+//HCAL Rec Hits
+#include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
+#include "RecoEcal/EgammaCoreTools/interface/EcalClusterLazyTools.h"
+#include "DataFormats/HcalDetId/interface/HcalDetId.h"
+#include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
+#include "DataFormats/HcalRecHit/interface/HORecHit.h"
+
+//ECAL Rechits
+#include "DataFormats/DetId/interface/DetId.h"
+#include "DataFormats/EcalDetId/interface/EBDetId.h"
+#include "DataFormats/EcalDetId/interface/EEDetId.h"
+#include "DataFormats/EcalDetId/interface/EcalSubdetector.h"
+#include "DataFormats/EcalRecHit/interface/EcalRecHit.h"
+#include "DataFormats/EcalRecHit/interface/EcalRecHitCollections.h"
+
+//ECAL conditions
+#include "CalibCalorimetry/EcalLaserCorrection/interface/EcalLaserDbService.h"
+#include "CalibCalorimetry/EcalLaserCorrection/interface/EcalLaserDbRecord.h"
+
+// Geometry
+#include "Geometry/Records/interface/CaloGeometryRecord.h"
+#include "Geometry/CaloGeometry/interface/CaloGeometry.h"
+#include "Geometry/CaloGeometry/interface/CaloSubdetectorGeometry.h"
+#include "Geometry/CaloGeometry/interface/CaloCellGeometry.h"
+
 #include "TFile.h"
 #include "TH2.h"
 #include "TF1.h"
@@ -56,7 +81,7 @@ class JetAnalyzer {
     public:
         JetAnalyzer(edm::ParameterSet&, edm::ConsumesCollector&&);
         ~JetAnalyzer();
-        virtual std::vector<pat::Jet> FillJetVector(const edm::Event&);
+        virtual std::vector<pat::Jet> FillJetVector(const edm::Event&, const edm::EventSetup&);
         virtual void CorrectJet(pat::Jet&, float, float, bool);
         virtual void CorrectMass(pat::Jet&, float, float, bool);
         virtual void CorrectPuppiMass(pat::Jet&, bool);
@@ -77,11 +102,17 @@ class JetAnalyzer {
       
     private:
 
-	edm::EDGetTokenT<std::vector<pat::Jet> > JetToken;
+        edm::EDGetTokenT<std::vector<pat::Jet> > JetToken;
         edm::EDGetTokenT<std::vector<pat::MET> > MetToken;
         edm::EDGetTokenT<edm::ValueMap<float>> QGToken;
+        edm::EDGetTokenT<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > ebRecHitsToken;
+        edm::EDGetTokenT<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > eeRecHitsToken;
+        edm::EDGetTokenT<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > esRecHitsToken;
+        edm::EDGetTokenT<edm::SortedCollection<HORecHit,edm::StrictWeakOrdering<HORecHit>>>       hcalRecHitsHOToken;
+        edm::EDGetTokenT<edm::SortedCollection<HBHERecHit,edm::StrictWeakOrdering<HBHERecHit>>>       hcalRecHitsHBHEToken;
         int JetId;
         float Jet1Pt, Jet2Pt, JetEta;
+        bool IsAOD;
         bool AddQG, RecalibrateJets, RecalibrateMass, RecalibratePuppiMass; 
 	std::string SoftdropPuppiMassString;
         bool SmearJets;
@@ -106,6 +137,8 @@ class JetAnalyzer {
         std::string JerName_sf;
 	std::vector<std::string> BTagNames;
         float Rparameter;
+        //Ecal RecHits
+        const float Rechit_cut = 0.5;
         
         TFile* PuppiCorrFile;
         TF1* PuppiJECcorr_gen;

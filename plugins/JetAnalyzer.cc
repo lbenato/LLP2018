@@ -7,10 +7,16 @@ JetAnalyzer::JetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl
     JetToken(CColl.consumes<std::vector<pat::Jet> >(PSet.getParameter<edm::InputTag>("jets"))),
     MetToken(CColl.consumes<std::vector<pat::MET> >(PSet.getParameter<edm::InputTag>("met"))),
     QGToken(CColl.consumes<edm::ValueMap<float>>(edm::InputTag("QGTagger", "qgLikelihood"))),
+    ebRecHitsToken(CColl.consumes<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > >(PSet.getParameter<edm::InputTag>("ebRecHits"))),
+    eeRecHitsToken(CColl.consumes<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > >(PSet.getParameter<edm::InputTag>("eeRecHits"))),
+    esRecHitsToken(CColl.consumes<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > >(PSet.getParameter<edm::InputTag>("esRecHits"))),
+    hcalRecHitsHOToken(CColl.consumes<edm::SortedCollection<HORecHit,edm::StrictWeakOrdering<HORecHit>>>(edm::InputTag("reducedHcalRecHits","horeco"))),
+    hcalRecHitsHBHEToken(CColl.consumes<edm::SortedCollection<HBHERecHit,edm::StrictWeakOrdering<HBHERecHit>>>(edm::InputTag("reducedHcalRecHits","hbhereco"))),
     JetId(PSet.getParameter<int>("jetid")),
     Jet1Pt(PSet.getParameter<double>("jet1pt")),
     Jet2Pt(PSet.getParameter<double>("jet2pt")),
     JetEta(PSet.getParameter<double>("jeteta")),
+    IsAOD(PSet.getParameter<bool>("isAOD")),
     AddQG(PSet.getParameter<bool>("addQGdiscriminator")),
     RecalibrateJets(PSet.getParameter<bool>("recalibrateJets")),
     RecalibrateMass(PSet.getParameter<bool>("recalibrateMass")),
@@ -190,7 +196,7 @@ JetAnalyzer::~JetAnalyzer() {
 
 
 
-std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent) {
+std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
     bool isMC(!iEvent.isRealData());
     int BTagTh(Jet1BTag);
     float PtTh(Jet1Pt), EtaTh(JetEta);
@@ -206,7 +212,33 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent) {
     // Vertex collection
     edm::Handle<reco::VertexCollection> PVCollection;
     iEvent.getByToken(VertexToken, PVCollection);
+
+    // ECAL rechits
+    edm::Handle<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > ebRecHitsCollection;
+    iEvent.getByToken(ebRecHitsToken, ebRecHitsCollection);
     
+    edm::Handle<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > eeRecHitsCollection;
+    iEvent.getByToken(eeRecHitsToken, eeRecHitsCollection);
+    
+    edm::Handle<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > esRecHitsCollection;
+    iEvent.getByToken(esRecHitsToken, esRecHitsCollection);
+  
+    // HCAL rechits
+    edm::Handle<edm::SortedCollection<HORecHit,edm::StrictWeakOrdering<HORecHit>>> hcalRecHitsHOCollection;
+    iEvent.getByToken(hcalRecHitsHOToken, hcalRecHitsHOCollection);
+    
+    edm::Handle<edm::SortedCollection<HBHERecHit,edm::StrictWeakOrdering<HBHERecHit>>> hcalRecHitsHBHECollection;
+    iEvent.getByToken(hcalRecHitsHBHEToken, hcalRecHitsHBHECollection);
+
+
+    edm::ESHandle<CaloGeometry> geoHandle;
+    iSetup.get<CaloGeometryRecord>().get(geoHandle);
+    const CaloSubdetectorGeometry *barrelGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalBarrel);
+    const CaloSubdetectorGeometry *endcapGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalEndcap);
+    const CaloSubdetectorGeometry *hbGeometry = geoHandle->getSubdetectorGeometry(DetId::Hcal, HcalBarrel);
+    const CaloSubdetectorGeometry *heGeometry = geoHandle->getSubdetectorGeometry(DetId::Hcal, HcalEndcap);
+    const CaloSubdetectorGeometry *hoGeometry = geoHandle->getSubdetectorGeometry(DetId::Hcal, HcalOuter);
+  
     // Rho handle
     edm::Handle<double> rho_handle;
     iEvent.getByToken(RhoToken, rho_handle);
@@ -476,6 +508,49 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent) {
             jet.addUserFloat("QGLikelihood", (*QGHandle)[jetRef]);
         }
         */
+
+        //Find ECAL/HCAL recHits
+        //Initialize
+        float jet_energy_frac(0.);
+        float jetRechitE_Error(0.);
+        float jetRechitE(0.);
+        float jetRechitT(0.);
+        float jetRechitT_rms(0.);
+        int n_matched_rechits(0);
+        if(IsAOD)
+        {
+        for(unsigned int q=0; q<ebRecHitsCollection->size(); q++){
+            const EcalRecHit *recHit = &(*ebRecHitsCollection)[q];
+            const DetId recHitId = recHit->detid();
+            const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
+
+            //Discard "bad" rechits            
+            if (recHit->checkFlag(EcalRecHit::kSaturated) || recHit->checkFlag(EcalRecHit::kLeadingEdgeRecovered) || recHit->checkFlag(EcalRecHit::kPoorReco) || recHit->checkFlag(EcalRecHit::kWeird) || recHit->checkFlag(EcalRecHit::kDiWeird)) continue;
+            if (recHit->timeError() < 0 || recHit->timeError() > 100) continue;
+            if (abs(recHit->time()) > 12.5) continue;
+            
+            //Calculate jet timestamps
+            if ( reco::deltaR(jet.eta(), jet.phi(), recHitPos.eta(), recHitPos.phi()) < 0.4) {
+                //if (reco::deltaR(jet.eta(), jet.phi(), recHitPos.eta(), recHitPos.phi()) < 0.15 && recHit->energy() > Rechit_cut) jet_energy_frac += recHit->energy();//needed???
+
+                if (recHit->energy() > Rechit_cut) {
+                    jetRechitE_Error += recHit->energyError() * recHit->energyError();
+                    jetRechitE += recHit->energy();
+                    jetRechitT += recHit->time()*recHit->energy();
+                    jetRechitT_rms += recHit->time()*recHit->time();
+                    n_matched_rechits++;
+                }
+                
+            }
+            
+        }//loop over ebRecHits
+        }//IsAOD condition
+
+        jet.addUserInt("nRecHits", n_matched_rechits);
+        jet.addUserFloat("timeRecHits", jetRechitE>0 ? jetRechitT/jetRechitE : -100.);
+        jet.addUserFloat("timeRMSRecHits", n_matched_rechits>0 ? sqrt(jetRechitT_rms) : -1.);
+        jet.addUserFloat("energyRecHits", n_matched_rechits>0 ? sqrt(jetRechitE) : -1.);
+        jet.addUserFloat("energyErrorRecHits", n_matched_rechits>0 ? sqrt(jetRechitE_Error) : -1.);
 
         Vect.push_back(jet); // Fill vector
     }
