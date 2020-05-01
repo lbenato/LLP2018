@@ -86,9 +86,9 @@ std::vector<pat::Tau> TauAnalyzer::FillTauVector(const edm::Event& iEvent) {
 
         //Fill user float
         tau.addUserFloat("pfIso", pfIso);
-        //tau.addUserInt("isLoose", isPassLoose ? 1 : 0);
-        //tau.addUserInt("isMedium", isPassMedium ? 1 : 0);
-        //tau.addUserInt("isTight", isPassTight ? 1 : 0);        
+        tau.addUserInt("isLoose", tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits") ? 1 : 0);
+        tau.addUserInt("isMedium", tau.tauID("byMediumCombinedIsolationDeltaBetaCorr3Hits") ? 1 : 0);
+        tau.addUserInt("isTight", tau.tauID("byTightCombinedIsolationDeltaBetaCorr3Hits") ? 1 : 0);        
       
         Vect.push_back(tau); // Fill vector
     }
