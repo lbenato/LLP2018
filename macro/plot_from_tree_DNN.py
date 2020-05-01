@@ -148,7 +148,7 @@ def plot(var, cut, cut_s, tree_name="ntuple/tree",norm=False):
         longcut_s = selection[cut_s]
 
     # Determine Primary Dataset
-    pd = getPrimaryDataset(longcut)
+    pd = getPrimaryDataset(samples, longcut)
     if len(data)>0 and len(pd)==0: raw_input("Warning: Primary Dataset not recognized, continue?")
     
     # Determine weight
@@ -169,7 +169,7 @@ def plot(var, cut, cut_s, tree_name="ntuple/tree",norm=False):
 
     ### Create and fill MC histograms ###
     print "doing project . . . "
-    hist = project(var, longcut, longcut_s, weight, data+back+sign, pd, NTUPLEDIR, treename=tree_name,formula=options.formula)
+    hist = project(samples, var, longcut, longcut_s, weight, data+back+sign, pd, NTUPLEDIR, treename=tree_name,formula=options.formula)
     
     # Background sum
     if len(back)>0:
@@ -199,15 +199,15 @@ def plot(var, cut, cut_s, tree_name="ntuple/tree",norm=False):
     if len(data+back)>0:
         if options.blind: RATIO = 0
         else: RATIO = 4
-        out = draw(hist, data if not options.blind else [], back, sign, SIGNAL, RATIO, POISSON, variable[var]['log'])
+        out = draw(samples, hist, data if not options.blind else [], back, sign, SIGNAL, RATIO, POISSON, variable[var]['log'])
     else:
-        out = drawSignal(hist, sign,variable[var]['log'])
+        out = drawSignal(samples, hist, sign,variable[var]['log'])
         out[0].SetGrid()
 
     # Other plot operations
     out[0].cd(1)
-    drawCMS(LUMI, "Preliminary" if len(data+back)>0 else "Simulation",onTop=True if len(data+back)>0 else False,data_obs=data)
-    #drawCMS(LUMI, "Work in Progress",data_obs=data)
+    drawCMS(samples, LUMI, "Preliminary" if len(data+back)>0 else "Simulation",onTop=True if len(data+back)>0 else False,data_obs=data)
+    #drawCMS(samples, LUMI, "Work in Progress",data_obs=data)
     drawRegion(shortcut)
     drawAnalysis("LL")
     #drawAnalysis("LLZH")
@@ -230,7 +230,7 @@ def plot(var, cut, cut_s, tree_name="ntuple/tree",norm=False):
             out[0].Print(pathname+"/"+var.replace('.', '_')+suffix+"_signal.pdf")    
     ### Other operations ###
     # Print table
-    if len(data+back)>0: printTable(hist, sign, SIGNAL)
+    if len(data+back)>0: printTable(samples, hist, sign, SIGNAL)
     
     if not gROOT.IsBatch(): raw_input("Press Enter to continue...")
 
