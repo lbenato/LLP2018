@@ -11,6 +11,9 @@
   <class name="GenPType"/>
   <class name="DT4DSegmentType"/>
   <class name="CSCSegmentType"/>
+  <class name="PhotonType"/>
+  <class name="TauType"/>
+  <class name="MEtType"/>
   <class name="std::vector<JetType>"/>
   <class name="std::vector<FatJetType>"/>
   <class name="std::vector<VertexType>"/>
@@ -22,4 +25,7 @@
   <class name="std::vector<GenPType>"/>
   <class name="std::vector<DT4DSegmentType>"/>
   <class name="std::vector<CSCSegmentType>"/>
+  <class name="std::vector<PhotonType>"/>
+  <class name="std::vector<TauType>"/>
+  <class name="std::vector<MEtType>"/>
 </lcgdict>
