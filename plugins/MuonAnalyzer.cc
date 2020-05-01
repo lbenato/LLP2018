@@ -183,7 +183,7 @@ std::vector<pat::Muon> MuonAnalyzer::FillMuonVector(const edm::Event& iEvent) {
 	      // Tracker iso corrected with by-hand subtraction
         float trkIso = mu.trackIso();
         // Subtrack all muons from iso cone
-        for(auto mit=MuonCollection->begin(); mit!=MuonCollection->end(); ++mit) if(mit!=it && deltaR(*mit, mu)<0.3 && IsTrackerHighPtMuon(mu, vertex)) trkIso -= mit->innerTrack()->pt();
+        for(auto mit=MuonCollection->begin(); mit!=MuonCollection->end(); ++mit) if(mit!=it && deltaR(*mit, mu)<0.3 && IsTrackerHighPtMuon(mu, vertex) && mit->track().isNonnull()) trkIso -= mit->innerTrack()->pt();
         //if(Vect.size() == 0 && std::next(it, 1)!=MuonCollection->end() && deltaR(*std::next(it, 1), mu) < 0.3) trkIso -= std::next(it, 1)->pt();
         //if(Vect.size() == 1 && deltaR(Vect[0], mu) < 0.3) trkIso -= Vect[0].tunePMuonBestTrack()->pt();
         if(trkIso < 0.) trkIso = 0.;
@@ -193,12 +193,12 @@ std::vector<pat::Muon> MuonAnalyzer::FillMuonVector(const edm::Event& iEvent) {
         if(IsoTh==1 && pfIso04>0.25) continue;
         if(IsoTh==2 && pfIso04>0.15) continue;
         // Add userFloat
-        mu.addUserFloat("inTrkPt", mu.innerTrack().isNonnull() ? mu.innerTrack()->pt() : -1);
+        mu.addUserFloat("inTrkPt", (mu.track().isNonnull() && mu.innerTrack().isNonnull()) ? mu.innerTrack()->pt() : -1);
         mu.addUserFloat("trkIso", trkIso);
         mu.addUserFloat("pfIso03", pfIso03);
         mu.addUserFloat("pfIso04", pfIso04);
-        mu.addUserFloat("dxy", mu.muonBestTrack()->dxy(vertex->position()));
-        mu.addUserFloat("dz", mu.muonBestTrack()->dz(vertex->position()));
+        mu.addUserFloat("dxy", mu.track().isNonnull() ? mu.muonBestTrack()->dxy(vertex->position()) : -999.);
+        mu.addUserFloat("dz", mu.track().isNonnull() ? mu.muonBestTrack()->dz(vertex->position()) : -999.);
         //mu.addUserInt("isTrackerHighPt", IsTrackerHighPtMuon(mu, vertex) ? 1 : 0);
         mu.addUserInt("isPFMuon", mu.isPFMuon() ? 1 : 0);
         mu.addUserInt("isLoose", mu.isLooseMuon() ? 1 : 0);
