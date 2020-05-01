@@ -94,12 +94,32 @@ elif options.lists == "v0_gen_studies_calo_AOD_HeavyHiggsSUSY":
     from Analyzer.LLP2018.samplesAOD2018 import sample, samples
     from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
     LUMI = 35867#36814# in pb-1 Full 2016 with normtag
+elif options.lists == "synch_exercise_caltech":
+    from Analyzer.LLP2018.samplesAOD2017 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
+    LUMI = 35867#36814# in pb-1 Full 2016 with normtag
+elif options.lists == "synch_exercise_caltech_v2":
+    from Analyzer.LLP2018.samplesAOD2017 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
+    LUMI = 35867#36814# in pb-1 Full 2016 with normtag
+elif options.lists == "synch_exercise_caltech_v3":
+    from Analyzer.LLP2018.samplesAOD2017 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
+    LUMI = 35867#36814# in pb-1 Full 2016 with normtag
+elif options.lists == "synch_exercise_caltech_v4":
+    from Analyzer.LLP2018.samplesAOD2017 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
+    LUMI = 35867#36814# in pb-1 Full 2016 with normtag
+elif options.lists == "test_calo_AOD_pfcand":
+    from Analyzer.LLP2018.samplesAOD2018 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+    LUMI = 35867#36814# in pb-1 Full 2016 with normtag
     
 else:
     print "No sample list indicated, aborting!"
     exit()
 
-list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","SUSY","TTbarSemiLep","TTbarNu","ggHeavyHiggs"]
+list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","SUSY","TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT"]
 print "Possible subgroups of samples:"
 for a in list_of_samples:
     print a
@@ -175,7 +195,7 @@ def hadd_outputs(fold,name):
 ######################This blocks naf machines
     #print name
     #os.system('hadd -k -f '+DEST+name+'.root '+fold+'/*/*/*/output_2*.root')# + ' ' +name+'/*/*/*/*_1.root')
-    os.system('hadd -k -f '+DEST+name+'.root ' + fold + "/*/*/*/*.root")#timestamp for calo_signal!
+    os.system('hadd -fk207 '+DEST+name+'.root ' + fold + "/*/*/*/*.root")#timestamp for calo_signal!
 pass
 
 def weight(name):
@@ -276,6 +296,14 @@ for l in subdirs:
 print "Ntuples ready in ", DEST
 os.system('cd '+DEST+".. ")
 
+if options.lists=="synch_exercise_caltech":
+    exit()
+if options.lists=="synch_exercise_caltech_v2":
+    exit()
+if options.lists=="synch_exercise_caltech_v3":
+    exit()
+if options.lists=="synch_exercise_caltech_v4":
+    exit()
 
 onlyfiles = [f for f in os.listdir(DEST) if (os.path.isfile(os.path.join(DEST, f)))]
 os.chdir(DEST)

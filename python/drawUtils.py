@@ -12,7 +12,7 @@ from ROOT import TLegend, TLatex, TText, TLine, TBox, TGaxis
 #### IMPORT SAMPLES AND VARIABLES DICTIONARIES ####
 
 #from Analyzer.LLP2018.samplesAOD2018 import sample, samples
-from Analyzer.LLP2018.variables import *
+from Analyzer.LLP2018.variables_default import *
 #from Analyzer.LLP2018.skimmed_variables import *
 from Analyzer.LLP2018.selections import *
 
@@ -277,7 +277,7 @@ def drawSignal(samples, hist, sign, log=False, logx=False):
         max_val = max(max_val,hist[s].GetMaximum())
         addOverflow(hist[s], True) # Add overflow
         hist[s+'Err'].Draw("SAMES,E2")
-    
+        hist[s].SetMinimum(0.9)
     #?#hist[sign[0]].GetXaxis().SetRangeUser(0., 1500)
     #?hist[sign[0]].GetYaxis().SetTitleOffset(hist[sign[-1]].GetYaxis().GetTitleOffset()*1.075)
     #?hist[sign[0]].SetMaximum(max(hist[sign[0]].GetMaximum(), hist[sign[-1]].GetMaximum())*1.25)
@@ -293,7 +293,7 @@ def drawSignal(samples, hist, sign, log=False, logx=False):
 
     if log:
         c1.GetPad(0).SetLogy()
-        c1.GetPad(0).SetLogx()
+        #c1.GetPad(0).SetLogx()
     if logx:
         c1.GetPad(0).SetLogx()
 
@@ -531,14 +531,22 @@ def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75):
         #latex.DrawLatex(0.12, 0.75, text)
         latex.DrawLatex(0.15, top, text)#DCMS
 
-def drawTagVar(tagvar, left=False, left_marg_CMS=0.15):
-    tagvarlist = ["nCaloTagJets","nLooseCaloTagJets","nCaloTagJetsRebuilt","nHardCaloTagJets","nLeadingCaloTagJets","nGenMatchedJets","1Loose1Tight"]
-    
-    text = ""
-    if tagvar in tagvarlist:
-        text = tagvar
-    else:
-        text = ""
+def drawTagVar(t, left=False, left_marg_CMS=0.15):
+
+
+    tagvarlist = {
+        "nCaloTagJets" : "",
+        "nLooseCaloTagJets" : "",
+        "nCaloTagJetsRebuilt" : "",
+        "nHardCaloTagJets" : "",
+        "nLeadingCaloTagJets" : "",
+        "nGenMatchedJets" : "",
+        "1Loose1Tight" : "",
+        "cHadEFrac" : "cHadEFrac",
+        "LEADER" : "DNN output",
+        }
+
+    text = t if not t in tagvarlist else tagvarlist[t]
     latex = TLatex()
     latex.SetNDC()
     latex.SetTextFont(62) #52

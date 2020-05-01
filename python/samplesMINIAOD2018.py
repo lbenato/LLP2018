@@ -285,7 +285,28 @@ samples = {
         'weight': 1.,
         'plot': True,
     },
-
+    'QCDRed' : {
+        'files' : [
+             #'QCD_HT50to100_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+             #'QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+             #'QCD_HT200to300_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+             'QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 
+             'QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 
+             'QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 
+             'QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 
+             'QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 
+             'QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8-v1'
+             ],
+        'fillcolor' : 920,
+        'fillstyle' : 1001,
+        'linecolor' : 920,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : 'QCD',
+        'title' : 'QCD',
+        'weight': 1.,
+        'plot': True,
+    },
     #TTbar
     'TTbar' : {
         'files' : [
@@ -482,9 +503,9 @@ samples = {
         'files' : ['n3n2-n1-hbb-hbb_mh127_pl1000'],
         'mass' : 127,
         'ctau' : 1000,
-        'fillcolor' : 826,
+        'fillcolor' : 8,
         'fillstyle' : 0,
-        'linecolor' : 826,
+        'linecolor' : 8,
         'linewidth' : 3,
         'linestyle' : 1,
         'label' : "m_{#chi} = 127 GeV, c#tau_{0} = 1 m",
@@ -635,6 +656,40 @@ samples = {
         'linewidth' : 3,
         'linestyle' : 3,
         'label' : "m_{H,S} = 1000,150 GeV, c#tau_{0} = 10 m",
+        'weight': 1.,
+        'plot': True,
+    },
+    'VBFH_M15_ctau1000' : {
+        'files' : [
+                #'VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC',
+                'VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC'
+                ],
+        'title' : 'VBFH m15 c #tau 1000',
+        'mass' : 15,
+        'ctau' : 1000,
+        'fillcolor' : 2,
+        'fillstyle' : 0,
+        'linecolor' : 2,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{#pi} = 15 GeV, c#tau_{0} = 1000 mm",
+        'weight': 1.,
+        'plot': True,
+    },
+    'VBFH_M30_ctau1000' : {
+        'files' : [
+                #'VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC',
+                'VBFH_HToSSTobbbb_MH-125_MS-30_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC'
+                ],
+        'title' : 'VBFH m30 c #tau 1000',
+        'mass' : 15,
+        'ctau' : 1000,
+        'fillcolor' : 6,
+        'fillstyle' : 0,
+        'linecolor' : 6,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{#pi} = 30 GeV, c#tau_{0} = 1 m",
         'weight': 1.,
         'plot': True,
     },

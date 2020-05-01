@@ -21,14 +21,26 @@ gStyle.SetOptStat(0)
 NTUPLEDIR   = "/nfs/dust/cms/group/cms-llp/v1_gen_production_calo/"
 #sign = ['VBFH_M30_ctau100','VBFH_M30_ctau1000','VBFH_M30_ctau10000']
 NTUPLEDIR = ""
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/test_heavy_higgs_GENSIM/"
+#NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/test_SUSY/"
 
-def plot_2D(sign,var,nbins=50,minimum=0,maximum=2000,filename="",string=""):
+
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v0_SUSY_calo_MINIAOD_2018/"
+from Analyzer.LLP2018.samplesMINIAOD2018 import sample, samples
+OUTPUTDIR = "plots/v0_SUSY_calo_MINIAOD_2018/METPreSelSUSYAOD/"
+
+#NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/HeavyHiggs_GENSIM/"
+#OUTPUTDIR = "plots/HeavyHiggs_GENSIM/"
+#from Analyzer.LLP2018.samples import sample, samples
+
+def plot_2D(sign,var,nbins=50,minimum=0,maximum=2000,bins=np.array([]),filename="",string="",part_var="GenBquarks",particle="#pi",norm=False):
     chain = {}
     hist = {}
     r_ecal = 129
     r_hcal = 179
     r_magnet = 295
     r_mb1 = 402
+    r_mb4 = 738
 
     z_ecal = 300
     z_hcal = 376
@@ -40,10 +52,12 @@ def plot_2D(sign,var,nbins=50,minimum=0,maximum=2000,filename="",string=""):
         v_hcal = TLine(r_hcal,minimum,r_hcal,maximum)
         v_magnet = TLine(r_magnet,minimum,r_magnet,maximum)
         v_mb1 = TLine(r_mb1,minimum,r_mb1,maximum)
+        v_mb4 = TLine(r_mb4,minimum,r_mb4,maximum)
         h_ecal = TLine(minimum,r_ecal,maximum,r_ecal)
         h_hcal = TLine(minimum,r_hcal,maximum,r_hcal)
         h_magnet = TLine(minimum,r_magnet,maximum,r_magnet)
         h_mb1 = TLine(minimum,r_mb1,maximum,r_mb1)
+        h_mb4 = TLine(minimum,r_mb4,maximum,r_mb4)
     elif var=="z":
         v_ecal = TLine(z_ecal,minimum,z_ecal,maximum)
         v_hcal = TLine(z_hcal,minimum,z_hcal,maximum)
@@ -70,7 +84,9 @@ def plot_2D(sign,var,nbins=50,minimum=0,maximum=2000,filename="",string=""):
     v_magnet.SetLineColor(1)
     h_magnet.SetLineColor(1)
     v_mb1.SetLineColor(801)
+    v_mb4.SetLineColor(4)
     h_mb1.SetLineColor(801)
+    h_mb4.SetLineColor(4)
 
     v_ecal.SetLineWidth(4)
     h_ecal.SetLineWidth(4)
@@ -80,6 +96,8 @@ def plot_2D(sign,var,nbins=50,minimum=0,maximum=2000,filename="",string=""):
     h_magnet.SetLineWidth(4)
     v_mb1.SetLineWidth(4)
     h_mb1.SetLineWidth(4)
+    v_mb4.SetLineWidth(3)
+    h_mb4.SetLineWidth(3)
 
     v_ecal.SetLineStyle(3)
     h_ecal.SetLineStyle(3)
@@ -89,12 +107,15 @@ def plot_2D(sign,var,nbins=50,minimum=0,maximum=2000,filename="",string=""):
     h_magnet.SetLineStyle(4)
     v_mb1.SetLineStyle(8)
     h_mb1.SetLineStyle(8)
+    v_mb4.SetLineStyle(9)
+    h_mb4.SetLineStyle(9)
 
-    leg = TLegend(0.75, 0.75, 0.9, 0.9)
+    leg = TLegend(1-0.9, 0.75, 1-0.75, 0.9)
     leg.AddEntry(v_ecal,"ECAL","L")
     leg.AddEntry(v_hcal,"HCAL","L")
     leg.AddEntry(v_magnet,"solenoid","L")
     leg.AddEntry(v_mb1,"MB1","L")
+    leg.AddEntry(v_mb4,"MB4","L")
 
     #pal= 68 #kAvocado
     #pal= 64 #kAquamarine, very readable
@@ -109,13 +130,23 @@ def plot_2D(sign,var,nbins=50,minimum=0,maximum=2000,filename="",string=""):
     gStyle.SetPalette(pal)
     gStyle.SetPaintTextFormat(".0f")
 
-    cutstring = "(fabs(GenBquarks[0].eta)<2.4 && fabs(GenBquarks[2].eta)<2.4 )*(EventWeight)"
-    cutstring = "(fabs(GenBquarks[0].eta)<2.4 && fabs(GenBquarks[2].eta)<2.4 && HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v)*(EventWeight)"
-    cutstring = "(fabs(GenBquarks[0].eta)<2.4 && fabs(GenBquarks[2].eta)<2.4 && HLT_HT650_DisplacedDijet60_Inclusive_v)*(EventWeight)"
-    #cutstring = "(fabs(GenBquarks[0].eta)<2.4 && fabs(GenBquarks[2].eta)<2.4 && (HLT_IsoMu24_v || HLT_Ele27_WPTight_Gsf_v))*(EventWeight)"
-    #cutstring = "(fabs(GenBquarks[0].eta)<2.4 && fabs(GenBquarks[2].eta)<2.4 && HLT_VBF_DisplacedJet40_VTightID_Hadronic_v)*(EventWeight)"
-    ##cutstring = "(fabs(GenBquarks[0].eta)<2.4 && fabs(GenBquarks[2].eta)<2.4 && HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v && MEt.pt>200)*(EventWeight)"
-    #cutstring = "(fabs(GenBquarks[0].eta)<2.4 && fabs(GenBquarks[2].eta)<2.4 && HLT_HT350_DisplacedDijet80_Tight_DisplacedTrack_v)*(EventWeight)"
+    if part_var=="GenBquarks":
+        cutstring = "(EventWeight) * ( (HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v && Flag_BadPFMuon && Flag_BadChCand) && nMuons==0 && nElectrons==0 && nPhotons==0 && nTaus==0 && HT>100 && MEt.pt>120 )"
+        #cutstring = "(EventWeight)"
+        #cutstring = "(fabs("+part_var+"[0].eta)<2.4 && fabs("+part_var+"[2].eta)<2.4 )*(EventWeight)"
+        #cutstring = "(fabs("+part_var+"[0].eta)<2.4 && fabs("+part_var+"[2].eta)<2.4 && HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v)*(EventWeight)"
+        #cutstring = "(fabs("+part_var+"[0].eta)<2.4 && fabs("+part_var+"[2].eta)<2.4 && HLT_HT650_DisplacedDijet60_Inclusive_v)*(EventWeight)"
+        #cutstring = "(fabs("+part_var+"[0].eta)<2.4 && fabs("+part_var+"[2].eta)<2.4 && (HLT_IsoMu24_v || HLT_Ele27_WPTight_Gsf_v))*(EventWeight)"
+        #cutstring = "(fabs("+part_var+"[0].eta)<2.4 && fabs("+part_var+"[2].eta)<2.4 && HLT_VBF_DisplacedJet40_VTightID_Hadronic_v)*(EventWeight)"
+        ##cutstring = "(fabs("+part_var+"[0].eta)<2.4 && fabs("+part_var+"[2].eta)<2.4 && HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v && MEt.pt>200)*(EventWeight)"
+        #cutstring = "(fabs("+part_var+"[0].eta)<2.4 && fabs("+part_var+"[2].eta)<2.4 && HLT_HT350_DisplacedDijet80_Tight_DisplacedTrack_v)*(EventWeight)"
+    else:
+        cutstring = "(EventWeight) * ( (HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v && Flag_BadPFMuon && Flag_BadChCand) && nMuons==0 && nElectrons==0 && nPhotons==0 && nTaus==0 && HT>100 && MEt.pt>120 )"
+        #MINIAOD: cutstring = "(EventWeight) * ( (HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v) && (isMC?Flag_eeBadScFilter:1) && (Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_globalTightHalo2016Filter && Flag_goodVertices && Flag_BadPFMuon && Flag_BadChCand) && nMuons==0 && nElectrons==0 && nPhotons==0 && nTaus==0 && HT>100 && MEt.pt>120 )"
+        #cutstring = "isMC"
+        #cutstring = "(EventWeight)"
+        #cutstring = "(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v)*(EventWeight)"
+        #cutstring = "isMC"
 
     for i, s in enumerate(sign):
         chain[s] = TChain("ntuple/tree")
@@ -123,29 +154,39 @@ def plot_2D(sign,var,nbins=50,minimum=0,maximum=2000,filename="",string=""):
             for p, ss in enumerate(samples[s]['files']):
                 chain[s].Add(NTUPLEDIR + ss + ".root")
         else:
-            chain[s].Add(filename+".root")
+            chain[s].Add(NTUPLEDIR + filename+".root")
+        print "Entries: ", chain[s].GetEntries()
         #filename[s] = TFile("VBFH_HToSSTobbbb_MH-125_MS-30_ctauS-1000.root", "READ")
-        hist[s] = TH2F(s, "", nbins, minimum, maximum, nbins, minimum, maximum)
+        if len(bins) ==0:
+            hist[s] = TH2F(s, "", nbins, minimum, maximum, nbins, minimum, maximum)
+        else:
+            hist[s] = TH2F(s, "", len(bins)-1, bins, len(bins)-1, bins)
         hist[s].Sumw2()
         if var=="z":
-            #chain[s].Project(s, "sqrt(pow(GenBquarks[0].radius,2) - pow(GenBquarks[0].radius2D,2)) * GenBquarks[0].eta/abs(GenBquarks[0].eta):sqrt(pow(GenBquarks[2].radius,2) - pow(GenBquarks[2].radius2D,2)) * GenBquarks[0].eta/abs(GenBquarks[0].eta)", cutstring)
+            #chain[s].Project(s, "sqrt(pow("+part_var+"[0].radius,2) - pow("+part_var+"[0].radius2D,2)) * "+part_var+"[0].eta/abs("+part_var+"[0].eta):sqrt(pow("+part_var+"[2].radius,2) - pow("+part_var+"[2].radius2D,2)) * "+part_var+"[0].eta/abs("+part_var+"[0].eta)", cutstring)
             #sign of eta for getting the right z value!
-            chain[s].Project(s, "sqrt(pow(GenBquarks[0].radius,2) - pow(GenBquarks[0].radius2D,2)):sqrt(pow(GenBquarks[2].radius,2) - pow(GenBquarks[2].radius2D,2))", cutstring)
+            chain[s].Project(s, "sqrt(pow("+part_var+"[0].radius,2) - pow("+part_var+"[0].radius2D,2)):sqrt(pow("+part_var+"[2].radius,2) - pow("+part_var+"[2].radius2D,2))", cutstring)
         else:
-            chain[s].Project(s, "GenBquarks[0]."+var+":GenBquarks[2]."+var+"", cutstring)
+            if part_var=="GenBquarks":
+                chain[s].Project(s, ""+part_var+"[0]."+var+":"+part_var+"[2]."+var+"", cutstring)
+            else:
+                chain[s].Project(s, ""+part_var+"[0]."+var+":"+part_var+"[1]."+var+"", cutstring)
         hist[s].SetOption("%s" % chain[s].GetTree().GetEntriesFast())
+        if norm:
+            hist[s].Scale(100./hist[s].Integral())
+            gStyle.SetPaintTextFormat('5.1f')
         c1 = TCanvas("c1", "c1", 1000, 1000)
         c1.cd()
-        c1.SetGrid()
+        #c1.SetGrid()
         c1.SetLogz()
-        #c1.SetLogx()
-        #c1.SetLogy()
-        hist[s].GetYaxis().SetTitle("Leading #pi transverse decay length (cm)")#("GenBquarks[0] "+var+" (cm)")
+        c1.SetLogx()
+        c1.SetLogy()
+        hist[s].GetYaxis().SetTitle("Leading "+particle+" transverse decay length (cm)")#(""+part_var+"[0] "+var+" (cm)")
         hist[s].GetYaxis().SetTitleOffset(1.4)
-        hist[s].GetXaxis().SetTitle("Sub-leading #pi transverse decay length (cm)")#("GenBquarks[2] "+var+" (cm)")
+        hist[s].GetXaxis().SetTitle("Sub-leading "+particle+" transverse decay length (cm)")#(""+part_var+"[2] "+var+" (cm)")
         hist[s].SetTitle(samples[s]['label'] if filename=="" else filename)
-        hist[s].SetMarkerColor(0)
-        hist[s].Draw("colztext")
+        hist[s].SetMarkerColor(0)#(2)#
+        hist[s].Draw("colz")#()#
         v_ecal.Draw("sames")
         h_ecal.Draw("sames")
         v_hcal.Draw("sames")
@@ -154,16 +195,22 @@ def plot_2D(sign,var,nbins=50,minimum=0,maximum=2000,filename="",string=""):
         h_magnet.Draw("sames")
         v_mb1.Draw("sames")
         h_mb1.Draw("sames")
+        v_mb4.Draw("sames")
+        h_mb4.Draw("sames")
+        hist[s].SetMarkerSize(1.2)#(2)#
+        hist[s].Draw("text,sames")#()#
         leg.Draw("sames")
-        c1.Print("macro/2D_gen_b_quark_"+var+"_"+(s if filename=="" else filename)+string+".png")
-        c1.Print("macro/2D_gen_b_quark_"+var+"_"+(s if filename=="" else filename)+string+".pdf")
+        c1.Print(OUTPUTDIR+"2D_gen_b_quark_"+var+"_"+(s if filename=="" else filename)+string+".png")
+        c1.Print(OUTPUTDIR+"2D_gen_b_quark_"+var+"_"+(s if filename=="" else filename)+string+".pdf")
 
         if not gROOT.IsBatch(): raw_input("Press Enter to continue...")
         c1.Close()
 
-taglio = "_acceptance"
-taglio = "_MET_trigger"
-taglio = "_displaced_dijet_trigger"
+taglio = "_preselections"
+#taglio = "_nocuts"
+#taglio = "_acceptance"
+#taglio = "_MET_trigger"
+#taglio = "_displaced_dijet_trigger"
 #taglio = "_single_lepton_trigger"
 #taglio = "_VBF_displaced_jet_trigger"
 signal_15 = {
@@ -285,14 +332,125 @@ signal_50 = {
 
 #for a in signal.keys():
 #    print a
-#    plot_2D([a],"radius2D",nbins=20,minimum=0,maximum=signal[a]['max'],filename="",string=taglio)
+#    plot_2D([a],"radius2D",nbins=20,minimum=0,maximum=signal[a]['max'],bins=np.array([]),filename="",string=taglio)
 
-signal = ["HTo2LongLivedTo4b_MH-1000_MFF-450_CTau-1000mm","HTo2LongLivedTo4b_MH-1000_MFF-450_CTau-10000mm"]
+'''
+#SUSY
+signal = ["mchi200_pl1000","mchi300_pl1000","mchi400_pl1000"]
 for a in signal:
-    plot_2D([a],"radius2D",nbins=20,minimum=0,maximum=500,filename=a,string=taglio)
+    plot_2D([a],"radius2D",nbins=50,minimum=9.9,maximum=50000,bins=np.array([9.9,25,50,100,250,500,1000,5000,10000,50000]),filename=a,string=taglio,part_var="GenHiggs")
 
-#plot_2D(a,"radius2D",nbins=20,minimum=0,maximum=500,filename=a,string=taglio)
+exit()
+'''
 
-#plot_2D("radius2D",nbins=20,minimum=0,maximum=1000,filename="VBFH_HToSSTobbbb_MH-125_MS-30_ctauS-1000",string=taglio)
-#plot_2D("radius2D",nbins=20,minimum=0,maximum=2000,filename="ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-10000",string=taglio)
-#plot_2D("z",nbins=10,minimum=0,maximum=1000,filename="VBFH_HToSSTobbbb_MH-125_MS-30_ctauS-1000")
+'''
+#Heavy Higgs
+signal = ["GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000",
+"GluGluH2_H2ToSSTobbbb_MH-125_MS-8_ctauS-1000",
+"GluGluH2_H2ToSSTobbbb_MH-400_MS-50_ctauS-1000",
+"GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-10000",
+"GluGluH2_H2ToSSTobbbb_MH-125_MS-8_ctauS-10000",
+"GluGluH2_H2ToSSTobbbb_MH-400_MS-50_ctauS-10000",
+"GluGluH2_H2ToSSTobbbb_MH-1000_MS-400_ctauS-1000",
+"GluGluH2_H2ToSSTobbbb_MH-200_MS-25_ctauS-1000",
+"GluGluH2_H2ToSSTobbbb_MH-600_MS-150_ctauS-1000",
+"GluGluH2_H2ToSSTobbbb_MH-1000_MS-400_ctauS-10000",
+"GluGluH2_H2ToSSTobbbb_MH-200_MS-25_ctauS-10000",
+"GluGluH2_H2ToSSTobbbb_MH-600_MS-150_ctauS-10000",
+"GluGluH2_H2ToSSTobbbb_MH-125_MS-25_ctauS-1000",
+"GluGluH2_H2ToSSTobbbb_MH-200_MS-50_ctauS-1000",
+"GluGluH2_H2ToSSTobbbb_MH-600_MS-50_ctauS-1000",
+"GluGluH2_H2ToSSTobbbb_MH-125_MS-25_ctauS-10000",    "GluGluH2_H2ToSSTobbbb_MH-200_MS-50_ctauS-10000",   "GluGluH2_H2ToSSTobbbb_MH-600_MS-50_ctauS-10000","GluGluH2_H2ToSSTobbbb_MH-125_MS-55_ctauS-1000",     "GluGluH2_H2ToSSTobbbb_MH-400_MS-100_ctauS-1000","GluGluH2_H2ToSSTobbbb_MH-125_MS-55_ctauS-10000",    "GluGluH2_H2ToSSTobbbb_MH-400_MS-100_ctauS-10000",
+"GluGluH2_H2ToSSTobbbb_MH-1000_MS-400_ctauS-500", 
+"GluGluH2_H2ToSSTobbbb_MH-1000_MS-400_ctauS-2000", 
+"GluGluH2_H2ToSSTobbbb_MH-1000_MS-400_ctauS-5000", 
+"GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-500", 
+"GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-2000", 
+"GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-5000", 
+"GluGluH2_H2ToSSTobbbb_MH-600_MS-150_ctauS-500", 
+"GluGluH2_H2ToSSTobbbb_MH-600_MS-150_ctauS-2000", 
+"GluGluH2_H2ToSSTobbbb_MH-600_MS-150_ctauS-5000", 
+"GluGluH2_H2ToSSTobbbb_MH-600_MS-50_ctauS-500", 
+"GluGluH2_H2ToSSTobbbb_MH-600_MS-50_ctauS-2000", 
+"GluGluH2_H2ToSSTobbbb_MH-600_MS-50_ctauS-5000", 
+"GluGluH2_H2ToSSTobbbb_MH-400_MS-100_ctauS-500", 
+"GluGluH2_H2ToSSTobbbb_MH-400_MS-100_ctauS-2000", 
+"GluGluH2_H2ToSSTobbbb_MH-400_MS-100_ctauS-5000", 
+"GluGluH2_H2ToSSTobbbb_MH-400_MS-50_ctauS-500", 
+"GluGluH2_H2ToSSTobbbb_MH-400_MS-50_ctauS-2000", 
+"GluGluH2_H2ToSSTobbbb_MH-400_MS-50_ctauS-5000", 
+"GluGluH2_H2ToSSTobbbb_MH-200_MS-50_ctauS-500", 
+"GluGluH2_H2ToSSTobbbb_MH-200_MS-50_ctauS-2000", 
+"GluGluH2_H2ToSSTobbbb_MH-200_MS-50_ctauS-5000", 
+"GluGluH2_H2ToSSTobbbb_MH-200_MS-25_ctauS-500", 
+"GluGluH2_H2ToSSTobbbb_MH-200_MS-25_ctauS-2000", 
+"GluGluH2_H2ToSSTobbbb_MH-200_MS-25_ctauS-5000", 
+"GluGluH2_H2ToSSTobbbb_MH-125_MS-55_ctauS-500", 
+"GluGluH2_H2ToSSTobbbb_MH-125_MS-55_ctauS-2000", 
+"GluGluH2_H2ToSSTobbbb_MH-125_MS-55_ctauS-5000", 
+"GluGluH2_H2ToSSTobbbb_MH-125_MS-25_ctauS-500", 
+"GluGluH2_H2ToSSTobbbb_MH-125_MS-25_ctauS-2000", 
+"GluGluH2_H2ToSSTobbbb_MH-125_MS-25_ctauS-5000", 
+]
+
+for a in signal:
+    plot_2D([a],"radius2D",nbins=50,minimum=9.9,maximum=50000,bins=np.array([9.9,50,100,250,500,1000,5000,10000,50000]),filename=a,string=taglio,part_var="GenBquarks")
+
+'''
+
+'''
+##Heavy Higgs gen sim
+signal = [
+    "GluGluH2_H2ToSSTobbbb_MH-1000_MS-400_ctauS-500_TuneCP5_13TeV-pythia8",
+    "GluGluH2_H2ToSSTobbbb_MH-1000_MS-400_ctauS-1000_TuneCP5_13TeV-pythia8",
+    "GluGluH2_H2ToSSTobbbb_MH-1000_MS-400_ctauS-2000_TuneCP5_13TeV-pythia8",    
+    "GluGluH2_H2ToSSTobbbb_MH-1000_MS-400_ctauS-5000_TuneCP5_13TeV-pythia8",
+    "GluGluH2_H2ToSSTobbbb_MH-1000_MS-400_ctauS-10000_TuneCP5_13TeV-pythia8",
+    "GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-500_TuneCP5_13TeV-pythia8",
+    "GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8",
+    "GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-2000_TuneCP5_13TeV-pythia8",    
+    "GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-5000_TuneCP5_13TeV-pythia8",
+    #"GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-10000_TuneCP5_13TeV-pythia8",
+    ]
+for a in signal:
+    plot_2D([a],"radius2D",nbins=50,minimum=1,maximum=5000,bins=np.array([1.,5.,10.,50,100,250,500,1000,5000]),filename=a,string=taglio,part_var="GenBquarks", particle="S", norm=True)
+'''
+
+##SUSY
+
+'''
+signal = ['n3n2-n1-hbb-hbb_mh400_pl1000','n3n2-n1-hbb-hbb_mh300_pl1000','n3n2-n1-hbb-hbb_mh200_pl1000']
+
+for a in signal:
+    plot_2D([a],"radius2D",nbins=50,minimum=1,maximum=5000,bins=np.array([1.,5.,10.,50,100,250,500,1000,5000]),filename=a,string=taglio,part_var="GenHiggs", particle="b", norm=True)
+exit()
+'''
+
+#HEAVY HIGGS
+
+signal = ['ggH_MH1000_MS400_ctau500',
+	'ggH_MH1000_MS400_ctau1000',
+	'ggH_MH1000_MS400_ctau2000',
+	'ggH_MH1000_MS400_ctau5000',
+	'ggH_MH1000_MS400_ctau10000',
+		
+	'ggH_MH1000_MS150_ctau500',
+	'ggH_MH1000_MS150_ctau1000',
+	'ggH_MH1000_MS150_ctau2000',
+	'ggH_MH1000_MS150_ctau5000',
+	'ggH_MH1000_MS150_ctau10000']
+
+plot_2D(signal,"radius2D",nbins=50,minimum=1,maximum=5000,bins=np.array([1.,5.,10.,50,100,250,500,1000,5000]),filename="",string=taglio,part_var="GenBquarks", particle="S", norm=True)
+
+exit()
+for a in signal:
+    print a
+    print samples[a]['files']
+    plot_2D([a],"radius2D",nbins=50,minimum=1,maximum=5000,bins=np.array([1.,5.,10.,50,100,250,500,1000,5000]),filename=a,string=taglio,part_var="GenBquarks", particle="S", norm=True)
+
+
+#plot_2D(a,"radius2D",nbins=20,minimum=0,maximum=500,bins=np.array([]),filename=a,string=taglio)
+
+#plot_2D("radius2D",nbins=20,minimum=0,maximum=1000,bins=np.array([]),filename="VBFH_HToSSTobbbb_MH-125_MS-30_ctauS-1000",string=taglio)
+#plot_2D("radius2D",nbins=20,minimum=0,maximum=2000,bins=np.array([]),filename="ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-10000",string=taglio)
+#plot_2D("z",nbins=10,minimum=0,maximum=1000,bins=np.array([]),filename="VBFH_HToSSTobbbb_MH-125_MS-30_ctauS-1000")

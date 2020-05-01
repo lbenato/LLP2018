@@ -35,6 +35,8 @@ selection["METPreSel120"] = selection["PFMETNoMuTrigger"] + " && " + selection["
 
 selection["METPreSelSUSYAOD"] = selection["PFMETNoMuTriggerAOD"] + " && " + selection["VetoLeptons"] + " && HT>100 && MEt.pt>120"
 selection["METPreSelSUSY"] = selection["PFMETNoMuTrigger"] + " && " + selection["VetoLeptons"] + " && HT>100 && MEt.pt>120"
+selection["CheckLeader"] = "MEt.sign>20 && " + selection["VetoLeptons"] + " && HT>100 && MEt.pt>120"
+selection["synch"] = selection["PFMETNoMuTriggerAOD"] + " && " + selection["VetoLeptons"] + " && HT>100 && MEt.pt>120 && Jets[0].pt>30 && Jets[1].pt>30 && nJets>1"
 
 
 selection["METPreSel120QCDKiller"] = selection["PFMETNoMuTrigger"] + " && " + selection["VetoLeptons"] + " && HT>100 && isVBF && MEt.pt>120 && MinJetMetDPhi>0.5"
