@@ -46,6 +46,47 @@
 #include "DataFormats/JetReco/interface/PFJet.h"
 #include "DataFormats/JetReco/interface/PFJetCollection.h"
 
+//Track classes
+#include "TrackingTools/IPTools/interface/IPTools.h"
+#include "DataFormats/GeometryCommonDetAlgo/interface/Measurement1D.h"
+#include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
+#include "TrackingTools/Records/interface/TransientTrackRecord.h"
+#include "TrackingTools/TransientTrack/interface/TransientTrack.h"
+#include "TrackingTools/TrajectoryState/interface/FreeTrajectoryState.h"
+#include "TrackingTools/TrajectoryState/interface/TrajectoryStateOnSurface.h"
+#include "TrackingTools/TrajectoryState/interface/TrajectoryStateTransform.h"
+
+#include "MagneticField/Records/interface/IdealMagneticFieldRecord.h"
+
+#include "TrackingTools/GeomPropagators/interface/Propagator.h"
+#include "TrackingTools/GeomPropagators/interface/StateOnTrackerBound.h"
+#include "TrackingTools/Records/interface/TrackingComponentsRecord.h"
+#include "TrackingTools/Records/interface/TransientTrackRecord.h"
+#include "TrackingTools/TrajectoryState/interface/TrajectoryStateTransform.h"
+#include "TrackingTools/MaterialEffects/interface/PropagatorWithMaterial.h"
+#include "RecoVertex/VertexPrimitives/interface/TransientVertex.h"
+
+#include "DataFormats/TrackReco/interface/TrackBase.h"
+#include "DataFormats/TrackReco/interface/TrackExtra.h"
+#include "DataFormats/TrackReco/interface/TrackExtraFwd.h"
+#include "DataFormats/TrackingRecHit/interface/TrackingRecHitFwd.h"
+
+#include "PhysicsTools/RecoUtils/interface/CheckHitPattern.h"
+#include "RecoVertex/ConfigurableVertexReco/interface/ConfigurableVertexReconstructor.h"
+#include "RecoVertex/VertexTools/interface/VertexCompatibleWithBeam.h"
+#include "RecoVertex/VertexTools/interface/VertexDistanceXY.h"
+#include "RecoVertex/KalmanVertexFit/interface/KalmanVertexFitter.h"
+#include "RecoVertex/KinematicFit/interface/KinematicParticleVertexFitter.h"
+#include "RecoVertex/KinematicFit/interface/KinematicParticleFitter.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/KinematicParticle.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/KinematicParticleFactoryFromTransientTrack.h"
+#include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicParticle.h"
+#include "RecoVertex/VertexPrimitives/interface/ConvertToFromReco.h"
+#include "RecoVertex/VertexPrimitives/interface/ConvertError.h"
+
+#include "SimDataFormats/TrackingHit/interface/PSimHit.h"
+#include "SimDataFormats/TrackerDigiSimLink/interface/StripDigiSimLink.h"
+
 //Pat classes
 #include "DataFormats/PatCandidates/interface/MET.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
@@ -126,6 +167,9 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::ParameterSet DisplacedStandAloneMuonsPSet;
     edm::EDGetTokenT<reco::PFJetCollection> jetToken;
     //edm::EDGetTokenT<std::vector<pat::MET> > metToken;
+    
+    edm::EDGetTokenT<vector<reco::Track> > generalTracksToken;
+    edm::EDGetTokenT<edm::View<reco::Track> > generalTracksViewToken;
 
 
     JetAnalyzer* theCHSJetAnalyzer;
@@ -206,7 +250,7 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     float EventWeight;
     float GenEventWeight;
     float PUWeight, PUWeightUp, PUWeightDown;
-    long int nJets;
+    long int nCHSJets;
     long int nCaloJets;
     long int nElectrons, nMuons, nTaus, nPhotons;
     long int nTightMuons, nTightElectrons;
@@ -249,6 +293,14 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //Pre-firing
     bool Prefired;
     long int nGenBquarks, nGenLL;
+    
+    
+    //Geometry and propagator
+    const MagneticField* MagneticFieldTag;
+    edm::ESHandle<Propagator> PropagatorHandle;
+    edm::ESHandle<TransientTrackBuilder> BuilderHandle;
+    
+    
     //Initialize tree                                                                                                                     
     edm::Service<TFileService> fs;
     TTree* tree;
@@ -377,6 +429,12 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     jetToken = consumes<reco::PFJetCollection>(IT_jets);
     edm::InputTag lheProduct_ = edm::InputTag("lheProduct");
 
+
+    //general tracks
+    edm::InputTag IT_generalTracks = edm::InputTag("generalTracks");
+    generalTracksToken = consumes<std::vector<reco::Track>>(IT_generalTracks);
+    generalTracksViewToken = consumes<edm::View<reco::Track>>(IT_generalTracks);
+        
     ////edm::InputTag IT_met = edm::InputTag("patMETs");
     ////edm::InputTag IT_met = edm::InputTag("slimmedMETs");
     ////metToken = consumes<std::vector<pat::MET>>(IT_met);
@@ -436,7 +494,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     ObjectsFormat::ResetCandidateType(VBF);
 
 
-    nJets = nCaloJets = 0;
+    nCHSJets = nCaloJets = 0;
     nElectrons = nMuons = nTaus = nPhotons = 0;
     nTightMuons = nTightElectrons = 0;
     //nStandAloneMuons = nDisplacedStandAloneMuons =0;
@@ -479,6 +537,10 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     EventNumber = iEvent.id().event();
     LumiNumber = iEvent.luminosityBlock();
     RunNumber = iEvent.id().run();
+    //std::cout << "\n";
+    //std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+    //std::cout << " Event Number: " << EventNumber << std::endl;
+
 
     //GenEventWeight
     GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
@@ -582,8 +644,8 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //if(isVerbose) std::cout << "Taus" << std::endl;
     std::vector<pat::Tau> TauVect = theTauAnalyzer->FillTauVector(iEvent);
-    theTauAnalyzer->CleanTausFromMuons(TauVect, MuonVect, 0.4);
-    theTauAnalyzer->CleanTausFromElectrons(TauVect, ElecVect, 0.4);
+    //theTauAnalyzer->CleanTausFromMuons(TauVect, MuonVect, 0.4);//synch caltech
+    //theTauAnalyzer->CleanTausFromElectrons(TauVect, ElecVect, 0.4);//synch caltech
     nTaus = TauVect.size();
 
     //------------------------------------------------------------------------------------------
@@ -624,10 +686,10 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //if(EventNumber!=44169) return;
     if(HT<100) return;//Avoid events with low HT//WAIT!!
     if(isCalo && MET.pt()<120) return;//Avoid events with very low MET for calo analysis
-    if(isCalo && nMuons>0) return;//Veto leptons and photons!
-    if(isCalo && nTaus>0) return;//Veto leptons and photons!
-    if(isCalo && nElectrons>0) return;//Veto leptons and photons!
-    if(isCalo && nPhotons>0) return;//Veto leptons and photons!
+    //if(isCalo && nMuons>0) return;//Veto leptons and photons!
+    //if(isCalo && nTaus>0) return;//Veto leptons and photons!
+    //if(isCalo && nElectrons>0) return;//Veto leptons and photons!
+    //if(isCalo && nPhotons>0) return;//Veto leptons and photons!
 
 
     //------------------------------------------------------------------------------------------
@@ -690,7 +752,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
 
-    std::vector<pat::Jet> VBFJetsVect = theVBFJetAnalyzer->FillJetVector(iEvent);
+    std::vector<pat::Jet> VBFJetsVect = theVBFJetAnalyzer->FillJetVector(iEvent,iSetup);
     pat::CompositeCandidate theVBF;
     std::vector<pat::Jet> VBFPairJetsVect;
    
@@ -790,7 +852,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // AK4 CHS jets
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-    std::vector<pat::Jet> CHSJetsVect = theCHSJetAnalyzer->FillJetVector(iEvent);
+    std::vector<pat::Jet> CHSJetsVect = theCHSJetAnalyzer->FillJetVector(iEvent,iSetup);
 
 
     //Filling Jet structure manually, without filling a vector first. Used as cross-check.
@@ -987,7 +1049,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       }
 
-    nJets = CHSJetsVect.size();
+    nCHSJets = CHSJetsVect.size();
 
     //Check for PU jet ID:
     /*
@@ -1138,13 +1200,6 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
     //# Loop over jets and study b tag info.
-    //for (unsigned int i = 0; i != pfXWP0p01Tags.size(); ++i) {
-    //    if(pfXWP0p01Tags[i].first->pt()>1 && abs(pfXWP0p01Tags[i].first->eta())<2.4) std::cout << "  pfX WP0p01 tag jet  [" << i << "]\tpt: " << pfXWP0p01Tags[i].first->pt() << "\teta: " << pfXWP0p01Tags[i].first->eta() << "\tphi: " << pfXWP0p01Tags[i].first->phi() << "\tpfXTags: " << pfXWP0p01Tags[i].second << std::endl;
-    //}
-
-    //for (unsigned int i = 0; i != pfXWP1Tags.size(); ++i) {
-    //    if(pfXWP1Tags[i].first->pt()>1 && abs(pfXWP1Tags[i].first->eta())<2.4) std::cout << "  pfX WP1 tag jet  [" << i << "]\tpt: " << pfXWP1Tags[i].first->pt() << "\teta: " << pfXWP1Tags[i].first->eta() << "\tphi: " << pfXWP1Tags[i].first->phi() << "\tpfXTags: " << pfXWP1Tags[i].second << std::endl;
-    //}
 
     if(isVerbose) {
       for (unsigned int i = 0; i != pfXWP1000Tags.size(); ++i) {
@@ -1386,91 +1441,448 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
 
-    // AK4 jets
+    //general tracks handle
+    edm::Handle<std::vector<reco::Track>> generalTracks;
+    iEvent.getByToken(generalTracksToken,generalTracks);
+    //std::cout << "general tracks size? " << generalTracks->size() << std::endl;
+    
+    edm::Handle<edm::View<reco::Track> > generalTracksView;
+    iEvent.getByToken(generalTracksViewToken,generalTracksView);
+
+
+    // Magnetic field
+    edm::ESHandle<MagneticField> MagneticField;
+    iSetup.get<IdealMagneticFieldRecord>().get(MagneticField);
+    MagneticFieldTag = &*MagneticField;
+    // Propagator
+    std::string PropagatorName = "PropagatorWithMaterial";
+    iSetup.get<TrackingComponentsRecord>().get(PropagatorName,PropagatorHandle);
+    StateOnTrackerBound stateOnTracker(PropagatorHandle.product());
+
+    //Loop on jets    
     for (unsigned int j = 0; j < CHSJetsVect.size(); j++){
-      int jj = j;
+    
+      //std::cout << "- - - - - - - - - - - -" << std::endl;
+      //std::cout << "Jet n. " << j << std::endl;
+      //int jj = j;
       // Initialize jet variables from PFCandidates:
-      float sumPtJet = 0.;
-      std::vector<float> sumPtPV;
-      std::vector<float> sigIP2D;
-      std::vector<float> theta2D;
-      std::vector<float> POCA_theta2D;
-      std::vector<float> nPixelHits;
+      //float sumPtJet = 0.;
+      //std::vector<float> sumPtPV;
+      //std::vector<float> deltaRPV;//L
+      //std::vector<float> sigIP2D;
+      //std::vector<float> theta2D;
+      //std::vector<float> POCA_theta2D;
+      //std::vector<float> nPixelHits;
+      //std::vector<float> nHits;
+      //std::vector<float> dzVect;
+      //std::vector<float> dxyVect;
+
+
+      //Caltech; some still to be understood
+      reco::Vertex primaryVertex = PVertexVect.at(0);
+      std::vector<float> IP2Ds;
+      std::vector<float> theta2Ds;
+      std::vector<float> nPixelHits;//method seems not available
       std::vector<float> nHits;
       std::vector<float> dzVect;
       std::vector<float> dxyVect;
-
-
+      
+      float ptAllTracks = 0.;//Caltech: pt sum of generalTracks inside jet cone
+      float ptAllPVTracks = 0.;//Caltech: pt sum of tracks belonging to any PV inside jet cone
+      float ptPVTracksMax = 0.;//Caltech: maximum pt sum of tracks in a vertex inside jet cone
+      int   nTracksAll = 0;//Caltech: num of generalTracks inside jet cone
+      int   nTracksPVMax = 0;//Caltech: maximum number of tracks in a vertex inside jet cone
+      
+      float medianIP2D = -10000.;
+      float medianTheta2D = -100.;
+      
       float alphaMax = -100.;
-      float sigIP2DMedian = -100.;
-      float theta2DMedian = -100.;
-      float POCA_theta2DMedian = -100.;
+      float betaMax = -100.;
+      float gammaMax = -100.;
+      float gammaMaxEM = -100.;
+      float gammaMaxHadronic = -100.;
+      float gammaMaxET = -100.;
+      //float sigIP2DMedian = -10000.;
+      //float theta2DMedian = -100.;
+      //float POCA_theta2DMedian = -100.;
       float nPixelHitsMedian = -1.;
       float nHitsMedian = -1.;
       float dzMedian = -9999.;
       float dxyMedian = -9999.;
+      float minDeltaRAllTracks = 999.;//Caltech: min DR bw generalTracks and current jet
+      float minDeltaRPVTracks = 999.;//Caltech: min DR bw a track included in a vertex and current jet; there is a pt constraint on the total pt of tracks associated to a jet. Ask why
+      
+      //int nTrackConstituentsWithPtLarger0p95 = 0;
+      //int nTrackConstituentsWithTrackDetails = 0;
+      //int nTrackConstituentsWithTrackDetailsPtLarger0p95 = 0; 
+ 
 
-      int nTracks0PixelHits = 0;
-      int nTracks1PixelHit = 0;
-      int nTracks2PixelHits = 0;
-      int nTracks3PixelHits = 0;
-      int nTracks4PixelHits = 0;
-      int nTracks5PixelHits = 0;
-      int nTracksAtLeast6PixelHits = 0;
-      int nTracksValidHitInBPix1 = 0;
-      int nTracks0LostInnerHits = 0;
-      int nTracks1LostInnerHit = 0;
-      int nTracksAtLeast2LostInnerHits = 0;
+
+      /* Track loop */
+      //int iterator_valid_track = 0;
+      for (unsigned int iTrack = 0; iTrack < generalTracks->size(); iTrack ++){
+
+        // Track propagation
+        FreeTrajectoryState fts = trajectoryStateTransform::initialFreeState (generalTracksView->at(iTrack),MagneticFieldTag);
+        TrajectoryStateOnSurface outer = stateOnTracker(fts);
+        if(!outer.isValid()) continue;
+        GlobalPoint outerPos = outer.globalPosition();
+
+        TLorentzVector generalTrackVecTemp;
+        generalTrackVecTemp.SetPtEtaPhiM((generalTracks->at(iTrack)).pt(), outerPos.eta(), outerPos.phi(), 0);
+
+        if ((generalTracks->at(iTrack)).pt() > 1) {
+          //std::cout << "Valid track n. " << iterator_valid_track << std::endl;
+          //iterator_valid_track++;
+          //std::cout << "Valid track: " << generalTracks->at(iTrack).pt() << std::endl;
+          if (minDeltaRAllTracks > reco::deltaR(generalTrackVecTemp.Eta(),generalTrackVecTemp.Phi(),CHSJetsVect.at(j).eta(),CHSJetsVect.at(j).phi()) )
+	  {
+	      minDeltaRAllTracks =  reco::deltaR(generalTrackVecTemp.Eta(),generalTrackVecTemp.Phi(),CHSJetsVect.at(j).eta(),CHSJetsVect.at(j).phi());
+	      //std::cout << "minDeltaRAllTracks " << minDeltaRAllTracks << std::endl;
+	  }
+	  if (reco::deltaR(generalTrackVecTemp.Eta(),generalTrackVecTemp.Phi(),CHSJetsVect.at(j).eta(),CHSJetsVect.at(j).phi()) < 0.4)
+	  {
+    	  	nTracksAll ++;
+    	  	//tot pt for alpha
+    	 	ptAllTracks += (generalTracks->at(iTrack)).pt();	                   
+                 nPixelHits.push_back((generalTracks->at(iTrack)).hitPattern().numberOfValidPixelHits());
+                 nHits.push_back((generalTracks->at(iTrack)).hitPattern().numberOfValidTrackerHits());
+                 dzVect.push_back((generalTracks->at(iTrack)).dz());
+                 dxyVect.push_back((generalTracks->at(iTrack)).dxy());
+    	 	//std::cout << "Track n. " << iterator_valid_track << " in jet! its pt" << (generalTracks->at(iTrack)).pt() << ", nTracksAll: " << nTracksAll << ", ptAllTracks: " << ptAllTracks  << std::endl;
+
+           }//if track in jet cone
+        }//if tracks pt>1 GeV
+        
+      }//loop on general tracks
+ 
+
+
+      /*Vertex loop */
+      if (ptAllTracks > 0.9){
+        //No matched jets
+        //int iterator_vertex = 0;
+        for (auto vertex = PVertexVect.begin(); vertex != PVertexVect.end(); vertex++){
+          double ptPVTracks = 0.;//pt of tracks associated to one singular PV and inside current jet cone
+          int nTracksPVTemp = 0;//number of tracks associated to one singular PV and inside current jet cone
+          if(!vertex->isValid())continue;
+          if (vertex->isFake())continue;
+          //std::cout << "Valid vertex n. " << iterator_vertex << std::endl;
+          //iterator_vertex++;
+          for(auto pvTrack=vertex->tracks_begin(); pvTrack!=vertex->tracks_end(); pvTrack++){
+
+              // Track propagation
+              FreeTrajectoryState ftspv = trajectoryStateTransform::initialFreeState (**pvTrack, MagneticFieldTag);
+              TrajectoryStateOnSurface outerpv = stateOnTracker(ftspv);
+              if(!outerpv.isValid()) continue;
+              GlobalPoint outerpvPos = outerpv.globalPosition();
+
+    	      TLorentzVector pvTrackVecTemp;
+    	      pvTrackVecTemp.SetPtEtaPhiM((*pvTrack)->pt(),outerpvPos.eta(),outerpvPos.phi(),0);
+  	      //If pv track associated with jet add pt to ptPVTracks
+    	      if ((*pvTrack)->pt() > 1)
+    	      {
+    	        if (minDeltaRPVTracks > reco::deltaR(pvTrackVecTemp.Eta(),pvTrackVecTemp.Phi(),CHSJetsVect.at(j).eta(),CHSJetsVect.at(j).phi()))
+    	        {
+    	          minDeltaRPVTracks =  reco::deltaR(pvTrackVecTemp.Eta(),pvTrackVecTemp.Phi(),CHSJetsVect.at(j).eta(),CHSJetsVect.at(j).phi());
+    	        }
+    	        if(reco::deltaR(pvTrackVecTemp.Eta(),pvTrackVecTemp.Phi(),CHSJetsVect.at(j).eta(),CHSJetsVect.at(j).phi()) < 0.4)
+    	        {
+    	           //std::cout << "Valid track inside vertex n. " << iterator_vertex << "; track pt: " << (*pvTrack)->pt() << std::endl;
+                   ptPVTracks += (*pvTrack)->pt();//pt sum per vertex
+                   ptAllPVTracks += (*pvTrack)->pt();//pt sum over all vertices
+                   nTracksPVTemp++;//number of tracks associated to one particular vertex
+    	        }//jet matching
+              }//minimum track pt
+           
+              if (ptPVTracks > ptPVTracksMax) {
+      	        ptPVTracksMax = ptPVTracks;
+      	        nTracksPVMax = nTracksPVTemp;
+      	      }
+      	     
+          }//loop on vertex tracks
+           
+         //alphaMax = ptAllTracks>0 ? ptPVTracksMax/ptAllTracks : -100.;
+         //std::cout << "Still inside vertex n. " << iterator_vertex << "; ptPVTracksMax: " << ptPVTracksMax << "; nTracksPVMax: " << nTracksPVMax << "; alphaMax: " << alphaMax << std::endl;
+  	}//loop on vertices
+  	
+      }//if pt all tracks
+ 
+
+
+      /* Track loop, without propagator, for sigIP2D and theta2D */
+      for (unsigned int iTrack = 0; iTrack < generalTracks->size(); iTrack ++){
+  	reco::Track generalTrack = generalTracks->at(iTrack);
+  	TLorentzVector generalTrackVecTemp;
+  	generalTrackVecTemp.SetPtEtaPhiM(generalTrack.pt(),generalTrack.eta(),generalTrack.phi(),0);
+
+  	if (generalTrack.pt() > 1) {
+	    if (reco::deltaR(generalTrackVecTemp.Eta(),generalTrackVecTemp.Phi(),CHSJetsVect.at(j).eta(),CHSJetsVect.at(j).phi()) < 0.4){
+    		// Theta 2D
+    		//WARNING! This gives product not found! TODO!
+    		//ROOT::Math::XYZPoint innerPos = generalTrack.innerPosition();
+    		//std::cout << innerPos << std::endl;
+    		//ROOT::Math::XYZPoint vertexPos = primaryVertex.position();
+    		//std::cout << vertexPos << std::endl;
+    		//ROOT::Math::XYZVector deltaPos = innerPos - vertexPos;
+    		//ROOT::Math::XYZVector momentum = generalTrack.innerMomentum();
+    		//double mag2DeltaPos = TMath::Sqrt((deltaPos.x()*deltaPos.x()) + (deltaPos.y()*deltaPos.y()));
+    		//double mag2Mom = TMath::Sqrt((momentum.x()*momentum.x()) + (momentum.y()*momentum.y()));
+    		//double theta2D = TMath::ACos((deltaPos.x()*momentum.x()+deltaPos.y()*momentum.y())/(mag2Mom*mag2DeltaPos));
+    		//theta2Ds.push_back(theta2D);
+
+    		// IP sig
+    		edm::ESHandle<TransientTrackBuilder> theB;
+    		iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB);
+    		reco::TransientTrack transTrack = theB->build(generalTrack);
+    		TrajectoryStateClosestToBeamLine traj = transTrack.stateAtBeamLine();
+    		Measurement1D meas = traj.transverseImpactParameter();
+    		std::pair<bool, Measurement1D> ip2d = IPTools::absoluteTransverseImpactParameter(transTrack,primaryVertex);
+    		IP2Ds.push_back(ip2d.second.value()/ip2d.second.error());
+            }//jet DR matching
+        }//track pt>1 GeV
+        
+      }//second loop on general tracks
+
+
+
+      std::sort(IP2Ds.begin(),IP2Ds.end());
+      //if (IP2Ds.size() % 2 == 0) medianIP2D = ((IP2Ds[IP2Ds.size()/2 -1] + IP2Ds[IP2Ds.size()/2) /2);//HH
+      //else medianIP2D = IP2Ds[IP2Ds.size()/2];//HH
+      if (IP2Ds.size() > 0){
+	   medianIP2D = IP2Ds[IP2Ds.size()/2];
+      }
+      
+      std::sort(theta2Ds.begin(),theta2Ds.end());
+      //if (theta2Ds.size() % 2 == 0) medianTheta2D = ((theta2Ds[theta2Ds.size()/2 -1] + theta2Ds[theta2Ds.size()/2) /2);//HH
+      //else medianTheta2D = theta2Ds[theta2Ds.size()/2];//HH
+      if (theta2Ds.size() > 0){
+          medianTheta2D = theta2Ds[theta2Ds.size()/2];
+      }
+
+      std::sort(nPixelHits.begin(), nPixelHits.end());
+      if (nPixelHits.size() > 0) {   
+        if (nPixelHits.size() % 2 ==0) nPixelHitsMedian = ((nPixelHits[nPixelHits.size()/2 -1] + nPixelHits[nPixelHits.size()/2]) /2);
+        else nPixelHitsMedian = nPixelHits[nPixelHits.size()/2];
+      }
+      
+      std::sort(nHits.begin(), nHits.end());
+      if (nHits.size() > 0) {   
+        if (nHits.size() % 2 ==0) nHitsMedian = ((nHits[nHits.size()/2 -1] + nHits[nHits.size()/2]) /2);
+        else nHitsMedian = nHits[nHits.size()/2];
+      }
+
+      std::sort(dxyVect.begin(), dxyVect.end());
+      if (dxyVect.size() > 0) {
+	if (dxyVect.size() % 2 ==0) dxyMedian = ((dxyVect[dxyVect.size()/2 -1] + dxyVect[dxyVect.size()/2]) /2);
+	else dxyMedian = dxyVect[dxyVect.size()/2];
+      }
+
+      std::sort(dzVect.begin(), dzVect.end());
+      if (dzVect.size() > 0) {
+	if (dzVect.size() % 2 ==0) dzMedian = ((dzVect[dzVect.size()/2 -1] + dzVect[dzVect.size()/2]) /2);
+	else dzMedian = dzVect[dzVect.size()/2];
+      }
+      
+      //std::cout << "Out of vertex loop, recalculate alphaMax " << std::endl;
+      alphaMax         = ptAllTracks>0 ? ptPVTracksMax/ptAllTracks : -100.;
+      betaMax          = ptAllTracks>0 ? ptPVTracksMax/CHSJetsVect[j].pt() : -100.;
+      gammaMax         = ptAllTracks>0 ? ptPVTracksMax/CHSJetsVect[j].energy() : -100.;
+      gammaMaxEM       = ( (CHSJetsVect[j].userFloat("photonEFrac") + CHSJetsVect[j].userFloat("eleEFrac"))>0 && ptAllTracks>0 ) ? ptPVTracksMax/(CHSJetsVect[j].energy()*(CHSJetsVect[j].userFloat("photonEFrac") + CHSJetsVect[j].userFloat("eleEFrac"))) : -100.;
+      gammaMaxHadronic = ( (CHSJetsVect[j].userFloat("cHadEFrac") + CHSJetsVect[j].userFloat("nHadEFrac"))>0 && ptAllTracks>0 ) ? ptPVTracksMax/(CHSJetsVect[j].energy()*(CHSJetsVect[j].userFloat("cHadEFrac") + CHSJetsVect[j].userFloat("nHadEFrac"))) : -100.;
+      gammaMaxET       = ptAllTracks>0 ? ptPVTracksMax/CHSJetsVect[j].et() : -100.;    
+      //std::cout << "Jet[" << j << "] has nTracksAll: " << nTracksAll << "; and ptAllTracks: " << ptAllTracks << " and nTracksPVMax " << nTracksPVMax << " and ptPVTracksMax " << ptPVTracksMax << "; alphaMax " << alphaMax << "; medianIP2D " << medianIP2D << "; medianTheta2D " << medianTheta2D << std::endl;
+
+
+      CHSJetsVect[j].addUserInt("nTracksAll", nTracksAll);
+      CHSJetsVect[j].addUserInt("nTracksPVMax", nTracksPVMax);
+      CHSJetsVect[j].addUserFloat("ptAllTracks", ptAllTracks>0 ? ptAllTracks : -1.);
+      CHSJetsVect[j].addUserFloat("ptAllPVTracks", ptAllPVTracks>0 ? ptAllPVTracks : -1.);
+      CHSJetsVect[j].addUserFloat("ptPVTracksMax", ptPVTracksMax>0 ? ptPVTracksMax : -1.);
+      CHSJetsVect[j].addUserFloat("alphaMax", alphaMax);
+      CHSJetsVect[j].addUserFloat("betaMax", betaMax);//zero if no tracks
+      CHSJetsVect[j].addUserFloat("gammaMax", gammaMax);//zero if no tracks
+      CHSJetsVect[j].addUserFloat("gammaMaxEM", gammaMaxEM);//zero if no tracks, but -100 if no EM EFrac
+      CHSJetsVect[j].addUserFloat("gammaMaxHadronic", gammaMaxHadronic);//zero if no tracks, but -100 if no hadronEFrac
+      CHSJetsVect[j].addUserFloat("gammaMaxET", gammaMaxET);//zero if no tracks
+      CHSJetsVect[j].addUserFloat("minDeltaRAllTracks",minDeltaRAllTracks);
+      CHSJetsVect[j].addUserFloat("minDeltaRPVTracks",minDeltaRPVTracks);
+      CHSJetsVect[j].addUserFloat("medianIP2D", medianIP2D);
+      CHSJetsVect[j].addUserFloat("medianTheta2D", medianTheta2D);
+      CHSJetsVect[j].addUserFloat("nPixelHitsMedian", nPixelHitsMedian);
+      CHSJetsVect[j].addUserFloat("nHitsMedian", nHitsMedian);
+      CHSJetsVect[j].addUserFloat("dxyMedian", dxyMedian);
+      CHSJetsVect[j].addUserFloat("dzMedian", dzMedian);
+      
+    }//loop on AK4 jets
+ 
+
+ 
+   
+
+
+    // AK4 jets
+    /* OLD LOOP, with PFCandidates */
+    for (unsigned int j = 0; j < CHSJetsVect.size(); j++){
+    
+      int jj = j;
+      // Initialize jet variables from PFCandidates:
+      float sumPtJetOld = 0.;
+      std::vector<float> sumPtPVOld;
+      //std::vector<float> deltaRPV;//L
+      std::vector<float> sigIP2DOld;
+      std::vector<float> theta2DOld;
+      std::vector<float> POCA_theta2DOld;
+      std::vector<float> nPixelHitsOld;
+      std::vector<float> nHitsOld;
+      std::vector<float> dzVectOld;
+      std::vector<float> dxyVectOld;
+
+
+      float alphaMaxOld = -100.;
+      float betaMaxOld = -100.;
+      float gammaMaxOld = -100.;
+      float gammaMaxEMOld = -100.;
+      float gammaMaxHadronicOld = -100.;
+      float gammaMaxETOld = -100.;
+      float sigIP2DMedianOld = -10000.;
+      float theta2DMedianOld = -100.;
+      float POCA_theta2DMedianOld = -100.;
+      float nPixelHitsMedianOld = -1.;
+      float nHitsMedianOld = -1.;
+      float dzMedianOld = -9999.;
+      float dxyMedianOld = -9999.;
+      //float minDeltaRAllTracks = 999.;
+      //float minDeltaRPVTracks = 999.;//L
+      //float minDeltaRAllTracksInJet = 999.;
+      //float minDeltaRPVTracksInJet = 999.;//L
+
+      int nTracks0PixelHitsOld = 0;
+      int nTracks1PixelHitOld = 0;
+      int nTracks2PixelHitsOld = 0;
+      int nTracks3PixelHitsOld = 0;
+      int nTracks4PixelHitsOld = 0;
+      int nTracks5PixelHitsOld = 0;
+      int nTracksAtLeast6PixelHitsOld = 0;
+      int nTracksValidHitInBPix1Old = 0;
+      int nTracks0LostInnerHitsOld = 0;
+      int nTracks1LostInnerHitOld = 0;
+      int nTracksAtLeast2LostInnerHitsOld = 0;
+      
+      int nTrackConstituentsWithPtLarger0p95 = 0;
+      int nTrackConstituentsWithTrackDetails = 0;
+      int nTrackConstituentsWithTrackDetailsPtLarger0p95 = 0;
 
       // Initialize vertex variable
-      for(unsigned int i = 0; i < PVertexVect.size(); i++) sumPtPV.push_back(0.);
+      for(unsigned int i = 0; i < PVertexVect.size(); i++)
+      {
+          sumPtPVOld.push_back(0.);
+          //deltaRPV.push_back(999.);//L
+      }
+
+      //calculate Caltech's variable
+      //for(unsigned int v = 0; v < PVertexVect.size(); v++)
+      //{
+      //    //std::cout << "Vertex n. " << v << std::endl;
+      //    float temp_DR = 999.;//re-initialize every vertex
+      //    float temp_DR_in_jet = 999.;
+      //    for(unsigned int p = 0; p < PFCandidateVect.size(); p++)
+      //    {
+      //        
+      //        if(PFCandidateVect[p].charge()!=0 and (PFCandidateVect[p].vertexRef()->position() == PVertexVect[v].position()) )//if pfcand has a charge and pf cand in same vertex position
+      //        {
+      //        	 //std::cout << "PF cand n. " << p << std::endl;
+      //            if( temp_DR > reco::deltaR(CHSJetsVect[j].eta(),CHSJetsVect[j].phi(),PFCandidateVect[p].eta(),PFCandidateVect[p].phi()) )
+      //            {
+      //                temp_DR = reco::deltaR(CHSJetsVect[j].eta(),CHSJetsVect[j].phi(),PFCandidateVect[p].eta(),PFCandidateVect[p].phi());
+      //                //std::cout<< "temp_DR " << temp_DR << std::endl;
+      //            }
+      //            
+      //            if(jj == PFCandidateAK4JetIndex[p] && (temp_DR_in_jet > reco::deltaR(CHSJetsVect[j].eta(),CHSJetsVect[j].phi(),PFCandidateVect[p].eta(),PFCandidateVect[p].phi())) )
+      //            {temp_DR_in_jet = reco::deltaR(CHSJetsVect[j].eta(),CHSJetsVect[j].phi(),PFCandidateVect[p].eta(),PFCandidateVect[p].phi());}
+      //        }
+      //       
+      //       
+      //    }//loop on PF candidates
+      //    //std::cout << "Best DR: " << temp_DR << std::endl;
+      //    //std::cout << "***********" << std::endl;
+      //    if(minDeltaRPVTracks>temp_DR) minDeltaRPVTracks=temp_DR;
+      //    if(minDeltaRPVTracksInJet>temp_DR_in_jet) minDeltaRPVTracksInJet=temp_DR_in_jet;
+      // 
+      //}//loop on vertices
+      ////std::cout << "Chosen DR: " << minDeltaRPVTracks << std::endl; 
+
+      for(unsigned int p = 0; p < PFCandidateVect.size(); p++)
+      {
+            ////Calculate DR between jet and all tracks in the jet
+            //if (PFCandidateVect[p].charge()!=0 and  (minDeltaRAllTracks > reco::deltaR(CHSJetsVect[j].eta(),CHSJetsVect[j].phi(),PFCandidateVect[p].eta(),PFCandidateVect[p].phi())) )
+            //{
+            //    minDeltaRAllTracks =  reco::deltaR(CHSJetsVect[j].eta(),CHSJetsVect[j].phi(),PFCandidateVect[p].eta(),PFCandidateVect[p].phi());
+	    //}
+	    
+	    //if (jj == PFCandidateAK4JetIndex[p] && PFCandidateVect[p].charge()!=0 and  (minDeltaRAllTracksInJet > reco::deltaR(CHSJetsVect[j].eta(),CHSJetsVect[j].phi(),PFCandidateVect[p].eta(),PFCandidateVect[p].phi())) )
+            //{
+            //    minDeltaRAllTracksInJet =  reco::deltaR(CHSJetsVect[j].eta(),CHSJetsVect[j].phi(),PFCandidateVect[p].eta(),PFCandidateVect[p].phi());
+	    //}
+	    
+	    if (jj == PFCandidateAK4JetIndex[p] && PFCandidateVect[p].charge()!=0 && PFCandidateVect[p].pt()>0.95) nTrackConstituentsWithPtLarger0p95++;
+	    if (jj == PFCandidateAK4JetIndex[p] && PFCandidateVect[p].charge()!=0 && PFCandidateVect[p].hasTrackDetails()) nTrackConstituentsWithTrackDetails++;
+	    if (jj == PFCandidateAK4JetIndex[p] && PFCandidateVect[p].charge()!=0 && PFCandidateVect[p].hasTrackDetails() && PFCandidateVect[p].pt()>0.95) nTrackConstituentsWithTrackDetailsPtLarger0p95++;
+
+
+      }//second loop over pf candidates
 
       for (unsigned int i = 0; i < PFCandidateVect.size(); i++){
 
 	if (jj == PFCandidateAK4JetIndex[i]){
           //std::cout << " debugggggggg 1! " << std::endl;
-	  if (PFCandidateVect[i].charge()){
-	    sumPtJet += PFCandidateVect[i].pt();
-	    sumPtPV[PFCandidateVtxIndex[i]] += PFCandidateVect[i].pt();
+	  //if (PFCandidateVect[i].charge()){
+	  if (PFCandidateVect[i].charge() && PFCandidateVect[i].hasTrackDetails()){//NEW, more comparable to generalTracks
+	    sumPtJetOld += PFCandidateVect[i].pt();
+	    sumPtPVOld[PFCandidateVtxIndex[i]] += PFCandidateVect[i].pt();
+	    
 	    //sigIP2D.push_back(PFCandidateVect[i].dxy()/PFCandidateVect[i].dxyError()); //dxyError stored only for pT>0.95 (see below)
 	    if (CHSJetsVect[j].hasTagInfo("pfSecondaryVertex")) {
 	      reco::CandSecondaryVertexTagInfo const *svTagInfo = CHSJetsVect[j].tagInfoCandSecondaryVertex("pfSecondaryVertex");
 	      if (svTagInfo->nVertices() > 0) {
 		const GlobalVector &dir = svTagInfo->flightDirection(0);
-		theta2D.push_back( std::acos( ( dir.x()*PFCandidateVect[i].px() + dir.y()*PFCandidateVect[i].py() ) /
+		theta2DOld.push_back( std::acos( ( dir.x()*PFCandidateVect[i].px() + dir.y()*PFCandidateVect[i].py() ) /
 					      ( std::sqrt(dir.x()*dir.x()+dir.y()*dir.y()) * PFCandidateVect[i].pt() ) ) );
+					                  //if( (std::sqrt(dir.x()*dir.x()+dir.y()*dir.y()) * PFCandidateVect[i].pt()) ==0) std::cout<<"---> Warning, den 0 in theta2D!! " << EventNumber << std::endl;
 	      }
 	    }
 
             float px = PFCandidateVect[i].pt()*TMath::Cos(PFCandidateVect[i].phiAtVtx());
             float py = PFCandidateVect[i].pt()*TMath::Sin(PFCandidateVect[i].phiAtVtx());
             float vR = std::sqrt(PFCandidateVect[i].vx()*PFCandidateVect[i].vx() + PFCandidateVect[i].vy()*PFCandidateVect[i].vy());
-            POCA_theta2D.push_back(std::acos((PFCandidateVect[i].vx()*px + PFCandidateVect[i].vy()*py) / (vR*PFCandidateVect[i].pt())));
+            POCA_theta2DOld.push_back(std::acos((PFCandidateVect[i].vx()*px + PFCandidateVect[i].vy()*py) / (vR*PFCandidateVect[i].pt())));
 
+            //if(PFCandidateVect[i].vx() ==0) std::cout<<"---> Warning, den 0 in POCA_theta2D!! " << EventNumber << std::endl;
 	    // Full tracking info stored only for pT>0.95 GeV
 	    // https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2016#Embedded_track_information
-	    if(PFCandidateVect[i].pt()>0.95 && PFCandidateVect[i].hasTrackDetails()) {//this looks more conservative
+	    //if(PFCandidateVect[i].pt()>0.95 && PFCandidateVect[i].hasTrackDetails()) {//this looks more conservative
+	    if(PFCandidateVect[i].hasTrackDetails()) {//NEW, more comparable to generalTracks
               //std::cout << " debugggggggg 2! " << std::endl;
-              sigIP2D.push_back(PFCandidateVect[i].dxy()/PFCandidateVect[i].dxyError());
+              sigIP2DOld.push_back(PFCandidateVect[i].dxy()/PFCandidateVect[i].dxyError());
 
-              nPixelHits.push_back(PFCandidateVect[i].numberOfPixelHits());
-              nHits.push_back(PFCandidateVect[i].numberOfHits());
+              nPixelHitsOld.push_back(PFCandidateVect[i].numberOfPixelHits());
+              nHitsOld.push_back(PFCandidateVect[i].numberOfHits());
 
-              if (PFCandidateVect[i].numberOfPixelHits() == 0) nTracks0PixelHits++;
-              else if (PFCandidateVect[i].numberOfPixelHits() == 1) nTracks1PixelHit++;
-              else if (PFCandidateVect[i].numberOfPixelHits() == 2) nTracks2PixelHits++;
-              else if (PFCandidateVect[i].numberOfPixelHits() == 3) nTracks3PixelHits++;
-              else if (PFCandidateVect[i].numberOfPixelHits() == 4) nTracks4PixelHits++;
-              else if (PFCandidateVect[i].numberOfPixelHits() == 5) nTracks5PixelHits++;
-              else nTracksAtLeast6PixelHits++;
+              if (PFCandidateVect[i].numberOfPixelHits() == 0) nTracks0PixelHitsOld++;
+              else if (PFCandidateVect[i].numberOfPixelHits() == 1) nTracks1PixelHitOld++;
+              else if (PFCandidateVect[i].numberOfPixelHits() == 2) nTracks2PixelHitsOld++;
+              else if (PFCandidateVect[i].numberOfPixelHits() == 3) nTracks3PixelHitsOld++;
+              else if (PFCandidateVect[i].numberOfPixelHits() == 4) nTracks4PixelHitsOld++;
+              else if (PFCandidateVect[i].numberOfPixelHits() == 5) nTracks5PixelHitsOld++;
+              else nTracksAtLeast6PixelHitsOld++;
 
-              if (PFCandidateVect[i].lostInnerHits() == -1) nTracksValidHitInBPix1++;
-              else if (PFCandidateVect[i].lostInnerHits() == 0) nTracks0LostInnerHits++;
-              else if (PFCandidateVect[i].lostInnerHits() == 1) nTracks1LostInnerHit++;
-              else if (PFCandidateVect[i].lostInnerHits() == 2) nTracksAtLeast2LostInnerHits++;
+              if (PFCandidateVect[i].lostInnerHits() == -1) nTracksValidHitInBPix1Old++;
+              else if (PFCandidateVect[i].lostInnerHits() == 0) nTracks0LostInnerHitsOld++;
+              else if (PFCandidateVect[i].lostInnerHits() == 1) nTracks1LostInnerHitOld++;
+              else if (PFCandidateVect[i].lostInnerHits() == 2) nTracksAtLeast2LostInnerHitsOld++;
 
-	      dxyVect.push_back(PFCandidateVect[i].dxy());
-	      dzVect.push_back(PFCandidateVect[i].dz());
+	      dxyVectOld.push_back(PFCandidateVect[i].dxy());
+	      dzVectOld.push_back(PFCandidateVect[i].dz());
 
             } // pT selection
 	  } // charge
@@ -1479,34 +1891,39 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       // TODO: Implement a median function to use for all vectors below:
 
-      if (sumPtPV.size() > 0) {
-	std::sort(sumPtPV.begin(), sumPtPV.end());
-	alphaMax = sumPtPV[sumPtPV.size()-1]/sumPtJet;
+      if (sumPtPVOld.size() > 0) {
+	std::sort(sumPtPVOld.begin(), sumPtPVOld.end());
+	alphaMaxOld = sumPtJetOld>0 ? sumPtPVOld[sumPtPVOld.size()-1]/sumPtJetOld : -100.;
+	betaMaxOld  = sumPtJetOld>0 ? sumPtPVOld[sumPtPVOld.size()-1]/CHSJetsVect[j].pt() : -100.;
+	gammaMaxOld = sumPtJetOld>0 ? sumPtPVOld[sumPtPVOld.size()-1]/CHSJetsVect[j].energy() : -100.;
+	gammaMaxEMOld = ( (CHSJetsVect[j].userFloat("photonEFrac") + CHSJetsVect[j].userFloat("eleEFrac"))>0 && sumPtJetOld>0 ) ? sumPtPVOld[sumPtPVOld.size()-1]/(CHSJetsVect[j].energy()*(CHSJetsVect[j].userFloat("photonEFrac") + CHSJetsVect[j].userFloat("eleEFrac"))) : -100.;
+	gammaMaxHadronicOld = ( (CHSJetsVect[j].userFloat("cHadEFrac") + CHSJetsVect[j].userFloat("nHadEFrac"))>0 && sumPtJetOld>0 ) ? sumPtPVOld[sumPtPVOld.size()-1]/(CHSJetsVect[j].energy()*(CHSJetsVect[j].userFloat("cHadEFrac") + CHSJetsVect[j].userFloat("nHadEFrac"))) : -100.;
+	gammaMaxETOld = sumPtJetOld>0 ? sumPtPVOld[sumPtPVOld.size()-1]/CHSJetsVect[j].et() : -100.;
       }
-      if (sigIP2D.size() > 0) {
-	std::sort(sigIP2D.begin(), sigIP2D.end());
-	if (sigIP2D.size() % 2 ==0) sigIP2DMedian = ((sigIP2D[sigIP2D.size()/2 -1] + sigIP2D[sigIP2D.size()/2]) /2);
-	else sigIP2DMedian = sigIP2D[sigIP2D.size()/2];
+      if (sigIP2DOld.size() > 0) {
+	std::sort(sigIP2DOld.begin(), sigIP2DOld.end());
+	if (sigIP2DOld.size() % 2 ==0) sigIP2DMedianOld = ((sigIP2DOld[sigIP2DOld.size()/2 -1] + sigIP2DOld[sigIP2DOld.size()/2]) /2);
+	else sigIP2DMedianOld = sigIP2DOld[sigIP2DOld.size()/2];
       }
-      if (theta2D.size() > 0) {
-	std::sort(theta2D.begin(), theta2D.end());
-	if (theta2D.size() % 2 ==0) theta2DMedian = ((theta2D[theta2D.size()/2 -1] + theta2D[theta2D.size()/2]) /2);
-	else theta2DMedian = theta2D[theta2D.size()/2];
+      if (theta2DOld.size() > 0) {
+	std::sort(theta2DOld.begin(), theta2DOld.end());
+	if (theta2DOld.size() % 2 ==0) theta2DMedianOld = ((theta2DOld[theta2DOld.size()/2 -1] + theta2DOld[theta2DOld.size()/2]) /2);
+	else theta2DMedianOld = theta2DOld[theta2DOld.size()/2];
       }
-      if (POCA_theta2D.size() > 0) {
-        std::sort(POCA_theta2D.begin(), POCA_theta2D.end());
-        if (POCA_theta2D.size() % 2 ==0) POCA_theta2DMedian = ((POCA_theta2D[POCA_theta2D.size()/2 -1] + POCA_theta2D[POCA_theta2D.size()/2]) /2);
-        else POCA_theta2DMedian = POCA_theta2D[POCA_theta2D.size()/2];
+      if (POCA_theta2DOld.size() > 0) {
+        std::sort(POCA_theta2DOld.begin(), POCA_theta2DOld.end());
+        if (POCA_theta2DOld.size() % 2 ==0) POCA_theta2DMedianOld = ((POCA_theta2DOld[POCA_theta2DOld.size()/2 -1] + POCA_theta2DOld[POCA_theta2DOld.size()/2]) /2);
+        else POCA_theta2DMedianOld = POCA_theta2DOld[POCA_theta2DOld.size()/2];
       }
-      if (nPixelHits.size() > 0) {
-        std::sort(nPixelHits.begin(), nPixelHits.end());
-        if (nPixelHits.size() % 2 ==0) nPixelHitsMedian = ((nPixelHits[nPixelHits.size()/2 -1] + nPixelHits[nPixelHits.size()/2]) /2);
-        else nPixelHitsMedian = nPixelHits[nPixelHits.size()/2];
+      if (nPixelHitsOld.size() > 0) {
+        std::sort(nPixelHitsOld.begin(), nPixelHitsOld.end());
+        if (nPixelHitsOld.size() % 2 ==0) nPixelHitsMedianOld = ((nPixelHitsOld[nPixelHitsOld.size()/2 -1] + nPixelHitsOld[nPixelHitsOld.size()/2]) /2);
+        else nPixelHitsMedianOld = nPixelHitsOld[nPixelHitsOld.size()/2];
       }
-      if (nHits.size() > 0) {
-        std::sort(nHits.begin(), nHits.end());
-        if (nHits.size() % 2 ==0) nHitsMedian = ((nHits[nHits.size()/2 -1] + nHits[nHits.size()/2]) /2);
-        else nHitsMedian = nHits[nHits.size()/2];
+      if (nHitsOld.size() > 0) {
+        std::sort(nHitsOld.begin(), nHitsOld.end());
+        if (nHitsOld.size() % 2 ==0) nHitsMedianOld = ((nHitsOld[nHitsOld.size()/2 -1] + nHitsOld[nHitsOld.size()/2]) /2);
+        else nHitsMedianOld = nHitsOld[nHitsOld.size()/2];
       }
 
       if (CHSJetsVect[j].hasTagInfo("pfSecondaryVertex")) {
@@ -1517,41 +1934,59 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	indexSVJet.push_back(j);
       }
 
-      if (dxyVect.size() > 0) {
-	std::sort(dxyVect.begin(), dxyVect.end());
-	if (dxyVect.size() % 2 ==0) dxyMedian = ((dxyVect[dxyVect.size()/2 -1] + dxyVect[dxyVect.size()/2]) /2);
-	else dxyMedian = dxyVect[dxyVect.size()/2];
+      if (dxyVectOld.size() > 0) {
+	std::sort(dxyVectOld.begin(), dxyVectOld.end());
+	if (dxyVectOld.size() % 2 ==0) dxyMedianOld = ((dxyVectOld[dxyVectOld.size()/2 -1] + dxyVectOld[dxyVectOld.size()/2]) /2);
+	else dxyMedianOld = dxyVectOld[dxyVectOld.size()/2];
       }
 
-      if (dzVect.size() > 0) {
-	std::sort(dzVect.begin(), dzVect.end());
-	if (dzVect.size() % 2 ==0) dzMedian = ((dzVect[dzVect.size()/2 -1] + dzVect[dzVect.size()/2]) /2);
-	else dzMedian = dzVect[dzVect.size()/2];
+      if (dzVectOld.size() > 0) {
+	std::sort(dzVectOld.begin(), dzVectOld.end());
+	if (dzVectOld.size() % 2 ==0) dzMedianOld = ((dzVectOld[dzVectOld.size()/2 -1] + dzVectOld[dzVectOld.size()/2]) /2);
+	else dzMedianOld = dzVectOld[dzVectOld.size()/2];
       }
 
-      CHSJetsVect[j].addUserFloat("alphaMax", alphaMax);
-      CHSJetsVect[j].addUserFloat("sigIP2DMedian", sigIP2DMedian);
-      CHSJetsVect[j].addUserFloat("theta2DMedian", theta2DMedian);
-      CHSJetsVect[j].addUserFloat("POCA_theta2DMedian", POCA_theta2DMedian);
-      CHSJetsVect[j].addUserFloat("nPixelHitsMedian", nPixelHitsMedian);
-      CHSJetsVect[j].addUserFloat("nHitsMedian", nHitsMedian);
+      CHSJetsVect[j].addUserFloat("alphaMaxOld", alphaMaxOld);
+      CHSJetsVect[j].addUserFloat("sumPtJetOld", sumPtJetOld>0 ? sumPtJetOld : -1.);
+      CHSJetsVect[j].addUserFloat("betaMaxOld", betaMaxOld);//zero if no tracks
+      CHSJetsVect[j].addUserFloat("gammaMaxOld", gammaMaxOld);//zero if no tracks
+      CHSJetsVect[j].addUserFloat("gammaMaxEMOld", gammaMaxEMOld);//zero if no tracks, but -100 if no EM EFrac
+      CHSJetsVect[j].addUserFloat("gammaMaxHadronicOld", gammaMaxHadronicOld);//zero if no tracks, but -100 if no hadronEFrac
+      CHSJetsVect[j].addUserFloat("gammaMaxETOld", gammaMaxETOld);//zero if no tracks
+      
+      //CHSJetsVect[j].addUserFloat("minDeltaRAllTracks",minDeltaRAllTracks);
+      //CHSJetsVect[j].addUserFloat("minDeltaRPVTracks",minDeltaRPVTracks);
+      //CHSJetsVect[j].addUserFloat("minDeltaRAllTracksInJet",minDeltaRAllTracksInJet);
+      //CHSJetsVect[j].addUserFloat("minDeltaRPVTracksInJet",minDeltaRPVTracksInJet);
+      
+      CHSJetsVect[j].addUserFloat("sigIP2DMedianOld", sigIP2DMedianOld);
+      CHSJetsVect[j].addUserFloat("theta2DMedianOld", theta2DMedianOld);
+      CHSJetsVect[j].addUserFloat("POCA_theta2DMedianOld", POCA_theta2DMedianOld);
+      CHSJetsVect[j].addUserFloat("nPixelHitsMedianOld", nPixelHitsMedianOld);
+      CHSJetsVect[j].addUserFloat("nHitsMedianOld", nHitsMedianOld);
 
-      CHSJetsVect[j].addUserFloat("dxyMedian", dxyMedian);
-      CHSJetsVect[j].addUserFloat("dzMedian", dzMedian);
+      CHSJetsVect[j].addUserFloat("dxyMedianOld", dxyMedianOld);
+      CHSJetsVect[j].addUserFloat("dzMedianOld", dzMedianOld);
     
-      CHSJetsVect[j].addUserInt("nTracks0PixelHits", nTracks0PixelHits);
-      CHSJetsVect[j].addUserInt("nTracks1PixelHit", nTracks1PixelHit);
-      CHSJetsVect[j].addUserInt("nTracks2PixelHits", nTracks2PixelHits);
-      CHSJetsVect[j].addUserInt("nTracks3PixelHits", nTracks3PixelHits);
-      CHSJetsVect[j].addUserInt("nTracks4PixelHits", nTracks4PixelHits);
-      CHSJetsVect[j].addUserInt("nTracks5PixelHits", nTracks5PixelHits);
-      CHSJetsVect[j].addUserInt("nTracksAtLeast6PixelHits", nTracksAtLeast6PixelHits);
-      CHSJetsVect[j].addUserInt("nTracksValidHitInBPix1", nTracksValidHitInBPix1);
-      CHSJetsVect[j].addUserInt("nTracks0LostInnerHits", nTracks0LostInnerHits);
-      CHSJetsVect[j].addUserInt("nTracks1LostInnerHit", nTracks1LostInnerHit);
-      CHSJetsVect[j].addUserInt("nTracksAtLeast2LostInnerHits", nTracksAtLeast2LostInnerHits);
+      CHSJetsVect[j].addUserInt("nTracks0PixelHits", nTracks0PixelHitsOld);
+      CHSJetsVect[j].addUserInt("nTracks1PixelHit", nTracks1PixelHitOld);
+      CHSJetsVect[j].addUserInt("nTracks2PixelHits", nTracks2PixelHitsOld);
+      CHSJetsVect[j].addUserInt("nTracks3PixelHits", nTracks3PixelHitsOld);
+      CHSJetsVect[j].addUserInt("nTracks4PixelHits", nTracks4PixelHitsOld);
+      CHSJetsVect[j].addUserInt("nTracks5PixelHits", nTracks5PixelHitsOld);
+      CHSJetsVect[j].addUserInt("nTracksAtLeast6PixelHits", nTracksAtLeast6PixelHitsOld);
+      CHSJetsVect[j].addUserInt("nTracksValidHitInBPix1", nTracksValidHitInBPix1Old);
+      CHSJetsVect[j].addUserInt("nTracks0LostInnerHits", nTracks0LostInnerHitsOld);
+      CHSJetsVect[j].addUserInt("nTracks1LostInnerHit", nTracks1LostInnerHitOld);
+      CHSJetsVect[j].addUserInt("nTracksAtLeast2LostInnerHits", nTracksAtLeast2LostInnerHitsOld);
+      
+      CHSJetsVect[j].addUserInt("nTrackConstituentsWithPtLarger0p95",nTrackConstituentsWithPtLarger0p95);
+      CHSJetsVect[j].addUserInt("nTrackConstituentsWithTrackDetails",nTrackConstituentsWithTrackDetails);
+      CHSJetsVect[j].addUserInt("nTrackConstituentsWithTrackDetailsPtLarger0p95",nTrackConstituentsWithTrackDetailsPtLarger0p95);
 
     }//end of EXO-16-003 variables for AK4 Jets
+    
+    
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -1941,19 +2376,43 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(unsigned int i = 0; i < CHSJetsVect.size(); i++) CHSJets.push_back( JetType() );
     for(unsigned int i = 0; i < CHSJetsVect.size(); i++) ObjectsFormat::FillJetType(CHSJets[i], &CHSJetsVect[i], isMC);
 
-    for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );
-    for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) ObjectsFormat::FillJetType(VBFPairJets[i], &VBFPairJetsVect[i], isMC);
+    //for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );//slim ntuple
+    //for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) ObjectsFormat::FillJetType(VBFPairJets[i], &VBFPairJetsVect[i], isMC);//slim ntuple
 
-    for(unsigned int i = 0; i < ggHJetVect.size(); i++) ggHJet.push_back( JetType() );
-    for(unsigned int i = 0; i < ggHJetVect.size(); i++) ObjectsFormat::FillJetType(ggHJet[i], &ggHJetVect[i], isMC);
+    // for(unsigned int i = 0; i < ggHJetVect.size(); i++) ggHJet.push_back( JetType() );//slim ntuple
+    //for(unsigned int i = 0; i < ggHJetVect.size(); i++) ObjectsFormat::FillJetType(ggHJet[i], &ggHJetVect[i], isMC);//slim ntuple
 
-    for(unsigned int i = 0; i < CaloJetsVect.size(); i++) CaloJets.push_back( CaloJetType() );
-    for(unsigned int i = 0; i < CaloJetsVect.size(); i++) ObjectsFormat::FillCaloJetType(CaloJets[i], &CaloJetsVect[i], isMC, caloGenMatched[i], caloGenMatchedRadius2D[i], caloGenMatchedEta[i]);
+    //for(unsigned int i = 0; i < CaloJetsVect.size(); i++) CaloJets.push_back( CaloJetType() );//slim ntuple
+    //for(unsigned int i = 0; i < CaloJetsVect.size(); i++) ObjectsFormat::FillCaloJetType(CaloJets[i], &CaloJetsVect[i], isMC, caloGenMatched[i], caloGenMatchedRadius2D[i], caloGenMatchedEta[i]);//slim ntuple
     //DTSegments
-    for(unsigned int i =0; i< DTSegmentVect.size();i++) ObjectsFormat::FillDT4DSegmentType(DTRecSegments4D[i], &DTSegmentVect[i],&DTSegment_Global_points[i]);
+    //for(unsigned int i =0; i< DTSegmentVect.size();i++) ObjectsFormat::FillDT4DSegmentType(DTRecSegments4D[i], &DTSegmentVect[i],&DTSegment_Global_points[i]);//slim ntuple
 
     //CSCSegments
-    for(unsigned int i =0; i< CSCSegmentVect.size();i++) ObjectsFormat::FillCSCSegmentType(CSCSegments[i], &CSCSegmentVect[i],&CSCSegment_Global_points[i]);
+    //for(unsigned int i =0; i< CSCSegmentVect.size();i++) ObjectsFormat::FillCSCSegmentType(CSCSegments[i], &CSCSegmentVect[i],&CSCSegment_Global_points[i]);//slim ntuple
+
+    //PFCandidates
+    if(WriteAK4JetPFCandidates || WriteAK8JetPFCandidates || WriteAllJetPFCandidates || WriteAllPFCandidates) {
+      int iAK4JetPFCand = 0;
+      int iAK8JetPFCand = 0;
+      int iAnyJetPFCand = 0;
+	    for(unsigned int i = 0; i < PFCandidateVect.size(); i++) {
+     	  if(WriteAK4JetPFCandidates && PFCandidateAK4JetIndex[i] != -1)	{
+	        ObjectsFormat::FillPFCandidateType(PFCandidates[iAK4JetPFCand], &PFCandidateVect[i], PFCandidateAK4JetIndex[i], PFCandidateAK8JetIndex[i], PFCandidateVtxIndex[i]);
+	        iAK4JetPFCand++;
+	      }
+        else if(WriteAK8JetPFCandidates && PFCandidateAK8JetIndex[i] != -1)	{
+          ObjectsFormat::FillPFCandidateType(PFCandidates[iAK8JetPFCand], &PFCandidateVect[i], PFCandidateAK4JetIndex[i], PFCandidateAK8JetIndex[i], PFCandidateVtxIndex[i]);
+          iAK8JetPFCand++;
+        }
+        else if(WriteAllJetPFCandidates && (PFCandidateAK4JetIndex[i] != -1 || PFCandidateAK8JetIndex[i] != -1)) {
+          ObjectsFormat::FillPFCandidateType(PFCandidates[iAnyJetPFCand], &PFCandidateVect[i], PFCandidateAK4JetIndex[i], PFCandidateAK8JetIndex[i], PFCandidateVtxIndex[i]);
+          iAnyJetPFCand++;
+        }
+        else if(WriteAllPFCandidates) {
+          ObjectsFormat::FillPFCandidateType(PFCandidates[i], &PFCandidateVect[i], PFCandidateAK4JetIndex[i], PFCandidateAK8JetIndex[i], PFCandidateVtxIndex[i]);
+        }
+	    }
+    }
 
     ////StandAloneMuons
     //for(unsigned int i =0; i< StandAloneMuonsVect.size();i++) ObjectsFormat::FillTrackType(StandAloneMuons[i], &StandAloneMuonsVect[i], GenStandAloneMuonsFlag[i]);
@@ -2079,7 +2538,7 @@ AODNtuplizer::beginJob()
     tree -> Branch("nPFCandidatesFullTrackInfo_hasTrackDetails", &nPFCandidatesFullTrackInfo_hasTrackDetails, "nPFCandidatesFullTrackInfo_hasTrackDetails/I");
    tree -> Branch("Flag_BadPFMuon", &BadPFMuonFlag, "Flag_BadPFMuon/O");
    tree -> Branch("Flag_BadChCand", &BadChCandFlag, "Flag_BadChCand/O");
-   tree -> Branch("nJets" , &nJets , "nJets/L");
+   tree -> Branch("nCHSJets" , &nCHSJets , "nCHSJets/L");
    tree -> Branch("nCaloJets" , &nCaloJets , "nCaloJets/L");
    tree -> Branch("nMatchedCHSJets" , &nMatchedCHSJets , "nMatchedCHSJets/L");
    tree -> Branch("nMatchedCaloJets" , &nMatchedCaloJets , "nMatchedCaloJets/L");
@@ -2123,18 +2582,22 @@ AODNtuplizer::beginJob()
    tree -> Branch("GenHiggs", &GenHiggs);
    tree -> Branch("GenLLPs", &GenLLPs);
    tree -> Branch("GenBquarks", &GenBquarks);
-   tree -> Branch("GenVBFquarks", &GenVBFquarks);
-   tree -> Branch("DTSegments", &DTRecSegments4D);
-   tree -> Branch("CSCSegments", &CSCSegments);
+   //tree -> Branch("GenVBFquarks", &GenVBFquarks);//slim ntuples
+   //tree -> Branch("DTSegments", &DTRecSegments4D);//slim ntuples
+   //tree -> Branch("CSCSegments", &CSCSegments);//slim ntuples
    //tree -> Branch("StandAloneMuons", &StandAloneMuons);
    //tree -> Branch("DisplacedStandAloneMuons", &DisplacedStandAloneMuons);
    ////tree -> Branch("RecoMEt", &RecoMEt.pt, RecoObjectsFormat::ListRecoMEtType().c_str());
-   tree -> Branch("MEt", &MEt.pt, ObjectsFormat::ListMEtType().c_str());
+
+   //tree -> Branch("MEt", &MEt.pt, ObjectsFormat::ListMEtType().c_str());
+
+   tree -> Branch("MEt", &MEt);
    tree -> Branch("Jets", &CHSJets);
-   tree -> Branch("VBFPairJets", &VBFPairJets);
-   tree -> Branch("ggHJet", &ggHJet);
-   tree -> Branch("CaloJets", &CaloJets);
-   tree -> Branch("VBFPair", &VBF.pt, ObjectsFormat::ListCandidateType().c_str());//wait!
+   //tree -> Branch("VBFPairJets", &VBFPairJets);//slim ntuples
+   //tree -> Branch("ggHJet", &ggHJet);//slim ntuples
+   //tree -> Branch("CaloJets", &CaloJets);//slim ntuples
+   //tree -> Branch("VBFPair", &VBF.pt, ObjectsFormat::ListCandidateType().c_str());//wai!//slim ntuples
+   if (WriteAK4JetPFCandidates || WriteAK8JetPFCandidates || WriteAllJetPFCandidates || WriteAllPFCandidates) tree -> Branch("PFCandidates", &PFCandidates);
 
 
 }
