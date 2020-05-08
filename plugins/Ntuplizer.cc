@@ -141,6 +141,9 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     edm::InputTag JetTagWP1000 = edm::InputTag("pfXTags:1000:ntuple");
     JetTagWP1000Token= consumes<reco::JetTagCollection>(JetTagWP1000);
 
+    //split up signal samples
+    edm::InputTag genLumi = edm::InputTag(std::string("generator"));
+    genLumiHeaderToken_             = consumes <GenLumiInfoHeader,edm::InLumi> (genLumi);
 
     if(isVerbose) std::cout << "CONSTRUCTOR" << std::endl;
     //if(isVerbose) std::cout << "ONLY EVENTS WITH 4 GEN B QUARKS IN ACCEPTANCE" << std::endl;
@@ -213,6 +216,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     isggH = false;
     //isZtoMM = isZtoEE = isWtoMN = isWtoEN = isTtoEM = false;
     EventNumber = LumiNumber = RunNumber = nPV = 0;
+    model_="NotSignal";
     AtLeastOneTrigger = AtLeastOneL1Filter = false;
     number_of_PV = number_of_SV = 0;//27 Sep: remember to properly initialize everything
     nCHSJets = nLooseCHSJets = nTightCHSJets = 0;
@@ -248,6 +252,11 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //GenEventWeight
     GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
     EventWeight *= GenEventWeight;
+
+    //split up signal samples
+    edm::Handle<GenLumiInfoHeader> gen_header;
+    iEvent.getLuminosityBlock().getByToken(genLumiHeaderToken_,gen_header);
+    model_ = gen_header->configDescription();
 
     if(PerformVBF and PerformggH) throw cms::Exception("Configuration") << "VBF and ggH selections can't be performed together! Please choose one option only!";
 
@@ -2482,6 +2491,7 @@ Ntuplizer::beginJob()
     tree -> Branch("RunNumber" , &RunNumber , "RunNumber/L");
     tree -> Branch("EventWeight", &EventWeight, "EventWeight/F");
     tree -> Branch("GenEventWeight", &GenEventWeight, "GenEventWeight/F");
+    tree -> Branch("model",       &model_);
     tree -> Branch("AtLeastOneTrigger" , &AtLeastOneTrigger , "AtLeastOneTrigger/O");
     tree -> Branch("AtLeastOneL1Filter" , &AtLeastOneL1Filter , "AtLeastOneL1Filter/O");
     tree -> Branch("Prefired" , &Prefired , "Prefired/O");

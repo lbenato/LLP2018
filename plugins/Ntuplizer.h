@@ -58,6 +58,9 @@
 #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 
+// Split up signal samples
+#include "SimDataFormats/GeneratorProducts/interface/GenLumiInfoHeader.h"
+
 //TagInfo
 #include "DataFormats/BTauReco/interface/FeaturesTagInfo.h"
 #include "LLPReco/DataFormats/interface/XTagInfo.h"
@@ -127,6 +130,9 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::ParameterSet PhotonPSet;
     edm::ParameterSet VertexPSet;
     edm::ParameterSet PFCandidatePSet;
+
+    edm::EDGetTokenT<GenLumiInfoHeader> genLumiHeaderToken_;
+    TString     model_;
 
     JetAnalyzer* AllJetAnalyzer;
     JetAnalyzer* theCHSJetAnalyzer;
