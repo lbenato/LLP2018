@@ -1,6 +1,7 @@
 #Here: standard crab config file
 
-from CRABClient.UserUtilities import config, getUsernameFromSiteDB
+import CRABClient
+from CRABClient.UserUtilities import config#, getUsernameFromSiteDB
 import sys
 config = config()
 
@@ -419,11 +420,13 @@ if __name__ == '__main__':
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
         from Analyzer.LLP2018.samplesAOD2017 import samples, sample
         pset = "AODNtuplizer2018.py"
-        folder = "v2_calo_AOD_2017_01May2020"#CHANGE here your crab folder name
+        #folder = "v2_calo_AOD_2017_01May2020"#CHANGE here your crab folder name
+        folder = "v2_calo_AOD_2017_genmatching_22May2020"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
         config.JobType.inputFiles = ['data']
         config.JobType.maxMemoryMB = 3000#15900 #more memory
+        config.JobType.numCores = 4
         is2016 = False
         is2017 = True
         is2018 = False
@@ -682,7 +685,7 @@ if __name__ == '__main__':
                 elif is2018:
                     config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
                 #config.Data.splitting = 'Automatic'
-                config.Data.unitsPerJob = 100000
+                #config.Data.unitsPerJob = 100000#comment, giving errors with new crab
             #config.JobType.pyCfgParams = ['runLocal=False']
             config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
