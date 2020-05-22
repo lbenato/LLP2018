@@ -196,7 +196,8 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP100Token;
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP1000Token;
 
-    int idLLP, idHiggs, idMotherB, statusLLP, statusHiggs;
+    int idLLP1, idLLP2;
+    int idHiggs, idMotherB, statusLLP, statusHiggs;
     double MinGenBpt, MaxGenBeta, MinGenBradius2D, MaxGenBradius2D, MinGenBetaAcc, MaxGenBetaAcc;
     double InvmassVBF, DetaVBF;//VBF tagging
     bool WriteGenVBFquarks, WriteGenHiggs, WriteGenBquarks, WriteGenLLPs;
@@ -293,6 +294,7 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //Pre-firing
     bool Prefired;
     long int nGenBquarks, nGenLL;
+    int nLLPInCalo;
     
     
     //Geometry and propagator
@@ -336,7 +338,8 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     CSCSet(iConfig.getParameter<edm::ParameterSet>("cscSet")),
     StandAloneMuonsPSet(iConfig.getParameter<edm::ParameterSet>("standaloneMuonsSet")),
     DisplacedStandAloneMuonsPSet(iConfig.getParameter<edm::ParameterSet>("displacedStandaloneMuonsSet")),
-    idLLP(iConfig.getParameter<int>("idLLP")),
+    idLLP1(iConfig.getParameter<int>("idLLP1")),
+    idLLP2(iConfig.getParameter<int>("idLLP2")),
     idHiggs(iConfig.getParameter<int>("idHiggs")),
     idMotherB(iConfig.getParameter<int>("idMotherB")),
     statusLLP(iConfig.getParameter<int>("statusLLP")),
@@ -524,6 +527,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     n_segments_around_b_quark_3 = 0;
     MinJetMetDPhi = MinJetMetDPhiAllJets = ggHJetMetDPhi = 10.;
     nGenBquarks = nGenLL = 0;
+    nLLPInCalo = 0;
     m_pi = 0.;
     gen_b_radius = -1.;
     gen_b_radius_2D = -1.;
@@ -708,7 +712,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     std::vector<reco::GenParticle> GenVBFVect = theGenAnalyzer->FillVBFGenVector(iEvent);
     std::vector<reco::GenParticle> GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idHiggs,statusHiggs);
-    std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idLLP,statusLLP);
+    std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByTwoIdsAndStatus(iEvent,idLLP1,idLLP2,statusLLP);
     std::vector<reco::GenParticle> GenBquarksVect;
 
     nGenLL = GenLongLivedVect.size();
@@ -723,6 +727,198 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
 
     nGenBquarks = GenBquarksVect.size();
+    
+    float ecal_radius = 129.0;
+    float max_calo_radius = 184.;
+    float max_calo_z = 376.;
+    float min_displacement_radius = 30;
+    
+    //Calculate calo corrections
+    std::vector<float> corrEtaDaughterLLP;
+    std::vector<float> corrPhiDaughterLLP;
+    std::vector<float> corrEtaGrandDaughterLLP;
+    std::vector<float> corrPhiGrandDaughterLLP;
+    std::vector<bool>  LLPInCalo;
+    std::vector<bool>  DaughterOfLLPInCalo;
+    std::vector<bool>  GrandDaughterOfLLPInCalo;
+    
+    std::vector<float> checkPtDaughterLLP;
+    std::vector<float> checkPtGrandDaughterLLP;
+    std::vector<float> checkEtaDaughterLLP;
+    std::vector<float> checkEtaGrandDaughterLLP;
+    std::vector<float> checkPhiDaughterLLP;
+    std::vector<float> checkPhiGrandDaughterLLP;
+
+    
+    //use idmotherb to determine wether one needs dau or grand dau corrections (heavy higgs: dau; susy: grand dau)
+    std::vector<const reco::Candidate*> LLPs;
+  
+    
+    for(unsigned int l=0; l<GenLongLivedVect.size(); l++)
+    {
+         if(GenLongLivedVect.size()>1 && GenLongLivedVect.at(l).numberOfDaughters()>1)
+         {
+         //must conver reco::GenParticles into const reco::Candidate*, otherwise daughter method does not work
+         const reco::Candidate *candLLP = &(GenLongLivedVect)[l];
+
+         float travelRadius = candLLP->numberOfDaughters()>1 ? sqrt( pow(candLLP->daughter(0)->vx(),2)+ pow(candLLP->daughter(0)->vy(),2) ) : -1000.;
+         float travelZ      = candLLP->numberOfDaughters()>1 ? candLLP->daughter(0)->vz() : -1000.;
+         
+         bool isLLPInCaloAcceptance = travelRadius > min_displacement_radius && travelRadius < max_calo_radius && travelZ < max_calo_z;
+         
+         if (isLLPInCaloAcceptance)
+         {
+             nLLPInCalo++;
+             LLPInCalo.push_back(true);
+         }
+         else
+         {
+             LLPInCalo.push_back(false);
+         }
+
+         //std::cout << " - - - - - - - - - - - - - - " << std::endl;
+         //std::cout << "LLP n. " << l << std::endl;
+         //std::cout << "in calo acceptance " << isLLPInCaloAcceptance << std::endl;
+         //std::cout << "travelRadius " << travelRadius << std::endl;
+         //std::cout << "travelZ " << travelZ << std::endl;
+         
+         for (unsigned int i = 0; i < candLLP->numberOfDaughters(); i++ )
+         {
+             if(abs(candLLP->daughter(i)->pdgId())==idHiggs || abs(candLLP->daughter(i)->pdgId())==5)//consider only higgs and b quarks
+             //if(abs(candLLP->daughter(i)->pdgId())==5)//consider only higgs and b quarks
+             {
+               float decayVertex_x  = candLLP->daughter(i)->vx();//per daughter of llp
+               float decayVertex_y  = candLLP->daughter(i)->vy();
+               float decayVertex_z  = candLLP->daughter(i)->vz();            
+               TLorentzVector tmp;
+               tmp.SetPxPyPzE(candLLP->daughter(i)->px(), candLLP->daughter(i)->py(), candLLP->daughter(i)->pz(), candLLP->daughter(i)->energy());
+               float gLLP_daughter_travel_time = (1./30.)*fabs(ecal_radius-travelRadius)/(tmp.Pt()/tmp.E());//per daughter of llp
+               float x_ecal = decayVertex_x + 30. * (tmp.Px()/tmp.E())*gLLP_daughter_travel_time;
+               float y_ecal = decayVertex_y + 30. * (tmp.Py()/tmp.E())*gLLP_daughter_travel_time;
+               float z_ecal = decayVertex_z + 30. * (tmp.Pz()/tmp.E())*gLLP_daughter_travel_time;
+             
+               float phi = atan((y_ecal-decayVertex_y)/(x_ecal-decayVertex_x));
+               if  (x_ecal < 0.0){
+                  phi = TMath::Pi() + phi;
+               }
+               phi = reco::deltaPhi(phi,0.0);
+               float theta = atan(sqrt(pow(x_ecal-decayVertex_x,2)+pow(y_ecal-decayVertex_y,2))/abs(z_ecal-decayVertex_z));
+               float eta = -1.0*TMath::Sign(1.0, z_ecal-decayVertex_z)*log(tan(theta/2));
+               corrEtaDaughterLLP.push_back(eta);
+               corrPhiDaughterLLP.push_back(phi);
+               checkPtDaughterLLP.push_back(candLLP->daughter(i)->pt());
+               checkEtaDaughterLLP.push_back(candLLP->daughter(i)->eta());
+               checkPhiDaughterLLP.push_back(candLLP->daughter(i)->phi());
+               if (isLLPInCaloAcceptance)
+               {
+                  DaughterOfLLPInCalo.push_back(true);
+               }
+               else
+               {
+                  DaughterOfLLPInCalo.push_back(false);
+               }
+               
+               //std::cout << "\n" << std::endl;
+               //std::cout << "LLP n. " << l << "; daughter n. " << i << std::endl;
+               //std::cout << "decayVertex_x " << decayVertex_x << std::endl;
+               //std::cout << "gLLP_daughter_travel_time " << gLLP_daughter_travel_time << std::endl;
+               //std::cout << "x_ecal " << x_ecal << std::endl;
+               //std::cout << "y_ecal " << y_ecal << std::endl;
+               //std::cout << "z_ecal " << z_ecal << std::endl;
+               //std::cout << "phi " << candLLP->daughter(i)->phi() << std::endl;
+               //std::cout << "corr phi " << phi << std::endl;
+               //std::cout << "eta " << candLLP->daughter(i)->eta() << std::endl;
+               //std::cout << "corr theta " << theta << std::endl;
+               //std::cout << "corr eta " << eta << std::endl;
+                            
+               
+               const reco::Candidate *tmpDauParticle = candLLP->daughter(i);
+               for (unsigned int g = 0; g < tmpDauParticle->numberOfDaughters(); g++ )
+               {
+               
+                  if(abs(candLLP->daughter(i)->daughter(g)->pdgId())==5 && idMotherB==25)
+                  {
+                  TLorentzVector tmpdau;
+		 tmpdau.SetPxPyPzE(tmpDauParticle->daughter(g)->px(), tmpDauParticle->daughter(g)->py(), tmpDauParticle->daughter(g)->pz(), tmpDauParticle->daughter(g)->energy());
+		 float gLLP_granddaughter_travel_time = (1./30.)*fabs(ecal_radius-travelRadius)/(tmpdau.Pt()/tmpdau.E());
+		 float x_ecal = decayVertex_x + 30. * (tmpdau.Px()/tmpdau.E())*gLLP_granddaughter_travel_time;
+                  float y_ecal = decayVertex_y + 30. * (tmpdau.Py()/tmpdau.E())*gLLP_granddaughter_travel_time;
+                  float z_ecal = decayVertex_z + 30. * (tmpdau.Pz()/tmpdau.E())*gLLP_granddaughter_travel_time;
+		 float phi = atan((y_ecal-decayVertex_y)/(x_ecal-decayVertex_x));
+		 if  (x_ecal < 0.0) {
+		    phi = TMath::Pi() + phi;
+		 }
+		 phi = deltaPhi(phi,0.0);
+		 float theta = atan(sqrt(pow(x_ecal-decayVertex_x,2)+pow(y_ecal-decayVertex_y,2))/abs(z_ecal-decayVertex_z));
+		 float eta = -1.0*TMath::Sign(1.0, z_ecal-decayVertex_z)*log(tan(theta/2));
+		 corrEtaGrandDaughterLLP.push_back(eta);
+                  corrPhiGrandDaughterLLP.push_back(phi);
+                  checkPtGrandDaughterLLP.push_back(tmpDauParticle->daughter(g)->pt());
+                  checkEtaGrandDaughterLLP.push_back(tmpDauParticle->daughter(g)->eta());
+                  checkPhiGrandDaughterLLP.push_back(tmpDauParticle->daughter(g)->phi());
+                  if (isLLPInCaloAcceptance)
+                  {
+                      GrandDaughterOfLLPInCalo.push_back(true);
+                  }
+                  else
+                  {
+                      GrandDaughterOfLLPInCalo.push_back(false);
+                  }
+                  //std::cout << "\n" << std::endl;
+                  //std::cout << "LLP n. " << l << "; daughter n. " << i << "; grand daughter n. " << g << std::endl;
+                  //std::cout << "decayVertex_x " << decayVertex_x << std::endl;
+                  //std::cout << "gLLP_granddaughter_travel_time " << gLLP_granddaughter_travel_time << std::endl;
+                  //std::cout << "x_ecal " << x_ecal << std::endl;
+                  //std::cout << "y_ecal " << y_ecal << std::endl;
+                  //std::cout << "z_ecal " << z_ecal << std::endl;
+                  //std::cout << "phi " << tmpDauParticle->daughter(g)->phi() << std::endl;
+                  //std::cout << "corr phi " << phi << std::endl;
+                  //std::cout << "corr theta " << theta << std::endl;
+                  //std::cout << "eta " << tmpDauParticle->daughter(g)->eta() << std::endl;
+                  //std::cout << "corr eta " << eta << std::endl;
+                  //std::cout << "status and id grand dau: " << tmpDauParticle->daughter(g)->pdgId() << "\t" << tmpDauParticle->daughter(g)->status() << std::endl;
+                  }
+               }//granddau loop
+             }//if
+         
+         }//dau loop
+         
+         }//ask to have 2 daughters and size>1
+    }//loop on LLPs
+    
+    //std::cout << "check pt higgs: " << std::endl;
+    //for(unsigned int a=0;a<GenHiggsVect.size();a++) std::cout << GenHiggsVect.at(a).pt() << std::endl;
+    //std::cout << "check pt bquarks: " << std::endl;
+    //for(unsigned int a=0;a<GenBquarksVect.size();a++) std::cout << GenBquarksVect.at(a).pt() << std::endl;
+    //std::cout << "checkPtDaughterLLP: " << std::endl;
+    //for(unsigned int a=0;a<checkPtDaughterLLP.size();a++) std::cout << checkPtDaughterLLP.at(a) << std::endl;
+    //std::cout << "checkPtGrandDaughterLLP: " << std::endl;
+    //for(unsigned int a=0;a<checkPtGrandDaughterLLP.size();a++) std::cout << checkPtGrandDaughterLLP.at(a) << std::endl;
+    //std::cout << "check eta higgs: " << std::endl;
+    //for(unsigned int a=0;a<GenHiggsVect.size();a++) std::cout << GenHiggsVect.at(a).eta() << std::endl;
+    //std::cout << "check eta bquarks: " << std::endl;
+    //for(unsigned int a=0;a<GenBquarksVect.size();a++) std::cout << GenBquarksVect.at(a).eta() << std::endl;
+    //std::cout << "checkEtaDaughterLLP: " << std::endl;
+    //for(unsigned int a=0;a<checkEtaDaughterLLP.size();a++) std::cout << checkEtaDaughterLLP.at(a) << std::endl;
+    //std::cout << "corrEtaDaughterLLP: " << std::endl;
+    //for(unsigned int a=0;a<corrEtaDaughterLLP.size();a++) std::cout << corrEtaDaughterLLP.at(a) << std::endl;
+    //std::cout << "checkEtaGrandDaughterLLP: " << std::endl;
+    //for(unsigned int a=0;a<checkEtaGrandDaughterLLP.size();a++) std::cout << checkEtaGrandDaughterLLP.at(a) << std::endl; 
+    //std::cout << "corrEtaGrandDaughterLLP: " << std::endl;
+    //for(unsigned int a=0;a<corrEtaGrandDaughterLLP.size();a++) std::cout << corrEtaGrandDaughterLLP.at(a) << std::endl;   
+    //std::cout << "check phi higgs: " << std::endl;
+    //for(unsigned int a=0;a<GenHiggsVect.size();a++) std::cout << GenHiggsVect.at(a).phi() << std::endl;
+    //std::cout << "check phi bquarks: " << std::endl;
+    //for(unsigned int a=0;a<GenBquarksVect.size();a++) std::cout << GenBquarksVect.at(a).phi() << std::endl;
+    //std::cout << "checkPhiDaughterLLP: " << std::endl;
+    //for(unsigned int a=0;a<checkPhiDaughterLLP.size();a++) std::cout << checkPhiDaughterLLP.at(a) << std::endl;
+    //std::cout << "corrPhiDaughterLLP: " << std::endl;
+    //for(unsigned int a=0;a<corrPhiDaughterLLP.size();a++) std::cout << corrPhiDaughterLLP.at(a) << std::endl;
+    //std::cout << "checkPhiGrandDaughterLLP: " << std::endl;
+    //for(unsigned int a=0;a<checkPhiGrandDaughterLLP.size();a++) std::cout << checkPhiGrandDaughterLLP.at(a) << std::endl; 
+    //std::cout << "corrPhiGrandDaughterLLP: " << std::endl;
+    //for(unsigned int a=0;a<corrPhiGrandDaughterLLP.size();a++) std::cout << corrPhiGrandDaughterLLP.at(a) << std::endl;
+    
 
     for(unsigned int i = 0; i < GenVBFVect.size(); i++) GenVBFquarks.push_back( GenPType() );
     for(unsigned int i = 0; i < GenHiggsVect.size(); i++) GenHiggs.push_back( GenPType() );
@@ -732,6 +928,12 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(nGenBquarks>0) gen_b_radius = GenBquarksVect.at(0).mother()? sqrt(pow(GenBquarksVect.at(0).vx() - GenBquarksVect.at(0).mother()->vx(),2) + pow(GenBquarksVect.at(0).vy() - GenBquarksVect.at(0).mother()->vy(),2) + pow(GenBquarksVect.at(0).vz() - GenBquarksVect.at(0).mother()->vz(),2)) : -1.;
     if(nGenLL>0) m_pi = GenLongLivedVect.at(0).mass();
 
+    //Fill gen objects here; needed later for jet matching
+
+    if (WriteGenVBFquarks) for(unsigned int i = 0; i < GenVBFVect.size(); i++) ObjectsFormat::FillGenPType(GenVBFquarks[i], &GenVBFVect[i]);
+    if (WriteGenLLPs)  for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenLLPs[i], &GenLongLivedVect[i], LLPInCalo[i], -9., -9.);
+    if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenHiggs[i], &GenHiggsVect[i], idMotherB==25 ? DaughterOfLLPInCalo[i] : false, idMotherB==25 ? corrEtaDaughterLLP[i] : -9., idMotherB==25 ? corrPhiDaughterLLP[i] : -9.);
+    if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenBquarks[i], &GenBquarksVect[i], idMotherB==25 ? GrandDaughterOfLLPInCalo[i] : DaughterOfLLPInCalo[i], idMotherB==25 ? corrEtaGrandDaughterLLP[i] : corrEtaDaughterLLP[i], idMotherB==25 ? corrPhiGrandDaughterLLP[i] : corrPhiDaughterLLP[i]);
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -872,13 +1074,8 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //std::cout << ManualJets.size() << std::endl;
 
 
-    //One way to implement jet-gen b-quark matching is performed here
-    //if(isVerbose) std::cout << "AK4 CHS matching to b quarks" << std::endl;
+    // Gen-matching: old approach
     std::vector<pat::Jet> MatchedCHSJetsVect;
-
-
-    //Matching the b quarks to AK4CHS jets
-    //Starting point: b-quark
     int matching_index_CHSJets;//local variable
     float delta_R_CHSJets;//local variable
     float current_delta_R_CHSJets;//local variable
@@ -895,9 +1092,6 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	      {
 		delta_R_CHSJets = min(delta_R_CHSJets,current_delta_R_CHSJets);
 		matching_index_CHSJets = a;
-		//std::cout<<"Vertex of the gen b ( "<< GenBquarksVect.at(b).vx() <<" , "<< GenBquarksVect.at(b).vy() <<" , "<< GenBquarksVect.at(b).vz() <<" )" << std::endl; 
-		//std::cout<<"Vertex of the matched jet ( "<< CHSJetsVect.at(a).vx() <<" , "<< CHSJetsVect.at(a).vy() <<" , "<< CHSJetsVect.at(a).vz() <<" )" << std::endl; 
-		//std::cout<<"Vertex[0] of the matched jet ( "<< CHSJetsVect.at(a).vertex() <<" )" << std::endl; 
 		CHSJetsVect[a].addUserInt("original_jet_index",a+1);
 		CHSJetsVect[a].addUserFloat("genbRadius2D", GenBquarksVect[b].mother()? sqrt(pow(GenBquarksVect[b].vx() - GenBquarksVect[b].mother()->vx(),2) + pow(GenBquarksVect[b].vy() - GenBquarksVect[b].mother()->vy(),2)) : -1000.);
 		CHSJetsVect[a].addUserFloat("genbEta",GenBquarksVect[b].eta());
@@ -930,7 +1124,6 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	      {
 		//let's add flags helping to find matched jets corresponding to original Jets vector
 		CHSJetsVect[r].addUserInt("isGenMatched",1);
-		//CHSJetsVect[r].addUserInt("isMatchedToMatchedCHSJet",s+1);//obsolete
 	      }
 
 	  }
@@ -947,6 +1140,131 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	}
 	CHSJetsVect[r].addUserInt("nMatchedGenBquarks",number_bs_matched_to_CHSJet);
       }
+
+    // Gen-matching: LLP in calo acceptance
+    std::vector<pat::Jet> TempMatchedCHSJetsVect;
+    float delta_R;//local variable
+    float current_delta_R;//local variable
+    //Loop over GenBquarks structure, we need corrections and gen info
+    for(unsigned int b = 0; b<GenBquarks.size(); b++)
+      {
+	delta_R = 1000.;
+	current_delta_R = 1000.;
+	for(unsigned int a = 0; a<CHSJetsVect.size(); a++)
+	  {
+	    current_delta_R = fabs(reco::deltaR(CHSJetsVect[a].eta(),CHSJetsVect[a].phi(),GenBquarks[b].eta,GenBquarks[b].phi));
+	    if(current_delta_R<0.4 && current_delta_R<delta_R && CHSJetsVect[a].genParton() && (fabs(CHSJetsVect[a].hadronFlavour())==5 || fabs(CHSJetsVect[a].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB && GenBquarks[b].isLLPInCaloAcceptance)
+
+	      {
+		delta_R = min(delta_R,current_delta_R);
+		TempMatchedCHSJetsVect.push_back(CHSJetsVect[a]);//duplicates possible, must be removed afterwards!
+	      }
+	  }
+
+      }
+
+    //Remove duplicates from Temp Matched CHSJets Vector
+    auto comp_tmp = [] ( const pat::Jet& lhs, const pat::Jet& rhs ) {return lhs.pt() ==rhs.pt();};
+    auto last_tmp = std::unique(TempMatchedCHSJetsVect.begin(), TempMatchedCHSJetsVect.end(),comp_tmp);
+    TempMatchedCHSJetsVect.erase(last_tmp, TempMatchedCHSJetsVect.end());
+
+
+    // add b-matching infos into original jet
+    for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+      {
+	for(unsigned int s = 0; s<TempMatchedCHSJetsVect.size(); s++)
+	  {
+
+	    if(TempMatchedCHSJetsVect[s].pt()==CHSJetsVect[r].pt()) CHSJetsVect[r].addUserInt("isGenMatchedLLPAccept",1);
+
+	  }
+
+      }
+      
+    TempMatchedCHSJetsVect.clear();
+
+    // Gen-matching: calo corrections
+    //Loop over GenBquarks structure, we need corrections and gen info
+    for(unsigned int b = 0; b<GenBquarks.size(); b++)
+      {
+	delta_R = 1000.;
+	current_delta_R = 1000.;
+	for(unsigned int a = 0; a<CHSJetsVect.size(); a++)
+	  {
+	    current_delta_R = fabs(reco::deltaR(CHSJetsVect[a].eta(),CHSJetsVect[a].phi(),GenBquarks[b].corrCaloEta,GenBquarks[b].corrCaloPhi));
+	    if(current_delta_R<0.4 && current_delta_R<delta_R && CHSJetsVect[a].genParton() && (fabs(CHSJetsVect[a].hadronFlavour())==5 || fabs(CHSJetsVect[a].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB)
+
+	      {
+		delta_R = min(delta_R,current_delta_R);
+		TempMatchedCHSJetsVect.push_back(CHSJetsVect[a]);//duplicates possible, must be removed afterwards!
+	      }
+	  }
+
+      }
+
+    //Remove duplicates from Temp Matched CHSJets Vector
+    //auto comp_tmp = [] ( const pat::Jet& lhs, const pat::Jet& rhs ) {return lhs.pt() ==rhs.pt();};
+    last_tmp = std::unique(TempMatchedCHSJetsVect.begin(), TempMatchedCHSJetsVect.end(),comp_tmp);
+    TempMatchedCHSJetsVect.erase(last_tmp, TempMatchedCHSJetsVect.end());
+
+
+    // add b-matching infos into original jet
+    for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+      {
+	for(unsigned int s = 0; s<TempMatchedCHSJetsVect.size(); s++)
+	  {
+
+	    if(TempMatchedCHSJetsVect[s].pt()==CHSJetsVect[r].pt()) CHSJetsVect[r].addUserInt("isGenMatchedCaloCorr",1);
+
+	  }
+
+      }
+      
+    TempMatchedCHSJetsVect.clear();
+      
+      
+    // Gen-matching: calo corrections and LLP in acceptance 
+    //Loop over GenBquarks structure, we need corrections and gen info
+    for(unsigned int b = 0; b<GenBquarks.size(); b++)
+      {
+	delta_R = 1000.;
+	current_delta_R = 1000.;
+	for(unsigned int a = 0; a<CHSJetsVect.size(); a++)
+	  {
+	    current_delta_R = fabs(reco::deltaR(CHSJetsVect[a].eta(),CHSJetsVect[a].phi(),GenBquarks[b].corrCaloEta,GenBquarks[b].corrCaloPhi));
+	    if(current_delta_R<0.4 && current_delta_R<delta_R && CHSJetsVect[a].genParton() && (fabs(CHSJetsVect[a].hadronFlavour())==5 || fabs(CHSJetsVect[a].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB && GenBquarks[b].isLLPInCaloAcceptance)
+
+	      {
+		delta_R = min(delta_R,current_delta_R);
+		TempMatchedCHSJetsVect.push_back(CHSJetsVect[a]);//duplicates possible, must be removed afterwards!
+	      }
+	  }
+
+      }
+
+    //Remove duplicates from Temp Matched CHSJets Vector
+    //auto comp_tmp = [] ( const pat::Jet& lhs, const pat::Jet& rhs ) {return lhs.pt() ==rhs.pt();};
+    last_tmp = std::unique(TempMatchedCHSJetsVect.begin(), TempMatchedCHSJetsVect.end(),comp_tmp);
+    TempMatchedCHSJetsVect.erase(last_tmp, TempMatchedCHSJetsVect.end());
+
+
+    // add b-matching infos into original jet
+    for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+      {
+	for(unsigned int s = 0; s<TempMatchedCHSJetsVect.size(); s++)
+	  {
+
+	    if(TempMatchedCHSJetsVect[s].pt()==CHSJetsVect[r].pt()) CHSJetsVect[r].addUserInt("isGenMatchedCaloCorrLLPAccept",1);
+
+	  }
+
+      }
+      
+    TempMatchedCHSJetsVect.clear();      
+      
+      
+      
+
 
 
 
@@ -2365,10 +2683,6 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     if(isVerbose) std::cout << " - Filling objects" << std::endl;
     
-    if (WriteGenVBFquarks) for(unsigned int i = 0; i < GenVBFVect.size(); i++) ObjectsFormat::FillGenPType(GenVBFquarks[i], &GenVBFVect[i]);
-    if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillGenPType(GenHiggs[i], &GenHiggsVect[i]);
-    if (WriteGenLLPs) for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillGenPType(GenLLPs[i], &GenLongLivedVect[i]);
-    if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillGenPType(GenBquarks[i], &GenBquarksVect[i]);
     //RecoObjectsFormat::FillRecoMEtType(RecoMEt, &RecoMET, isMC);//wait, to be fixed
     ObjectsFormat::FillMEtType(MEt, &MET, isMC);//wait, to be fixed
     ObjectsFormat::FillCandidateType(VBF, &theVBF, isMC);//wait, to be fixed
