@@ -30,6 +30,7 @@ class GenAnalyzer {
         virtual std::map<std::string, float> FillLheMap(const edm::Event&);
         virtual std::vector<reco::GenParticle> FillGenVector(const edm::Event&);
         virtual std::vector<reco::GenParticle> FillGenVectorByIdAndStatus(const edm::Event&, int, int);
+        virtual std::vector<reco::GenParticle> FillGenVectorByTwoIdsAndStatus(const edm::Event&, int, int, int);
         virtual std::vector<reco::GenParticle> FillGenVectorByIdListAndStatusAndMotherList(const edm::Event&, std::vector<int>, int, std::vector<int>);
         virtual std::vector<reco::GenParticle> FillVBFGenVector(const edm::Event&);//, std::vector<int>, int, std::vector<int>, std::vector<int>);
         virtual std::vector<reco::GenParticle> FillGenVectorByIdStatusAndMother(const edm::Event&, int, int, int);
