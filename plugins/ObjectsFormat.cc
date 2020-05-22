@@ -358,6 +358,9 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     I.matchLL     = R->hasUserInt("hasMatchedLL") ? R->userInt("hasMatchedLL") : -1;
     //I.original_jet_index     = R->hasUserInt("original_jet_index") ? R->userInt("original_jet_index") : -1;
     I.isGenMatched = R->hasUserInt("isGenMatched") ? R->userInt("isGenMatched") : 0;
+    I.isGenMatchedCaloCorr = R->hasUserInt("isGenMatchedCaloCorr") ? R->userInt("isGenMatchedCaloCorr") : 0;
+    I.isGenMatchedLLPAccept = R->hasUserInt("isGenMatchedLLPAccept") ? R->userInt("isGenMatchedLLPAccept") : 0;
+    I.isGenMatchedCaloCorrLLPAccept = R->hasUserInt("isGenMatchedCaloCorrLLPAccept") ? R->userInt("isGenMatchedCaloCorrLLPAccept") : 0;  
     I.isVBFGenMatched = R->hasUserInt("isVBFGenMatched") ? R->userInt("isVBFGenMatched") : 0;
     //track, old implementation
     I.alphaMaxOld    = R->hasUserFloat("alphaMaxOld") ? R->userFloat("alphaMaxOld") : -100.;
@@ -609,6 +612,9 @@ void ObjectsFormat::ResetJetType(JetType& I) {
     I.matchLL     = -1;
     //I.original_jet_index = -1;
     I.isGenMatched = 0;
+    I.isGenMatchedCaloCorr = 0;
+    I.isGenMatchedLLPAccept = 0;
+    I.isGenMatchedCaloCorrLLPAccept = 0;
     I.isVBFGenMatched = 0;
     //track, old implementation
     I.alphaMaxOld = -100.;
@@ -1612,6 +1618,31 @@ std::string ObjectsFormat::ListLorentzType() {return "pt/F:eta/F:phi/F:energy/F:
 //       GenParticles     //
 //***********************//
 
+void ObjectsFormat::FillCaloGenPType(GenPType& I, const reco::GenParticle* R, bool caloAcceptanceDecision, float etaCorr, float phiCorr) {
+    if(!R) return;
+    I.pt          = R->pt();
+    I.eta         = R->eta();
+    I.rapidity    = R->rapidity();
+    I.phi         = R->phi();
+    I.mass        = R->mass();
+    I.energy      = R->energy();
+    I.charge      = R->charge();
+    I.pdgId       = R->pdgId();
+    I.status      = R->status();
+    I.radius      = R->mother()? sqrt(pow(R->vx() - R->mother()->vx(),2) + pow(R->vy() - R->mother()->vy(),2) + pow(R->vz() - R->mother()->vz(),2)) : -1000.;
+    I.radius2D    = R->mother()? sqrt(pow(R->vx() - R->mother()->vx(),2) + pow(R->vy() - R->mother()->vy(),2)) : -1000.;
+    I.motherid    = R->mother()? R->mother()->pdgId() : 0;
+    I.vx          = R->vx();
+    I.vy          = R->vy();
+    I.vz          = R->vz();
+    I.travelTime  = R->numberOfDaughters()>1 ? sqrt( pow(R->daughter(0)->vx()-R->vx(),2)+ pow(R->daughter(0)->vy()-R->vy(),2) + pow(R->daughter(0)->vz()-R->vz(),2) )/30*sqrt(pow(R->px(),2) + pow(R->py(),2) + pow(R->pz(),2))/R->energy(): -1.;
+    I.travelRadius = R->numberOfDaughters()>1 ? sqrt( pow(R->daughter(0)->vx(),2)+ pow(R->daughter(0)->vy(),2) ) : -1000.;
+    I.beta        = R->energy()>0 ? sqrt(pow(R->px(),2) + pow(R->py(),2) + pow(R->pz(),2))/R->energy() : -1.;
+    I.corrCaloEta = etaCorr;
+    I.corrCaloPhi = phiCorr;
+    I.isLLPInCaloAcceptance = caloAcceptanceDecision;
+}
+
 void ObjectsFormat::FillGenPType(GenPType& I, const reco::GenParticle* R) {
     if(!R) return;
     I.pt          = R->pt();
@@ -1629,6 +1660,12 @@ void ObjectsFormat::FillGenPType(GenPType& I, const reco::GenParticle* R) {
     I.vx          = R->vx();
     I.vy          = R->vy();
     I.vz          = R->vz();
+    I.travelTime  = R->numberOfDaughters()>1 ? sqrt( pow(R->daughter(0)->vx()-R->vx(),2)+ pow(R->daughter(0)->vy()-R->vy(),2) + pow(R->daughter(0)->vz()-R->vz(),2) )/30*sqrt(pow(R->px(),2) + pow(R->py(),2) + pow(R->pz(),2))/R->energy(): -1.;
+    I.travelRadius = R->numberOfDaughters()>1 ? sqrt( pow(R->daughter(0)->vx(),2)+ pow(R->daughter(0)->vy(),2) ) : -1000.;
+    I.beta        = R->energy()>0 ? sqrt(pow(R->px(),2) + pow(R->py(),2) + pow(R->pz(),2))/R->energy() : -1.;
+    I.corrCaloEta = -9.;
+    I.corrCaloPhi = -9.;
+    I.isLLPInCaloAcceptance = false;
 }
 
 
@@ -1648,6 +1685,12 @@ void ObjectsFormat::ResetGenPType(GenPType& I) {
     I.vx          = -99;
     I.vy          = -99;
     I.vz          = -99;
+    I.travelTime  = -1.;
+    I.travelRadius = -1000.;
+    I.beta        = -1.;
+    I.corrCaloEta = -9.;
+    I.corrCaloPhi = -9.;
+    I.isLLPInCaloAcceptance = false;
 
 }
 

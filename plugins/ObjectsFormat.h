@@ -39,6 +39,7 @@ class ObjectsFormat {
         static void FillCandidateType(CandidateType&, pat::CompositeCandidate*, bool);
         static void FillLorentzType(LorentzType&, const reco::Candidate::LorentzVector*);
         static void FillGenPType(GenPType&, const reco::GenParticle*);
+        static void FillCaloGenPType(GenPType&, const reco::GenParticle*, bool, float, float);
         static void FillTriggerObjectType(TriggerObjectType&, const pat::TriggerObjectStandAlone*);
         static void FillPFCandidateType(PFCandidateType&, const pat::PackedCandidate*, int, int, int);
         static void FillPrimVertexType(VertexType&, const reco::Vertex*);

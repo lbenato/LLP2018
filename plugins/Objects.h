@@ -109,7 +109,7 @@ PUId(-1), PUIdLoose(false), PUIdMedium(false), PUIdTight(false), PUDiscriminant(
 //isMatched(false), dR_q1(1000), dR_q2(1000), dR_q3(1000), dR_q4(1000), m_q1(false), m_q2(false), m_q3(false), m_q4(false), dR_pi1(1000), dR_pi2(1000),
 matchBquark(-1), matchLL(-1),
 //original_jet_index(-1),
-    isGenMatched(0), isVBFGenMatched(0),
+    isGenMatched(0), isGenMatchedCaloCorr(0), isGenMatchedLLPAccept(0), isGenMatchedCaloCorrLLPAccept(0), isVBFGenMatched(0),
     //track variables, old implementation
     alphaMaxOld(-100.), sumPtJetOld(-1.), betaMaxOld(-100.), gammaMaxOld(-100.), gammaMaxEMOld(-100.), gammaMaxHadronicOld(-100.), gammaMaxETOld(-100.), sigIP2DMedianOld(-10000.), theta2DMedianOld(-100.), POCA_theta2DMedianOld(-100.), nPixelHitsMedianOld(-1.0), nHitsMedianOld(-1.0), dxyMedianOld(-9999.), dzMedianOld(-9999.),//minDeltaRAllTracksOld(999.), minDeltaRPVTracksOld(999.), minDeltaRAllTracksInJetOld(999.), minDeltaRPVTracksInJetOld(999.),
     //track variables, new implementation
@@ -228,7 +228,10 @@ matchBquark(-1), matchLL(-1),
     int matchBquark;
     int matchLL;
   //int original_jet_index;
-    int isGenMatched;
+    int isGenMatched;    
+    int isGenMatchedCaloCorr;
+    int isGenMatchedLLPAccept;
+    int isGenMatchedCaloCorrLLPAccept;
     int isVBFGenMatched;
     //track, old implementation
     float alphaMaxOld;
@@ -642,7 +645,7 @@ struct EventType {
 };
 
 struct GenPType {
-GenPType(): pt(-1.), eta(-9.), rapidity(-99999.), phi(-9.), mass(-1.), energy(-1.), charge(0), pdgId(0), status(0), radius(-1), radius2D(-1), motherid(0) {}
+GenPType(): pt(-1.), eta(-9.), rapidity(-99999.), phi(-9.), mass(-1.), energy(-1.), charge(0), pdgId(0), status(0), radius(-1), radius2D(-1), motherid(0), travelTime(-1.), travelRadius(-1000.), beta(-1.), corrCaloEta(-9.), corrCaloPhi(-9.), isLLPInCaloAcceptance(false) {}
     float pt;
     float eta;
     float rapidity;
@@ -658,6 +661,12 @@ GenPType(): pt(-1.), eta(-9.), rapidity(-99999.), phi(-9.), mass(-1.), energy(-1
     float vx;
     float vy;
     float vz;
+    float travelTime;
+    float travelRadius;
+    float beta;
+    float corrCaloEta;
+    float corrCaloPhi;
+    bool isLLPInCaloAcceptance;
 };
 
 struct TriggerObjectType {
