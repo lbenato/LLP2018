@@ -114,6 +114,14 @@ elif options.lists == "test_calo_AOD_pfcand":
     from Analyzer.LLP2018.samplesAOD2018 import sample, samples
     from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
     LUMI = 35867#36814# in pb-1 Full 2016 with normtag
+elif options.lists == "v2_calo_AOD_2017":
+    from Analyzer.LLP2018.samplesAOD2017 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
+    LUMI = 41557#2017 lumi with normtag, from pdvm2017 twiki
+elif options.lists == "v3_calo_AOD_2018":
+    from Analyzer.LLP2018.samplesAOD2018 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+    LUMI = 1
     
 else:
     print "No sample list indicated, aborting!"
@@ -218,9 +226,10 @@ def weight(name):
         elif('ZH_HToSSTobbbb') in name:
             #We take into account ZH Higgs production x-sec times branching fraction into leptons
             xs = 0.8839*(3.3658/100.)
-        elif('n3n2-n1-hbb-hbb') in name:
-            #Don't know this x-sec actually...
-            xs = 1.
+        #elif('n3n2-n1-hbb-hbb') in name:
+        #    #Don't know this x-sec actually...
+        #    print "This is susy name: ", name
+        #    xs = 1.
         elif('GluGluH2_H2ToSSTobbbb') in name:
             #We do not take into account ggH Higgs production x-sec! Absolute x-sec needed!
             xs = 1.#48.58
