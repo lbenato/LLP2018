@@ -263,11 +263,16 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         jet.addUserInt("Index", idx);
         pat::JetRef jetRef(PFJetsCollection, idx);
 
+        // First pt cut, to avoid issues with AK8!
+        if(jet.pt()<PtTh) continue;
+        
+
 	//First of all, jet id selections
         // Quality cut
         if(JetId==1 && !isLooseJet(jet)) continue;
         if(JetId==2 && !isTightJet(jet)) continue;
         if(JetId==3 && !isTightLepVetoJet(jet)) continue;
+        
         // b-tagging
         if(BTagTh==1 && jet.bDiscriminator(BTag)<BTagTh) continue;
         // Save jet ID
@@ -358,8 +363,9 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             jet.addUserFloat("ak8PFJetsPuppiSoftDropEnergy", puppiSoftdrop.energy());
             jet.addUserFloat("ak8PFJetsPuppiSoftDropMass", puppiSoftdrop.mass());
             
-            float tau21 = jet.userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau2")/jet.userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau1");
-            float ddt = tau21 + 0.063 * log( jet.userFloat("ak8PFJetsPuppiSoftDropMass")*jet.userFloat("ak8PFJetsPuppiSoftDropMass")/jet.userFloat("ak8PFJetsPuppiSoftDropPt") );
+            //float tau21 = jet.userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau2")/jet.userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau1");
+            float tau21 = jet.hasUserFloat("NjettinessAK8Puppi:tau2") ? jet.userFloat("NjettinessAK8Puppi:tau2")/jet.userFloat("NjettinessAK8Puppi:tau1") : -1.;
+            float ddt = jet.hasUserFloat("ak8PFJetsPuppiSoftDropMass") ? tau21 + 0.063 * log( jet.userFloat("ak8PFJetsPuppiSoftDropMass")*jet.userFloat("ak8PFJetsPuppiSoftDropMass")/jet.userFloat("ak8PFJetsPuppiSoftDropPt") ) : -1.;
             jet.addUserFloat("ddtTau21", ddt);
         }
         
@@ -512,14 +518,51 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         //Find ECAL/HCAL recHits
         //Initialize
         float jet_energy_frac(0.);
-        float jetRechitE_Error(0.);
-        float jetRechitE(0.);
-        float jetRechitT(0.);
-        float jetRechitT_rms(0.);
-        int n_matched_rechits(0);
+        float jetRechitE_Error_EB(0.);
+        float jetRechitE_EB(0.);
+        float jetRechitT_EB(0.);
+        float jetRechitT_rms_EB(0.);
+        float jetRechitX_EB(0.);
+        float jetRechitY_EB(0.);
+        float jetRechitZ_EB(0.);
+        float jetRechitRadius_EB(0.);
+        int n_matched_rechits_EB(0);
+        
+        float jetRechitE_Error_EE(0.);
+        float jetRechitE_EE(0.);
+        float jetRechitT_EE(0.);
+        float jetRechitT_rms_EE(0.);
+        float jetRechitX_EE(0.);
+        float jetRechitY_EE(0.);
+        float jetRechitZ_EE(0.);
+        float jetRechitRadius_EE(0.);
+        int n_matched_rechits_EE(0);
+                
+        //float jet_energy_frac_HBHE(0.);
+        float jetRechitE_Error_HB(0.);
+        float jetRechitE_HB(0.);
+        float jetRechitT_HB(0.);
+        float jetRechitT_rms_HB(0.);
+        float jetRechitX_HB(0.);
+        float jetRechitY_HB(0.);
+        float jetRechitZ_HB(0.);
+        float jetRechitRadius_HB(0.);
+        int n_matched_rechits_HB(0);
+         
+        float jetRechitE_Error_HE(0.);
+        float jetRechitE_HE(0.);
+        float jetRechitT_HE(0.);
+        float jetRechitT_rms_HE(0.);
+        float jetRechitX_HE(0.);
+        float jetRechitY_HE(0.);
+        float jetRechitZ_HE(0.);
+        float jetRechitRadius_HE(0.);
+        int n_matched_rechits_HE(0);
+        
         if(IsAOD)
         {
-        for(unsigned int q=0; q<ebRecHitsCollection->size(); q++){
+          //Loop on EB rec hits
+          for(unsigned int q=0; q<ebRecHitsCollection->size(); q++){
             const EcalRecHit *recHit = &(*ebRecHitsCollection)[q];
             const DetId recHitId = recHit->detid();
             const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
@@ -534,24 +577,176 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
                 //if (reco::deltaR(jet.eta(), jet.phi(), recHitPos.eta(), recHitPos.phi()) < 0.15 && recHit->energy() > Rechit_cut) jet_energy_frac += recHit->energy();//needed???
 
                 if (recHit->energy() > Rechit_cut) {
-                    jetRechitE_Error += recHit->energyError() * recHit->energyError();
-                    jetRechitE += recHit->energy();
-                    jetRechitT += recHit->time()*recHit->energy();
-                    jetRechitT_rms += recHit->time()*recHit->time();
-                    n_matched_rechits++;
+                    jetRechitE_Error_EB += recHit->energyError() * recHit->energyError();
+                    jetRechitE_EB += recHit->energy();
+                    jetRechitT_EB += recHit->time()*recHit->energy();
+                    jetRechitT_rms_EB += recHit->time()*recHit->time();
+                    jetRechitX_EB += recHitPos.x()*recHit->energy();
+                    jetRechitY_EB += recHitPos.y()*recHit->energy();
+                    jetRechitZ_EB += recHitPos.z()*recHit->energy();
+                    jetRechitRadius_EB += sqrt( pow(recHitPos.x()*recHit->energy(),2) + pow(recHitPos.y()*recHit->energy(),2) );
+                    n_matched_rechits_EB++;
                 }
+                
                 
             }
             
-        }//loop over ebRecHits
+          }//loop over ebRecHits
+          
+                   
+          //Loop on EE rec hits
+          for(unsigned int q=0; q<eeRecHitsCollection->size(); q++){
+            const EcalRecHit *recHit = &(*eeRecHitsCollection)[q];
+            const DetId recHitId = recHit->detid();
+            const auto recHitPos = endcapGeometry->getGeometry(recHitId)->getPosition();
+
+            //Discard "bad" rechits            
+            if (recHit->checkFlag(EcalRecHit::kSaturated) || recHit->checkFlag(EcalRecHit::kLeadingEdgeRecovered) || recHit->checkFlag(EcalRecHit::kPoorReco) || recHit->checkFlag(EcalRecHit::kWeird) || recHit->checkFlag(EcalRecHit::kDiWeird)) continue;
+            if (recHit->timeError() < 0 || recHit->timeError() > 100) continue;
+            if (abs(recHit->time()) > 12.5) continue;
+            
+            //Calculate jet timestamps
+            if ( reco::deltaR(jet.eta(), jet.phi(), recHitPos.eta(), recHitPos.phi()) < 0.4) {
+                //if (reco::deltaR(jet.eta(), jet.phi(), recHitPos.eta(), recHitPos.phi()) < 0.15 && recHit->energy() > Rechit_cut) jet_energy_frac += recHit->energy();//needed???
+
+                if (recHit->energy() > Rechit_cut) {
+                    jetRechitE_Error_EE += recHit->energyError() * recHit->energyError();
+                    jetRechitE_EE += recHit->energy();
+                    jetRechitT_EE += recHit->time()*recHit->energy();
+                    jetRechitT_rms_EE += recHit->time()*recHit->time();
+                    jetRechitX_EE += recHitPos.x()*recHit->energy();
+                    jetRechitY_EE += recHitPos.y()*recHit->energy();
+                    jetRechitZ_EE += recHitPos.z()*recHit->energy();
+                    jetRechitRadius_EE += sqrt( pow(recHitPos.x()*recHit->energy(),2) + pow(recHitPos.y()*recHit->energy(),2) );
+                    n_matched_rechits_EE++;
+                }
+                
+                
+            }
+            
+          }//loop over eeRecHits	  
+	      
+	  //loop over hcal hits
+	  for (unsigned int iHit = 0; iHit < hcalRecHitsHBHECollection->size(); iHit ++){
+	    const HBHERecHit *recHit = &(*hcalRecHitsHBHECollection)[iHit];
+
+	    float hiteta = -999;
+	    float hitphi = -999;
+	    float hitx   = -99999999.;
+	    float hity   = -99999999.;
+	    float hitz   = -99999999.;
+	    if (recHit->energy() < 0.1) continue;
+	    const HcalDetId recHitId = recHit->detid();
+	    if (recHit->detid().subdetId() == HcalBarrel)
+	      {
+	        //std::cout << "Debug, segfault at HB? " << std::endl;
+		const auto recHitPos = hbGeometry->getGeometry(recHitId)->getPosition();
+		hiteta = recHitPos.eta();
+		hitphi = recHitPos.phi();
+		hitx   = recHitPos.x();
+		hity   = recHitPos.y();
+		hitz   = recHitPos.z();
+	      
+		if ( reco::deltaR(jet.eta(), jet.phi(), hiteta, hitphi) < 0.4 )//why 0.5??
+		  {
+  		    //std::cout << "Debug, segfault at matching AK4 and HB? " << std::endl;
+		    //jetRechitE_Error_HBHE += recHit->energyError() * recHit->energyError();
+		    jetRechitE_HB += recHit->energy();
+		    jetRechitT_HB += recHit->time()*recHit->energy();
+		    jetRechitT_rms_HB += recHit->time()*recHit->time();
+		    jetRechitX_HB += hitx*recHit->energy();
+		    jetRechitY_HB += hity*recHit->energy();
+		    jetRechitZ_HB += hitz*recHit->energy();
+		    jetRechitRadius_HB += sqrt( pow(hitx*recHit->energy(),2) + pow(hity*recHit->energy(),2) );
+		    n_matched_rechits_HB++;
+		  }
+            
+	      }
+	    /*
+	    else if (recHit->detid().subdetId() == HcalEndcap)
+	      {
+	        std::cout << "Debug, segfault at HE? " << std::endl;
+		const auto recHitPos = heGeometry->getGeometry(recHitId)->getPosition();
+		std::cout << "HE get position failing? " << std::endl;
+		hiteta = recHitPos.eta();
+		hitphi = recHitPos.phi();
+		hitx   = recHitPos.x();
+		hity   = recHitPos.y();
+		hitz   = recHitPos.z();
+	      
+		if ( reco::deltaR(jet.eta(), jet.phi(), hiteta, hitphi) < 0.4 )//why 0.5??
+		  {
+		    std::cout << "Debug, segfault at matching AK4 and HE? " << std::endl;
+		    //jetRechitE_Error_HBHE += recHit->energyError() * recHit->energyError();
+		    jetRechitE_HE += recHit->energy();
+		    jetRechitT_HE += recHit->time()*recHit->energy();
+		    jetRechitT_rms_HE += recHit->time()*recHit->time();
+		    jetRechitX_HE += hitx*recHit->energy();
+		    jetRechitY_HE += hity*recHit->energy();
+		    jetRechitZ_HE += hitz*recHit->energy();
+		    jetRechitRadius_HE += sqrt( pow(hitx*recHit->energy(),2) + pow(hity*recHit->energy(),2) );
+		    n_matched_rechits_HE++;
+		  }
+	      }
+	    
+	    else
+	      {
+		std::cout << "Error: HCAL Rechit has detId subdet = " << recHit->detid().subdetId() << "  which is not HcalBarrel or HcalEndcap. skipping it. \n";
+	      }
+	      */
+            
+
+	  }//loop over hcal hbhe hits          
+          
+          
+          
+          
+          
+          
+          
+          
         }//IsAOD condition
 
-        jet.addUserInt("nRecHits", n_matched_rechits);
-        jet.addUserFloat("timeRecHits", jetRechitE>0 ? jetRechitT/jetRechitE : -100.);
-        jet.addUserFloat("timeRMSRecHits", n_matched_rechits>0 ? sqrt(jetRechitT_rms) : -1.);
-        jet.addUserFloat("energyRecHits", n_matched_rechits>0 ? sqrt(jetRechitE) : -1.);
-        jet.addUserFloat("energyErrorRecHits", n_matched_rechits>0 ? sqrt(jetRechitE_Error) : -1.);
+        jet.addUserInt("nRecHitsEB", n_matched_rechits_EB);
+        jet.addUserFloat("timeRecHitsEB", jetRechitE_EB>0 ? jetRechitT_EB/jetRechitE_EB : -100.);
+        jet.addUserFloat("timeRMSRecHitsEB", n_matched_rechits_EB>0 ? sqrt(jetRechitT_rms_EB) : -1.);
+        jet.addUserFloat("energyRecHitsEB", n_matched_rechits_EB>0 ? sqrt(jetRechitE_EB) : -1.);
+        jet.addUserFloat("energyErrorRecHitsEB", n_matched_rechits_EB>0 ? sqrt(jetRechitE_Error_EB) : -1.);
+        jet.addUserFloat("xRecHitsEB", jetRechitE_EB>0 ? jetRechitX_EB/jetRechitE_EB : -1000.);
+        jet.addUserFloat("yRecHitsEB", jetRechitE_EB>0 ? jetRechitY_EB/jetRechitE_EB : -1000.);
+        jet.addUserFloat("zRecHitsEB", jetRechitE_EB>0 ? jetRechitZ_EB/jetRechitE_EB : -1000.);
+        jet.addUserFloat("radiusRecHitsEB", jetRechitE_EB>0 ? jetRechitRadius_EB/jetRechitE_EB : -1000.);
 
+        jet.addUserInt("nRecHitsEE", n_matched_rechits_EE);
+        jet.addUserFloat("timeRecHitsEE", jetRechitE_EE>0 ? jetRechitT_EE/jetRechitE_EE : -100.);
+        jet.addUserFloat("timeRMSRecHitsEE", n_matched_rechits_EE>0 ? sqrt(jetRechitT_rms_EE) : -1.);
+        jet.addUserFloat("energyRecHitsEE", n_matched_rechits_EE>0 ? sqrt(jetRechitE_EE) : -1.);
+        jet.addUserFloat("energyErrorRecHitsEE", n_matched_rechits_EE>0 ? sqrt(jetRechitE_Error_EE) : -1.);
+        jet.addUserFloat("xRecHitsEE", jetRechitE_EE>0 ? jetRechitX_EE/jetRechitE_EE : -1000.);
+        jet.addUserFloat("yRecHitsEE", jetRechitE_EE>0 ? jetRechitY_EE/jetRechitE_EE : -1000.);
+        jet.addUserFloat("zRecHitsEE", jetRechitE_EE>0 ? jetRechitZ_EE/jetRechitE_EE : -1000.);
+        jet.addUserFloat("radiusRecHitsEE", jetRechitE_EE>0 ? jetRechitRadius_EE/jetRechitE_EE : -1000.);        
+        
+        jet.addUserInt("nRecHitsHB", n_matched_rechits_HB);
+        jet.addUserFloat("timeRecHitsHB", jetRechitE_HB>0 ? jetRechitT_HB/jetRechitE_HB : -100.);
+        jet.addUserFloat("timeRMSRecHitsHB", n_matched_rechits_HB>0 ? sqrt(jetRechitT_rms_HB) : -1.);
+        jet.addUserFloat("energyRecHitsHB", n_matched_rechits_HB>0 ? sqrt(jetRechitE_HB) : -1.);
+        jet.addUserFloat("energyErrorRecHitsHB", n_matched_rechits_HB>0 ? sqrt(jetRechitE_Error_HB) : -1.);
+        jet.addUserFloat("xRecHitsHB", jetRechitE_HB>0 ? jetRechitX_HB/jetRechitE_HB : -1000.);
+        jet.addUserFloat("yRecHitsHB", jetRechitE_HB>0 ? jetRechitY_HB/jetRechitE_HB : -1000.);
+        jet.addUserFloat("zRecHitsHB", jetRechitE_HB>0 ? jetRechitZ_HB/jetRechitE_HB : -1000.);
+        jet.addUserFloat("radiusRecHitsHB", jetRechitE_HB>0 ? jetRechitRadius_HB/jetRechitE_HB : -1000.);
+        /*
+        jet.addUserInt("nRecHitsHE", n_matched_rechits_HE);
+        jet.addUserFloat("timeRecHitsHE", jetRechitE_HE>0 ? jetRechitT_HE/jetRechitE_HE : -100.);
+        jet.addUserFloat("timeRMSRecHitsHE", n_matched_rechits_HE>0 ? sqrt(jetRechitT_rms_HE) : -1.);
+        jet.addUserFloat("energyRecHitsHE", n_matched_rechits_HE>0 ? sqrt(jetRechitE_HE) : -1.);
+        jet.addUserFloat("energyErrorRecHitsHE", n_matched_rechits_HE>0 ? sqrt(jetRechitE_Error_HE) : -1.);
+        jet.addUserFloat("xRecHitsHE", jetRechitE_HE>0 ? jetRechitX_HE/jetRechitE_HE : -1000.);
+        jet.addUserFloat("yRecHitsHE", jetRechitE_HE>0 ? jetRechitY_HE/jetRechitE_HE : -1000.);
+        jet.addUserFloat("zRecHitsHE", jetRechitE_HE>0 ? jetRechitZ_HE/jetRechitE_HE : -1000.);
+        jet.addUserFloat("radiusRecHitsHE", jetRechitE_HE>0 ? jetRechitRadius_HE/jetRechitE_HE : -1000.);        
+	*/
         Vect.push_back(jet); // Fill vector
     }
     return Vect;
