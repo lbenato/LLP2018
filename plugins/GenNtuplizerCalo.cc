@@ -552,9 +552,9 @@ GenNtuplizerCalo::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
     for(unsigned int i = 0; i < GenHiggsVect.size(); i++)     GenHiggs.push_back( GenPType() );
     for(unsigned int i = 0; i < GenBquarksVect.size(); i++)   GenBquarks.push_back( GenPType() );
     
-    if (WriteGenLLPs)  for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenLLPs[i], &GenLongLivedVect[i], LLPInCalo[i], -9., -9.);
-    if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenHiggs[i], &GenHiggsVect[i], idMotherB==25 ? DaughterOfLLPInCalo[i] : false, idMotherB==25 ? corrEtaDaughterLLP[i] : -9., idMotherB==25 ? corrPhiDaughterLLP[i] : -9.);
-    if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenBquarks[i], &GenBquarksVect[i], idMotherB==25 ? GrandDaughterOfLLPInCalo[i] : DaughterOfLLPInCalo[i], idMotherB==25 ? corrEtaGrandDaughterLLP[i] : corrEtaDaughterLLP[i], idMotherB==25 ? corrPhiGrandDaughterLLP[i] : corrPhiDaughterLLP[i]);
+    if (WriteGenLLPs)  for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenLLPs[i], &GenLongLivedVect[i], LLPInCalo[i], -9., -9., -1., -1., -1., -1.);
+    if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenHiggs[i], &GenHiggsVect[i], idMotherB==25 ? DaughterOfLLPInCalo[i] : false, idMotherB==25 ? corrEtaDaughterLLP[i] : -9., idMotherB==25 ? corrPhiDaughterLLP[i] : -9., -1., -1., -1., -1.);
+    if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenBquarks[i], &GenBquarksVect[i], idMotherB==25 ? GrandDaughterOfLLPInCalo[i] : DaughterOfLLPInCalo[i], idMotherB==25 ? corrEtaGrandDaughterLLP[i] : corrEtaDaughterLLP[i], idMotherB==25 ? corrPhiGrandDaughterLLP[i] : corrPhiDaughterLLP[i], -1., -1., -1., -1.);
     
     
     for(unsigned int i = 0; i < GenLLPs.size(); i++)
