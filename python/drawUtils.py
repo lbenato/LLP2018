@@ -12,7 +12,8 @@ from ROOT import TLegend, TLatex, TText, TLine, TBox, TGaxis
 #### IMPORT SAMPLES AND VARIABLES DICTIONARIES ####
 
 #from Analyzer.LLP2018.samplesAOD2018 import sample, samples
-from Analyzer.LLP2018.variables_default import *
+#from Analyzer.LLP2018.variables_default import *
+from Analyzer.LLP2018.variables import *
 #from Analyzer.LLP2018.skimmed_variables import *
 from Analyzer.LLP2018.selections import *
 
