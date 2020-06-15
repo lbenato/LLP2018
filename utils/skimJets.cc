@@ -28,7 +28,9 @@ void skimJets(
                  //"/nfs/dust/cms/group/cms-llp/test_calo_AOD_pfcand/WW_TuneCP5_13TeV-pythia8-v2.root",//
                  std::string outFilename=
 		 //"/nfs/dust/cms/group/cms-llp/test_calo_AOD_pfcand/Skim/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC.root"
-		 "output_4ML.root"
+		 "output_4ML.root",
+		 Long64_t first_event=0,
+		 Long64_t last_event=-1
              )
 
 {//"GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC_ML.root") {
@@ -63,6 +65,7 @@ void skimJets(
     Int_t    nTaus;
     Int_t    nPFCandidates;
     Int_t    nPFCandidatesTrack;
+    //Int_t    nLLPInCalo;
 
     std::vector<JetType>         *Jets = 0;
     std::vector<PFCandidateType> *PFCandidates = 0;
@@ -92,6 +95,7 @@ void skimJets(
     TBranch        *b_nTaus;
     TBranch        *b_nPFCandidates;
     TBranch        *b_nPFCandidatesTrack;  
+    //TBranch        *b_nLLPInCalo;
 
     inTree->SetBranchAddress("Jets",              &Jets,              &b_Jets);
     inTree->SetBranchAddress("PFCandidates"   ,   &PFCandidates,      &b_PFCandidates);
@@ -115,6 +119,8 @@ void skimJets(
     inTree->SetBranchAddress("nTaus",             &nTaus,             &b_nTaus);
     inTree->SetBranchAddress("nPFCandidates",     &nPFCandidates,     &b_nPFCandidates);
     inTree->SetBranchAddress("nPFCandidatesTrack", &nPFCandidatesTrack, &b_nPFCandidatesTrack);
+    //inTree->SetBranchAddress("nLLPInCalo", &nLLPInCalo, &b_nLLPInCalo);
+
     
     
 
@@ -123,7 +129,7 @@ void skimJets(
     // Output
     // =================
 
-    TFile *outFile = TFile::Open(outFilename.data(),"RECREATE");
+    TFile *outFile = TFile::Open(outFilename.data(),"RECREATE", "", 207);
     TTree *outTree = new TTree("skim", "skim");
     
 
@@ -160,6 +166,7 @@ void skimJets(
     outTree->Branch("nTaus",             &nTaus,             "nTaus/I");
     outTree->Branch("nPFCandidates",     &nPFCandidates,     "nPFCandidates/I");
     outTree->Branch("nPFCandidatesTrack", &nPFCandidatesTrack, "nPFCandidatesTrack/I");
+    //outTree->Branch("nLLPInCalo",        &nLLPInCalo,        "nLLPInCalo/I");
     
     //outTree->Branch("PFCandidates", &PFCandidates);
     //outTree->Branch("Jets", &Jets);
@@ -180,7 +187,12 @@ void skimJets(
     // Event loop
     // =================
 
-    for (Long64_t entry=0; entry<inTree->GetEntriesFast(); entry++) {
+    Long64_t start_loop;
+    Long64_t stop_loop;
+    start_loop = first_event>-1 ? first_event : 0;
+    stop_loop = last_event>-1  ? last_event : inTree->GetEntriesFast();
+    //for (Long64_t entry=0; entry<inTree->GetEntriesFast(); entry++) {
+    for (Long64_t entry=start_loop; entry<inTree->GetEntriesFast() && entry<stop_loop; entry++) {
     //std::cout << inTree->GetEntriesFast() << std::endl;
     //for (Long64_t entry=0; entry<10; entry++) {
         inTree->GetEntry(entry);
