@@ -141,7 +141,7 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       ~AODNtuplizer();
 
       static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
-
+      static bool pt_sorter(const pat::PackedCandidate&, const pat::PackedCandidate&);
 
    private:
       virtual void beginJob() override;
@@ -155,16 +155,17 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::ParameterSet CHSJetPSet;
     edm::ParameterSet CaloJetPSet;
     edm::ParameterSet VBFJetPSet;
+    edm::ParameterSet CHSFatJetPSet;
     edm::ParameterSet ElectronPSet;
     edm::ParameterSet MuonPSet;
     edm::ParameterSet TauPSet;
     edm::ParameterSet PhotonPSet;
     edm::ParameterSet VertexPSet;
     edm::ParameterSet PFCandidatePSet;
-    edm::ParameterSet DTPSet;
-    edm::ParameterSet CSCSet;
-    edm::ParameterSet StandAloneMuonsPSet;
-    edm::ParameterSet DisplacedStandAloneMuonsPSet;
+    //edm::ParameterSet DTPSet;
+    //edm::ParameterSet CSCSet;
+    //edm::ParameterSet StandAloneMuonsPSet;
+    //edm::ParameterSet DisplacedStandAloneMuonsPSet;
     edm::EDGetTokenT<reco::PFJetCollection> jetToken;
     //edm::EDGetTokenT<std::vector<pat::MET> > metToken;
     
@@ -175,6 +176,7 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     JetAnalyzer* theCHSJetAnalyzer;
     CaloJetAnalyzer* theCaloJetAnalyzer;
     JetAnalyzer* theVBFJetAnalyzer;
+    JetAnalyzer* theCHSFatJetAnalyzer;
     GenAnalyzer* theGenAnalyzer;
     PileupAnalyzer* thePileupAnalyzer;
     TriggerAnalyzer* theTriggerAnalyzer;
@@ -184,17 +186,18 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     PhotonAnalyzer* thePhotonAnalyzer;
     VertexAnalyzer* theVertexAnalyzer;
     PFCandidateAnalyzer* thePFCandidateAnalyzer;
-    DTAnalyzer* theDTAnalyzer;
-    CSCAnalyzer* theCSCAnalyzer;
+    //DTAnalyzer* theDTAnalyzer;
+    //CSCAnalyzer* theCSCAnalyzer;
     //StandAloneMuonsAnalyzer* theStandAloneMuonsAnalyzer;
     //StandAloneMuonsAnalyzer* theDisplacedStandAloneMuonsAnalyzer;
 
-    edm::EDGetTokenT<reco::JetTagCollection> JetTagWP0p01Token;
-    edm::EDGetTokenT<reco::JetTagCollection> JetTagWP0p1Token;
-    edm::EDGetTokenT<reco::JetTagCollection> JetTagWP1Token;
-    edm::EDGetTokenT<reco::JetTagCollection> JetTagWP10Token;
-    edm::EDGetTokenT<reco::JetTagCollection> JetTagWP100Token;
-    edm::EDGetTokenT<reco::JetTagCollection> JetTagWP1000Token;
+    //edm::EDGetTokenT<reco::JetTagCollection> JetTagWP0p01Token;
+    //edm::EDGetTokenT<reco::JetTagCollection> JetTagWP0p1Token;
+    //edm::EDGetTokenT<reco::JetTagCollection> JetTagWP1Token;
+    //edm::EDGetTokenT<reco::JetTagCollection> JetTagWP10Token;
+    //edm::EDGetTokenT<reco::JetTagCollection> JetTagWP100Token;
+    //edm::EDGetTokenT<reco::JetTagCollection> JetTagWP1000Token;
+    
 
     int idLLP1, idLLP2;
     int idHiggs, idMotherB, statusLLP, statusHiggs;
@@ -218,6 +221,7 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 
     std::vector<JetType> CHSJets;
     std::vector<JetType> VBFPairJets;
+    std::vector<FatJetType> CHSFatJets;
     std::vector<JetType> ggHJet;
     //std::vector<RecoJetType> ManualJets;
     std::vector<CaloJetType> CaloJets;
@@ -226,8 +230,8 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     std::vector<GenPType> GenBquarks;
     std::vector<GenPType> GenLLPs;
     std::vector<GenPType> GenHiggs;
-    std::vector<DT4DSegmentType> DTRecSegments4D;    
-    std::vector<CSCSegmentType> CSCSegments;
+    //std::vector<DT4DSegmentType> DTRecSegments4D;    
+    //std::vector<CSCSegmentType> CSCSegments;
     //std::vector<TrackType> StandAloneMuons;
     //std::vector<TrackType> DisplacedStandAloneMuons;
 
@@ -243,6 +247,20 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     std::map<std::string, bool> L1FiltersMap;
 
     bool isVerbose, isVerboseTrigger, isSignal, isCalo;
+    
+    
+    //new met filters, Matthew
+    edm::EDGetTokenT<bool> globalSuperTightHalo2016FilterToken_;
+    edm::EDGetTokenT<bool> globalTightHalo2016FilterToken_;
+    edm::EDGetTokenT<bool> BadChargedCandidateFilterToken_;
+    edm::EDGetTokenT<bool> BadPFMuonFilterToken_;
+    edm::EDGetTokenT<bool> EcalDeadCellTriggerPrimitiveFilterToken_;
+    edm::EDGetTokenT<bool> HBHENoiseFilterToken_;
+    edm::EDGetTokenT<bool> HBHEIsoNoiseFilterToken_;
+    edm::EDGetTokenT<bool> ecalBadCalibFilterToken_;
+    edm::EDGetTokenT<bool> eeBadScFilterToken_;
+    edm::EDGetTokenT<bool> primaryVertexFilterToken_;  
+    
     bool isMC;
     bool isVBF;
     bool isggH;
@@ -252,6 +270,7 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     float GenEventWeight;
     float PUWeight, PUWeightUp, PUWeightDown;
     long int nCHSJets;
+    long int nCHSFatJets;
     long int nCaloJets;
     long int nElectrons, nMuons, nTaus, nPhotons;
     long int nTightMuons, nTightElectrons;
@@ -260,23 +279,24 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     long int nVBFGenMatchedCHSJets;
     long int nVBFGenMatchedVBFJets;
     long int number_of_b_matched_to_CHSJets;
+    long int number_of_b_matched_to_CHSFatJets;
     long int number_of_b_matched_to_CaloJets;
     long int number_of_VBFGen_matched_to_CHSJets;
     long int number_of_VBFGen_matched_to_VBFJets;
-    long int number_of_b_matched_to_DTSegment4D;
-    long int number_of_b_matched_to_CSCSegment;
-    long int number_of_VBF_matched_to_DTSegment4D;
-    long int number_of_VBF_matched_to_CSCSegment;
-    int n_segments_around_b_quark_0;
-    int n_segments_around_b_quark_1;
-    int n_segments_around_b_quark_2;
-    int n_segments_around_b_quark_3;
-    long int nDTSegments, nDTSegmentsStation1, nDTSegmentsStation2, nDTSegmentsStation3, nDTSegmentsStation4;
-    long int nCSCSegments;
-    long int nMatchedDTsegmentstob;
-    long int nMatchedCSCsegmentstob;
-    long int nMatchedDTsegmentstoVBF;
-    long int nMatchedCSCsegmentstoVBF;
+    //long int number_of_b_matched_to_DTSegment4D;
+    //long int number_of_b_matched_to_CSCSegment;
+    //long int number_of_VBF_matched_to_DTSegment4D;
+    //long int number_of_VBF_matched_to_CSCSegment;
+    //int n_segments_around_b_quark_0;
+    //int n_segments_around_b_quark_1;
+    //int n_segments_around_b_quark_2;
+    //int n_segments_around_b_quark_3;
+    //long int nDTSegments, nDTSegmentsStation1, nDTSegmentsStation2, nDTSegmentsStation3, nDTSegmentsStation4;
+    //long int nCSCSegments;
+    //long int nMatchedDTsegmentstob;
+    //long int nMatchedCSCsegmentstob;
+    //long int nMatchedDTsegmentstoVBF;
+    //long int nMatchedCSCsegmentstoVBF;
     //long int nStandAloneMuons, nMatchedStandAloneMuons;
     //long int nDisplacedStandAloneMuons, nMatchedDisplacedStandAloneMuons;
     
@@ -302,6 +322,17 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::ESHandle<Propagator> PropagatorHandle;
     edm::ESHandle<TransientTrackBuilder> BuilderHandle;
     
+    //new met filters, matthew
+    bool Flag2_globalSuperTightHalo2016Filter;
+    bool Flag2_globalTightHalo2016Filter;
+    bool Flag2_goodVertices;
+    bool Flag2_BadChargedCandidateFilter;
+    bool Flag2_BadPFMuonFilter;
+    bool Flag2_EcalDeadCellTriggerPrimitiveFilter;
+    bool Flag2_HBHENoiseFilter;
+    bool Flag2_HBHEIsoNoiseFilter;
+    bool Flag2_ecalBadCalibFilter;
+    bool Flag2_eeBadScFilter;
     
     //Initialize tree                                                                                                                     
     edm::Service<TFileService> fs;
@@ -328,16 +359,17 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     CHSJetPSet(iConfig.getParameter<edm::ParameterSet>("chsJetSet")),
     CaloJetPSet(iConfig.getParameter<edm::ParameterSet>("caloJetSet")),
     VBFJetPSet(iConfig.getParameter<edm::ParameterSet>("vbfJetSet")),
+    CHSFatJetPSet(iConfig.getParameter<edm::ParameterSet>("chsFatJetSet")),
     ElectronPSet(iConfig.getParameter<edm::ParameterSet>("electronSet")),
     MuonPSet(iConfig.getParameter<edm::ParameterSet>("muonSet")),
     TauPSet(iConfig.getParameter<edm::ParameterSet>("tauSet")),
     PhotonPSet(iConfig.getParameter<edm::ParameterSet>("photonSet")),
     VertexPSet(iConfig.getParameter<edm::ParameterSet>("vertexSet")),
     PFCandidatePSet(iConfig.getParameter<edm::ParameterSet>("pfCandidateSet")),
-    DTPSet(iConfig.getParameter<edm::ParameterSet>("dtSet")),
-    CSCSet(iConfig.getParameter<edm::ParameterSet>("cscSet")),
-    StandAloneMuonsPSet(iConfig.getParameter<edm::ParameterSet>("standaloneMuonsSet")),
-    DisplacedStandAloneMuonsPSet(iConfig.getParameter<edm::ParameterSet>("displacedStandaloneMuonsSet")),
+    //DTPSet(iConfig.getParameter<edm::ParameterSet>("dtSet")),
+    //CSCSet(iConfig.getParameter<edm::ParameterSet>("cscSet")),
+    //StandAloneMuonsPSet(iConfig.getParameter<edm::ParameterSet>("standaloneMuonsSet")),
+    //DisplacedStandAloneMuonsPSet(iConfig.getParameter<edm::ParameterSet>("displacedStandaloneMuonsSet")),
     idLLP1(iConfig.getParameter<int>("idLLP1")),
     idLLP2(iConfig.getParameter<int>("idLLP2")),
     idHiggs(iConfig.getParameter<int>("idHiggs")),
@@ -373,7 +405,17 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     isVerbose(iConfig.getParameter<bool> ("verbose")),
     isVerboseTrigger(iConfig.getParameter<bool> ("verboseTrigger")),
     isSignal(iConfig.getParameter<bool> ("signal")),
-    isCalo(iConfig.getParameter<bool> ("iscalo"))
+    isCalo(iConfig.getParameter<bool> ("iscalo")),
+    globalSuperTightHalo2016FilterToken_(consumes<bool>(edm::InputTag("globalSuperTightHalo2016Filter"))),
+    globalTightHalo2016FilterToken_(consumes<bool>(edm::InputTag("globalTightHalo2016Filter"))),
+    BadChargedCandidateFilterToken_(consumes<bool>(edm::InputTag("BadChargedCandidateFilter"))),
+    BadPFMuonFilterToken_(consumes<bool>(edm::InputTag("BadPFMuonFilter"))),
+    EcalDeadCellTriggerPrimitiveFilterToken_(consumes<bool>(edm::InputTag("EcalDeadCellTriggerPrimitiveFilter"))),
+    HBHENoiseFilterToken_(consumes<bool>(edm::InputTag("HBHENoiseFilterResultProducer","HBHENoiseFilterResult"))),
+    HBHEIsoNoiseFilterToken_(consumes<bool>(edm::InputTag("HBHENoiseFilterResultProducer","HBHEIsoNoiseFilterResult"))),
+    ecalBadCalibFilterToken_(consumes<bool>(edm::InputTag("ecalBadCalibReducedMINIAODFilter"))),
+    eeBadScFilterToken_(consumes<bool>(edm::InputTag("eeBadScFilter"))),
+    primaryVertexFilterToken_(consumes<bool>(edm::InputTag("primaryVertexFilter")))
 
 {
 
@@ -389,6 +431,7 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     theCHSJetAnalyzer       = new JetAnalyzer(CHSJetPSet, consumesCollector());
     theCaloJetAnalyzer      = new CaloJetAnalyzer(CaloJetPSet, consumesCollector());
     theVBFJetAnalyzer       = new JetAnalyzer(VBFJetPSet, consumesCollector());
+    theCHSFatJetAnalyzer   = new JetAnalyzer(CHSFatJetPSet, consumesCollector());
     theGenAnalyzer          = new GenAnalyzer(GenPSet, consumesCollector());
     thePileupAnalyzer       = new PileupAnalyzer(PileupPSet, consumesCollector());
     theTriggerAnalyzer      = new TriggerAnalyzer(TriggerPSet, consumesCollector());
@@ -398,8 +441,8 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     thePhotonAnalyzer       = new PhotonAnalyzer(PhotonPSet, consumesCollector());
     theVertexAnalyzer       = new VertexAnalyzer(VertexPSet, consumesCollector());
     thePFCandidateAnalyzer  = new PFCandidateAnalyzer(PFCandidatePSet, consumesCollector());
-    theDTAnalyzer           = new DTAnalyzer(DTPSet, consumesCollector());
-    theCSCAnalyzer          = new CSCAnalyzer(CSCSet, consumesCollector());
+    //theDTAnalyzer           = new DTAnalyzer(DTPSet, consumesCollector());
+    //theCSCAnalyzer          = new CSCAnalyzer(CSCSet, consumesCollector());
     //theStandAloneMuonsAnalyzer          = new StandAloneMuonsAnalyzer(StandAloneMuonsPSet,  consumesCollector());
     //theDisplacedStandAloneMuonsAnalyzer = new StandAloneMuonsAnalyzer(DisplacedStandAloneMuonsPSet,  consumesCollector());
 
@@ -410,23 +453,23 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     for(unsigned int i = 0; i < MetFiltersList.size(); i++) MetFiltersMap[ MetFiltersList[i] ] = false;
 
     //Imperial College Tagger
-    edm::InputTag JetTagWP0p01 = edm::InputTag("pfXTags:0p01:ntuple");
-    JetTagWP0p01Token= consumes<reco::JetTagCollection>(JetTagWP0p01);
+    //edm::InputTag JetTagWP0p01 = edm::InputTag("pfXTags:0p01:ntuple");
+    //JetTagWP0p01Token= consumes<reco::JetTagCollection>(JetTagWP0p01);
 
-    edm::InputTag JetTagWP0p1 = edm::InputTag("pfXTags:0p1:ntuple");
-    JetTagWP0p1Token= consumes<reco::JetTagCollection>(JetTagWP0p1);
+    //edm::InputTag JetTagWP0p1 = edm::InputTag("pfXTags:0p1:ntuple");
+    //JetTagWP0p1Token= consumes<reco::JetTagCollection>(JetTagWP0p1);
 
-    edm::InputTag JetTagWP1 = edm::InputTag("pfXTags:1:ntuple");
-    JetTagWP1Token= consumes<reco::JetTagCollection>(JetTagWP1);
+    //edm::InputTag JetTagWP1 = edm::InputTag("pfXTags:1:ntuple");
+    //JetTagWP1Token= consumes<reco::JetTagCollection>(JetTagWP1);
 
-    edm::InputTag JetTagWP10 = edm::InputTag("pfXTags:10:ntuple");
-    JetTagWP10Token= consumes<reco::JetTagCollection>(JetTagWP10);
+    //edm::InputTag JetTagWP10 = edm::InputTag("pfXTags:10:ntuple");
+    //JetTagWP10Token= consumes<reco::JetTagCollection>(JetTagWP10);
 
-    edm::InputTag JetTagWP100 = edm::InputTag("pfXTags:100:ntuple");
-    JetTagWP100Token= consumes<reco::JetTagCollection>(JetTagWP100);
+    //edm::InputTag JetTagWP100 = edm::InputTag("pfXTags:100:ntuple");
+    //JetTagWP100Token= consumes<reco::JetTagCollection>(JetTagWP100);
 
-    edm::InputTag JetTagWP1000 = edm::InputTag("pfXTags:1000:ntuple");
-    JetTagWP1000Token= consumes<reco::JetTagCollection>(JetTagWP1000);
+    //edm::InputTag JetTagWP1000 = edm::InputTag("pfXTags:1000:ntuple");
+    //JetTagWP1000Token= consumes<reco::JetTagCollection>(JetTagWP1000);
 
     edm::InputTag IT_jets = edm::InputTag("ak4PFJetsCHS");
     jetToken = consumes<reco::PFJetCollection>(IT_jets);
@@ -437,6 +480,7 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     edm::InputTag IT_generalTracks = edm::InputTag("generalTracks");
     generalTracksToken = consumes<std::vector<reco::Track>>(IT_generalTracks);
     generalTracksViewToken = consumes<edm::View<reco::Track>>(IT_generalTracks);
+
         
     ////edm::InputTag IT_met = edm::InputTag("patMETs");
     ////edm::InputTag IT_met = edm::InputTag("slimmedMETs");
@@ -461,6 +505,7 @@ AODNtuplizer::~AODNtuplizer()
     delete theCHSJetAnalyzer;
     delete theCaloJetAnalyzer;
     delete theVBFJetAnalyzer;
+    delete theCHSFatJetAnalyzer;
     delete theGenAnalyzer;
     delete thePileupAnalyzer;
     delete theTriggerAnalyzer;
@@ -470,8 +515,8 @@ AODNtuplizer::~AODNtuplizer()
     delete thePhotonAnalyzer;
     delete theVertexAnalyzer;
     delete thePFCandidateAnalyzer;
-    delete theDTAnalyzer;
-    delete theCSCAnalyzer;
+    //delete theDTAnalyzer;
+    //delete theCSCAnalyzer;
     //delete theStandAloneMuonsAnalyzer;
     //delete theDisplacedStandAloneMuonsAnalyzer;
 }
@@ -497,11 +542,11 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     ObjectsFormat::ResetCandidateType(VBF);
 
 
-    nCHSJets = nCaloJets = 0;
+    nCHSJets = nCaloJets = nCHSFatJets = 0;
     nElectrons = nMuons = nTaus = nPhotons = 0;
     nTightMuons = nTightElectrons = 0;
     //nStandAloneMuons = nDisplacedStandAloneMuons =0;
-    nDTSegments = nDTSegmentsStation1 = nDTSegmentsStation2 = nDTSegmentsStation3 = nDTSegmentsStation4 = nCSCSegments = 0;
+    //nDTSegments = nDTSegmentsStation1 = nDTSegmentsStation2 = nDTSegmentsStation3 = nDTSegmentsStation4 = nCSCSegments = 0;
     //nMatchedStandAloneMuons = nMatchedDisplacedStandAloneMuons =0;
     isMC = false;
     isVBF = false;
@@ -515,16 +560,17 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     nVBFGenMatchedVBFJets = 0;
     number_of_b_matched_to_CHSJets = 0;
     number_of_b_matched_to_CaloJets = 0;
+    number_of_b_matched_to_CHSFatJets = 0;
     number_of_VBFGen_matched_to_CHSJets = 0;
     number_of_VBFGen_matched_to_VBFJets = 0;
-    number_of_b_matched_to_DTSegment4D=0;
-    number_of_b_matched_to_CSCSegment=0;
-    number_of_VBF_matched_to_DTSegment4D=0;
-    number_of_VBF_matched_to_CSCSegment=0;
-    n_segments_around_b_quark_0 = 0;
-    n_segments_around_b_quark_1 = 0;
-    n_segments_around_b_quark_2 = 0;
-    n_segments_around_b_quark_3 = 0;
+    //number_of_b_matched_to_DTSegment4D=0;
+    //number_of_b_matched_to_CSCSegment=0;
+    //number_of_VBF_matched_to_DTSegment4D=0;
+    //number_of_VBF_matched_to_CSCSegment=0;
+    //n_segments_around_b_quark_0 = 0;
+    //n_segments_around_b_quark_1 = 0;
+    //n_segments_around_b_quark_2 = 0;
+    //n_segments_around_b_quark_3 = 0;
     MinJetMetDPhi = MinJetMetDPhiAllJets = ggHJetMetDPhi = 10.;
     nGenBquarks = nGenLL = 0;
     nLLPInCalo = 0;
@@ -535,6 +581,17 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     AtLeastOneTrigger = AtLeastOneL1Filter = false;
     nPFCandidates = nPFCandidatesTrack = nPFCandidatesHighPurityTrack = nPFCandidatesFullTrackInfo = nPFCandidatesFullTrackInfo_pt = nPFCandidatesFullTrackInfo_hasTrackDetails = 0;
     number_of_PV = number_of_SV = 0;
+    
+    Flag2_globalSuperTightHalo2016Filter = false;
+    Flag2_globalTightHalo2016Filter = false;
+    Flag2_goodVertices = false;
+    Flag2_BadChargedCandidateFilter = false;
+    Flag2_BadPFMuonFilter = false;
+    Flag2_EcalDeadCellTriggerPrimitiveFilter = false;
+    Flag2_HBHENoiseFilter = false;
+    Flag2_HBHEIsoNoiseFilter = false;
+    Flag2_ecalBadCalibFilter = false;
+    Flag2_eeBadScFilter = false;
 
     //Event info                                                                
     isMC = !iEvent.isRealData();
@@ -571,6 +628,43 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     theTriggerAnalyzer->FillMetFiltersMap(iEvent, MetFiltersMap);
     BadPFMuonFlag = theTriggerAnalyzer->GetBadPFMuonFlag(iEvent);
     BadChCandFlag = theTriggerAnalyzer->GetBadChCandFlag(iEvent);
+
+    //new met filters, matthew
+    //new handle here
+    edm::Handle<bool> globalSuperTightHalo2016Filter;
+    edm::Handle<bool> globalTightHalo2016Filter;
+    edm::Handle<bool> BadChargedCandidateFilter;
+    edm::Handle<bool> BadPFMuonFilter;
+    edm::Handle<bool> EcalDeadCellTriggerPrimitiveFilter;
+    edm::Handle<bool> ecalBadCalibReducedMINIAODFilter;
+    edm::Handle<bool> eeBadScFilter;
+    edm::Handle<bool> HBHENoiseFilter;
+    edm::Handle<bool> HBHEIsoNoiseFilter;
+    edm::Handle<bool> primaryVertexFilter;
+    
+    iEvent.getByToken(globalSuperTightHalo2016FilterToken_, globalSuperTightHalo2016Filter);
+    iEvent.getByToken(globalTightHalo2016FilterToken_, globalTightHalo2016Filter);
+    iEvent.getByToken(BadChargedCandidateFilterToken_, BadChargedCandidateFilter);
+    iEvent.getByToken(BadPFMuonFilterToken_, BadPFMuonFilter);
+    iEvent.getByToken(EcalDeadCellTriggerPrimitiveFilterToken_, EcalDeadCellTriggerPrimitiveFilter);
+    iEvent.getByToken(HBHENoiseFilterToken_, HBHENoiseFilter);
+    iEvent.getByToken(HBHEIsoNoiseFilterToken_, HBHEIsoNoiseFilter);
+    iEvent.getByToken(ecalBadCalibFilterToken_, ecalBadCalibReducedMINIAODFilter);
+    iEvent.getByToken(eeBadScFilterToken_, eeBadScFilter);
+    //iEvent.getByToken(primaryVertexFilterToken_, primaryVertexFilter);
+    
+    Flag2_globalSuperTightHalo2016Filter = *globalSuperTightHalo2016Filter;
+    Flag2_globalTightHalo2016Filter = *globalTightHalo2016Filter;
+    Flag2_BadChargedCandidateFilter = *BadChargedCandidateFilter;
+    Flag2_BadPFMuonFilter = *BadPFMuonFilter;
+    Flag2_EcalDeadCellTriggerPrimitiveFilter = *EcalDeadCellTriggerPrimitiveFilter;
+    Flag2_HBHENoiseFilter = *HBHENoiseFilter;
+    Flag2_HBHEIsoNoiseFilter = *HBHEIsoNoiseFilter;
+    Flag2_ecalBadCalibFilter = *ecalBadCalibReducedMINIAODFilter;
+    Flag2_eeBadScFilter = *eeBadScFilter;
+    //Flag2_goodVertices = *primaryVertexFilter;
+
+
 
     //theTriggerAnalyzer->FillL1FiltersMap(iEvent, L1FiltersMap);//commented; filters are treated differently in 2016 w.r.t. 2017/2018
 
@@ -738,6 +832,15 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::vector<float> corrPhiDaughterLLP;
     std::vector<float> corrEtaGrandDaughterLLP;
     std::vector<float> corrPhiGrandDaughterLLP;
+    std::vector<float> LLPRadius_Dau;
+    std::vector<float> LLPX_Dau;
+    std::vector<float> LLPY_Dau;
+    std::vector<float> LLPZ_Dau;
+    std::vector<float> LLPRadius_GrandDau;
+    std::vector<float> LLPX_GrandDau;
+    std::vector<float> LLPY_GrandDau;
+    std::vector<float> LLPZ_GrandDau;
+
     std::vector<bool>  LLPInCalo;
     std::vector<bool>  DaughterOfLLPInCalo;
     std::vector<bool>  GrandDaughterOfLLPInCalo;
@@ -751,7 +854,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     
     //use idmotherb to determine wether one needs dau or grand dau corrections (heavy higgs: dau; susy: grand dau)
-    std::vector<const reco::Candidate*> LLPs;
+    //std::vector<const reco::Candidate*> LLPs;
   
     
     for(unsigned int l=0; l<GenLongLivedVect.size(); l++)
@@ -762,9 +865,11 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
          const reco::Candidate *candLLP = &(GenLongLivedVect)[l];
 
          float travelRadius = candLLP->numberOfDaughters()>1 ? sqrt( pow(candLLP->daughter(0)->vx(),2)+ pow(candLLP->daughter(0)->vy(),2) ) : -1000.;
-         float travelZ      = candLLP->numberOfDaughters()>1 ? candLLP->daughter(0)->vz() : -1000.;
+         float travelX      = candLLP->numberOfDaughters()>1 ? candLLP->daughter(0)->vx() : -10000.;
+         float travelY      = candLLP->numberOfDaughters()>1 ? candLLP->daughter(0)->vy() : -10000.;
+         float travelZ      = candLLP->numberOfDaughters()>1 ? candLLP->daughter(0)->vz() : -10000.;
          
-         bool isLLPInCaloAcceptance = travelRadius > min_displacement_radius && travelRadius < max_calo_radius && travelZ < max_calo_z;
+         bool isLLPInCaloAcceptance = travelRadius > min_displacement_radius && travelRadius < max_calo_radius && fabs(travelZ) < max_calo_z;
          
          if (isLLPInCaloAcceptance)
          {
@@ -817,7 +922,10 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                {
                   DaughterOfLLPInCalo.push_back(false);
                }
-               
+               LLPRadius_Dau.push_back(travelRadius);
+               LLPX_Dau.push_back(travelX);
+               LLPY_Dau.push_back(travelY);
+               LLPZ_Dau.push_back(travelZ);
                //std::cout << "\n" << std::endl;
                //std::cout << "LLP n. " << l << "; daughter n. " << i << std::endl;
                //std::cout << "decayVertex_x " << decayVertex_x << std::endl;
@@ -864,6 +972,10 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                   {
                       GrandDaughterOfLLPInCalo.push_back(false);
                   }
+		  LLPRadius_GrandDau.push_back(travelRadius);
+		  LLPX_GrandDau.push_back(travelX);
+		  LLPY_GrandDau.push_back(travelY);
+		  LLPZ_GrandDau.push_back(travelZ);
                   //std::cout << "\n" << std::endl;
                   //std::cout << "LLP n. " << l << "; daughter n. " << i << "; grand daughter n. " << g << std::endl;
                   //std::cout << "decayVertex_x " << decayVertex_x << std::endl;
@@ -929,18 +1041,32 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(nGenLL>0) m_pi = GenLongLivedVect.at(0).mass();
 
     //Fill gen objects here; needed later for jet matching
-
+    //std::cout<< " Seg violation alert!!!" << std::endl;
     if (WriteGenVBFquarks) for(unsigned int i = 0; i < GenVBFVect.size(); i++) ObjectsFormat::FillGenPType(GenVBFquarks[i], &GenVBFVect[i]);
-    if (WriteGenLLPs)  for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenLLPs[i], &GenLongLivedVect[i], LLPInCalo[i], -9., -9.);
-    if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenHiggs[i], &GenHiggsVect[i], idMotherB==25 ? DaughterOfLLPInCalo[i] : false, idMotherB==25 ? corrEtaDaughterLLP[i] : -9., idMotherB==25 ? corrPhiDaughterLLP[i] : -9.);
-    if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenBquarks[i], &GenBquarksVect[i], idMotherB==25 ? GrandDaughterOfLLPInCalo[i] : DaughterOfLLPInCalo[i], idMotherB==25 ? corrEtaGrandDaughterLLP[i] : corrEtaDaughterLLP[i], idMotherB==25 ? corrPhiGrandDaughterLLP[i] : corrPhiDaughterLLP[i]);
+    if (WriteGenLLPs)  for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenLLPs[i], &GenLongLivedVect[i], LLPInCalo[i], -9., -9., -1000.,-10000.,-10000.,-10000.);
+    if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenHiggs[i], &GenHiggsVect[i], idMotherB==25 ? DaughterOfLLPInCalo[i] : false, idMotherB==25 ? corrEtaDaughterLLP[i] : -9., idMotherB==25 ? corrPhiDaughterLLP[i] : -9., idMotherB==25 ? LLPRadius_Dau[i] : -1000., idMotherB==25 ? LLPX_Dau[i] : -10000., idMotherB==25 ? LLPY_Dau[i] : -10000., idMotherB==25 ? LLPZ_Dau[i] : -10000.);
+
+    //std::cout << GenBquarksVect.size() << std::endl;
+    //std::cout << LLPRadius_Dau.size() << std::endl;
+    //std::cout << LLPRadius_GrandDau.size() << std::endl;
+    if(WriteGenBquarks && (LLPZ_GrandDau.size()==GenBquarksVect.size() || LLPZ_Dau.size()==GenBquarksVect.size()) ) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenBquarks[i], &GenBquarksVect[i],
+    idMotherB==25 && GrandDaughterOfLLPInCalo.size()==GenBquarksVect.size() ? GrandDaughterOfLLPInCalo[i] : DaughterOfLLPInCalo[i],
+    idMotherB==25 && corrEtaGrandDaughterLLP.size()==GenBquarksVect.size() ? corrEtaGrandDaughterLLP[i] : corrEtaDaughterLLP[i],
+    idMotherB==25 && corrPhiGrandDaughterLLP.size()==GenBquarksVect.size()? corrPhiGrandDaughterLLP[i] : corrPhiDaughterLLP[i],
+    idMotherB==25 && LLPRadius_GrandDau.size()==GenBquarksVect.size() ? LLPRadius_GrandDau[i] : LLPRadius_Dau[i],
+    idMotherB==25 && LLPX_GrandDau.size()==GenBquarksVect.size() ? LLPX_GrandDau[i] : LLPX_Dau[i],
+    idMotherB==25 && LLPY_GrandDau.size()==GenBquarksVect.size() ? LLPY_GrandDau[i] : LLPY_Dau[i],
+    idMotherB==25 && LLPZ_GrandDau.size()==GenBquarksVect.size() ? LLPZ_GrandDau[i] : LLPZ_Dau[i]);
+    //some non empty gen b quarks
+    //for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenBquarks[i], &GenBquarksVect[i], false, -1., -1., -1., -1.);
+    //std::cout<< " Not diedddd!!!" << std::endl;
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     // Pu weight and number of vertices
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-    //if(isVerbose) std::cout << "Pile-up" << std::endl;
+    if(isVerbose) std::cout << "Pile-up" << std::endl;
     PUWeight     = thePileupAnalyzer->GetPUWeight(iEvent);//calculates pileup weights
     PUWeightUp   = thePileupAnalyzer->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
     PUWeightDown = thePileupAnalyzer->GetPUWeightDown(iEvent);//syst uncertainties due to pileup
@@ -953,8 +1079,10 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // VBF Jets
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
+    if(isVerbose) std::cout << "VBF jets" << std::endl;
 
     std::vector<pat::Jet> VBFJetsVect = theVBFJetAnalyzer->FillJetVector(iEvent,iSetup);
+    //if(isVerbose) std::cout << "VBF jets vect left empty on purpose" << std::endl;
     pat::CompositeCandidate theVBF;
     std::vector<pat::Jet> VBFPairJetsVect;
    
@@ -998,6 +1126,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     ////
+    if(isVerbose) std::cout << "VBF jet gen matching" << std::endl;
     std::vector<pat::Jet> VBFGenMatchedVBFJetsVect;//That is for gluon fusion, mainly
     int VBF_matching_index_VBFJets;
     float VBF_delta_R_VBFJets;
@@ -1054,8 +1183,13 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // AK4 CHS jets
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
+    if(isVerbose) std::cout << "AK4 CHS jets" << std::endl;
     std::vector<pat::Jet> CHSJetsVect = theCHSJetAnalyzer->FillJetVector(iEvent,iSetup);
 
+    for(unsigned int a = 0; a<CHSJetsVect.size(); a++)
+      {
+	CHSJetsVect.at(a).addUserFloat( "dPhi_met",reco::deltaPhi(CHSJetsVect.at(a).phi(),MET.phi()) );
+      }
 
     //Filling Jet structure manually, without filling a vector first. Used as cross-check.
     //for(reco::PFJetCollection::const_iterator it=JetColl->begin(); it!=JetColl->end(); ++it) {
@@ -1079,22 +1213,29 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     int matching_index_CHSJets;//local variable
     float delta_R_CHSJets;//local variable
     float current_delta_R_CHSJets;//local variable
-    for(unsigned int b = 0; b<GenBquarksVect.size(); b++)
+    for(unsigned int b = 0; b<GenBquarks.size(); b++)
       {
 	delta_R_CHSJets = 1000.;
 	current_delta_R_CHSJets = 1000.;
 	matching_index_CHSJets = -1;
 	for(unsigned int a = 0; a<CHSJetsVect.size(); a++)
 	  {
-	    current_delta_R_CHSJets = fabs(reco::deltaR(CHSJetsVect[a].eta(),CHSJetsVect[a].phi(),GenBquarksVect[b].eta(),GenBquarksVect[b].phi()));
+	    current_delta_R_CHSJets = fabs(reco::deltaR(CHSJetsVect[a].eta(),CHSJetsVect[a].phi(),GenBquarks[b].eta,GenBquarks[b].phi));
 	    if(current_delta_R_CHSJets<0.4 && current_delta_R_CHSJets<delta_R_CHSJets && CHSJetsVect[a].genParton() && (fabs(CHSJetsVect[a].hadronFlavour())==5 || fabs(CHSJetsVect[a].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB)
 	      //this implements all the reasonable possibilities!
 	      {
 		delta_R_CHSJets = min(delta_R_CHSJets,current_delta_R_CHSJets);
 		matching_index_CHSJets = a;
 		CHSJetsVect[a].addUserInt("original_jet_index",a+1);
-		CHSJetsVect[a].addUserFloat("genbRadius2D", GenBquarksVect[b].mother()? sqrt(pow(GenBquarksVect[b].vx() - GenBquarksVect[b].mother()->vx(),2) + pow(GenBquarksVect[b].vy() - GenBquarksVect[b].mother()->vy(),2)) : -1000.);
-		CHSJetsVect[a].addUserFloat("genbEta",GenBquarksVect[b].eta());
+		CHSJetsVect[a].addUserFloat("radiusLLP",GenBquarks[b].travelRadiusLLP);
+		CHSJetsVect[a].addUserFloat("xLLP",GenBquarks[b].travelXLLP);
+		CHSJetsVect[a].addUserFloat("yLLP",GenBquarks[b].travelYLLP);
+		CHSJetsVect[a].addUserFloat("zLLP",GenBquarks[b].travelZLLP);
+		CHSJetsVect[a].addUserFloat("xGenb",GenBquarks[b].vx);
+		CHSJetsVect[a].addUserFloat("yGenb",GenBquarks[b].vy);
+		CHSJetsVect[a].addUserFloat("zGenb",GenBquarks[b].vz);
+		//CHSJetsVect[a].addUserFloat("genbRadius2D", GenBquarksVect[b].mother()? sqrt(pow(GenBquarksVect[b].vx() - GenBquarksVect[b].mother()->vx(),2) + pow(GenBquarksVect[b].vy() - GenBquarksVect[b].mother()->vy(),2)) : -1000.);
+		//CHSJetsVect[a].addUserFloat("genbEta",GenBquarksVect[b].eta());
 		MatchedCHSJetsVect.push_back(CHSJetsVect[a]);//duplicates possible, must be removed afterwards!
 	      }
 	  }
@@ -1130,8 +1271,8 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	//add number of b's matched to jet
 	current_delta_R_CHSJets = 1000.;
 	int number_bs_matched_to_CHSJet = 0;
-	for (unsigned int b = 0; b<GenBquarksVect.size(); b++){
-	  current_delta_R_CHSJets = fabs(reco::deltaR(CHSJetsVect[r].eta(),CHSJetsVect[r].phi(),GenBquarksVect[b].eta(),GenBquarksVect[b].phi()));
+	for (unsigned int b = 0; b<GenBquarks.size(); b++){
+	  current_delta_R_CHSJets = fabs(reco::deltaR(CHSJetsVect[r].eta(),CHSJetsVect[r].phi(),GenBquarks[b].eta,GenBquarks[b].phi));
 	  if(current_delta_R_CHSJets<0.4 && CHSJetsVect[r].genParton() && (fabs(CHSJetsVect[r].hadronFlavour())==5 || fabs(CHSJetsVect[r].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[r].genParton()) )==idMotherB)
 	    //this implements all the reasonable possibilities!
 	    {
@@ -1197,6 +1338,13 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	      {
 		delta_R = min(delta_R,current_delta_R);
 		TempMatchedCHSJetsVect.push_back(CHSJetsVect[a]);//duplicates possible, must be removed afterwards!
+		CHSJetsVect[a].addUserFloat("radiusLLPCaloCorr",GenBquarks[b].travelRadiusLLP);
+		CHSJetsVect[a].addUserFloat("xLLPCaloCorr",GenBquarks[b].travelXLLP);
+		CHSJetsVect[a].addUserFloat("yLLPCaloCorr",GenBquarks[b].travelYLLP);
+		CHSJetsVect[a].addUserFloat("zLLPCaloCorr",GenBquarks[b].travelZLLP);
+		CHSJetsVect[a].addUserFloat("xGenbCaloCorr",GenBquarks[b].vx);
+		CHSJetsVect[a].addUserFloat("yGenbCaloCorr",GenBquarks[b].vy);
+		CHSJetsVect[a].addUserFloat("zGenbCaloCorr",GenBquarks[b].vz);
 	      }
 	  }
 
@@ -1217,6 +1365,21 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	    if(TempMatchedCHSJetsVect[s].pt()==CHSJetsVect[r].pt()) CHSJetsVect[r].addUserInt("isGenMatchedCaloCorr",1);
 
 	  }
+	  
+	  
+	  
+	//add number of b's matched to jet
+	current_delta_R = 1000.;
+	int number_bs_matched_to_CHSJet_CaloCorr = 0;
+	for (unsigned int b = 0; b<GenBquarks.size(); b++){
+	  current_delta_R = fabs(reco::deltaR(CHSJetsVect[r].eta(),CHSJetsVect[r].phi(),GenBquarks[b].corrCaloEta,GenBquarks[b].corrCaloPhi));
+	  if(current_delta_R<0.4 && CHSJetsVect[r].genParton() && (fabs(CHSJetsVect[r].hadronFlavour())==5 || fabs(CHSJetsVect[r].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[r].genParton()) )==idMotherB)
+	    //this implements all the reasonable possibilities!
+	    {
+	      number_bs_matched_to_CHSJet_CaloCorr += 1;
+	    }
+	}
+	CHSJetsVect[r].addUserInt("nMatchedGenBquarksCaloCorr",number_bs_matched_to_CHSJet_CaloCorr);
 
       }
       
@@ -1407,7 +1570,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 	  }
       }
-    
+ 
+ 
+    //Number of track constituents    
     for(unsigned int j = 0; j < CHSJetsVect.size(); j++){
       int nTrackConstituents = 0;
       //per jet tag: number of jet constituents and number of tracks
@@ -1422,6 +1587,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       CHSJetsVect.at(j).addUserInt("nTrackConstituents",nTrackConstituents);
     }
 
+
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     // AK4 CHS Jets: Imperial College Tagger
@@ -1429,101 +1595,101 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
 
     //First attempt to read Imperial Tagger
-    edm::Handle<reco::JetTagCollection> pfXTagWP0p01Handle;
-    iEvent.getByToken(JetTagWP0p01Token, pfXTagWP0p01Handle);
-    const reco::JetTagCollection & pfXWP0p01Tags = *(pfXTagWP0p01Handle.product());
+    //edm::Handle<reco::JetTagCollection> pfXTagWP0p01Handle;
+    //iEvent.getByToken(JetTagWP0p01Token, pfXTagWP0p01Handle);
+    //const reco::JetTagCollection & pfXWP0p01Tags = *(pfXTagWP0p01Handle.product());
 
-    edm::Handle<reco::JetTagCollection> pfXTagWP0p1Handle;
-    iEvent.getByToken(JetTagWP0p1Token, pfXTagWP0p1Handle);
-    const reco::JetTagCollection & pfXWP0p1Tags = *(pfXTagWP0p1Handle.product());
+    //edm::Handle<reco::JetTagCollection> pfXTagWP0p1Handle;
+    //iEvent.getByToken(JetTagWP0p1Token, pfXTagWP0p1Handle);
+    //const reco::JetTagCollection & pfXWP0p1Tags = *(pfXTagWP0p1Handle.product());
 
-    edm::Handle<reco::JetTagCollection> pfXTagWP1Handle;
-    iEvent.getByToken(JetTagWP1Token, pfXTagWP1Handle);
-    const reco::JetTagCollection & pfXWP1Tags = *(pfXTagWP1Handle.product());
+    //edm::Handle<reco::JetTagCollection> pfXTagWP1Handle;
+    //iEvent.getByToken(JetTagWP1Token, pfXTagWP1Handle);
+    //const reco::JetTagCollection & pfXWP1Tags = *(pfXTagWP1Handle.product());
 
-    edm::Handle<reco::JetTagCollection> pfXTagWP10Handle;
-    iEvent.getByToken(JetTagWP10Token, pfXTagWP10Handle);
-    const reco::JetTagCollection & pfXWP10Tags = *(pfXTagWP10Handle.product());
+    //edm::Handle<reco::JetTagCollection> pfXTagWP10Handle;
+    //iEvent.getByToken(JetTagWP10Token, pfXTagWP10Handle);
+    //const reco::JetTagCollection & pfXWP10Tags = *(pfXTagWP10Handle.product());
 
-    edm::Handle<reco::JetTagCollection> pfXTagWP100Handle;
-    iEvent.getByToken(JetTagWP100Token, pfXTagWP100Handle);
-    const reco::JetTagCollection & pfXWP100Tags = *(pfXTagWP100Handle.product());
+    //edm::Handle<reco::JetTagCollection> pfXTagWP100Handle;
+    //iEvent.getByToken(JetTagWP100Token, pfXTagWP100Handle);
+    //const reco::JetTagCollection & pfXWP100Tags = *(pfXTagWP100Handle.product());
 
-    edm::Handle<reco::JetTagCollection> pfXTagWP1000Handle;
-    iEvent.getByToken(JetTagWP1000Token, pfXTagWP1000Handle);
-    const reco::JetTagCollection & pfXWP1000Tags = *(pfXTagWP1000Handle.product());
+    //edm::Handle<reco::JetTagCollection> pfXTagWP1000Handle;
+    //iEvent.getByToken(JetTagWP1000Token, pfXTagWP1000Handle);
+    //const reco::JetTagCollection & pfXWP1000Tags = *(pfXTagWP1000Handle.product());
 
-    //Addd per-jet user float including Imperial Tagger
-    for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
-      {
-	for(unsigned int s = 0; s<pfXWP0p01Tags.size(); s++)
-	  {
-	    //if(pfXWP0p01Tags[s].first->eta()==CHSJetsVect[r].eta())
-            if( reco::deltaR(pfXWP0p01Tags[s].first->eta(),pfXWP0p01Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
-	      {
-                //std::cout << "CHS Jets n. " << r << " and pfXWP0p01 n. " << s << "are matching!" << std::endl;
-		CHSJetsVect[r].addUserFloat("pfXWP0p01",pfXWP0p01Tags[s].second);
-	      }
-	  }
+    ////Addd per-jet user float including Imperial Tagger
+    //for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+    //  {
+    //	for(unsigned int s = 0; s<pfXWP0p01Tags.size(); s++)
+    //	  {
+    //	    //if(pfXWP0p01Tags[s].first->eta()==CHSJetsVect[r].eta())
+    //        if( reco::deltaR(pfXWP0p01Tags[s].first->eta(),pfXWP0p01Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
+    //	      {
+    //            //std::cout << "CHS Jets n. " << r << " and pfXWP0p01 n. " << s << "are matching!" << std::endl;
+    //		CHSJetsVect[r].addUserFloat("pfXWP0p01",pfXWP0p01Tags[s].second);
+    //	      }
+    //	  }
 
-	for(unsigned int s = 0; s<pfXWP0p1Tags.size(); s++)
-          {
-            //if(pfXWP0p1Tags[s].first->eta()==CHSJetsVect[r].eta())
-            if( reco::deltaR(pfXWP0p1Tags[s].first->eta(),pfXWP0p1Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
-              {
-                //std::cout << "CHS Jets n. " << r << " and pfXWP0p1 n. " << s << "are matching!" << std::endl;
-                CHSJetsVect[r].addUserFloat("pfXWP0p1",pfXWP0p1Tags[s].second);
-              }
-          }
+    //	for(unsigned int s = 0; s<pfXWP0p1Tags.size(); s++)
+    //      {
+    //        //if(pfXWP0p1Tags[s].first->eta()==CHSJetsVect[r].eta())
+    //        if( reco::deltaR(pfXWP0p1Tags[s].first->eta(),pfXWP0p1Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
+    //          {
+    //            //std::cout << "CHS Jets n. " << r << " and pfXWP0p1 n. " << s << "are matching!" << std::endl;
+    //            CHSJetsVect[r].addUserFloat("pfXWP0p1",pfXWP0p1Tags[s].second);
+    //          }
+    //      }
 
-	for(unsigned int s = 0; s<pfXWP1Tags.size(); s++)
-	  {
-	    //if(pfXWP1Tags[s].first->eta()==CHSJetsVect[r].eta())
-            if( reco::deltaR(pfXWP1Tags[s].first->eta(),pfXWP1Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
-	      {
-                //std::cout << "CHS Jets n. " << r << " and pfXWP1 n. " << s << "are matching!" << std::endl;
-		CHSJetsVect[r].addUserFloat("pfXWP1",pfXWP1Tags[s].second);
-	      }
-	  }
-
-
-	for(unsigned int s = 0; s<pfXWP10Tags.size(); s++)
-	  {
-            if( reco::deltaR(pfXWP10Tags[s].first->eta(),pfXWP10Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
-	      {
-		CHSJetsVect[r].addUserFloat("pfXWP10",pfXWP10Tags[s].second);
-	      }
-	  }
-
-	for(unsigned int s = 0; s<pfXWP100Tags.size(); s++)
-	  {
-            if( reco::deltaR(pfXWP100Tags[s].first->eta(),pfXWP100Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
-	      {
-		CHSJetsVect[r].addUserFloat("pfXWP100",pfXWP100Tags[s].second);
-	      }
-	  }
+    //	for(unsigned int s = 0; s<pfXWP1Tags.size(); s++)
+    //	  {
+    //	    //if(pfXWP1Tags[s].first->eta()==CHSJetsVect[r].eta())
+    //       if( reco::deltaR(pfXWP1Tags[s].first->eta(),pfXWP1Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
+    //	      {
+    //            //std::cout << "CHS Jets n. " << r << " and pfXWP1 n. " << s << "are matching!" << std::endl;
+    //		CHSJetsVect[r].addUserFloat("pfXWP1",pfXWP1Tags[s].second);
+    //	      }
+    //	  }
 
 
+    //	for(unsigned int s = 0; s<pfXWP10Tags.size(); s++)
+    //	  {
+    //        if( reco::deltaR(pfXWP10Tags[s].first->eta(),pfXWP10Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
+    //	      {
+    //		CHSJetsVect[r].addUserFloat("pfXWP10",pfXWP10Tags[s].second);
+    //	      }
+    //	  }
 
-	for(unsigned int s = 0; s<pfXWP1000Tags.size(); s++)
-	  {
-	    //if(pfXWP1000Tags[s].first->eta()==CHSJetsVect[r].eta())
-            if( reco::deltaR(pfXWP1000Tags[s].first->eta(),pfXWP1000Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
-	      {
-                if(isVerbose) std::cout << "CHS Jets n. " << r << " and pfXWP1000 n. " << s << " are matching; dR: " << reco::deltaR(pfXWP1000Tags[s].first->eta(),pfXWP1000Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) << std::endl;
-		CHSJetsVect[r].addUserFloat("pfXWP1000",pfXWP1000Tags[s].second);
-	      }
-	  }
-      }
+    //	for(unsigned int s = 0; s<pfXWP100Tags.size(); s++)
+    //	  {
+    //            if( reco::deltaR(pfXWP100Tags[s].first->eta(),pfXWP100Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
+    //	      {
+    //		CHSJetsVect[r].addUserFloat("pfXWP100",pfXWP100Tags[s].second);
+    //	      }
+    //	  }
+
+
+
+    //	for(unsigned int s = 0; s<pfXWP1000Tags.size(); s++)
+    //	  {
+    //	    //if(pfXWP1000Tags[s].first->eta()==CHSJetsVect[r].eta())
+    //            if( reco::deltaR(pfXWP1000Tags[s].first->eta(),pfXWP1000Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) < 0.01 )
+    //	      {
+    //                if(isVerbose) std::cout << "CHS Jets n. " << r << " and pfXWP1000 n. " << s << " are matching; dR: " << reco::deltaR(pfXWP1000Tags[s].first->eta(),pfXWP1000Tags[s].first->phi(),CHSJetsVect[r].eta(),CHSJetsVect[r].phi()) << std::endl;
+    //		CHSJetsVect[r].addUserFloat("pfXWP1000",pfXWP1000Tags[s].second);
+    //	      }
+    //	  }
+    //      }
 
 
     //# Loop over jets and study b tag info.
 
-    if(isVerbose) {
-      for (unsigned int i = 0; i != pfXWP1000Tags.size(); ++i) {
-          if(pfXWP1000Tags[i].first->pt()>1 && abs(pfXWP1000Tags[i].first->eta())<2.4) std::cout << "  pfX WP1000 tag jet  [" << i << "]\tpt: " << pfXWP1000Tags[i].first->pt() << "\teta: " << pfXWP1000Tags[i].first->eta() << "\tphi: " << pfXWP1000Tags[i].first->phi() << "\tpfXTags: " << pfXWP1000Tags[i].second << std::endl;
-      }
-    }
+    //    if(isVerbose) {
+    //      for (unsigned int i = 0; i != pfXWP1000Tags.size(); ++i) {
+    //          if(pfXWP1000Tags[i].first->pt()>1 && abs(pfXWP1000Tags[i].first->eta())<2.4) std::cout << "  pfX WP1000 tag jet  [" << i << "]\tpt: " << pfXWP1000Tags[i].first->pt() << "\teta: " << pfXWP1000Tags[i].first->eta() << "\tphi: " << pfXWP1000Tags[i].first->phi() << "\tpfXTags: " << pfXWP1000Tags[i].second << std::endl;
+    //      }
+    //    }
 
     //If you have a Jet, rather than a JetTag, and wish to know if it is b-tagged, there are several ways of doing so. One which always works is to perform angular matching between the Jet and the JetTag::jet(). (The match should be perfect if your JetCollection was used to produce the JetTagCollection).
 
@@ -1643,6 +1809,253 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
     nMatchedCaloJets = MatchedCaloJetsVect.size();
 
+
+
+
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // AK8 CHS jets
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    if(isVerbose) std::cout << "AK8 CHS jets" << std::endl;
+    std::string SoftdropPuppiMassString(CHSFatJetPSet.getParameter<std::string>("softdropPuppiMassString"));
+    //std::cout << "Here fillinh ak8 " << std::endl;
+    //std::cout << "softdrop mass string: " << SoftdropPuppiMassString << std::endl;
+    std::vector<pat::Jet> CHSFatJetsVect = theCHSFatJetAnalyzer->FillJetVector(iEvent,iSetup);
+
+    for(unsigned int a = 0; a<CHSFatJetsVect.size(); a++)
+      {
+	CHSFatJetsVect.at(a).addUserFloat( "dPhi_met",reco::deltaPhi(CHSFatJetsVect.at(a).phi(),MET.phi()) );
+      }
+
+    //number of constituents
+    for(unsigned int j = 0; j < CHSFatJetsVect.size(); j++){
+      int nTrackConstituentsAK8 = 0;
+      //per jet tag: number of jet constituents and number of tracks
+      std::vector<edm::Ptr<reco::Candidate>> JetConstituentAK8Vect = CHSFatJetsVect[j].getJetConstituents();
+      CHSFatJetsVect.at(j).addUserInt("nConstituents",JetConstituentAK8Vect.size());
+      for(unsigned int k = 0; k < JetConstituentAK8Vect.size(); k++){
+
+        if(JetConstituentAK8Vect[k]->charge()!=0){
+          nTrackConstituentsAK8++;
+        }
+      }
+      CHSFatJetsVect.at(j).addUserInt("nTrackConstituents",nTrackConstituentsAK8);
+    }
+    
+    //Debug ak8 features
+    //for(unsigned int i = 0; i<CHSFatJetsVect.size(); i++)
+    //{
+        //std::cout << "Fat jet n. " << i << std::endl;
+        //std::cout << CHSFatJetsVect.at(i).pt() << std::endl;
+        
+        //if reclustered 
+        
+        //std::cout << CHSFatJetsVect.at(i).userFloat("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMassReclustered") << std::endl;
+        //std::cout << CHSFatJetsVect.at(i).userFloat("NjettinessAK8Reclustered:tau1") << std::endl;
+        //std::cout << CHSFatJetsVect.at(i).userFloat("NjettinessAK8Reclustered:tau2") << std::endl;
+        //std::cout << CHSFatJetsVect.at(i).userFloat("NjettinessAK8Reclustered:tau3") << std::endl;
+        //std::cout << CHSFatJetsVect.at(i).userFloat("ak8PFJetsCHSPrunedMassReclustered") << std::endl;
+        //std::cout << CHSFatJetsVect.at(i).userFloat("ak8PFJetsCHSSoftDropMassReclustered") << std::endl;
+        //std::cout << CHSFatJetsVect.at(i).userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau1Reclustered") << std::endl;
+        //std::cout << CHSFatJetsVect.at(i).userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau2Reclustered") << std::endl;
+        //std::cout << CHSFatJetsVect.at(i).userFloat("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiPrunedMassReclustered") << std::endl;
+        
+        //if not reclustered
+
+        //std::cout << "softdrop puppi" << CHSFatJetsVect.at(i).userFloat("ak8PFJetsPuppiSoftDropMass") << std::endl;
+        //std::cout << "pruned chs" << CHSFatJetsVect.at(i).userFloat("ak8PFJetsCHSValueMap:ak8PFJetsCHSPrunedMass") << std::endl;
+        //std::cout << "softdrop chs" << CHSFatJetsVect.at(i).userFloat("ak8PFJetsCHSValueMap:ak8PFJetsCHSSoftDropMass") << std::endl;
+        //std::cout << CHSFatJetsVect.at(i).userFloat("NjettinessAK8Puppi:tau1") << std::endl;
+        //std::cout << CHSFatJetsVect.at(i).userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau1") << std::endl;
+        //std::cout << CHSFatJetsVect.at(i).userFloat("ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN2") << std::endl;
+    //}
+
+
+    
+    // Gen-matching: old approach
+    std::vector<pat::Jet> MatchedFatJetsVect;
+    int matching_index_FatJets;//local variable
+    float delta_R_FatJets;//local variable
+    float current_delta_R_FatJets;//local variable
+    for(unsigned int b = 0; b<GenBquarks.size(); b++)
+      {
+	delta_R_FatJets = 1000.;
+	current_delta_R_FatJets = 1000.;
+	matching_index_FatJets = -1;
+	for(unsigned int a = 0; a<CHSFatJetsVect.size(); a++)
+	  {
+	    current_delta_R_FatJets = fabs(reco::deltaR(CHSFatJetsVect[a].eta(),CHSFatJetsVect[a].phi(),GenBquarks[b].eta,GenBquarks[b].phi));
+	    if(current_delta_R_FatJets<0.8 && current_delta_R_FatJets<delta_R_FatJets)
+	      //this implements all the reasonable possibilities!
+	      {
+		delta_R_FatJets = min(delta_R_FatJets,current_delta_R_FatJets);
+		matching_index_FatJets = a;
+		CHSFatJetsVect[a].addUserFloat("radiusLLP",GenBquarks[b].travelRadiusLLP);
+		CHSFatJetsVect[a].addUserFloat("xLLP",GenBquarks[b].travelXLLP);
+		CHSFatJetsVect[a].addUserFloat("yLLP",GenBquarks[b].travelYLLP);
+		CHSFatJetsVect[a].addUserFloat("zLLP",GenBquarks[b].travelZLLP);
+		CHSFatJetsVect[a].addUserFloat("xGenb",GenBquarks[b].vx);
+		CHSFatJetsVect[a].addUserFloat("yGenb",GenBquarks[b].vy);
+		CHSFatJetsVect[a].addUserFloat("zGenb",GenBquarks[b].vz);
+		MatchedFatJetsVect.push_back(CHSFatJetsVect[a]);//duplicates possible, must be removed afterwards!
+	      }
+	  }
+	if(matching_index_FatJets>=0){
+	  number_of_b_matched_to_CHSFatJets++;
+	}
+      }
+
+
+    //Remove duplicates from Matched CHSJets Vector
+    for(unsigned int r = 0; r<MatchedFatJetsVect.size(); r++)
+      {
+	for(unsigned int s = 0; s<MatchedFatJetsVect.size(); s++)
+	  {
+	    if(r!=s && MatchedFatJetsVect[s].pt()==MatchedFatJetsVect[r].pt()) MatchedFatJetsVect.erase(MatchedFatJetsVect.begin()+s);
+	  }//duplicates removed
+      }
+
+    // add b-matching infos into original jet
+    for(unsigned int r = 0; r<CHSFatJetsVect.size(); r++)
+      {
+	for(unsigned int s = 0; s<MatchedFatJetsVect.size(); s++)
+	  {
+
+	    if(MatchedFatJetsVect[s].pt()==CHSFatJetsVect[r].pt())
+	      {
+		//let's add flags helping to find matched jets corresponding to original Jets vector
+		CHSFatJetsVect[r].addUserInt("isGenMatched",1);
+	      }
+
+	  }
+	//add number of b's matched to jet
+	current_delta_R_FatJets = 1000.;
+	int number_bs_matched_to_FatJet = 0;
+	for (unsigned int b = 0; b<GenBquarks.size(); b++){
+	  current_delta_R_FatJets = fabs(reco::deltaR(CHSFatJetsVect[r].eta(),CHSFatJetsVect[r].phi(),GenBquarks[b].eta,GenBquarks[b].phi));
+	  if(current_delta_R_FatJets<0.8)
+	    //this implements all the reasonable possibilities!
+	    {
+	      number_bs_matched_to_FatJet += 1;
+	    }
+	}
+	CHSFatJetsVect[r].addUserInt("nMatchedGenBquarks",number_bs_matched_to_FatJet);
+      }
+
+    
+
+    // Gen-matching: calo corrections LATER
+    std::vector<pat::Jet> TempMatchedFatJetsVect;
+    
+    //Loop over GenBquarks structure, we need corrections and gen info
+    for(unsigned int b = 0; b<GenBquarks.size(); b++)
+      {
+	delta_R = 1000.;
+	current_delta_R = 1000.;
+	for(unsigned int a = 0; a<CHSFatJetsVect.size(); a++)
+	  {
+	    current_delta_R = fabs(reco::deltaR(CHSFatJetsVect[a].eta(),CHSFatJetsVect[a].phi(),GenBquarks[b].corrCaloEta,GenBquarks[b].corrCaloPhi));
+	    if(current_delta_R<0.8 && current_delta_R<delta_R)
+
+	      {
+		delta_R = min(delta_R,current_delta_R);
+		TempMatchedFatJetsVect.push_back(CHSFatJetsVect[a]);//duplicates possible, must be removed afterwards!
+		CHSFatJetsVect[a].addUserFloat("radiusLLPCaloCorr",GenBquarks[b].travelRadiusLLP);
+		CHSFatJetsVect[a].addUserFloat("xLLPCaloCorr",GenBquarks[b].travelXLLP);
+		CHSFatJetsVect[a].addUserFloat("yLLPCaloCorr",GenBquarks[b].travelYLLP);
+		CHSFatJetsVect[a].addUserFloat("zLLPCaloCorr",GenBquarks[b].travelZLLP);
+		CHSFatJetsVect[a].addUserFloat("xGenbCaloCorr",GenBquarks[b].vx);
+		CHSFatJetsVect[a].addUserFloat("yGenbCaloCorr",GenBquarks[b].vy);
+		CHSFatJetsVect[a].addUserFloat("zGenbCaloCorr",GenBquarks[b].vz);
+	      }
+	  }
+
+      }
+
+    //Remove duplicates from Temp Matched CHSJets Vector
+    //auto comp_tmp = [] ( const pat::Jet& lhs, const pat::Jet& rhs ) {return lhs.pt() ==rhs.pt();};
+    last_tmp = std::unique(TempMatchedFatJetsVect.begin(), TempMatchedFatJetsVect.end(),comp_tmp);
+    TempMatchedFatJetsVect.erase(last_tmp, TempMatchedFatJetsVect.end());
+
+
+    // add b-matching infos into original jet
+    for(unsigned int r = 0; r<CHSFatJetsVect.size(); r++)
+      {
+	for(unsigned int s = 0; s<TempMatchedFatJetsVect.size(); s++)
+	  {
+
+	    if(TempMatchedFatJetsVect[s].pt()==CHSFatJetsVect[r].pt()) CHSFatJetsVect[r].addUserInt("isGenMatchedCaloCorr",1);
+
+	  }
+	  
+	  
+	//add number of b's matched to jet
+	current_delta_R = 1000.;
+	int number_bs_matched_to_FatJet_CaloCorr = 0;
+	for (unsigned int b = 0; b<GenBquarks.size(); b++){
+	  current_delta_R = fabs(reco::deltaR(CHSFatJetsVect[r].eta(),CHSFatJetsVect[r].phi(),GenBquarks[b].corrCaloEta,GenBquarks[b].corrCaloPhi));
+	  if(current_delta_R<0.8)
+	    //this implements all the reasonable possibilities!
+	    {
+	      number_bs_matched_to_FatJet_CaloCorr += 1;
+	    }
+	}
+	CHSFatJetsVect[r].addUserInt("nMatchedGenBquarksCaloCorr",number_bs_matched_to_FatJet_CaloCorr);
+
+      }
+      
+    TempMatchedFatJetsVect.clear();
+     
+
+
+    /////////////////////////////////////////////////////////////
+
+    //Remove jets tagged as VBF from the list of potential signal...later!!!
+    /*
+    if(PerformVBF)
+      {
+
+	for(unsigned int r = 0; r<CHSFatJetsVect.size(); r++)
+	  {
+	    for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
+	      {
+		if(VBFPairJetsVect[s].pt()==CHSJetsVect[r].pt() && isVBF) //if jets aren't tagged as VBF jets, don't remove them
+		  {
+		    CHSJetsVect.erase(CHSJetsVect.begin()+r);
+		  }
+	      }//VBF jet pair removed
+	  }
+
+      }
+
+    else if(PerformggH)
+      {
+
+	for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+	  {
+	    for(unsigned int s = 0; s<ggHJetVect.size(); s++)
+	      {
+		if(ggHJetVect[s].pt()==CHSJetsVect[r].pt() && isggH) //if jets aren't tagged as ggH jets, don't remove them
+		  {
+		    CHSJetsVect.erase(CHSJetsVect.begin()+r);
+		  }
+	      }//ggH jet removed
+	  }
+
+      }
+    */
+    nCHSFatJets = CHSFatJetsVect.size();
+
+
+
+
+
+
+
+
+
+
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     // Vertices
@@ -1687,6 +2100,8 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::vector<int> indexSVJet;
 
     PFCandidateVect = thePFCandidateAnalyzer->FillPFCandidateVector(iEvent);
+    //Here sort in pt
+    std::sort(PFCandidateVect.begin(), PFCandidateVect.end(), AODNtuplizer::pt_sorter);
 
     // Initialize PFCandidate variables: Set indices to -1 (not matched)
     for(unsigned int i = 0; i < PFCandidateVect.size(); i++){
@@ -1748,6 +2163,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     }
 
+
     if(WriteAK4JetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAK4Jet; i++) PFCandidates.push_back( PFCandidateType() );
     //if(WriteAK8JetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAK8Jet; i++) PFCandidates.push_back( PFCandidateType() );
     //if(WriteAllJetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAnyJet; i++) PFCandidates.push_back( PFCandidateType() );
@@ -1755,7 +2171,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-    // EXO-16-003 variables and and n(Pixel)Hits //TODO: Move to separate analyzer!
+    // EXO-16-003 variables and and n(Pixel)Hits
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
 
@@ -2035,9 +2451,250 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }//loop on AK4 jets
  
 
- 
+    //AK8 jets, new loops with new variables
    
 
+//AAAAAAAA
+   
+    for (unsigned int j = 0; j < CHSFatJetsVect.size(); j++){
+
+      //Caltech; some still to be understood
+      reco::Vertex primaryVertexAK8 = PVertexVect.at(0);
+      std::vector<float> IP2DsAK8;
+      std::vector<float> theta2DsAK8;
+      std::vector<float> nPixelHitsAK8;//method seems not available
+      std::vector<float> nHitsAK8;
+      std::vector<float> dzVectAK8;
+      std::vector<float> dxyVectAK8;
+      
+      float ptAllTracksAK8 = 0.;//Caltech: pt sum of generalTracks inside jet cone
+      float ptAllPVTracksAK8 = 0.;//Caltech: pt sum of tracks belonging to any PV inside jet cone
+      float ptPVTracksMaxAK8 = 0.;//Caltech: maximum pt sum of tracks in a vertex inside jet cone
+      int   nTracksAllAK8 = 0;//Caltech: num of generalTracks inside jet cone
+      int   nTracksPVMaxAK8 = 0;//Caltech: maximum number of tracks in a vertex inside jet cone
+      
+      float medianIP2DAK8 = -10000.;
+      float medianTheta2DAK8 = -100.;
+      
+      float alphaMaxAK8 = -100.;
+      float betaMaxAK8 = -100.;
+      float gammaMaxAK8 = -100.;
+      float gammaMaxEMAK8 = -100.;
+      float gammaMaxHadronicAK8 = -100.;
+      float gammaMaxETAK8 = -100.;
+      float nPixelHitsMedianAK8 = -1.;
+      float nHitsMedianAK8 = -1.;
+      float dzMedianAK8 = -9999.;
+      float dxyMedianAK8 = -9999.;
+      float minDeltaRAllTracksAK8 = 999.;//Caltech: min DR bw generalTracks and current jet
+      float minDeltaRPVTracksAK8 = 999.;//Caltech: min DR bw a track included in a vertex and current jet; there is a pt constraint on the total pt of tracks associated to a jet. Ask why
+      
+
+      /* Track loop */
+      //int iterator_valid_track = 0;
+      for (unsigned int iTrack = 0; iTrack < generalTracks->size(); iTrack ++){
+
+        // Track propagation
+        FreeTrajectoryState ftsAK8 = trajectoryStateTransform::initialFreeState (generalTracksView->at(iTrack),MagneticFieldTag);
+        TrajectoryStateOnSurface outerAK8 = stateOnTracker(ftsAK8);
+        if(!outerAK8.isValid()) continue;
+        GlobalPoint outerPosAK8 = outerAK8.globalPosition();
+
+        TLorentzVector generalTrackVecTempAK8;
+        generalTrackVecTempAK8.SetPtEtaPhiM((generalTracks->at(iTrack)).pt(), outerPosAK8.eta(), outerPosAK8.phi(), 0);
+
+        if ((generalTracks->at(iTrack)).pt() > 1) {
+          if (minDeltaRAllTracksAK8 > reco::deltaR(generalTrackVecTempAK8.Eta(),generalTrackVecTempAK8.Phi(),CHSFatJetsVect.at(j).eta(),CHSFatJetsVect.at(j).phi()) )
+	  {
+	      minDeltaRAllTracksAK8 =  reco::deltaR(generalTrackVecTempAK8.Eta(),generalTrackVecTempAK8.Phi(),CHSFatJetsVect.at(j).eta(),CHSFatJetsVect.at(j).phi());
+	      //std::cout << "minDeltaRAllTracks " << minDeltaRAllTracks << std::endl;
+	  }
+	  if (reco::deltaR(generalTrackVecTempAK8.Eta(),generalTrackVecTempAK8.Phi(),CHSFatJetsVect.at(j).eta(),CHSFatJetsVect.at(j).phi()) < 0.8)
+	  {
+    	  	nTracksAllAK8 ++;
+    	  	//tot pt for alpha
+    	 	ptAllTracksAK8 += (generalTracks->at(iTrack)).pt();	                   
+                 nPixelHitsAK8.push_back((generalTracks->at(iTrack)).hitPattern().numberOfValidPixelHits());
+                 nHitsAK8.push_back((generalTracks->at(iTrack)).hitPattern().numberOfValidTrackerHits());
+                 dzVectAK8.push_back((generalTracks->at(iTrack)).dz());
+                 dxyVectAK8.push_back((generalTracks->at(iTrack)).dxy());
+
+           }//if track in jet cone
+        }//if tracks pt>1 GeV
+        
+      }//loop on general tracks
+ 
+
+
+      /*Vertex loop */
+      if (ptAllTracksAK8 > 0.9){
+        //No matched jets
+        //int iterator_vertex = 0;
+        for (auto vertex = PVertexVect.begin(); vertex != PVertexVect.end(); vertex++){
+          double ptPVTracksAK8 = 0.;//pt of tracks associated to one singular PV and inside current jet cone
+          int nTracksPVTempAK8 = 0;//number of tracks associated to one singular PV and inside current jet cone
+          if(!vertex->isValid())continue;
+          if (vertex->isFake())continue;
+          //std::cout << "Valid vertex n. " << iterator_vertex << std::endl;
+          //iterator_vertex++;
+          for(auto pvTrack=vertex->tracks_begin(); pvTrack!=vertex->tracks_end(); pvTrack++){
+
+              // Track propagation
+              FreeTrajectoryState ftspvAK8 = trajectoryStateTransform::initialFreeState (**pvTrack, MagneticFieldTag);
+              TrajectoryStateOnSurface outerpvAK8 = stateOnTracker(ftspvAK8);
+              if(!outerpvAK8.isValid()) continue;
+              GlobalPoint outerpvPosAK8 = outerpvAK8.globalPosition();
+
+    	      TLorentzVector pvTrackVecTempAK8;
+    	      pvTrackVecTempAK8.SetPtEtaPhiM((*pvTrack)->pt(),outerpvPosAK8.eta(),outerpvPosAK8.phi(),0);
+  	      //If pv track associated with jet add pt to ptPVTracks
+    	      if ((*pvTrack)->pt() > 1)
+    	      {
+    	        if (minDeltaRPVTracksAK8 > reco::deltaR(pvTrackVecTempAK8.Eta(),pvTrackVecTempAK8.Phi(),CHSFatJetsVect.at(j).eta(),CHSFatJetsVect.at(j).phi()))
+    	        {
+    	          minDeltaRPVTracksAK8 =  reco::deltaR(pvTrackVecTempAK8.Eta(),pvTrackVecTempAK8.Phi(),CHSFatJetsVect.at(j).eta(),CHSFatJetsVect.at(j).phi());
+    	        }
+    	        if(reco::deltaR(pvTrackVecTempAK8.Eta(),pvTrackVecTempAK8.Phi(),CHSFatJetsVect.at(j).eta(),CHSFatJetsVect.at(j).phi()) < 0.8)
+    	        {
+    	           //std::cout << "Valid track inside vertex n. " << iterator_vertex << "; track pt: " << (*pvTrack)->pt() << std::endl;
+                   ptPVTracksAK8 += (*pvTrack)->pt();//pt sum per vertex
+                   ptAllPVTracksAK8 += (*pvTrack)->pt();//pt sum over all vertices
+                   nTracksPVTempAK8++;//number of tracks associated to one particular vertex
+    	        }//jet matching
+              }//minimum track pt
+           
+              if (ptPVTracksAK8 > ptPVTracksMaxAK8) {
+      	        ptPVTracksMaxAK8 = ptPVTracksAK8;
+      	        nTracksPVMaxAK8 = nTracksPVTempAK8;
+      	      }
+      	     
+          }//loop on vertex tracks
+           
+  	}//loop on vertices
+  	
+      }//if pt all tracks
+ 
+
+
+      /* Track loop, without propagator, for sigIP2D and theta2D */
+      for (unsigned int iTrack = 0; iTrack < generalTracks->size(); iTrack ++){
+  	reco::Track generalTrack = generalTracks->at(iTrack);
+  	TLorentzVector generalTrackVecTempAK8;
+  	generalTrackVecTempAK8.SetPtEtaPhiM(generalTrack.pt(),generalTrack.eta(),generalTrack.phi(),0);
+
+  	if (generalTrack.pt() > 1) {
+	    if (reco::deltaR(generalTrackVecTempAK8.Eta(),generalTrackVecTempAK8.Phi(),CHSFatJetsVect.at(j).eta(),CHSFatJetsVect.at(j).phi()) < 0.8){
+    		// Theta 2D
+    		//WARNING! This gives product not found! TODO!
+    		//ROOT::Math::XYZPoint innerPos = generalTrack.innerPosition();
+    		//std::cout << innerPos << std::endl;
+    		//ROOT::Math::XYZPoint vertexPos = primaryVertex.position();
+    		//std::cout << vertexPos << std::endl;
+    		//ROOT::Math::XYZVector deltaPos = innerPos - vertexPos;
+    		//ROOT::Math::XYZVector momentum = generalTrack.innerMomentum();
+    		//double mag2DeltaPos = TMath::Sqrt((deltaPos.x()*deltaPos.x()) + (deltaPos.y()*deltaPos.y()));
+    		//double mag2Mom = TMath::Sqrt((momentum.x()*momentum.x()) + (momentum.y()*momentum.y()));
+    		//double theta2D = TMath::ACos((deltaPos.x()*momentum.x()+deltaPos.y()*momentum.y())/(mag2Mom*mag2DeltaPos));
+    		//theta2Ds.push_back(theta2D);
+
+    		// IP sig
+    		edm::ESHandle<TransientTrackBuilder> theB;
+    		iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder",theB);
+    		reco::TransientTrack transTrack = theB->build(generalTrack);
+    		TrajectoryStateClosestToBeamLine traj = transTrack.stateAtBeamLine();
+    		Measurement1D meas = traj.transverseImpactParameter();
+    		std::pair<bool, Measurement1D> ip2d = IPTools::absoluteTransverseImpactParameter(transTrack,primaryVertexAK8);
+    		IP2DsAK8.push_back(ip2d.second.value()/ip2d.second.error());
+            }//jet DR matching
+        }//track pt>1 GeV
+        
+      }//second loop on general tracks
+
+
+
+      std::sort(IP2DsAK8.begin(),IP2DsAK8.end());
+      //if (IP2DsAK8.size() % 2 == 0) medianIP2D = ((IP2DsAK8[IP2DsAK8.size()/2 -1] + IP2DsAK8[IP2DsAK8.size()/2) /2);//HH
+      //else medianIP2D = IP2DsAK8[IP2DsAK8.size()/2];//HH
+      if (IP2DsAK8.size() > 0){
+	   medianIP2DAK8 = IP2DsAK8[IP2DsAK8.size()/2];
+      }
+      
+      std::sort(theta2DsAK8.begin(),theta2DsAK8.end());
+      //if (theta2DsAK8.size() % 2 == 0) medianTheta2DAK8 = ((theta2DsAK8[theta2DsAK8.size()/2 -1] + theta2DsAK8[theta2DsAK8.size()/2) /2);//HH
+      //else medianTheta2DAK8 = theta2DsAK8[theta2DsAK8.size()/2];//HH
+      if (theta2DsAK8.size() > 0){
+          medianTheta2DAK8 = theta2DsAK8[theta2DsAK8.size()/2];
+      }
+
+      std::sort(nPixelHitsAK8.begin(), nPixelHitsAK8.end());
+      if (nPixelHitsAK8.size() > 0) {   
+        if (nPixelHitsAK8.size() % 2 ==0) nPixelHitsMedianAK8 = ((nPixelHitsAK8[nPixelHitsAK8.size()/2 -1] + nPixelHitsAK8[nPixelHitsAK8.size()/2]) /2);
+        else nPixelHitsMedianAK8 = nPixelHitsAK8[nPixelHitsAK8.size()/2];
+      }
+      
+      std::sort(nHitsAK8.begin(), nHitsAK8.end());
+      if (nHitsAK8.size() > 0) {   
+        if (nHitsAK8.size() % 2 ==0) nHitsMedianAK8 = ((nHitsAK8[nHitsAK8.size()/2 -1] + nHitsAK8[nHitsAK8.size()/2]) /2);
+        else nHitsMedianAK8 = nHitsAK8[nHitsAK8.size()/2];
+      }
+
+      std::sort(dxyVectAK8.begin(), dxyVectAK8.end());
+      if (dxyVectAK8.size() > 0) {
+	if (dxyVectAK8.size() % 2 ==0) dxyMedianAK8 = ((dxyVectAK8[dxyVectAK8.size()/2 -1] + dxyVectAK8[dxyVectAK8.size()/2]) /2);
+	else dxyMedianAK8 = dxyVectAK8[dxyVectAK8.size()/2];
+      }
+
+      std::sort(dzVectAK8.begin(), dzVectAK8.end());
+      if (dzVectAK8.size() > 0) {
+	if (dzVectAK8.size() % 2 ==0) dzMedianAK8 = ((dzVectAK8[dzVectAK8.size()/2 -1] + dzVectAK8[dzVectAK8.size()/2]) /2);
+	else dzMedianAK8 = dzVectAK8[dzVectAK8.size()/2];
+      }
+      
+      //std::cout << "Out of vertex loop, recalculate alphaMax " << std::endl;
+      alphaMaxAK8         = ptAllTracksAK8>0 ? ptPVTracksMaxAK8/ptAllTracksAK8 : -100.;
+      betaMaxAK8          = ptAllTracksAK8>0 ? ptPVTracksMaxAK8/CHSFatJetsVect[j].pt() : -100.;
+      gammaMaxAK8         = ptAllTracksAK8>0 ? ptPVTracksMaxAK8/CHSFatJetsVect[j].energy() : -100.;
+      gammaMaxEMAK8       = ( (CHSFatJetsVect[j].userFloat("photonEFrac") + CHSFatJetsVect[j].userFloat("eleEFrac"))>0 && ptAllTracksAK8>0 ) ? ptPVTracksMaxAK8/(CHSFatJetsVect[j].energy()*(CHSFatJetsVect[j].userFloat("photonEFrac") + CHSFatJetsVect[j].userFloat("eleEFrac"))) : -100.;
+      gammaMaxHadronicAK8 = ( (CHSFatJetsVect[j].userFloat("cHadEFrac") + CHSFatJetsVect[j].userFloat("nHadEFrac"))>0 && ptAllTracksAK8>0 ) ? ptPVTracksMaxAK8/(CHSFatJetsVect[j].energy()*(CHSFatJetsVect[j].userFloat("cHadEFrac") + CHSFatJetsVect[j].userFloat("nHadEFrac"))) : -100.;
+      gammaMaxETAK8       = ptAllTracksAK8>0 ? ptPVTracksMaxAK8/CHSFatJetsVect[j].et() : -100.;    
+      //std::cout << "Jet[" << j << "] has nTracksAll: " << nTracksAll << "; and ptAllTracks: " << ptAllTracks << " and nTracksPVMax " << nTracksPVMax << " and ptPVTracksMax " << ptPVTracksMax << "; alphaMax " << alphaMax << "; medianIP2D " << medianIP2D << "; medianTheta2D " << medianTheta2D << std::endl;
+
+
+      CHSFatJetsVect[j].addUserInt("nTracksAll", nTracksAllAK8);
+      CHSFatJetsVect[j].addUserInt("nTracksPVMax", nTracksPVMaxAK8);
+      CHSFatJetsVect[j].addUserFloat("ptAllTracks", ptAllTracksAK8>0 ? ptAllTracksAK8 : -1.);
+      CHSFatJetsVect[j].addUserFloat("ptAllPVTracks", ptAllPVTracksAK8>0 ? ptAllPVTracksAK8 : -1.);
+      CHSFatJetsVect[j].addUserFloat("ptPVTracksMax", ptPVTracksMaxAK8>0 ? ptPVTracksMaxAK8 : -1.);
+      CHSFatJetsVect[j].addUserFloat("alphaMax", alphaMaxAK8);
+      CHSFatJetsVect[j].addUserFloat("betaMax", betaMaxAK8);//zero if no tracks
+      CHSFatJetsVect[j].addUserFloat("gammaMax", gammaMaxAK8);//zero if no tracks
+      CHSFatJetsVect[j].addUserFloat("gammaMaxEM", gammaMaxEMAK8);//zero if no tracks, but -100 if no EM EFrac
+      CHSFatJetsVect[j].addUserFloat("gammaMaxHadronic", gammaMaxHadronicAK8);//zero if no tracks, but -100 if no hadronEFrac
+      CHSFatJetsVect[j].addUserFloat("gammaMaxET", gammaMaxETAK8);//zero if no tracks
+      CHSFatJetsVect[j].addUserFloat("minDeltaRAllTracks",minDeltaRAllTracksAK8);
+      CHSFatJetsVect[j].addUserFloat("minDeltaRPVTracks",minDeltaRPVTracksAK8);
+      CHSFatJetsVect[j].addUserFloat("medianIP2D", medianIP2DAK8);
+      CHSFatJetsVect[j].addUserFloat("medianTheta2D", medianTheta2DAK8);
+      CHSFatJetsVect[j].addUserFloat("nPixelHitsMedian", nPixelHitsMedianAK8);
+      CHSFatJetsVect[j].addUserFloat("nHitsMedian", nHitsMedianAK8);
+      CHSFatJetsVect[j].addUserFloat("dxyMedian", dxyMedianAK8);
+      CHSFatJetsVect[j].addUserFloat("dzMedian", dzMedianAK8);
+      
+    }//loop on AK8 jets
+
+
+
+
+
+
+
+
+
+
+
+
+
+//AAAAAAA
 
     // AK4 jets
     /* OLD LOOP, with PFCandidates */
@@ -2312,7 +2969,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
    
-
+    /*
     std::vector<DTRecSegment4D> DTSegmentVect = theDTAnalyzer->FillDTSegment4DVector(iEvent);
     std::vector<GlobalPoint> DTSegment_Global_points = theDTAnalyzer->FillGlobalPointDT4DSegmentVector(iEvent, iSetup,DTSegmentVect);
     for(unsigned int i =0; i< DTSegmentVect.size();i++) DTRecSegments4D.push_back( DT4DSegmentType() );
@@ -2537,131 +3194,6 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         }
     nMatchedCSCsegmentstoVBF = MatchedCSCSegmenttoVBFVect.size();
 
-
-    //------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------
-    // StandAloneMuons
-    //------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------
-   
-    /*
-    std::vector<reco::Track> StandAloneMuonsVect = theStandAloneMuonsAnalyzer->FillStandAloneMuonsVector(iEvent);
-    for(unsigned int i =0; i< StandAloneMuonsVect.size();i++) StandAloneMuons.push_back( TrackType() );
-    nStandAloneMuons = StandAloneMuonsVect.size();
-    std::vector<bool> GenStandAloneMuonsFlag;
-    for(unsigned int i =0; i< StandAloneMuonsVect.size();i++) GenStandAloneMuonsFlag.push_back(false);
-
-    //One way to implement jet-gen b-quark matching is performed here
-    std::vector<reco::Track> MatchedStandAloneMuonsVect;
-
-    //Matching the b quarks to StandAloneMuons
-    //Starting point: b-quark
-    int matching_index_StandAloneMuons;//local variable
-    float delta_R_StandAloneMuons;//local variable
-    float current_delta_R_StandAloneMuons;//local variable
-    for(unsigned int b = 0; b<GenBquarksVect.size(); b++)
-      {
-	delta_R_StandAloneMuons = 1000.;
-	current_delta_R_StandAloneMuons = 1000.;
-	matching_index_StandAloneMuons = -1;
-	for(unsigned int a = 0; a<StandAloneMuonsVect.size(); a++)
-	  {
-	    current_delta_R_StandAloneMuons = fabs(reco::deltaR(StandAloneMuonsVect[a].eta(),StandAloneMuonsVect[a].phi(),GenBquarksVect[b].eta(),GenBquarksVect[b].phi()));
-	    //std::cout << "comparing gen b n. " << b << " and standalone muon n." << a << std::endl;
-	    //std::cout << current_delta_R_StandAloneMuons << std::endl;
-	    if(current_delta_R_StandAloneMuons<0.4 && current_delta_R_StandAloneMuons<delta_R_StandAloneMuons)
-	      //this implements all the reasonable possibilities!
-	      {
-	      delta_R_StandAloneMuons = min(delta_R_StandAloneMuons,current_delta_R_StandAloneMuons);
-	      matching_index_StandAloneMuons = a;
-	      MatchedStandAloneMuonsVect.push_back(StandAloneMuonsVect[a]);//duplicates possible, must be removed afterwards!
-	      }
-	  }
-	if(matching_index_StandAloneMuons>=0){
-	  //std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
-	  //std::cout << "standalone muon matched: " << matching_index_StandAloneMuons  <<std::endl;
-	  GenStandAloneMuonsFlag.at(matching_index_StandAloneMuons) = true;
-	  //number_of_b_matched_to_CHSJets++;//wait
-	}
-      }
-
-
-    //Remove duplicates from Matched CHSJets Vector
-    for(unsigned int r = 0; r<MatchedStandAloneMuonsVect.size(); r++)
-      {
-	for(unsigned int s = 0; s<MatchedStandAloneMuonsVect.size(); s++)
-	  {
-	    if(r!=s && MatchedStandAloneMuonsVect[s].pt()==MatchedStandAloneMuonsVect[r].pt()) MatchedStandAloneMuonsVect.erase(MatchedStandAloneMuonsVect.begin()+s);
-	  }//duplicates removed
-      }
-    nMatchedStandAloneMuons = MatchedStandAloneMuonsVect.size();//wait
-
-    //int n_StandAloneMuons_in_CHSJets = 0;
-    //for(unsigned int m = 0; m < StandAloneMuonsVect.size(); m++) {
-    //for(unsigned int j = 0; j < CHSJetsVect.size(); ) {
-    //	if(deltaR(CHSJetsVect.at(j), StandAloneMuonsVect.at(m)) < 0.4) n_StandAloneMuons_in_CHSJets++;
-    //}
-    //}
-    //std::cout << "Standalone muons in jets: " << n_StandAloneMuons_in_CHSJets << std::endl;
-    */
-
-    //------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------
-    // DisplacedStandAloneMuons
-    //------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------
-
-    /*
-    std::vector<reco::Track> DisplacedStandAloneMuonsVect = theDisplacedStandAloneMuonsAnalyzer->FillStandAloneMuonsVector(iEvent);
-    for(unsigned int i =0; i< DisplacedStandAloneMuonsVect.size();i++) DisplacedStandAloneMuons.push_back( TrackType() );
-    nDisplacedStandAloneMuons = DisplacedStandAloneMuonsVect.size();
-    std::vector<bool> GenDisplacedStandAloneMuonsFlag;
-    for(unsigned int i =0; i< DisplacedStandAloneMuonsVect.size();i++) GenDisplacedStandAloneMuonsFlag.push_back(false);
-
-    //One way to implement jet-gen b-quark matching is performed here
-    std::vector<reco::Track> MatchedDisplacedStandAloneMuonsVect;
-
-    //Matching the b quarks to DisplacedStandAloneMuons
-    //Starting point: b-quark
-    int matching_index_DisplacedStandAloneMuons;//local variable
-    float delta_R_DisplacedStandAloneMuons;//local variable
-    float current_delta_R_DisplacedStandAloneMuons;//local variable
-    for(unsigned int b = 0; b<GenBquarksVect.size(); b++)
-      {
-	delta_R_DisplacedStandAloneMuons = 1000.;
-	current_delta_R_DisplacedStandAloneMuons = 1000.;
-	matching_index_DisplacedStandAloneMuons = -1;
-	for(unsigned int a = 0; a<DisplacedStandAloneMuonsVect.size(); a++)
-	  {
-	    current_delta_R_DisplacedStandAloneMuons = fabs(reco::deltaR(DisplacedStandAloneMuonsVect[a].eta(),DisplacedStandAloneMuonsVect[a].phi(),GenBquarksVect[b].eta(),GenBquarksVect[b].phi()));
-	    //std::cout << "comparing gen b n. " << b << " and displaced standalone muon n." << a << std::endl;
-	    //std::cout << current_delta_R_DisplacedStandAloneMuons << std::endl;
-	    if(current_delta_R_DisplacedStandAloneMuons<0.4 && current_delta_R_DisplacedStandAloneMuons<delta_R_DisplacedStandAloneMuons)
-	      //this implements all the reasonable possibilities!
-	      {
-	      delta_R_DisplacedStandAloneMuons = min(delta_R_DisplacedStandAloneMuons,current_delta_R_DisplacedStandAloneMuons);
-	      matching_index_DisplacedStandAloneMuons = a;
-	      MatchedDisplacedStandAloneMuonsVect.push_back(DisplacedStandAloneMuonsVect[a]);//duplicates possible, must be removed afterwards!
-	      }
-	  }
-	if(matching_index_DisplacedStandAloneMuons>=0){
-	  //std::cout << "++++++++++++++++++++++++++++++++++" << std::endl;
-	  //std::cout << "displaced standalone muon matched: " << matching_index_DisplacedStandAloneMuons  <<std::endl;
-	  GenDisplacedStandAloneMuonsFlag.at(matching_index_DisplacedStandAloneMuons) = true;
-	  //number_of_b_matched_to_CHSJets++;//wait
-	}
-      }
-
-
-    //Remove duplicates from Matched CHSJets Vector
-    for(unsigned int r = 0; r<MatchedDisplacedStandAloneMuonsVect.size(); r++)
-      {
-	for(unsigned int s = 0; s<MatchedDisplacedStandAloneMuonsVect.size(); s++)
-	  {
-	    if(r!=s && MatchedDisplacedStandAloneMuonsVect[s].pt()==MatchedDisplacedStandAloneMuonsVect[r].pt()) MatchedDisplacedStandAloneMuonsVect.erase(MatchedDisplacedStandAloneMuonsVect.begin()+s);
-	  }//duplicates removed
-      }
-    nMatchedDisplacedStandAloneMuons = MatchedDisplacedStandAloneMuonsVect.size();//wait
     */
 
     //-----------------------------------------------------------------------------------------
@@ -2690,6 +3222,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(unsigned int i = 0; i < CHSJetsVect.size(); i++) CHSJets.push_back( JetType() );
     for(unsigned int i = 0; i < CHSJetsVect.size(); i++) ObjectsFormat::FillJetType(CHSJets[i], &CHSJetsVect[i], isMC);
 
+    for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) CHSFatJets.push_back( FatJetType() );
+    for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) ObjectsFormat::FillFatJetType(CHSFatJets[i], &CHSFatJetsVect[i], SoftdropPuppiMassString, isMC);
+    
     //for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );//slim ntuple
     //for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) ObjectsFormat::FillJetType(VBFPairJets[i], &VBFPairJetsVect[i], isMC);//slim ntuple
 
@@ -2703,6 +3238,8 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     //CSCSegments
     //for(unsigned int i =0; i< CSCSegmentVect.size();i++) ObjectsFormat::FillCSCSegmentType(CSCSegments[i], &CSCSegmentVect[i],&CSCSegment_Global_points[i]);//slim ntuple
+
+
 
     //PFCandidates
     if(WriteAK4JetPFCandidates || WriteAK8JetPFCandidates || WriteAllJetPFCandidates || WriteAllPFCandidates) {
@@ -2767,9 +3304,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //std::cout << "number of DisplacedStandAloneMuons: " << DisplacedStandAloneMuonsVect.size() << std::endl;
       //for(unsigned int i = 0; i < DisplacedStandAloneMuonsVect.size(); i++) std::cout << "  DisplacedStandAloneMuons  [" << i << "]\tpt: " << DisplacedStandAloneMuonsVect[i].pt() << "\teta: " << DisplacedStandAloneMuonsVect[i].eta() << "\tphi: " << DisplacedStandAloneMuonsVect[i].phi() << std::endl;
 
-      std::cout << "number of DT segments:  " << DTSegmentVect.size() << std::endl;
-      std::cout << "number of DT global position:  " << DTSegment_Global_points.size() << std::endl;
-      for(unsigned int i = 0; i < DTSegment_Global_points.size(); i++) std::cout << "  Global position of DT segment [" << i << "]\teta: " << DTSegment_Global_points[i].eta() << "\tphi: " << DTSegment_Global_points[i].phi() << "\tsize of rech hits: "<< DTSegmentVect.at(i).recHits().size() << std::endl;
+      //std::cout << "number of DT segments:  " << DTSegmentVect.size() << std::endl;
+      //std::cout << "number of DT global position:  " << DTSegment_Global_points.size() << std::endl;
+      //for(unsigned int i = 0; i < DTSegment_Global_points.size(); i++) std::cout << "  Global position of DT segment [" << i << "]\teta: " << DTSegment_Global_points[i].eta() << "\tphi: " << DTSegment_Global_points[i].phi() << "\tsize of rech hits: "<< DTSegmentVect.at(i).recHits().size() << std::endl;
 
 
       //std::cout << "number of CSC segments:  " << CSCSegmentVect.size() << std::endl;
@@ -2789,10 +3326,11 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     CHSJets.clear();
     CaloJets.clear();
     VBFPairJets.clear();
+    CHSFatJets.clear();
     ggHJet.clear();
 
-    DTRecSegments4D.clear();
-    CSCSegments.clear();
+    //DTRecSegments4D.clear();
+    //CSCSegments.clear();
 
 #ifdef THIS_IS_AN_EVENT_EXAMPLE
     Handle<ExampleData> pIn;
@@ -2828,6 +3366,7 @@ AODNtuplizer::beginJob()
    tree -> Branch("AtLeastOneL1Filter" , &AtLeastOneL1Filter , "AtLeastOneL1Filter/O");
    tree -> Branch("Prefired" , &Prefired , "Prefired/O");
    tree -> Branch("nPV" , &nPV , "nPV/L");
+   tree -> Branch("nLLPInCalo" , &nLLPInCalo , "nLLPInCalo/I");
    tree -> Branch("isVBF" , &isVBF, "isVBF/O");
    tree -> Branch("isggH" , &isggH, "isggH/O");
    tree -> Branch("HT" , &HT , "HT/F");
@@ -2844,53 +3383,68 @@ AODNtuplizer::beginJob()
    tree -> Branch("nPhotons", &nPhotons, "nPhotons/I");
    tree -> Branch("nTightMuons", &nTightMuons, "nTightMuons/I");
    tree -> Branch("nTightElectrons", &nTightElectrons, "nTightElectrons/I");
-    tree -> Branch("nPFCandidates" , &nPFCandidates, "nPFCandidates/I");
-    tree -> Branch("nPFCandidatesTrack", &nPFCandidatesTrack, "nPFCandidatesTrack/I");
-    tree -> Branch("nPFCandidatesHighPurityTrack", &nPFCandidatesHighPurityTrack, "nPFCandidatesHighPurityTrack/I");
-    tree -> Branch("nPFCandidatesFullTrackInfo", &nPFCandidatesFullTrackInfo, "nPFCandidatesFullTrackInfo/I");
-    tree -> Branch("nPFCandidatesFullTrackInfo_pt", &nPFCandidatesFullTrackInfo_pt, "nPFCandidatesFullTrackInfo_pt/I");
-    tree -> Branch("nPFCandidatesFullTrackInfo_hasTrackDetails", &nPFCandidatesFullTrackInfo_hasTrackDetails, "nPFCandidatesFullTrackInfo_hasTrackDetails/I");
-   tree -> Branch("Flag_BadPFMuon", &BadPFMuonFlag, "Flag_BadPFMuon/O");
-   tree -> Branch("Flag_BadChCand", &BadChCandFlag, "Flag_BadChCand/O");
+   tree -> Branch("nPFCandidates" , &nPFCandidates, "nPFCandidates/I");
+   tree -> Branch("nPFCandidatesTrack", &nPFCandidatesTrack, "nPFCandidatesTrack/I");
+   tree -> Branch("nPFCandidatesHighPurityTrack", &nPFCandidatesHighPurityTrack, "nPFCandidatesHighPurityTrack/I");
+   tree -> Branch("nPFCandidatesFullTrackInfo", &nPFCandidatesFullTrackInfo, "nPFCandidatesFullTrackInfo/I");
+   tree -> Branch("nPFCandidatesFullTrackInfo_pt", &nPFCandidatesFullTrackInfo_pt, "nPFCandidatesFullTrackInfo_pt/I");
+   tree -> Branch("nPFCandidatesFullTrackInfo_hasTrackDetails", &nPFCandidatesFullTrackInfo_hasTrackDetails, "nPFCandidatesFullTrackInfo_hasTrackDetails/I");
+   //tree -> Branch("Flag_BadPFMuon", &BadPFMuonFlag, "Flag_BadPFMuon/O");
+   //tree -> Branch("Flag_BadChCand", &BadChCandFlag, "Flag_BadChCand/O");
+   
+   
    tree -> Branch("nCHSJets" , &nCHSJets , "nCHSJets/L");
    tree -> Branch("nCaloJets" , &nCaloJets , "nCaloJets/L");
+   tree -> Branch("nCHSFatJets" , &nCHSFatJets , "nCHSFatJets/L");
    tree -> Branch("nMatchedCHSJets" , &nMatchedCHSJets , "nMatchedCHSJets/L");
    tree -> Branch("nMatchedCaloJets" , &nMatchedCaloJets , "nMatchedCaloJets/L");
    tree -> Branch("nVBFGenMatchedCHSJets", & nVBFGenMatchedCHSJets, "nVBFGenMatchedCHSJets/L");
    tree -> Branch("nVBFGenMatchedVBFJets", & nVBFGenMatchedVBFJets, "nVBFGenMatchedVBFJets/L");
-   tree -> Branch("nDTSegments", &nDTSegments, "nDTSegments/L");
-   tree -> Branch("nDTSegmentsStation1", &nDTSegmentsStation1, "nDTSegmentsStation1/L");
-   tree -> Branch("nDTSegmentsStation2", &nDTSegmentsStation2, "nDTSegmentsStation2/L");
-   tree -> Branch("nDTSegmentsStation3", &nDTSegmentsStation3, "nDTSegmentsStation3/L");
-   tree -> Branch("nDTSegmentsStation4", &nDTSegmentsStation4, "nDTSegmentsStation4/L");
-   tree -> Branch("nCSCSegments", &nCSCSegments, "nCSCSegments/L");
-   tree -> Branch("nMatchedDTsegmentstob", &nMatchedDTsegmentstob, "nMatchedDTsegmentstob/L");
-   tree -> Branch("nMatchedCSCsegmentstob", &nMatchedCSCsegmentstob, "nMatchedCSCsegmentstob/L");
-   tree -> Branch("nMatchedDTsegmentstoVBF", &nMatchedDTsegmentstoVBF, "nMatchedDTsegmentstoVBF/L");
-   tree -> Branch("nMatchedCSCsegmentstoVBF", &nMatchedCSCsegmentstoVBF, "nMatchedCSCsegmentstoVBF/L");
+   //tree -> Branch("nDTSegments", &nDTSegments, "nDTSegments/L");
+   //tree -> Branch("nDTSegmentsStation1", &nDTSegmentsStation1, "nDTSegmentsStation1/L");
+   //tree -> Branch("nDTSegmentsStation2", &nDTSegmentsStation2, "nDTSegmentsStation2/L");
+   //tree -> Branch("nDTSegmentsStation3", &nDTSegmentsStation3, "nDTSegmentsStation3/L");
+   //tree -> Branch("nDTSegmentsStation4", &nDTSegmentsStation4, "nDTSegmentsStation4/L");
+   //tree -> Branch("nCSCSegments", &nCSCSegments, "nCSCSegments/L");
+   //tree -> Branch("nMatchedDTsegmentstob", &nMatchedDTsegmentstob, "nMatchedDTsegmentstob/L");
+   //tree -> Branch("nMatchedCSCsegmentstob", &nMatchedCSCsegmentstob, "nMatchedCSCsegmentstob/L");
+   //tree -> Branch("nMatchedDTsegmentstoVBF", &nMatchedDTsegmentstoVBF, "nMatchedDTsegmentstoVBF/L");
+   //tree -> Branch("nMatchedCSCsegmentstoVBF", &nMatchedCSCsegmentstoVBF, "nMatchedCSCsegmentstoVBF/L");
    tree -> Branch("number_of_b_matched_to_CHSJets", &number_of_b_matched_to_CHSJets, "number_of_b_matched_to_CHSJets/L");
    tree -> Branch("number_of_b_matched_to_CaloJets", &number_of_b_matched_to_CaloJets, "number_of_b_matched_to_CaloJets/L");
    tree -> Branch("number_of_VBFGen_matched_to_CHSJets", &number_of_VBFGen_matched_to_CHSJets, "number_of_VBFGen_matched_to_CHSJets/L");
    tree -> Branch("number_of_VBFGen_matched_to_VBFJets", &number_of_VBFGen_matched_to_VBFJets, "number_of_VBFGen_matched_to_VBFJets/L");
-   tree -> Branch("number_of_b_matched_to_DTSegment4D", &number_of_b_matched_to_DTSegment4D, "number_of_b_matched_to_DTSegment4D/L");
-   tree -> Branch("number_of_b_matched_to_CSCSegment", &number_of_b_matched_to_CSCSegment, "number_of_b_matched_to_CSCSegment/L");
-   tree -> Branch("number_of_VBF_matched_to_CSCSegment", &number_of_VBF_matched_to_CSCSegment, "number_of_VBF_matched_to_CSCSegment/L");
-   tree -> Branch("number_of_VBF_matched_to_DTSegment4D", &number_of_VBF_matched_to_DTSegment4D, "number_of_VBF_matched_to_DTSegment4D/L");
-   tree -> Branch("n_segments_around_b_quark_0",&n_segments_around_b_quark_0, "n_segments_around_b_quark_0/I");
-   tree -> Branch("n_segments_around_b_quark_1",&n_segments_around_b_quark_1, "n_segments_around_b_quark_1/I");
-   tree -> Branch("n_segments_around_b_quark_2",&n_segments_around_b_quark_2, "n_segments_around_b_quark_2/I");
-   tree -> Branch("n_segments_around_b_quark_3",&n_segments_around_b_quark_3, "n_segments_around_b_quark_3/I");
+   //tree -> Branch("number_of_b_matched_to_DTSegment4D", &number_of_b_matched_to_DTSegment4D, "number_of_b_matched_to_DTSegment4D/L");
+   //tree -> Branch("number_of_b_matched_to_CSCSegment", &number_of_b_matched_to_CSCSegment, "number_of_b_matched_to_CSCSegment/L");
+   //tree -> Branch("number_of_VBF_matched_to_CSCSegment", &number_of_VBF_matched_to_CSCSegment, "number_of_VBF_matched_to_CSCSegment/L");
+   //tree -> Branch("number_of_VBF_matched_to_DTSegment4D", &number_of_VBF_matched_to_DTSegment4D, "number_of_VBF_matched_to_DTSegment4D/L");
+   //tree -> Branch("n_segments_around_b_quark_0",&n_segments_around_b_quark_0, "n_segments_around_b_quark_0/I");
+   //tree -> Branch("n_segments_around_b_quark_1",&n_segments_around_b_quark_1, "n_segments_around_b_quark_1/I");
+   //tree -> Branch("n_segments_around_b_quark_2",&n_segments_around_b_quark_2, "n_segments_around_b_quark_2/I");
+   //tree -> Branch("n_segments_around_b_quark_3",&n_segments_around_b_quark_3, "n_segments_around_b_quark_3/I");
    //tree -> Branch("nStandAloneMuons", &nStandAloneMuons, "nStandAloneMuons/L");
    //tree -> Branch("nDisplacedStandAloneMuons", &nDisplacedStandAloneMuons, "nDisplacedStandAloneMuons/L");
    //tree -> Branch("nMatchedStandAloneMuons", &nMatchedStandAloneMuons, "nMatchedStandAloneMuons/L");
-   //tree -> Branch("nMatchedDisplacedStandAloneMuons", &nMatchedDisplacedStandAloneMuons, "nMatchedDisplacedStandAloneMuons/L");
-   
-   tree -> Branch("Flag_BadPFMuon", &BadPFMuonFlag, "Flag_BadPFMuon/O");
-   tree -> Branch("Flag_BadChCand", &BadChCandFlag, "Flag_BadChCand/O");
+   //tree -> Branch("nMatchedDisplacedStandAloneMuons", &nMatchedDisplacedStandAloneMuons, "nMatchedDisplacedStandAloneMuons/L");   
+
    // Set trigger branches
    for(auto it = TriggerMap.begin(); it != TriggerMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());
    for(auto it = MetFiltersMap.begin(); it != MetFiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());
    //for(auto it = L1FiltersMap.begin(); it != L1FiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());
+
+   tree -> Branch("Flag_BadPFMuon", &BadPFMuonFlag, "Flag_BadPFMuon/O");
+   tree -> Branch("Flag_BadChCand", &BadChCandFlag, "Flag_BadChCand/O");
+   
+   tree->Branch("Flag2_globalSuperTightHalo2016Filter", &Flag2_globalSuperTightHalo2016Filter, "Flag2_globalSuperTightHalo2016Filter/O");
+   tree->Branch("Flag2_globalTightHalo2016Filter", &Flag2_globalTightHalo2016Filter, "Flag2_globalTightHalo2016Filter/O");
+   tree->Branch("Flag2_goodVertices", &Flag2_goodVertices, "Flag2_goodVertices/O");
+   tree->Branch("Flag2_EcalDeadCellTriggerPrimitiveFilter", &Flag2_EcalDeadCellTriggerPrimitiveFilter, "Flag2_EcalDeadCellTriggerPrimitiveFilter/O");
+   tree->Branch("Flag2_HBHENoiseFilter", &Flag2_HBHENoiseFilter, "Flag2_HBHENoiseFilter/O");
+   tree->Branch("Flag2_HBHEIsoNoiseFilter", &Flag2_HBHEIsoNoiseFilter, "Flag2_HBHEIsoNoiseFilter/O");
+   tree->Branch("Flag2_ecalBadCalibFilter", &Flag2_ecalBadCalibFilter, "Flag2_ecalBadCalibFilter/O");
+   tree->Branch("Flag2_eeBadScFilter", &Flag2_eeBadScFilter, "Flag2_eeBadScFilter/O");
+   tree->Branch("Flag2_BadPFMuonFilter", &Flag2_BadPFMuonFilter, "Flag2_BadPFMuonFilter/O");
+   tree->Branch("Flag2_BadChargedCandidateFilter", &Flag2_BadChargedCandidateFilter, "Flag2_BadChargedCandidateFilter/O");
 
    //tree -> Branch("ManualJets", &ManualJets);
    tree -> Branch("GenHiggs", &GenHiggs);
@@ -2907,6 +3461,7 @@ AODNtuplizer::beginJob()
 
    tree -> Branch("MEt", &MEt);
    tree -> Branch("Jets", &CHSJets);
+   tree -> Branch("FatJets", &CHSFatJets);
    //tree -> Branch("VBFPairJets", &VBFPairJets);//slim ntuples
    //tree -> Branch("ggHJet", &ggHJet);//slim ntuples
    //tree -> Branch("CaloJets", &CaloJets);//slim ntuples
@@ -2915,6 +3470,8 @@ AODNtuplizer::beginJob()
 
 
 }
+
+bool AODNtuplizer::pt_sorter(const pat::PackedCandidate& x, const pat::PackedCandidate& y) { return x.pt() > y.pt(); }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void 
