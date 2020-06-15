@@ -207,6 +207,13 @@ var_template = {
       "max" : 1000,
       "log" : True,
     },
+    "Jets.pt": {
+      "title" : "jets p_{T} (GeV)",
+      "nbins" : 50,#40
+      "min" : 0,
+      "max" : 1000,
+      "log" : True,
+    },
     "Jets[[N]].eta": {
       "title" : "jet [[N]] #eta",
       "nbins" : 50,
@@ -242,6 +249,60 @@ var_template = {
       "max" : 1000.,
       "log" : True,
     },
+    "Jets.alphaMax": {
+      "title" : "jets #alpha_{max}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    "Jets.gammaMaxET": {
+      "title" : "jets gammaMaxET",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 2.,
+      "log" : True,
+    },       
+    "Jets.minDeltaRPVTracks": {
+      "title" : "jets minDeltaRPVTracks",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    
+    "Jets.nPixelHitsMedian": {
+      "title" : "jets nPixelHitsMedian",
+      "nbins" : 15,
+      "min" : 0.-0.5,
+      "max" : 15.-0.5,
+      "log" : True,
+    },
+    
+    "Jets.nHitsMedian": {
+      "title" : "jets nHitsMedian",
+      "nbins" : 50,
+      "min" : 0.-0.5,
+      "max" : 50.-0.5,
+      "log" : True,
+    },
+    
+    "Jets.dxyMedian": {
+      "title" : "jets dxyMedian",
+      "nbins" : 50,
+      "min" : -20.,
+      "max" : 20.,
+      "log" : True,
+    },
+    
+    "Jets.dzMedian": {
+      "title" : "jets dzMedian",
+      "nbins" : 50,
+      "min" : -40.,
+      "max" : 40.,
+      "log" : True,
+    },
+      
     "Jets[[N]].sigIP2DMedian": {
       "title" : "jet [[N]] sigIP2DMedian",
       "nbins" : 50,
@@ -374,6 +435,13 @@ var_template = {
     #Jet energy fractions
     "Jets[[N]].cHadEFrac": {
       "title" : "jet [[N]] charged hadron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "Jets.cHadEFrac": {
+      "title" : "jets charged hadron energy fraction",
       "nbins" : 50,
       "min" : 0,
       "max" : 1,
@@ -881,6 +949,13 @@ var_template = {
         "max" : 20,
         "log" : True,
     },
+    "Jets.nSelectedTracks": {
+        "title" : "Number of selected tracks per jets",
+        "nbins" : 20,
+        "min" : 0-0.5,
+        "max" : 20-0.5,
+        "log" : True,
+    },
     "Jets[[N]].dRSVJet": {
         "title" : "dR between SV and jet",
         "nbins" : 51,
@@ -916,7 +991,192 @@ var_template = {
         "max" : 30,
         "log" : True,
     },
-
+    #EB rec hits
+    "Jets.nRecHitsEB": {
+        "title" : "nRecHitsEB jets",
+        "nbins" : 101,
+        "min" : 0-0.5,
+        "max" : 100-0.5,
+        "log" : True,
+    },
+    "Jets.energyRecHitsEB": {
+        "title" : "energyRecHitsEB jets",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 50,
+        "log" : True,
+    },
+    "Jets.timeRecHitsEB": {
+        "title" : "timeRecHitsEB jets",
+        "nbins" : 100,
+        "min" : -10,
+        "max" : 10,
+        "log" : True,
+    },
+    "Jets.xRecHitsEB": {
+        "title" : "xRecHitsEB jets",
+        "nbins" : 50,
+        "min" : -180,
+        "max" : 180,
+        "log" : True,
+    },
+    "Jets.yRecHitsEB": {
+        "title" : "yRecHitsEB jets",
+        "nbins" : 50,
+        "min" : -180,
+        "max" : 180,
+        "log" : True,
+    },
+    "Jets.zRecHitsEB": {
+        "title" : "zRecHitsEB jets",
+        "nbins" : 50,
+        "min" : -300,
+        "max" : 300,
+        "log" : True,
+    },
+    "Jets.radiusRecHitsEB": {
+        "title" : "radiusRecHitsEB jets",
+        "nbins" : 50,
+        "min" : 125,
+        "max" : 180,
+        "log" : True,
+    }, 
+    #EE rec hits
+    "Jets.nRecHitsEE": {
+        "title" : "nRecHitsEE jets",
+        "nbins" : 31,
+        "min" : 0-0.5,
+        "max" : 30-0.5,
+        "log" : True,
+    },
+    "Jets.energyRecHitsEE": {
+        "title" : "energyRecHitsEE jets",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 50,
+        "log" : True,
+    },
+    "Jets.timeRecHitsEE": {
+        "title" : "timeRecHitsEE jets",
+        "nbins" : 100,
+        "min" : -10,
+        "max" : 10,
+        "log" : True,
+    },
+    "Jets.xRecHitsEE": {
+        "title" : "xRecHitsEE jets",
+        "nbins" : 50,
+        "min" : -180,
+        "max" : 180,
+        "log" : True,
+    },
+    "Jets.yRecHitsEE": {
+        "title" : "yRecHitsEE jets",
+        "nbins" : 50,
+        "min" : -180,
+        "max" : 180,
+        "log" : True,
+    },
+    "Jets.zRecHitsEE": {
+        "title" : "zRecHitsEE jets",
+        "nbins" : 50,
+        "min" : -400,
+        "max" : 400,
+        "log" : True,
+    },
+    "Jets.radiusRecHitsEE": {
+        "title" : "radiusRecHitsEE jets",
+        "nbins" : 50,
+        "min" : 125,
+        "max" : 180,
+        "log" : True,
+    },         
+    "Jets.xLLP": {
+        "title" : "xLLP jets",
+        "nbins" : 50,
+        "min" : -180,
+        "max" : 180,
+        "log" : True,
+    },
+    "Jets.xGenb": {
+        "title" : "xGenb jets",
+        "nbins" : 50,
+        "min" : -140,
+        "max" : 140,
+        "log" : True,
+    },
+    "Jets.yLLP": {
+        "title" : "yLLP jets",
+        "nbins" : 50,
+        "min" : -180,
+        "max" : 180,
+        "log" : True,
+    },
+    "Jets.zLLP": {
+        "title" : "zLLP jets",
+        "nbins" : 50,
+        "min" : -450,
+        "max" : 450,
+        "log" : True,
+    },
+    "Jets.radiusLLP": {
+        "title" : "radiusLLP jets",
+        "nbins" : 50,
+        "min" : 30,
+        "max" : 300,
+        "log" : True,
+    },
+    #HB rec hits
+    "Jets.nRecHitsHB": {
+        "title" : "nRecHitsHB jets",
+        "nbins" : 51,
+        "min" : 0-0.5,
+        "max" : 50-0.5,
+        "log" : True,
+    },
+    "Jets.energyRecHitsHB": {
+        "title" : "energyRecHitsHB jets",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 50,
+        "log" : True,
+    },
+    "Jets.timeRecHitsHB": {
+        "title" : "timeRecHitsHB jets",
+        "nbins" : 100,
+        "min" : -10,
+        "max" : 10,
+        "log" : True,
+    },
+    "Jets.xRecHitsHB": {
+        "title" : "xRecHitsHB jets",
+        "nbins" : 50,
+        "min" : -290,
+        "max" : 290,
+        "log" : True,
+    },
+    "Jets.yRecHitsHB": {
+        "title" : "yRecHitsHB jets",
+        "nbins" : 50,
+        "min" : -290,
+        "max" : 290,
+        "log" : True,
+    },
+    "Jets.zRecHitsHB": {
+        "title" : "zRecHitsHB jets",
+        "nbins" : 50,
+        "min" : -450,
+        "max" : 450,
+        "log" : True,
+    },
+    "Jets.radiusRecHitsHB": {
+        "title" : "radiusRecHitsHB jets",
+        "nbins" : 50,
+        "min" : 175,
+        "max" : 290,
+        "log" : True,
+    }, 
+#nRecHitsEB(-1), timeRecHitsEB(-100.), timeRMSRecHitsEB(-1.), energyRecHitsEB(-1.), energyErrorRecHitsEB(-1.), xRecHitsEB(-1000.), yRecHitsEB(-1000.), zRecHitsEB(-1000.), radiusRecHitsEB
     #VBF Pair jets
     "VBFPairJets.VBFPairJets[[N]].pt": {
       "title" : "VBF pair jet [[N]] p_{T} (GeV)",
@@ -1063,7 +1323,7 @@ var_template = {
     },
 
     # FatJets variables
-    "FatJets.FatJets[[N]].isGenMatched": {
+    "FatJets[[N]].isGenMatched": {
       "title" : "AK8 jet [[N]] is gen matched",
       "nbins" : 2,
       "min" : -0.5,
@@ -1071,98 +1331,105 @@ var_template = {
       "log" : True,
     },
     #FatJets kinematics
-    "FatJets.FatJets[[N]].pt": {
+    "FatJets[[N]].pt": {
       "title" : "AK8 jet [[N]] p_{T} (GeV)",
       "nbins" : 40,#40
       "min" : 0,
       "max" : 400,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].eta": {
+    "FatJets.pt": {
+      "title" : "AK8 jets p_{T} (GeV)",
+      "nbins" : 40,#40
+      "min" : 170,
+      "max" : 1000,
+      "log" : True,
+    },    
+    "FatJets[[N]].eta": {
       "title" : "AK8 jet [[N]] #eta",
       "nbins" : 50,
       "min" : -3,
       "max" : 3,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].phi": {
+    "FatJets[[N]].phi": {
       "title" : "AK8 jet [[N]] #varphi",
       "nbins" : 60,
       "min" : -3.2,
       "max" : 3.2,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].mass": {
+    "FatJets[[N]].mass": {
       "title" : "AK8 jet [[N]] mass (GeV)",
       "nbins" : 50,
       "min" : 0,
       "max" : 100,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].CSV": {
+    "FatJets[[N]].CSV": {
       "title" : "AK8 jet [[N]] CSV",
       "nbins" : 50,
       "min" : 0,
       "max" : 1,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].pfBoostedDoubleSVAK8": {
+    "FatJets[[N]].pfBoostedDoubleSVAK8": {
       "title" : "AK8 jet [[N]] pfBoostedDoubleSVAK8",
       "nbins" : 50,
       "min" : 0,
       "max" : 1,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].alphaMax": {
+    "FatJets[[N]].alphaMax": {
       "title" : "AK8 jet [[N]] #alpha_{max}",
       "nbins" : 50,
       "min" : 0.,
       "max" : 1.,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].sigIP2DMedian": {
+    "FatJets[[N]].sigIP2DMedian": {
       "title" : "AK8 jet [[N]] sigIP2DMedian",
       "nbins" : 50,
       "min" : -5,#-50,
       "max" : 7,#50,
       "log" : True,
     },
-    "-log(abs(FatJets.FatJets[[N]].sigIP2DMedian))": {
+    "-log(abs(FatJets[[N]].sigIP2DMedian))": {
       "title" : "AK8 jet [[N]] sigIP2DMedian",
       "nbins" : 100,
       "min" : -50,
       "max" : 50,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].theta2DMedian": {
+    "FatJets[[N]].theta2DMedian": {
       "title" : "AK8 jet [[N]] theta2DMedian",
       "nbins" : 50,
       "min" : 0,
       "max" : 1,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].flavour": {
+    "FatJets[[N]].flavour": {
       "title" : "AK8 jet [[N]] flavour",
       "nbins" : 25,
       "min" : -0.5,
       "max" : 24.5,
       "log" : False,
     },
-#    "FatJets.FatJets[[N]].FracCal": {
+#    "FatJets[[N]].FracCal": {
 #      "title" : "AK8 jet [[N]] ECAL energy/HCAL energy",
 #      "nbins" : 50,
 #      "min" : 0,
 #      "max" : 10,
 #      "log" : True,
 #    },
-#    "FatJets.FatJets[[N]].hcalE": {
+#    "FatJets[[N]].hcalE": {
 #      "title" : "AK8 jet [[N]] HCAL energy",
 #      "nbins" : 50,
 #      "min" : 0,
 #      "max" : 500,
 #      "log" : True,
 #    },
-#    "FatJets.FatJets[[N]].ecalE": {
+#    "FatJets[[N]].ecalE": {
 #      "title" : "AK8 jet [[N]] ECAL energy",
 #      "nbins" : 50,
 #      "min" : 0,
@@ -1170,14 +1437,14 @@ var_template = {
 #      "log" : True,
 #    },
     #FatJets constituents
-    "FatJets.FatJets[[N]].nConstituents": {
+    "FatJets[[N]].nConstituents": {
       "title" : "AK8 jet [[N]] number of jet constituents",
       "nbins" : 50,
       "min" : -0.5,
       "max" : 99.5+50,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nTrackConstituents": {
+    "FatJets[[N]].nTrackConstituents": {
       "title" : "AK8 jet [[N]] number of jet constituents with tracks",
       #"title" : "Leading jet: n. of constituents with tracks",
       "nbins" : 50,
@@ -1185,7 +1452,7 @@ var_template = {
       "max" : 49.5+50,
       "log" : True,
     },
-    "(FatJets.FatJets[[N]].nTrackConstituents)/(FatJets.FatJets[[N]].nConstituents)": {
+    "(FatJets[[N]].nTrackConstituents)/(FatJets[[N]].nConstituents)": {
       "title" : "percentage of jet [[N]] constituents with tracks",
       "nbins" : 50,
       "min" : 0.,
@@ -1193,35 +1460,35 @@ var_template = {
       "log" : True,
     },
     #FatJets energies
-    "FatJets.FatJets[[N]].cHadE": {
+    "FatJets[[N]].cHadE": {
       "title" : "AK8 jet [[N]] charged hadron energy",
       "nbins" : 50,
       "min" : 0,
       "max" : 200,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nHadE": {
+    "FatJets[[N]].nHadE": {
       "title" : "AK8 jet [[N]] neutral hadron energy",
       "nbins" : 50,
       "min" : 0,
       "max" : 200,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].muE": {
+    "FatJets[[N]].muE": {
       "title" : "AK8 jet [[N]] #mu energy",
       "nbins" : 20,
       "min" : 0,
       "max" : 20,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].eleE": {
+    "FatJets[[N]].eleE": {
       "title" : "AK8 jet [[N]] electron energy",
       "nbins" : 50,
       "min" : 0,
       "max" : 50,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].photonE": {
+    "FatJets[[N]].photonE": {
       "title" : "AK8 jet [[N]] photon energy",
       "nbins" : 50,
       "min" : 0,
@@ -1229,35 +1496,42 @@ var_template = {
       "log" : True,
     },
     #FatJets energy fractions
-    "FatJets.FatJets[[N]].cHadEFrac": {
+    "FatJets[[N]].cHadEFrac": {
       "title" : "AK8 jet [[N]] charged hadron energy fraction",
       "nbins" : 50,
       "min" : 0,
       "max" : 1,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nHadEFrac": {
+    "FatJets.cHadEFrac": {
+      "title" : "AK8 jets charged hadron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "FatJets[[N]].nHadEFrac": {
       "title" : "AK8 jet [[N]] neutral hadron energy fraction",
       "nbins" : 50,
       "min" : 0,
       "max" : 1,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].muEFrac": {
+    "FatJets[[N]].muEFrac": {
       "title" : "AK8 jet [[N]] #mu energy fraction",
       "nbins" : 50,
       "min" : 0,
       "max" : 0.1,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].eleEFrac": {
+    "FatJets[[N]].eleEFrac": {
       "title" : "AK8 jet [[N]] electron energy fraction",
       "nbins" : 50,
       "min" : 0,
       "max" : 0.1,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].photonEFrac": {
+    "FatJets[[N]].photonEFrac": {
       "title" : "AK8 jet [[N]] photon energy fraction",
       "nbins" : 50,
       "min" : 0,
@@ -1265,56 +1539,56 @@ var_template = {
       "log" : True,
     },
     #FatJets multiplicities
-    "FatJets.FatJets[[N]].eleMulti": {
+    "FatJets[[N]].eleMulti": {
       "title" : "AK8 jet [[N]] electron multiplicity",
       "nbins" : 20,
       "min" : 0,
       "max" : 20,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].muMulti": {
+    "FatJets[[N]].muMulti": {
       "title" : "AK8 jet [[N]] #mu multiplicity",
       "nbins" : 20,
       "min" : 0,
       "max" : 20,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].photonMulti": {
+    "FatJets[[N]].photonMulti": {
       "title" : "AK8 jet [[N]] photon multiplicity",
       "nbins" : 50,
       "min" : 0,
       "max" : 50,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].cHadMulti": {
+    "FatJets[[N]].cHadMulti": {
       "title" : "AK8 jet [[N]] charged hadron multiplicity",
       "nbins" : 50,
       "min" : 0,
       "max" : 50,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nHadMulti": {
+    "FatJets[[N]].nHadMulti": {
       "title" : "AK8 jet [[N]] neutral hadron multiplicity",
       "nbins" : 50,
       "min" : 0,
       "max" : 50,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].cMulti": {
+    "FatJets[[N]].cMulti": {
       "title" : "AK8 jet [[N]] charged multiplicity",
       "nbins" : 50,
       "min" : 0,
       "max" : 50,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nMulti": {
+    "FatJets[[N]].nMulti": {
       "title" : "AK8 jet [[N]] neutral multiplicity",
       "nbins" : 50,
       "min" : 0,
       "max" : 50,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].npr": {
+    "FatJets[[N]].npr": {
       "title" : "AK8 jet [[N]] number of components",
       "nbins" : 100,
       "min" : 0,
@@ -1322,49 +1596,49 @@ var_template = {
       "log" : True,
     },
     #FatJets multiplicity fractions
-    "FatJets.FatJets[[N]].eleMultiFrac": {
+    "FatJets[[N]].eleMultiFrac": {
       "title" : "AK8 jet [[N]] electron multiplicity fraction",
       "nbins" : 51,
       "min" : -0.01,
       "max" : 1.01,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].muMultiFrac": {
+    "FatJets[[N]].muMultiFrac": {
       "title" : "AK8 jet [[N]] #mu multiplicity fraction",
       "nbins" : 51,
       "min" : -0.01,
       "max" : 1.01,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].photonMultiFrac": {
+    "FatJets[[N]].photonMultiFrac": {
       "title" : "AK8 jet [[N]] photon multiplicity fraction",
       "nbins" : 51,
       "min" : -0.01,
       "max" : 1.01,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].cHadMultiFrac": {
+    "FatJets[[N]].cHadMultiFrac": {
       "title" : "AK8 jet [[N]] charged hadron multiplicity fraction",
       "nbins" : 51,
       "min" : -0.01,
       "max" : 1.01,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nHadMultiFrac": {
+    "FatJets[[N]].nHadMultiFrac": {
       "title" : "AK8 jet [[N]] neutral hadron multiplicity fraction",
       "nbins" : 51,
       "min" : -0.01,
       "max" : 1.01,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].cMultiFrac": {
+    "FatJets[[N]].cMultiFrac": {
       "title" : "AK8 jet [[N]] charged multiplicity fraction",
       "nbins" : 51,
       "min" : -0.01,
       "max" : 1.01,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nMultiFrac": {
+    "FatJets[[N]].nMultiFrac": {
       "title" : "AK8 jet [[N]] neutral multiplicity fraction",
       "nbins" : 51,
       "min" : -0.01,
@@ -1372,14 +1646,28 @@ var_template = {
       "log" : True,
     },
     #FatJets substructure
-    "FatJets.FatJets[[N]].chsTau21": {
+    "FatJets[[N]].chsTau21": {
       "title" : "AK8 jet [[N]] CHS #tau_{2}/#tau_{1}",
-      "nbins" : 50,
+      "nbins" : 25,
       "min" : 0.,
       "max" : 1.,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nSoftDropSubJets": {
+    "FatJets[[N]].puppiTau21": {
+      "title" : "AK8 jet [[N]] puppi #tau_{2}/#tau_{1}",
+      "nbins" : 25,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    "FatJets.puppiTau21": {
+      "title" : "AK8 jets puppi #tau_{2}/#tau_{1}",
+      "nbins" : 25,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },    
+    "FatJets[[N]].nSoftDropSubJets": {
       "title" : "AK8 jet [[N]] : n. CHS softdrop sub-jets",
       "nbins" : 4,
       "min" : -0.5,
@@ -1387,42 +1675,42 @@ var_template = {
       "log" : True,
     },
     #FatJets tracks hits
-    "FatJets.FatJets[[N]].nPixelHitsMedian": {
+    "FatJets[[N]].nPixelHitsMedian": {
       "title" : "AK8 jet [[N]] median number of pixel hits",
       "nbins" : 10,
       "min" : -0.5,
       "max" : 9.5,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nHitsMedian": {
+    "FatJets[[N]].nHitsMedian": {
       "title" : "AK8 jet [[N]] median number of tracker hits",
       "nbins" : 20+5,
       "min" : -0.5,
       "max" : 19.5+5,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nTracks0PixelHits": {
+    "FatJets[[N]].nTracks0PixelHits": {
       "title" : "AK8 jet [[N]] number of tracks with 0 pixel hits",
       "nbins" : 20,
       "min" : -0.5,
       "max" : 19.5,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nTracks1PixelHit": {
+    "FatJets[[N]].nTracks1PixelHit": {
       "title" : "AK8 jet [[N]] number of tracks with 1 pixel hits",
       "nbins" : 40,
       "min" : -0.5,
       "max" : 39.5,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nTracks2PixelHits": {
+    "FatJets[[N]].nTracks2PixelHits": {
       "title" : "AK8 jet [[N]] number of tracks with 2 pixel hits",
       "nbins" : 40,
       "min" : -0.5,
       "max" : 39.5,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nTracks3PixelHits": {
+    "FatJets[[N]].nTracks3PixelHits": {
       "title" : "AK8 jet [[N]] number of tracks with 3 pixel hits",
       #"title" : "Leading jet: n. of tracks with 3 pixel hits",
       "nbins" : 40-10,
@@ -1430,63 +1718,63 @@ var_template = {
       "max" : 39.5-10,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nTracks4PixelHits": {
+    "FatJets[[N]].nTracks4PixelHits": {
       "title" : "AK8 jet [[N]] number of tracks with 4 pixel hits",
       "nbins" : 40,
       "min" : -0.5,
       "max" : 39.5,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nTracks5PixelHits": {
+    "FatJets[[N]].nTracks5PixelHits": {
       "title" : "AK8 jet [[N]] number of tracks with 5 pixel hits",
       "nbins" : 40,
       "min" : -0.5,
       "max" : 39.5,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nTracks6PixelHits": {
+    "FatJets[[N]].nTracks6PixelHits": {
       "title" : "AK8 jet [[N]] number of tracks with 6 pixel hits",
       "nbins" : 40,
       "min" : -0.5,
       "max" : 39.5,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nTracksLarger5PixelHits": {
+    "FatJets[[N]].nTracksLarger5PixelHits": {
       "title" : "AK8 jet [[N]] number of tracks with more than 5 pixel hits",
       "nbins" : 10,
       "min" : -0.5,
       "max" : 9.5,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nTracksLarger6PixelHits": {
+    "FatJets[[N]].nTracksLarger6PixelHits": {
       "title" : "AK8 jet [[N]] number of tracks with more than 6 pixel hits",
       "nbins" : 10,
       "min" : -0.5,
       "max" : 9.5,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nTracks0LostInnerHits": {
+    "FatJets[[N]].nTracks0LostInnerHits": {
       "title" : "AK8 jet [[N]] number of tracks with 0 lost inner hits",
       "nbins" : 40,
       "min" : -0.5,
       "max" : 39.5,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nTracks1LostInnerHit": {
+    "FatJets[[N]].nTracks1LostInnerHit": {
       "title" : "AK8 jet [[N]] number of tracks with 1 lost inner hit",
       "nbins" : 40,
       "min" : -0.5,
       "max" : 39.5,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nTracks2LostInnerHits": {
+    "FatJets[[N]].nTracks2LostInnerHits": {
       "title" : "AK8 jet [[N]] number of tracks with 2 lost inner hits",
       "nbins" : 40,
       "min" : -0.5,
       "max" : 39.5,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].nTracksLarger2LostInnerHits": {
+    "FatJets[[N]].nTracksLarger2LostInnerHits": {
       "title" : "AK8 jet [[N]] number of tracks with more than 2 lost inner hits",
       "nbins" : 40,
       "min" : -0.5,
@@ -1494,21 +1782,213 @@ var_template = {
       "log" : True,
     },
 
-    "FatJets.FatJets[[N]].CHSsoftdropMass": {
+    "FatJets[[N]].CHSsoftdropMass": {
       "title" : "AK8 jet [[N]] CHS softdrop mass (GeV)",
       "nbins" : 50,
       "min" : 0,
       "max" : 100,
       "log" : True,
     },
-    "FatJets.FatJets[[N]].CHSsoftdropMassCorr": {
+    "FatJets.softdropPuppiMass": {
+      "title" : "AK8 jets softdrop puppi mass (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 400,
+      "log" : True,
+    },
+    "FatJets[[N]].CHSsoftdropMassCorr": {
       "title" : "AK8 jet [[N]] CHS softdrop mass corr  (GeV)",
       "nbins" : 50,
       "min" : 0,
       "max" : 100,
       "log" : True,
     },
-#    "FatJets.FatJets[N].pt": {
+    #EB rec hits
+    "FatJets.nRecHitsEB": {
+        "title" : "nRecHitsEB AK8 jets",
+        "nbins" : 101,
+        "min" : 0-0.5,
+        "max" : 100-0.5,
+        "log" : True,
+    },
+    "FatJets.energyRecHitsEB": {
+        "title" : "energyRecHitsEB AK8 jets",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 50,
+        "log" : True,
+    },
+    "FatJets.timeRecHitsEB": {
+        "title" : "timeRecHitsEB AK8 jets",
+        "nbins" : 100,
+        "min" : -10,
+        "max" : 10,
+        "log" : True,
+    },
+    "FatJets.xRecHitsEB": {
+        "title" : "xRecHitsEB AK8 jets",
+        "nbins" : 50,
+        "min" : -180,
+        "max" : 180,
+        "log" : True,
+    },
+    "FatJets.yRecHitsEB": {
+        "title" : "yRecHitsEB AK8 jets",
+        "nbins" : 50,
+        "min" : -180,
+        "max" : 180,
+        "log" : True,
+    },
+    "FatJets.zRecHitsEB": {
+        "title" : "zRecHitsEB AK8 jets",
+        "nbins" : 50,
+        "min" : -300,
+        "max" : 300,
+        "log" : True,
+    },
+    "FatJets.radiusRecHitsEB": {
+        "title" : "radiusRecHitsEB AK8 jets",
+        "nbins" : 50,
+        "min" : 125,
+        "max" : 180,
+        "log" : True,
+    },    
+    #EE rec hits
+    "FatJets.nRecHitsEE": {
+        "title" : "nRecHitsEE AK8 jets",
+        "nbins" : 31,
+        "min" : 0-0.5,
+        "max" : 30-0.5,
+        "log" : True,
+    },
+    "FatJets.energyRecHitsEE": {
+        "title" : "energyRecHitsEE AK8 jets",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 50,
+        "log" : True,
+    },
+    "FatJets.timeRecHitsEE": {
+        "title" : "timeRecHitsEE AK8 jets",
+        "nbins" : 100,
+        "min" : -10,
+        "max" : 10,
+        "log" : True,
+    },
+    "FatJets.xRecHitsEE": {
+        "title" : "xRecHitsEE AK8 jets",
+        "nbins" : 50,
+        "min" : -180,
+        "max" : 180,
+        "log" : True,
+    },
+    "FatJets.yRecHitsEE": {
+        "title" : "yRecHitsEE AK8 jets",
+        "nbins" : 50,
+        "min" : -180,
+        "max" : 180,
+        "log" : True,
+    },
+    "FatJets.zRecHitsEE": {
+        "title" : "zRecHitsEE AK8 jets",
+        "nbins" : 50,
+        "min" : -300,
+        "max" : 300,
+        "log" : True,
+    },
+    "FatJets.radiusRecHitsEE": {
+        "title" : "radiusRecHitsEE AK8 jets",
+        "nbins" : 50,
+        "min" : 125,
+        "max" : 180,
+        "log" : True,
+    },       
+    "FatJets.xLLP": {
+        "title" : "xLLP AK8 jets",
+        "nbins" : 50,
+        "min" : -180,
+        "max" : 180,
+        "log" : True,
+    },
+    "FatJets.xGenb": {
+        "title" : "xGenb AK8 jets",
+        "nbins" : 50,
+        "min" : -140,
+        "max" : 140,
+        "log" : True,
+    },
+    "FatJets.yLLP": {
+        "title" : "yLLP AK8 jets",
+        "nbins" : 50,
+        "min" : -180,
+        "max" : 180,
+        "log" : True,
+    },
+    "FatJets.zLLP": {
+        "title" : "zLLP AK8 jets",
+        "nbins" : 50,
+        "min" : -450,
+        "max" : 450,
+        "log" : True,
+    },
+    "FatJets.radiusLLP": {
+        "title" : "radiusLLP AK8 jets",
+        "nbins" : 50,
+        "min" : 30,
+        "max" : 300,
+        "log" : True,
+    },
+    #HB rec hits
+    "FatJets.nRecHitsHB": {
+        "title" : "nRecHitsHB AK8 jets",
+        "nbins" : 51,
+        "min" : 0-0.5,
+        "max" : 50-0.5,
+        "log" : True,
+    },
+    "FatJets.energyRecHitsHB": {
+        "title" : "energyRecHitsHB AK8 jets",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 50,
+        "log" : True,
+    },
+    "FatJets.timeRecHitsHB": {
+        "title" : "timeRecHitsHB AK8 jets",
+        "nbins" : 100,
+        "min" : -10,
+        "max" : 10,
+        "log" : True,
+    },
+    "FatJets.xRecHitsHB": {
+        "title" : "xRecHitsHB AK8 jets",
+        "nbins" : 50,
+        "min" : -290,
+        "max" : 290,
+        "log" : True,
+    },
+    "FatJets.yRecHitsHB": {
+        "title" : "yRecHitsHB AK8 jets",
+        "nbins" : 50,
+        "min" : -290,
+        "max" : 290,
+        "log" : True,
+    },
+    "FatJets.zRecHitsHB": {
+        "title" : "zRecHitsHB AK8 jets",
+        "nbins" : 50,
+        "min" : -450,
+        "max" : 450,
+        "log" : True,
+    },
+    "FatJets.radiusRecHitsHB": {
+        "title" : "radiusRecHitsHB AK8 jets",
+        "nbins" : 50,
+        "min" : 175,
+        "max" : 290,
+        "log" : True,
+    }, 
+#    "FatJets[N].pt": {
 #      "title" : "AK8 jet [[N]] p_{T} (GeV)",
 #      "nbins" : 40,
 #      "min" : 200,
@@ -1890,8 +2370,8 @@ var_template = {
     "MEt.pt": {
       "title" : "E_{T}^{miss} (GeV)",
       "nbins" : 50,
-      "min" : 0,
-      "max" : 1000,
+      "min" : 100,
+      "max" : 600,
       "log" : True,
     },
     "MEt.sign": {
@@ -1958,11 +2438,32 @@ var_template = {
       "max" : 1000,
       "log" : True,
     },
-    "GenHiggs.pt": {
-      "title" : "gen Higgs p_{T} (GeV)",
+    "GenLLPs[[N]].dRdaughters": {
+      "title" : "gen #DeltaR daughters of long lived particle [N] (GeV)",
       "nbins" : 40,
       "min" : 0,
-      "max" : 400,
+      "max" : 1000,
+      "log" : True,
+    },
+    "GenLLPs.dRdaughters": {
+      "title" : "gen #DeltaR daughters of long lived particles (GeV)",
+      "nbins" : 40,
+      "min" : 0,
+      "max" : 5,
+      "log" : True,
+    },
+    "GenHiggs.dRdaughters": {
+      "title" : "gen #DeltaR daughters of Higgs-like particles (GeV)",
+      "nbins" : 40,
+      "min" : 0,
+      "max" : 5,
+      "log" : True,
+    },
+    "GenHiggs.pt": {
+      "title" : "gen Higgs-like p_{T} (GeV)",
+      "nbins" : 40,
+      "min" : 0,
+      "max" : 1000,
       "log" : True,
     },
     "GenHiggs[[N]].pt": {
@@ -2263,6 +2764,7 @@ for n, v in var_template.iteritems():
       "max" : 1,
       "log" : True,
     },
+    
     "Jets.sigIP2DMedian": {
       "title" : "all jets sigIP2DMedian",
       "nbins" : 100,
