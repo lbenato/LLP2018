@@ -22,7 +22,7 @@ void ObjectsFormat::FillElectronType(LeptonType& I, const pat::Electron* R, bool
     I.ip3d        = R->dB(pat::Electron::PV3D);
     I.sip3d       = R->dB(pat::Electron::PV3D)/R->edB(pat::Electron::PV3D);
     I.nPixelHits  = R->gsfTrack()->hitPattern().numberOfValidPixelHits();
-    I.dPhi_met    = R->hasUserFloat("dPhi_met") ? R->userFloat("dPhi_met") : -1.;
+    I.dPhi_met    = R->hasUserFloat("dPhi_met") ? R->userFloat("dPhi_met") : -99.;
     I.charge      = R->charge();
     I.pdgId       = R->pdgId();
     I.isElectron  = true;
@@ -70,7 +70,7 @@ void ObjectsFormat::FillMuonType(LeptonType& I, const pat::Muon* R, bool isMC) {
     I.ip3d        = R->dB(pat::Muon::PV3D);//not working
     I.sip3d       = R->dB(pat::Muon::PV3D)/R->edB(pat::Muon::PV3D);//not working
     I.nPixelHits  = -1.;//R->innerTrack()->hitPattern().numberOfValidPixelHits();
-    I.dPhi_met    = R->hasUserFloat("dPhi_met") ? R->userFloat("dPhi_met") : -1.;
+    I.dPhi_met    = R->hasUserFloat("dPhi_met") ? R->userFloat("dPhi_met") : -99.;
     I.charge      = R->charge();
     I.pdgId       = R->pdgId();
     I.isElectron  = false;
@@ -102,7 +102,7 @@ void ObjectsFormat::ResetLeptonType(LeptonType& I) {
     I.ip3d        = -99.;
     I.sip3d       = -99.;
     I.nPixelHits  = -1.;
-    I.dPhi_met    = -1.;
+    I.dPhi_met    = -99.;
     I.charge      = 0;
     I.pdgId       = 0;
     I.isElectron  = false;
@@ -253,7 +253,7 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     I.energyRaw   = R->correctedJet(0).energy();
     I.ptRaw       = R->correctedJet(0).pt();
     I.ptUnc       = R->hasUserFloat("JESUncertainty") ? R->userFloat("JESUncertainty") : -1;
-    //I.dPhi_met    = R->hasUserFloat("dPhi_met") ? R->userFloat("dPhi_met") : -1.;
+    I.dPhi_met    = R->hasUserFloat("dPhi_met") ? R->userFloat("dPhi_met") : -99.;
     //I.dPhi_Jet1   = R->hasUserFloat("dPhi_Jet1") ? R->userFloat("dPhi_Jet1") : -1.;
     //I.puId        = R->hasUserFloat("pileupJetId:fullDiscriminant")? R->userFloat("pileupJetId:fullDiscriminant") : -1.; //-1.; // FIXME
     I.CSV         = R->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
@@ -360,7 +360,21 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     I.isGenMatched = R->hasUserInt("isGenMatched") ? R->userInt("isGenMatched") : 0;
     I.isGenMatchedCaloCorr = R->hasUserInt("isGenMatchedCaloCorr") ? R->userInt("isGenMatchedCaloCorr") : 0;
     I.isGenMatchedLLPAccept = R->hasUserInt("isGenMatchedLLPAccept") ? R->userInt("isGenMatchedLLPAccept") : 0;
-    I.isGenMatchedCaloCorrLLPAccept = R->hasUserInt("isGenMatchedCaloCorrLLPAccept") ? R->userInt("isGenMatchedCaloCorrLLPAccept") : 0;  
+    I.isGenMatchedCaloCorrLLPAccept = R->hasUserInt("isGenMatchedCaloCorrLLPAccept") ? R->userInt("isGenMatchedCaloCorrLLPAccept") : 0;
+    I.radiusLLP = R->hasUserFloat("radiusLLP") ? R->userFloat("radiusLLP") : -1000;
+    I.xLLP = R->hasUserFloat("xLLP") ? R->userFloat("xLLP") : -10000;
+    I.yLLP = R->hasUserFloat("yLLP") ? R->userFloat("yLLP") : -10000;
+    I.zLLP = R->hasUserFloat("zLLP") ? R->userFloat("zLLP") : -10000;
+    I.radiusLLPCaloCorr = R->hasUserFloat("radiusLLPCaloCorr") ? R->userFloat("radiusLLPCaloCorr") : -1000;
+    I.xLLPCaloCorr = R->hasUserFloat("xLLPCaloCorr") ? R->userFloat("xLLPCaloCorr") : -10000;
+    I.yLLPCaloCorr = R->hasUserFloat("yLLPCaloCorr") ? R->userFloat("yLLPCaloCorr") : -10000;
+    I.zLLPCaloCorr = R->hasUserFloat("zLLPCaloCorr") ? R->userFloat("zLLPCaloCorr") : -10000;
+    I.xGenb = R->hasUserFloat("xGenb") ? R->userFloat("xGenb") : -10000;
+    I.yGenb = R->hasUserFloat("yGenb") ? R->userFloat("yGenb") : -10000;
+    I.zGenb = R->hasUserFloat("zGenb") ? R->userFloat("zGenb") : -10000;
+    I.xGenbCaloCorr = R->hasUserFloat("xGenbCaloCorr") ? R->userFloat("xGenbCaloCorr") : -10000;
+    I.yGenbCaloCorr = R->hasUserFloat("yGenbCaloCorr") ? R->userFloat("yGenbCaloCorr") : -10000;
+    I.zGenbCaloCorr = R->hasUserFloat("zGenbCaloCorr") ? R->userFloat("zGenbCaloCorr") : -10000;
     I.isVBFGenMatched = R->hasUserInt("isVBFGenMatched") ? R->userInt("isVBFGenMatched") : 0;
     //track, old implementation
     I.alphaMaxOld    = R->hasUserFloat("alphaMaxOld") ? R->userFloat("alphaMaxOld") : -100.;
@@ -475,11 +489,45 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     I.nTrackConstituentsWithTrackDetails = R->hasUserInt("nTrackConstituentsWithTrackDetails") ? R->userInt("nTrackConstituentsWithTrackDetails") : -1;
     I.nTrackConstituentsWithTrackDetailsPtLarger0p95 = R->hasUserInt("nTrackConstituentsWithTrackDetailsPtLarger0p95") ? R->userInt("nTrackConstituentsWithTrackDetailsPtLarger0p95") : -1;
     I.nMatchedGenBquarks = R->hasUserInt("nMatchedGenBquarks") ? R->userInt("nMatchedGenBquarks") : -1;
-    I.nRecHits = R->hasUserInt("nRecHits") ? R->userInt("nRecHits") : 0;
-    I.timeRecHits = R->hasUserFloat("timeRecHits") ? R->userFloat("timeRecHits") : 0.;
-    I.timeRMSRecHits = R->hasUserFloat("timeRMSRecHits") ? R->userFloat("timeRMSRecHits") : 0.;
-    I.energyRecHits = R->hasUserFloat("energyRecHits") ? R->userFloat("energyRecHits") : 0.;
-    I.energyErrorRecHits = R->hasUserFloat("energyErrorRecHits") ? R->userFloat("energyErrorRecHits") : 0.;
+    I.nMatchedGenBquarksCaloCorr = R->hasUserInt("nMatchedGenBquarksCaloCorr") ? R->userInt("nMatchedGenBquarksCaloCorr") : -1;
+    I.nRecHitsEB = R->hasUserInt("nRecHitsEB") ? R->userInt("nRecHitsEB") : -1;
+    I.timeRecHitsEB = R->hasUserFloat("timeRecHitsEB") ? R->userFloat("timeRecHitsEB") : -100.;
+    I.timeRMSRecHitsEB = R->hasUserFloat("timeRMSRecHitsEB") ? R->userFloat("timeRMSRecHitsEB") : -1.;
+    I.energyRecHitsEB = R->hasUserFloat("energyRecHitsEB") ? R->userFloat("energyRecHitsEB") : -1.;
+    I.energyErrorRecHitsEB = R->hasUserFloat("energyErrorRecHitsEB") ? R->userFloat("energyErrorRecHitsEB") : -1.;
+    I.xRecHitsEB = R->hasUserFloat("xRecHitsEB") ? R->userFloat("xRecHitsEB") : -100000.;
+    I.yRecHitsEB = R->hasUserFloat("yRecHitsEB") ? R->userFloat("yRecHitsEB") : -100000.;
+    I.zRecHitsEB = R->hasUserFloat("zRecHitsEB") ? R->userFloat("zRecHitsEB") : -100000.;
+    I.radiusRecHitsEB = R->hasUserFloat("radiusRecHitsEB") ? R->userFloat("radiusRecHitsEB") : -100000.;
+
+    I.nRecHitsEE = R->hasUserInt("nRecHitsEE") ? R->userInt("nRecHitsEE") : -1;
+    I.timeRecHitsEE = R->hasUserFloat("timeRecHitsEE") ? R->userFloat("timeRecHitsEE") : -100.;
+    I.timeRMSRecHitsEE = R->hasUserFloat("timeRMSRecHitsEE") ? R->userFloat("timeRMSRecHitsEE") : -1.;
+    I.energyRecHitsEE = R->hasUserFloat("energyRecHitsEE") ? R->userFloat("energyRecHitsEE") : -1.;
+    I.energyErrorRecHitsEE = R->hasUserFloat("energyErrorRecHitsEE") ? R->userFloat("energyErrorRecHitsEE") : -1.;
+    I.xRecHitsEE = R->hasUserFloat("xRecHitsEE") ? R->userFloat("xRecHitsEE") : -100000.;
+    I.yRecHitsEE = R->hasUserFloat("yRecHitsEE") ? R->userFloat("yRecHitsEE") : -100000.;
+    I.zRecHitsEE = R->hasUserFloat("zRecHitsEE") ? R->userFloat("zRecHitsEE") : -100000.;
+    I.radiusRecHitsEE = R->hasUserFloat("radiusRecHitsEE") ? R->userFloat("radiusRecHitsEE") : -100000.;
+
+    I.nRecHitsHB = R->hasUserInt("nRecHitsHB") ? R->userInt("nRecHitsHB") : -1;
+    I.timeRecHitsHB = R->hasUserFloat("timeRecHitsHB") ? R->userFloat("timeRecHitsHB") : -100.;
+    I.timeRMSRecHitsHB = R->hasUserFloat("timeRMSRecHitsHB") ? R->userFloat("timeRMSRecHitsHB") : -1.;
+    I.energyRecHitsHB = R->hasUserFloat("energyRecHitsHB") ? R->userFloat("energyRecHitsHB") : -1.;
+    I.energyErrorRecHitsHB = R->hasUserFloat("energyErrorRecHitsHB") ? R->userFloat("energyErrorRecHitsHB") : -1.;
+    I.xRecHitsHB = R->hasUserFloat("xRecHitsHB") ? R->userFloat("xRecHitsHB") : -1000.;
+    I.yRecHitsHB = R->hasUserFloat("yRecHitsHB") ? R->userFloat("yRecHitsHB") : -1000.;
+    I.zRecHitsHB = R->hasUserFloat("zRecHitsHB") ? R->userFloat("zRecHitsHB") : -1000.;
+    I.radiusRecHitsHB = R->hasUserFloat("radiusRecHitsHB") ? R->userFloat("radiusRecHitsHB") : -1000.;
+    I.nRecHitsHE = R->hasUserInt("nRecHitsHE") ? R->userInt("nRecHitsHE") : -1;
+    I.timeRecHitsHE = R->hasUserFloat("timeRecHitsHE") ? R->userFloat("timeRecHitsHE") : -100.;
+    I.timeRMSRecHitsHE = R->hasUserFloat("timeRMSRecHitsHE") ? R->userFloat("timeRMSRecHitsHE") : -1.;
+    I.energyRecHitsHE = R->hasUserFloat("energyRecHitsHE") ? R->userFloat("energyRecHitsHE") : -1.;
+    I.energyErrorRecHitsHE = R->hasUserFloat("energyErrorRecHitsHE") ? R->userFloat("energyErrorRecHitsHE") : -1.;
+    I.xRecHitsHE = R->hasUserFloat("xRecHitsHE") ? R->userFloat("xRecHitsHE") : -1000.;
+    I.yRecHitsHE = R->hasUserFloat("yRecHitsHE") ? R->userFloat("yRecHitsHE") : -1000.;
+    I.zRecHitsHE = R->hasUserFloat("zRecHitsHE") ? R->userFloat("zRecHitsHE") : -1000.;
+    I.radiusRecHitsHE = R->hasUserFloat("radiusRecHitsHE") ? R->userFloat("radiusRecHitsHE") : -1000.;
     I.pfXWP0p01   = R->hasUserFloat("pfXWP0p01") ? R->userFloat("pfXWP0p01") : -1.; 
     I.pfXWP0p1    = R->hasUserFloat("pfXWP0p1") ? R->userFloat("pfXWP0p1") : -1.;
     I.pfXWP1      = R->hasUserFloat("pfXWP1") ? R->userFloat("pfXWP1") : -1.; 
@@ -507,7 +555,7 @@ void ObjectsFormat::ResetJetType(JetType& I) {
     I.energyRaw   = -1.;
     I.ptRaw       = -1.;
     I.ptUnc       = -1.;
-    //I.dPhi_met    = -1.;
+    I.dPhi_met    = -99.;
     //I.dPhi_Jet1   = -1.;
     //I.puId        = -1.;
     I.CSV         = -99.;
@@ -615,6 +663,8 @@ void ObjectsFormat::ResetJetType(JetType& I) {
     I.isGenMatchedCaloCorr = 0;
     I.isGenMatchedLLPAccept = 0;
     I.isGenMatchedCaloCorrLLPAccept = 0;
+    I.radiusLLP = -1000;
+    I.zLLP = -10000;
     I.isVBFGenMatched = 0;
     //track, old implementation
     I.alphaMaxOld = -100.;
@@ -715,11 +765,11 @@ void ObjectsFormat::ResetJetType(JetType& I) {
     I.nTrackConstituentsWithTrackDetails = -1;
     I.nTrackConstituentsWithTrackDetailsPtLarger0p95 = -1;
     I.nMatchedGenBquarks = -1;
-    I.nRecHits = -1;
-    I.timeRecHits = -100.;
-    I.timeRMSRecHits = -1.;
-    I.energyRecHits = -1.;
-    I.energyErrorRecHits = -1.;
+    I.nRecHitsEB = -1;
+    I.timeRecHitsEB = -100.;
+    I.timeRMSRecHitsEB = -1.;
+    I.energyRecHitsEB = -1.;
+    I.energyErrorRecHitsEB = -1.;
     I.pfXWP0p01   = -1.; 
     I.pfXWP0p1    = -1.;
     I.pfXWP1      = -1.; 
@@ -774,13 +824,13 @@ void ObjectsFormat::FillFatJetType(FatJetType& I, const pat::Jet* R, std::string
   //  }
     I.ptRaw       = R->correctedJet(0).pt();
     I.ptUnc       = R->hasUserFloat("JESUncertainty") ? R->userFloat("JESUncertainty") : -1;
-    I.dPhi_met    = R->hasUserFloat("dPhi_met") ? R->userFloat("dPhi_met") : -1.;
-    I.dPhi_Jet1   = R->hasUserFloat("dPhi_Jet1") ? R->userFloat("dPhi_Jet1") : -1.;
+    I.dPhi_met    = R->hasUserFloat("dPhi_met") ? R->userFloat("dPhi_met") : -99.;
+    //L//I.dPhi_Jet1   = R->hasUserFloat("dPhi_Jet1") ? R->userFloat("dPhi_Jet1") : -1.;
     I.puId        = -1.; //R->userFloat("pileupJetId:fullDiscriminant");
     I.CSV         = R->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
     I.CSVR        = R->hasUserFloat("ReshapedDiscriminator") ? R->userFloat("ReshapedDiscriminator") : R->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
-    I.CSVRUp      = R->hasUserFloat("ReshapedDiscriminatorUp") ? R->userFloat("ReshapedDiscriminatorUp") : R->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
-    I.CSVRDown    = R->hasUserFloat("ReshapedDiscriminatorDown") ? R->userFloat("ReshapedDiscriminatorDown") : R->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+    //L//I.CSVRUp      = R->hasUserFloat("ReshapedDiscriminatorUp") ? R->userFloat("ReshapedDiscriminatorUp") : R->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+    //L//I.CSVRDown    = R->hasUserFloat("ReshapedDiscriminatorDown") ? R->userFloat("ReshapedDiscriminatorDown") : R->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
     I.pfBoostedDoubleSVAK8 = R->bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags");
   //  I.CSVV1       = R->bDiscriminator("combinedSecondaryVertexV1BJetTags");
   //  I.CSVSL       = R->bDiscriminator("combinedSecondaryVertexSoftPFLeptonV1BJetTags");
@@ -803,60 +853,60 @@ void ObjectsFormat::FillFatJetType(FatJetType& I, const pat::Jet* R, std::string
   //      I.TightSFa     = (1.-1.e-3*theBTagWeight->ReturnScaleFactorMistag(3, R->pt(), R->eta()))/(1.-1.e-3);
   //    }
   //  }
-    I.CHSprunedMass            = R->hasUserFloat("ak8PFJetsCHSPrunedMass") ? R->userFloat("ak8PFJetsCHSPrunedMass") : -1.;
-    I.CHSsoftdropMass          = R->hasUserFloat("ak8PFJetsCHSSoftDropMass") ? R->userFloat("ak8PFJetsCHSSoftDropMass") : -1.;
+    I.CHSprunedMass            = R->hasUserFloat("ak8PFJetsCHSValueMap:ak8PFJetsCHSPrunedMass") ? R->userFloat("ak8PFJetsCHSValueMap:ak8PFJetsCHSPrunedMass") : -1.;
+    I.CHSsoftdropMass          = R->hasUserFloat("ak8PFJetsCHSValueMap:ak8PFJetsCHSSoftDropMass") ? R->userFloat("ak8PFJetsCHSValueMap:ak8PFJetsCHSSoftDropMass") : -1.;
     I.softdropPuppiMass        = R->hasUserFloat(SoftdropPuppiMassString) ? R->userFloat(SoftdropPuppiMassString) : -1.;
-    I.CHSprunedMassCorr        = R->hasUserFloat("ak8PFJetsCHSPrunedMassCorr") ? R->userFloat("ak8PFJetsCHSPrunedMassCorr") : -1.;
-    I.CHSsoftdropMassCorr      = R->hasUserFloat("ak8PFJetsCHSSoftDropMassCorr") ? R->userFloat("ak8PFJetsCHSSoftDropMassCorr") : -1.;
-    if(!isMC) I.softdropPuppiMassCorr = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorr") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorr") : -1.;
-    if(isMC) I.softdropPuppiMassCorr = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMR") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrJMR") : -1.;//smeared softdrop puppi mass for MC
-    I.softdropPuppiMassCorrNotSmeared = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrNotSmeared") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrNotSmeared") : -1.;
-    I.nSoftDropSubJets    = (R->hasSubjets("SoftDrop") && R->subjets("SoftDrop").size() > 0) ? R->subjets("SoftDrop").size() : -1;//calculated from SoftDrop sub-jets
-    I.pt1         = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 0 ? R->subjets("SoftDrop")[0]->pt() : -1.) : -1.;
-    I.eta1        = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 0 ? R->subjets("SoftDrop")[0]->eta() : -9.) : -9.;
-    I.phi1        = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 0 ? R->subjets("SoftDrop")[0]->phi() : -9.) : -9.;
-    I.mass1       = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 0 ? R->subjets("SoftDrop")[0]->mass() : -1.) : -1.;
-    I.CSV1        = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 0 ? R->subjets("SoftDrop")[0]->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") : -99.) : -99.;
+    //L//I.CHSprunedMassCorr        = R->hasUserFloat("ak8PFJetsCHSPrunedMassCorr") ? R->userFloat("ak8PFJetsCHSPrunedMassCorr") : -1.;
+    //L//I.CHSsoftdropMassCorr      = R->hasUserFloat("ak8PFJetsCHSSoftDropMassCorr") ? R->userFloat("ak8PFJetsCHSSoftDropMassCorr") : -1.;
+    //L//if(!isMC) I.softdropPuppiMassCorr = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorr") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorr") : -1.;
+    //L//if(isMC) I.softdropPuppiMassCorr = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMR") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrJMR") : -1.;//smeared softdrop puppi mass for MC
+    //L//I.softdropPuppiMassCorrNotSmeared = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrNotSmeared") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrNotSmeared") : -1.;
+    I.nSoftDropSubJets    = (R->hasSubjets("SoftDropPuppi") && R->subjets("SoftDropPuppi").size() > 0) ? R->subjets("SoftDropPuppi").size() : -1;//calculated from SoftDropPuppi sub-jets
+    I.pt1         = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 0 ? R->subjets("SoftDropPuppi")[0]->pt() : -1.) : -1.;
+    I.eta1        = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 0 ? R->subjets("SoftDropPuppi")[0]->eta() : -9.) : -9.;
+    I.phi1        = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 0 ? R->subjets("SoftDropPuppi")[0]->phi() : -9.) : -9.;
+    I.mass1       = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 0 ? R->subjets("SoftDropPuppi")[0]->mass() : -1.) : -1.;
+    I.CSV1        = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 0 ? R->subjets("SoftDropPuppi")[0]->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") : -99.) : -99.;
     //I.CSVR1       = R->hasUserFloat("ReshapedDiscriminator1") ? R->userFloat("ReshapedDiscriminator1") : -99.;
     //I.CSVR1Up     = R->hasUserFloat("ReshapedDiscriminatorUp1") ? R->userFloat("ReshapedDiscriminatorUp1") : -99.;
     //I.CSVR1Down   = R->hasUserFloat("ReshapedDiscriminatorDown1") ? R->userFloat("ReshapedDiscriminatorDown1") : -99.;
-    I.CMVA1       = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 0 ? R->subjets("SoftDrop")[0]->bDiscriminator("pfCombinedMVAV2BJetTags") : -99.) : -99.;
+    I.CMVA1       = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 0 ? R->subjets("SoftDropPuppi")[0]->bDiscriminator("pfCombinedMVAV2BJetTags") : -99.) : -99.;
     //I.CMVAR1      = R->hasUserFloat("CMVAR1") ? R->userFloat("CMVAR1") : -99.;
     //I.CMVAR1Up    = R->hasUserFloat("CMVAR1Up") ? R->userFloat("CMVAR1Up") : -99.;
     //I.CMVAR1Down  = R->hasUserFloat("CMVAR1Down") ? R->userFloat("CMVAR1Down") : -99.;
-    I.flavour1    = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 0 ? R->subjets("SoftDrop")[0]->hadronFlavour() : -1.) : -1.;
-    if (R->hasSubjets("SoftDrop")){
-      if( R->subjets("SoftDrop").size() > 0){
-	if (R->subjets("SoftDrop")[0]->hasTagInfo("pfSecondaryVertex")){
-	  I.nSV1 = R->subjets("SoftDrop")[0]->tagInfoCandSecondaryVertex("pfSecondaryVertex")->nVertices();
-	  I.nVertexTracks1 = R->subjets("SoftDrop")[0]->tagInfoCandSecondaryVertex("pfSecondaryVertex")->nVertexTracks();
+    I.flavour1    = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 0 ? R->subjets("SoftDropPuppi")[0]->hadronFlavour() : -1.) : -1.;
+    if (R->hasSubjets("SoftDropPuppi")){
+      if( R->subjets("SoftDropPuppi").size() > 0){
+	if (R->subjets("SoftDropPuppi")[0]->hasTagInfo("pfSecondaryVertex")){
+	  I.nSV1 = R->subjets("SoftDropPuppi")[0]->tagInfoCandSecondaryVertex("pfSecondaryVertex")->nVertices();
+	  I.nVertexTracks1 = R->subjets("SoftDropPuppi")[0]->tagInfoCandSecondaryVertex("pfSecondaryVertex")->nVertexTracks();
 	}
       }
     }
-    I.pt2         = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 1 ? R->subjets("SoftDrop")[1]->pt() : -1.) : -1.;
-    I.eta2        = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 1 ? R->subjets("SoftDrop")[1]->eta() : -9.) : -9.;
-    I.phi2        = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 1 ? R->subjets("SoftDrop")[1]->phi() : -9.) : -9.;
-    I.mass2       = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 1 ? R->subjets("SoftDrop")[1]->mass() : -1.) : -1.;
-    I.CSV2        = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 1 ? R->subjets("SoftDrop")[1]->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") : -99.) : -99.;
+    I.pt2         = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 1 ? R->subjets("SoftDropPuppi")[1]->pt() : -1.) : -1.;
+    I.eta2        = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 1 ? R->subjets("SoftDropPuppi")[1]->eta() : -9.) : -9.;
+    I.phi2        = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 1 ? R->subjets("SoftDropPuppi")[1]->phi() : -9.) : -9.;
+    I.mass2       = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 1 ? R->subjets("SoftDropPuppi")[1]->mass() : -1.) : -1.;
+    I.CSV2        = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 1 ? R->subjets("SoftDropPuppi")[1]->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") : -99.) : -99.;
     //I.CSVR2       = R->hasUserFloat("ReshapedDiscriminator2") ? R->userFloat("ReshapedDiscriminator2") : -99.;
     //I.CSVR2Up     = R->hasUserFloat("ReshapedDiscriminatorUp2") ? R->userFloat("ReshapedDiscriminatorUp2") : -99.;
     //I.CSVR2Down   = R->hasUserFloat("ReshapedDiscriminatorDown2") ? R->userFloat("ReshapedDiscriminatorDown2") : -99.;
-    I.CMVA2       = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 1 ? R->subjets("SoftDrop")[1]->bDiscriminator("pfCombinedMVAV2BJetTags") : -99.) : -99.;
+    I.CMVA2       = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 1 ? R->subjets("SoftDropPuppi")[1]->bDiscriminator("pfCombinedMVAV2BJetTags") : -99.) : -99.;
     //I.CMVAR2      = R->hasUserFloat("CMVAR2") ? R->userFloat("CMVAR2") : -99.;
     //I.CMVAR2Up    = R->hasUserFloat("CMVAR2Up") ? R->userFloat("CMVAR2Up") : -99.;
     //I.CMVAR2Down  = R->hasUserFloat("CMVAR2Down") ? R->userFloat("CMVAR2Down") : -99.;
-    I.flavour2    = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 1 ? R->subjets("SoftDrop")[1]->hadronFlavour() : -1.) : -1.;
-    if (R->hasSubjets("SoftDrop")){
-      if( R->subjets("SoftDrop").size() > 1){
-	if (R->subjets("SoftDrop")[1]->hasTagInfo("pfSecondaryVertex")){
-	  I.nSV2 = R->subjets("SoftDrop")[1]->tagInfoCandSecondaryVertex("pfSecondaryVertex")->nVertices();
-	  I.nVertexTracks2 = R->subjets("SoftDrop")[1]->tagInfoCandSecondaryVertex("pfSecondaryVertex")->nVertexTracks();
+    I.flavour2    = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 1 ? R->subjets("SoftDropPuppi")[1]->hadronFlavour() : -1.) : -1.;
+    if (R->hasSubjets("SoftDropPuppi")){
+      if( R->subjets("SoftDropPuppi").size() > 1){
+	if (R->subjets("SoftDropPuppi")[1]->hasTagInfo("pfSecondaryVertex")){
+	  I.nSV2 = R->subjets("SoftDropPuppi")[1]->tagInfoCandSecondaryVertex("pfSecondaryVertex")->nVertices();
+	  I.nVertexTracks2 = R->subjets("SoftDropPuppi")[1]->tagInfoCandSecondaryVertex("pfSecondaryVertex")->nVertexTracks();
 	}
       }
     }
-    I.dR          = R->hasSubjets("SoftDrop") ? (R->subjets("SoftDrop").size() > 1 ? deltaR(*R->subjets("SoftDrop")[0], *R->subjets("SoftDrop")[1]) : -1.) : -1.;
-    I.chsTau21    = R->hasUserFloat("NjettinessAK8:tau1") ? (R->userFloat("NjettinessAK8:tau1") != 0 ? R->userFloat("NjettinessAK8:tau2")/R->userFloat("NjettinessAK8:tau1") : -1.) : -1.;
-    I.puppiTau21  = R->hasUserFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau1") ? (R->userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau1") != 0 ? R->userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau2")/R->userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau1") : -1.) : -1.;
+    I.dR          = R->hasSubjets("SoftDropPuppi") ? (R->subjets("SoftDropPuppi").size() > 1 ? deltaR(*R->subjets("SoftDropPuppi")[0], *R->subjets("SoftDropPuppi")[1]) : -1.) : -1.;
+    I.chsTau21    = R->hasUserFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau1") ? (R->userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau1") != 0 ? R->userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau2")/R->userFloat("ak8PFJetsCHSValueMap:NjettinessAK8CHSTau1") : -1.) : -1.;
+    I.puppiTau21  = R->hasUserFloat("NjettinessAK8Puppi:tau1") ? (R->userFloat("NjettinessAK8Puppi:tau1") != 0 ? R->userFloat("NjettinessAK8Puppi:tau2")/R->userFloat("NjettinessAK8Puppi:tau1") : -1.) : -1.;
     I.ddtTau21    = R->hasUserFloat("ddtTau21") ? R->userFloat("ddtTau21") : -1.;
     I.BDSV        = R->bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags");
     I.cHadE       = R->chargedHadronEnergy();
@@ -899,57 +949,135 @@ void ObjectsFormat::FillFatJetType(FatJetType& I, const pat::Jet* R, std::string
     I.isTight     = R->hasUserInt("isTight") ? R->userInt("isTight") : false;
     I.isTightLepVeto     = R->hasUserInt("isTightLepVeto") ? R->userInt("isTightLepVeto") : false;
     I.isMatched   = (I.mother==25);
-    I.JESUnc      = R->hasUserFloat("JESUncertainty") ? R->userFloat("JESUncertainty") : -1.;
-    I.ptJERUp     = R->hasUserFloat("ptJERUp") ? R->userFloat("ptJERUp") : -1.;
-    I.etaJERUp    = R->hasUserFloat("etaJERUp") ? R->userFloat("etaJERUp") : -1.;
-    I.phiJERUp    = R->hasUserFloat("phiJERUp") ? R->userFloat("phiJERUp") : -9.;
-    I.energyJERUp = R->hasUserFloat("energyJERUp") ? R->userFloat("energyJERUp") : -1.;
-    I.ptJERDown   = R->hasUserFloat("ptJERDown") ? R->userFloat("ptJERDown") : -1.;
-    I.etaJERDown  = R->hasUserFloat("etaJERDown") ? R->userFloat("etaJERDown") : -1.;
-    I.phiJERDown  = R->hasUserFloat("phiJERDown") ? R->userFloat("phiJERDown") : -9.;
-    I.energyJERDown = R->hasUserFloat("energyJERDown") ? R->userFloat("energyJERDown") : -1.;
-    I.smearFact   = R->hasUserFloat("smearFactor") ? R->userFloat("smearFactor") : -1.;
-    I.smearFactUp   = R->hasUserFloat("smearFactorUp") ? R->userFloat("smearFactorUp") : -1.;
-    I.smearFactDown = R->hasUserFloat("smearFactorDown") ? R->userFloat("smearFactorDown") : -1.;
-    I.softdropPuppiMassCorrJMS = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMS") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrJMS") : -1.;
-    I.softdropPuppiMassCorrJMSUp = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMSUp") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrJMSUp") : -1.;
-    I.softdropPuppiMassCorrJMSDown = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMSDown") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrJMSDown") : -1.;
-    I.softdropPuppiMassCorrJMR = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMR") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrJMR") : -1.;
-    I.softdropPuppiMassCorrJMRUp = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMRUp") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrJMRUp") : -1.;
-    I.softdropPuppiMassCorrJMRDown = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMRDown") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrJMRDown") : -1.;
-    I.dR_q1       = R->hasUserFloat("dR_q1") ? R->userFloat("dR_q1") : 1000;
-    I.dR_q2       = R->hasUserFloat("dR_q2") ? R->userFloat("dR_q2") : 1000;
-    I.dR_q3       = R->hasUserFloat("dR_q3") ? R->userFloat("dR_q3") : 1000;
-    I.dR_q4       = R->hasUserFloat("dR_q4") ? R->userFloat("dR_q4") : 1000;
-    I.m_q1        = R->hasUserFloat("dR_q1") ? (R->userFloat("dR_q1")<0.8 ? true : false) : false;
-    I.m_q2        = R->hasUserFloat("dR_q2") ? (R->userFloat("dR_q2")<0.8 ? true : false) : false;
-    I.m_q3        = R->hasUserFloat("dR_q3") ? (R->userFloat("dR_q3")<0.8 ? true : false) : false;
-    I.m_q4        = R->hasUserFloat("dR_q4") ? (R->userFloat("dR_q4")<0.8 ? true : false) : false;
-    I.dR_pi1      = R->hasUserFloat("dR_pi1") ? R->userFloat("dR_pi1") : 1000;
-    I.dR_pi2      = R->hasUserFloat("dR_pi2") ? R->userFloat("dR_pi2") : 1000;
-    I.matchBquark = R->hasUserInt("hasMatchedBquarks") ? R->userInt("hasMatchedBquarks") : -1;
-    I.matchLL     = R->hasUserInt("hasMatchedLL") ? R->userInt("hasMatchedLL") : -1;
+    //L//I.JESUnc      = R->hasUserFloat("JESUncertainty") ? R->userFloat("JESUncertainty") : -1.;
+    //L//I.ptJERUp     = R->hasUserFloat("ptJERUp") ? R->userFloat("ptJERUp") : -1.;
+    //L//I.etaJERUp    = R->hasUserFloat("etaJERUp") ? R->userFloat("etaJERUp") : -1.;
+    //L//I.phiJERUp    = R->hasUserFloat("phiJERUp") ? R->userFloat("phiJERUp") : -9.;
+    //L//I.energyJERUp = R->hasUserFloat("energyJERUp") ? R->userFloat("energyJERUp") : -1.;
+    //L//I.ptJERDown   = R->hasUserFloat("ptJERDown") ? R->userFloat("ptJERDown") : -1.;
+    //L//I.etaJERDown  = R->hasUserFloat("etaJERDown") ? R->userFloat("etaJERDown") : -1.;
+    //L//I.phiJERDown  = R->hasUserFloat("phiJERDown") ? R->userFloat("phiJERDown") : -9.;
+    //L//I.energyJERDown = R->hasUserFloat("energyJERDown") ? R->userFloat("energyJERDown") : -1.;
+    //L//I.smearFact   = R->hasUserFloat("smearFactor") ? R->userFloat("smearFactor") : -1.;
+    //L//I.smearFactUp   = R->hasUserFloat("smearFactorUp") ? R->userFloat("smearFactorUp") : -1.;
+    //L//I.smearFactDown = R->hasUserFloat("smearFactorDown") ? R->userFloat("smearFactorDown") : -1.;
+    //L//I.softdropPuppiMassCorrJMS = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMS") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrJMS") : -1.;
+    //L//I.softdropPuppiMassCorrJMSUp = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMSUp") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrJMSUp") : -1.;
+    //L//I.softdropPuppiMassCorrJMSDown = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMSDown") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrJMSDown") : -1.;
+    //L//I.softdropPuppiMassCorrJMR = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMR") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrJMR") : -1.;
+    //L//I.softdropPuppiMassCorrJMRUp = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMRUp") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrJMRUp") : -1.;
+    //L//I.softdropPuppiMassCorrJMRDown = R->hasUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMRDown") ? R->userFloat("ak8PFJetsPuppiSoftDropMassCorrJMRDown") : -1.;
+    //L//I.dR_q1       = R->hasUserFloat("dR_q1") ? R->userFloat("dR_q1") : 1000;
+    //L//I.dR_q2       = R->hasUserFloat("dR_q2") ? R->userFloat("dR_q2") : 1000;
+    //L//I.dR_q3       = R->hasUserFloat("dR_q3") ? R->userFloat("dR_q3") : 1000;
+    //L//I.dR_q4       = R->hasUserFloat("dR_q4") ? R->userFloat("dR_q4") : 1000;
+    //L//I.m_q1        = R->hasUserFloat("dR_q1") ? (R->userFloat("dR_q1")<0.8 ? true : false) : false;
+    //L//I.m_q2        = R->hasUserFloat("dR_q2") ? (R->userFloat("dR_q2")<0.8 ? true : false) : false;
+    //L//I.m_q3        = R->hasUserFloat("dR_q3") ? (R->userFloat("dR_q3")<0.8 ? true : false) : false;
+    //L//I.m_q4        = R->hasUserFloat("dR_q4") ? (R->userFloat("dR_q4")<0.8 ? true : false) : false;
+    //L//I.dR_pi1      = R->hasUserFloat("dR_pi1") ? R->userFloat("dR_pi1") : 1000;
+    //L//I.dR_pi2      = R->hasUserFloat("dR_pi2") ? R->userFloat("dR_pi2") : 1000;
+    //L//I.matchBquark = R->hasUserInt("hasMatchedBquarks") ? R->userInt("hasMatchedBquarks") : -1;
+    //L//I.matchLL     = R->hasUserInt("hasMatchedLL") ? R->userInt("hasMatchedLL") : -1;
     I.isGenMatched = R->hasUserInt("isGenMatched") ? R->userInt("isGenMatched") : 0;
-    I.alphaMax    = R->hasUserFloat("alphaMax") ? R->userFloat("alphaMax") : -1000;
-    I.sigIP2DMedian = R->hasUserFloat("sigIP2DMedian") ? R->userFloat("sigIP2DMedian") : -1000;
-    I.theta2DMedian = R->hasUserFloat("theta2DMedian") ? R->userFloat("theta2DMedian") : -1000;
-    I.POCA_theta2DMedian = R->hasUserFloat("POCA_theta2DMedian") ? R->userFloat("POCA_theta2DMedian") : -1000;
-    I.nPixelHitsMedian = R->hasUserFloat("nPixelHitsMedian") ? R->userFloat("nPixelHitsMedian") : -1.0;
-    I.nHitsMedian = R->hasUserFloat("nHitsMedian") ? R->userFloat("nHitsMedian") : -1.0;
+    I.isGenMatchedCaloCorr = R->hasUserInt("isGenMatchedCaloCorr") ? R->userInt("isGenMatchedCaloCorr") : 0;
+    I.radiusLLP = R->hasUserFloat("radiusLLP") ? R->userFloat("radiusLLP") : -1000;
+    I.xLLP = R->hasUserFloat("xLLP") ? R->userFloat("xLLP") : -10000;
+    I.yLLP = R->hasUserFloat("yLLP") ? R->userFloat("yLLP") : -10000;
+    I.zLLP = R->hasUserFloat("zLLP") ? R->userFloat("zLLP") : -10000;
+    I.radiusLLPCaloCorr = R->hasUserFloat("radiusLLPCaloCorr") ? R->userFloat("radiusLLPCaloCorr") : -1000;
+    I.xLLPCaloCorr = R->hasUserFloat("xLLPCaloCorr") ? R->userFloat("xLLPCaloCorr") : -10000;
+    I.yLLPCaloCorr = R->hasUserFloat("yLLPCaloCorr") ? R->userFloat("yLLPCaloCorr") : -10000;
+    I.zLLPCaloCorr = R->hasUserFloat("zLLPCaloCorr") ? R->userFloat("zLLPCaloCorr") : -10000;
+    I.xGenb = R->hasUserFloat("xGenb") ? R->userFloat("xGenb") : -10000;
+    I.yGenb = R->hasUserFloat("yGenb") ? R->userFloat("yGenb") : -10000;
+    I.zGenb = R->hasUserFloat("zGenb") ? R->userFloat("zGenb") : -10000;
+    I.xGenbCaloCorr = R->hasUserFloat("xGenbCaloCorr") ? R->userFloat("xGenbCaloCorr") : -10000;
+    I.yGenbCaloCorr = R->hasUserFloat("yGenbCaloCorr") ? R->userFloat("yGenbCaloCorr") : -10000;
+    I.zGenbCaloCorr = R->hasUserFloat("zGenbCaloCorr") ? R->userFloat("zGenbCaloCorr") : -10000;
+    //L//I.alphaMax    = R->hasUserFloat("alphaMax") ? R->userFloat("alphaMax") : -1000;
+    //L//I.sigIP2DMedian = R->hasUserFloat("sigIP2DMedian") ? R->userFloat("sigIP2DMedian") : -1000;
+    //L//I.theta2DMedian = R->hasUserFloat("theta2DMedian") ? R->userFloat("theta2DMedian") : -1000;
+    //L//I.POCA_theta2DMedian = R->hasUserFloat("POCA_theta2DMedian") ? R->userFloat("POCA_theta2DMedian") : -1000;
+    //L//I.nPixelHitsMedian = R->hasUserFloat("nPixelHitsMedian") ? R->userFloat("nPixelHitsMedian") : -1.0;
+    //L//I.nHitsMedian = R->hasUserFloat("nHitsMedian") ? R->userFloat("nHitsMedian") : -1.0;
+    //L//I.nConstituents = R->hasUserInt("nConstituents") ? R->userInt("nConstituents") : -1;
+    //L//I.nTrackConstituents = R->hasUserInt("nTrackConstituents") ? R->userInt("nTrackConstituents") : -1;
+    //L//I.nTracks0PixelHits = R->hasUserInt("nTracks0PixelHits") ? R->userInt("nTracks0PixelHits") : -1;
+    //L//I.nTracks1PixelHit  = R->hasUserInt("nTracks1PixelHit")  ? R->userInt("nTracks1PixelHit")  : -1;
+    //L//I.nTracks2PixelHits = R->hasUserInt("nTracks2PixelHits") ? R->userInt("nTracks2PixelHits") : -1;
+    //L//I.nTracks3PixelHits = R->hasUserInt("nTracks3PixelHits") ? R->userInt("nTracks3PixelHits") : -1;
+    //L//I.nTracks4PixelHits = R->hasUserInt("nTracks4PixelHits") ? R->userInt("nTracks4PixelHits") : -1;
+    //L//I.nTracks5PixelHits = R->hasUserInt("nTracks5PixelHits") ? R->userInt("nTracks5PixelHits") : -1;
+    //L//I.nTracksAtLeast6PixelHits = R->hasUserInt("nTracksAtLeast6PixelHits") ? R->userInt("nTracksAtLeast6PixelHits") : -1;
+    //L//I.nTracksValidHitInBPix1 = R->hasUserInt("nTracksValidHitInBPix1") ? R->userInt("nTracksValidHitInBPix1") : -1;
+    //L//I.nTracks0LostInnerHits = R->hasUserInt("nTracks0LostInnerHits") ? R->userInt("nTracks0LostInnerHits") : -1;
+    //L//I.nTracks1LostInnerHit = R->hasUserInt("nTracks1LostInnerHit") ? R->userInt("nTracks1LostInnerHit") : -1;
+    //L//I.nTracksAtLeast2LostInnerHits = R->hasUserInt("nTracksAtLeast2LostInnerHits") ? R->userInt("nTracksAtLeast2LostInnerHits") : -1;
+    
+    I.nRecHitsEB = R->hasUserInt("nRecHitsEB") ? R->userInt("nRecHitsEB") : -1;
+    I.timeRecHitsEB = R->hasUserFloat("timeRecHitsEB") ? R->userFloat("timeRecHitsEB") : -100.;
+    I.timeRMSRecHitsEB = R->hasUserFloat("timeRMSRecHitsEB") ? R->userFloat("timeRMSRecHitsEB") : -1.;
+    I.energyRecHitsEB = R->hasUserFloat("energyRecHitsEB") ? R->userFloat("energyRecHitsEB") : -1.;
+    I.energyErrorRecHitsEB = R->hasUserFloat("energyErrorRecHitsEB") ? R->userFloat("energyErrorRecHitsEB") : -1.;
+    I.xRecHitsEB = R->hasUserFloat("xRecHitsEB") ? R->userFloat("xRecHitsEB") : -100000.;
+    I.yRecHitsEB = R->hasUserFloat("yRecHitsEB") ? R->userFloat("yRecHitsEB") : -100000.;
+    I.zRecHitsEB = R->hasUserFloat("zRecHitsEB") ? R->userFloat("zRecHitsEB") : -100000.;
+    I.radiusRecHitsEB = R->hasUserFloat("radiusRecHitsEB") ? R->userFloat("radiusRecHitsEB") : -100000.;
+
+    I.nRecHitsEE = R->hasUserInt("nRecHitsEE") ? R->userInt("nRecHitsEE") : -1;
+    I.timeRecHitsEE = R->hasUserFloat("timeRecHitsEE") ? R->userFloat("timeRecHitsEE") : -100.;
+    I.timeRMSRecHitsEE = R->hasUserFloat("timeRMSRecHitsEE") ? R->userFloat("timeRMSRecHitsEE") : -1.;
+    I.energyRecHitsEE = R->hasUserFloat("energyRecHitsEE") ? R->userFloat("energyRecHitsEE") : -1.;
+    I.energyErrorRecHitsEE = R->hasUserFloat("energyErrorRecHitsEE") ? R->userFloat("energyErrorRecHitsEE") : -1.;
+    I.xRecHitsEE = R->hasUserFloat("xRecHitsEE") ? R->userFloat("xRecHitsEE") : -100000.;
+    I.yRecHitsEE = R->hasUserFloat("yRecHitsEE") ? R->userFloat("yRecHitsEE") : -100000.;
+    I.zRecHitsEE = R->hasUserFloat("zRecHitsEE") ? R->userFloat("zRecHitsEE") : -100000.;
+    I.radiusRecHitsEE = R->hasUserFloat("radiusRecHitsEE") ? R->userFloat("radiusRecHitsEE") : -100000.;
+
+    I.nRecHitsHB = R->hasUserInt("nRecHitsHB") ? R->userInt("nRecHitsHB") : -1;
+    I.timeRecHitsHB = R->hasUserFloat("timeRecHitsHB") ? R->userFloat("timeRecHitsHB") : -100.;
+    I.timeRMSRecHitsHB = R->hasUserFloat("timeRMSRecHitsHB") ? R->userFloat("timeRMSRecHitsHB") : -1.;
+    I.energyRecHitsHB = R->hasUserFloat("energyRecHitsHB") ? R->userFloat("energyRecHitsHB") : -1.;
+    I.energyErrorRecHitsHB = R->hasUserFloat("energyErrorRecHitsHB") ? R->userFloat("energyErrorRecHitsHB") : -1.;
+    I.xRecHitsHB = R->hasUserFloat("xRecHitsHB") ? R->userFloat("xRecHitsHB") : -1000.;
+    I.yRecHitsHB = R->hasUserFloat("yRecHitsHB") ? R->userFloat("yRecHitsHB") : -1000.;
+    I.zRecHitsHB = R->hasUserFloat("zRecHitsHB") ? R->userFloat("zRecHitsHB") : -1000.;
+    I.radiusRecHitsHB = R->hasUserFloat("radiusRecHitsHB") ? R->userFloat("radiusRecHitsHB") : -1000.;
+    I.nRecHitsHE = R->hasUserInt("nRecHitsHE") ? R->userInt("nRecHitsHE") : -1;
+    I.timeRecHitsHE = R->hasUserFloat("timeRecHitsHE") ? R->userFloat("timeRecHitsHE") : -100.;
+    I.timeRMSRecHitsHE = R->hasUserFloat("timeRMSRecHitsHE") ? R->userFloat("timeRMSRecHitsHE") : -1.;
+    I.energyRecHitsHE = R->hasUserFloat("energyRecHitsHE") ? R->userFloat("energyRecHitsHE") : -1.;
+    I.energyErrorRecHitsHE = R->hasUserFloat("energyErrorRecHitsHE") ? R->userFloat("energyErrorRecHitsHE") : -1.;
+    I.xRecHitsHE = R->hasUserFloat("xRecHitsHE") ? R->userFloat("xRecHitsHE") : -1000.;
+    I.yRecHitsHE = R->hasUserFloat("yRecHitsHE") ? R->userFloat("yRecHitsHE") : -1000.;
+    I.zRecHitsHE = R->hasUserFloat("zRecHitsHE") ? R->userFloat("zRecHitsHE") : -1000.;
+    I.radiusRecHitsHE = R->hasUserFloat("radiusRecHitsHE") ? R->userFloat("radiusRecHitsHE") : -1000.;
+    //track, new implementation
     I.nConstituents = R->hasUserInt("nConstituents") ? R->userInt("nConstituents") : -1;
-    I.nTrackConstituents = R->hasUserInt("nTrackConstituents") ? R->userInt("nTrackConstituents") : -1;
-    I.nTracks0PixelHits = R->hasUserInt("nTracks0PixelHits") ? R->userInt("nTracks0PixelHits") : -1;
-    I.nTracks1PixelHit  = R->hasUserInt("nTracks1PixelHit")  ? R->userInt("nTracks1PixelHit")  : -1;
-    I.nTracks2PixelHits = R->hasUserInt("nTracks2PixelHits") ? R->userInt("nTracks2PixelHits") : -1;
-    I.nTracks3PixelHits = R->hasUserInt("nTracks3PixelHits") ? R->userInt("nTracks3PixelHits") : -1;
-    I.nTracks4PixelHits = R->hasUserInt("nTracks4PixelHits") ? R->userInt("nTracks4PixelHits") : -1;
-    I.nTracks5PixelHits = R->hasUserInt("nTracks5PixelHits") ? R->userInt("nTracks5PixelHits") : -1;
-    I.nTracksAtLeast6PixelHits = R->hasUserInt("nTracksAtLeast6PixelHits") ? R->userInt("nTracksAtLeast6PixelHits") : -1;
-    I.nTracksValidHitInBPix1 = R->hasUserInt("nTracksValidHitInBPix1") ? R->userInt("nTracksValidHitInBPix1") : -1;
-    I.nTracks0LostInnerHits = R->hasUserInt("nTracks0LostInnerHits") ? R->userInt("nTracks0LostInnerHits") : -1;
-    I.nTracks1LostInnerHit = R->hasUserInt("nTracks1LostInnerHit") ? R->userInt("nTracks1LostInnerHit") : -1;
-    I.nTracksAtLeast2LostInnerHits = R->hasUserInt("nTracksAtLeast2LostInnerHits") ? R->userInt("nTracksAtLeast2LostInnerHits") : -1;
+    I.nTrackConstituents = R->hasUserInt("nTrackConstituents") ? R->userInt("nTrackConstituents") : -1;    
+    I.ptAllTracks    = R->hasUserFloat("ptAllTracks") ? R->userFloat("ptAllTracks") : -1.;
+    I.ptAllPVTracks  = R->hasUserFloat("ptAllPVTracks") ? R->userFloat("ptAllPVTracks") : -1.;
+    I.ptPVTracksMax  = R->hasUserFloat("ptPVTracksMax") ? R->userFloat("ptPVTracksMax") : -1.;
+    I.nTracksAll     = R->hasUserInt("nTracksAll") ? R->userInt("nTracksAll") : -1;
+    I.nTracksPVMax   = R->hasUserInt("nTracksPVMax") ? R->userInt("nTracksPVMax") : -1;
+    I.medianIP2D     = R->hasUserFloat("medianIP2D") ? R->userFloat("medianIP2D") : -10000.;
+    I.medianTheta2D  = R->hasUserFloat("medianTheta2D") ? R->userFloat("medianTheta2D") : -100.;
+    I.alphaMax       = R->hasUserFloat("alphaMax") ? R->userFloat("alphaMax") : -100.;
+    I.betaMax        = R->hasUserFloat("betaMax") ? R->userFloat("betaMax") : -100.;
+    I.gammaMax       = R->hasUserFloat("gammaMax") ? R->userFloat("gammaMax") : -100.;
+    I.gammaMaxEM     = R->hasUserFloat("gammaMaxEM") ? R->userFloat("gammaMaxEM") : -100.;
+    I.gammaMaxHadronic  = R->hasUserFloat("gammaMaxHadronic") ? R->userFloat("gammaMaxHadronic") : -100.;
+    I.gammaMaxET     = R->hasUserFloat("gammaMaxET") ? R->userFloat("gammaMaxET") : -100.;
+    I.minDeltaRAllTracks = R->hasUserFloat("minDeltaRAllTracks") ? R->userFloat("minDeltaRAllTracks") : 999.;
+    I.minDeltaRPVTracks  = R->hasUserFloat("minDeltaRPVTracks") ? R->userFloat("minDeltaRPVTracks") : 999.;
+    I.nHitsMedian    = R->hasUserFloat("nHitsMedian") ? R->userFloat("nHitsMedian") : -1.;
+    I.nPixelHitsMedian    = R->hasUserFloat("nPixelHitsMedian") ? R->userFloat("nPixelHitsMedian") : -1.;
+    I.dzMedian       = R->hasUserFloat("dzMedian") ? R->userFloat("dzMedian") : -9999.;
+    I.dxyMedian      = R->hasUserFloat("dxyMedian") ? R->userFloat("dxyMedian") : -9999.;     
+    
     I.nMatchedGenBquarks = R->hasUserInt("nMatchedGenBquarks") ? R->userInt("nMatchedGenBquarks") : -1;
+    I.nMatchedGenBquarksCaloCorr = R->hasUserInt("nMatchedGenBquarksCaloCorr") ? R->userInt("nMatchedGenBquarksCaloCorr") : -1;
 }
 
 void ObjectsFormat::ResetFatJetType(FatJetType& I) {
@@ -960,21 +1088,21 @@ void ObjectsFormat::ResetFatJetType(FatJetType& I) {
     I.energy      = -1.;
     I.ptRaw       = -1.;
     I.ptUnc       = -1.;
-    I.dPhi_met    = -1.;
-    I.dPhi_Jet1   = -1.;
+    I.dPhi_met    = -99.;
+    //L//I.dPhi_Jet1   = -1.;
     I.puId        = -1.;
     I.CSV         = -99.;
     I.CSVR        = -99.;
-    I.CSVRUp      = -99.;
-    I.CSVRDown    = -99.;
+    //L//I.CSVRUp      = -99.;
+    //L//I.CSVRDown    = -99.;
     I.pfBoostedDoubleSVAK8 = -99.;
     I.CHSprunedMass            = -1.;
     I.CHSsoftdropMass          = -1.;
     I.softdropPuppiMass     = -1.;
-    I.CHSprunedMassCorr        = -1.;
-    I.CHSsoftdropMassCorr      = -1.;
-    I.softdropPuppiMassCorr = -1.;
-    I.softdropPuppiMassCorrNotSmeared = -1.;
+    //L//I.CHSprunedMassCorr        = -1.;
+    //L//I.CHSsoftdropMassCorr      = -1.;
+    //L//I.softdropPuppiMassCorr = -1.;
+    //L//I.softdropPuppiMassCorrNotSmeared = -1.;
     I.nSoftDropSubJets = -1;
     I.pt1         = -1.;
     I.eta1        = -9.;
@@ -1050,56 +1178,56 @@ void ObjectsFormat::ResetFatJetType(FatJetType& I) {
     I.isTight     = false;
     I.isTightLepVeto     = false;
     I.isMatched   = false;
-    I.JESUnc      = -1.;
-    I.ptJERUp     = -1.;
-    I.etaJERUp    = -1.;
-    I.phiJERUp    = -9.;
-    I.energyJERUp = -1.;
-    I.ptJERDown   = -1.;
-    I.etaJERDown  = -1.;
-    I.phiJERDown  = -9.;
-    I.energyJERDown = -1.;
-    I.smearFact   = -1.;
-    I.smearFactUp   = -1.;
-    I.smearFactDown = -1.;
-    I.softdropPuppiMassCorrJMS = -1.;
-    I.softdropPuppiMassCorrJMSUp = -1.;
-    I.softdropPuppiMassCorrJMSDown = -1.;
-    I.softdropPuppiMassCorrJMR = -1.;
-    I.softdropPuppiMassCorrJMRUp = -1.;
-    I.softdropPuppiMassCorrJMRDown = -1.;
-    I.dR_q1       = 1000.;
-    I.dR_q2       = 1000.;
-    I.dR_q3       = 1000.;
-    I.dR_q4       = 1000.;
-    I.m_q1        = false;
-    I.m_q2        = false;
-    I.m_q3        = false;
-    I.m_q4        = false;
-    I.dR_pi1      = 1000.;
-    I.dR_pi2      = 1000.;
-    I.matchBquark = -1;
-    I.matchLL     = -1;
+    //L//I.JESUnc      = -1.;
+    //L//I.ptJERUp     = -1.;
+    //L//I.etaJERUp    = -1.;
+    //L//I.phiJERUp    = -9.;
+    //L//I.energyJERUp = -1.;
+    //L//I.ptJERDown   = -1.;
+    //L//I.etaJERDown  = -1.;
+    //L//I.phiJERDown  = -9.;
+    //L//I.energyJERDown = -1.;
+    //L//I.smearFact   = -1.;
+    //L//I.smearFactUp   = -1.;
+    //L//I.smearFactDown = -1.;
+    //L//I.softdropPuppiMassCorrJMS = -1.;
+    //L//I.softdropPuppiMassCorrJMSUp = -1.;
+    //L//I.softdropPuppiMassCorrJMSDown = -1.;
+    //L//I.softdropPuppiMassCorrJMR = -1.;
+    //L//I.softdropPuppiMassCorrJMRUp = -1.;
+    //L//I.softdropPuppiMassCorrJMRDown = -1.;
+    //L//I.dR_q1       = 1000.;
+    //L//I.dR_q2       = 1000.;
+    //L//I.dR_q3       = 1000.;
+    //L//I.dR_q4       = 1000.;
+    //L//I.m_q1        = false;
+    //L//I.m_q2        = false;
+    //L//I.m_q3        = false;
+    //L//I.m_q4        = false;
+    //L//I.dR_pi1      = 1000.;
+    //L//I.dR_pi2      = 1000.;
+    //L//I.matchBquark = -1;
+    //L//I.matchLL     = -1;
     I.isGenMatched = false;
-    I.alphaMax         = -100.;
-    I.sigIP2DMedian    = -100.;
-    I.theta2DMedian    = -100.;
-    I.POCA_theta2DMedian = -100.;
-    I.nPixelHitsMedian = -1.;
-    I.nHitsMedian      = -1.;
-    I.nConstituents = -1;
-    I.nTrackConstituents = -1;
-    I.nTracks0PixelHits = -1;
-    I.nTracks1PixelHit  = -1;
-    I.nTracks2PixelHits = -1;
-    I.nTracks3PixelHits = -1;
-    I.nTracks4PixelHits = -1;
-    I.nTracks5PixelHits = -1;
-    I.nTracksAtLeast6PixelHits = -1;
-    I.nTracksValidHitInBPix1 = -1;
-    I.nTracks0LostInnerHits = -1;
-    I.nTracks1LostInnerHit = -1;
-    I.nTracksAtLeast2LostInnerHits = -1;
+    //L//I.alphaMax         = -100.;
+    //L//I.sigIP2DMedian    = -100.;
+    //L//I.theta2DMedian    = -100.;
+    //L//I.POCA_theta2DMedian = -100.;
+    //L//I.nPixelHitsMedian = -1.;
+    //L//I.nHitsMedian      = -1.;
+    //L//I.nConstituents = -1;
+    //L//I.nTrackConstituents = -1;
+    //L//I.nTracks0PixelHits = -1;
+    //L//I.nTracks1PixelHit  = -1;
+    //L//I.nTracks2PixelHits = -1;
+    //L//I.nTracks3PixelHits = -1;
+    //L//I.nTracks4PixelHits = -1;
+    //L//I.nTracks5PixelHits = -1;
+    //L//I.nTracksAtLeast6PixelHits = -1;
+    //L//I.nTracksValidHitInBPix1 = -1;
+    //L//I.nTracks0LostInnerHits = -1;
+    //L//I.nTracks1LostInnerHit = -1;
+    //L//I.nTracksAtLeast2LostInnerHits = -1;
     I.nMatchedGenBquarks = -1;
 }
 
@@ -1120,7 +1248,7 @@ void ObjectsFormat::FillCustomFatJetType(CustomFatJetType& I, const pat::Jet* R,
     I.energy      = R->energy();
     I.ptRaw       = R->correctedJet(0).pt();
     I.ptUnc       = R->hasUserFloat("JESUncertainty") ? R->userFloat("JESUncertainty") : -1;
-    I.dPhi_met    = R->hasUserFloat("dPhi_met") ? R->userFloat("dPhi_met") : -1.;
+    I.dPhi_met    = R->hasUserFloat("dPhi_met") ? R->userFloat("dPhi_met") : -99.;
     I.dPhi_Jet1   = R->hasUserFloat("dPhi_Jet1") ? R->userFloat("dPhi_Jet1") : -1.;
     I.puId        = -1.; //R->userFloat("pileupJetId:fullDiscriminant");
     I.CSV         = R->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
@@ -1257,7 +1385,7 @@ void ObjectsFormat::ResetCustomFatJetType(CustomFatJetType& I) {
     I.energy      = -1.;
     I.ptRaw       = -1.;
     I.ptUnc       = -1.;
-    I.dPhi_met    = -1.;
+    I.dPhi_met    = -99.;
     I.dPhi_Jet1   = -1.;
     I.puId        = -1.;
     I.CSV         = -99.;
@@ -1618,7 +1746,7 @@ std::string ObjectsFormat::ListLorentzType() {return "pt/F:eta/F:phi/F:energy/F:
 //       GenParticles     //
 //***********************//
 
-void ObjectsFormat::FillCaloGenPType(GenPType& I, const reco::GenParticle* R, bool caloAcceptanceDecision, float etaCorr, float phiCorr) {
+void ObjectsFormat::FillCaloGenPType(GenPType& I, const reco::GenParticle* R, bool caloAcceptanceDecision, float etaCorr, float phiCorr, float radius_LLP, float x_LLP, float y_LLP, float z_LLP) {
     if(!R) return;
     I.pt          = R->pt();
     I.eta         = R->eta();
@@ -1637,10 +1765,18 @@ void ObjectsFormat::FillCaloGenPType(GenPType& I, const reco::GenParticle* R, bo
     I.vz          = R->vz();
     I.travelTime  = R->numberOfDaughters()>1 ? sqrt( pow(R->daughter(0)->vx()-R->vx(),2)+ pow(R->daughter(0)->vy()-R->vy(),2) + pow(R->daughter(0)->vz()-R->vz(),2) )/30*sqrt(pow(R->px(),2) + pow(R->py(),2) + pow(R->pz(),2))/R->energy(): -1.;
     I.travelRadius = R->numberOfDaughters()>1 ? sqrt( pow(R->daughter(0)->vx(),2)+ pow(R->daughter(0)->vy(),2) ) : -1000.;
+    I.travelX = R->numberOfDaughters()>1 ? R->daughter(0)->vx() : -10000.;
+    I.travelY = R->numberOfDaughters()>1 ? R->daughter(0)->vy() : -10000.;
+    I.travelZ = R->numberOfDaughters()>1 ? R->daughter(0)->vz() : -10000.;
     I.beta        = R->energy()>0 ? sqrt(pow(R->px(),2) + pow(R->py(),2) + pow(R->pz(),2))/R->energy() : -1.;
     I.corrCaloEta = etaCorr;
     I.corrCaloPhi = phiCorr;
     I.isLLPInCaloAcceptance = caloAcceptanceDecision;
+    I.travelRadiusLLP = radius_LLP;
+    I.travelXLLP = x_LLP;
+    I.travelYLLP = y_LLP;
+    I.travelZLLP = z_LLP;
+    I.dRdaughters = R->numberOfDaughters()>1 ? deltaR(*R->daughter(0),*R->daughter(1)) : -1.;
 }
 
 void ObjectsFormat::FillGenPType(GenPType& I, const reco::GenParticle* R) {
@@ -1666,6 +1802,7 @@ void ObjectsFormat::FillGenPType(GenPType& I, const reco::GenParticle* R) {
     I.corrCaloEta = -9.;
     I.corrCaloPhi = -9.;
     I.isLLPInCaloAcceptance = false;
+    I.dRdaughters = R->numberOfDaughters()>1 ? deltaR(*R->daughter(0), *R->daughter(1)) : -1.;
 }
 
 
