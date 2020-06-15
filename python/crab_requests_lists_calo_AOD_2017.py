@@ -71,9 +71,9 @@ requests = {
 
 ##############################
 #Dibosons
-'WW_TuneCP5_13TeV-pythia8-v1' : '/WW_TuneCP5_13TeV-pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',#80% T2_IT_Legnaro
-'WZ_TuneCP5_13TeV-pythia8-v1' : '/WZ_TuneCP5_13TeV-pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',#T2_IT_Legnaro
-'ZZ_TuneCP5_13TeV-pythia8-v1' : '/ZZ_TuneCP5_13TeV-pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',#11% at T2_BE_UCL
+#'WW_TuneCP5_13TeV-pythia8-v1' : '/WW_TuneCP5_13TeV-pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',#T2_UK_London_Brunel
+#'WZ_TuneCP5_13TeV-pythia8-v1' : '/WZ_TuneCP5_13TeV-pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',#Caltech
+'ZZ_TuneCP5_13TeV-pythia8-v1' : '/ZZ_TuneCP5_13TeV-pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',#T2_BE_UCL
 
 ##############################
 #DYJetsToNuNu
@@ -86,12 +86,12 @@ requests = {
 
 ##############################
 #ZJetsToNuNu
-'ZJetsToNuNu_HT-100To200_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-100To200_13TeV-madgraph/RunIIFall17DRPremix-94X_mc2017_realistic_v10-v1/AODSIM',#less than 1% at T1_UK_RAL_Disk
-'ZJetsToNuNu_HT-200To400_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-200To400_13TeV-madgraph/RunIIFall17DRPremix-94X_mc2017_realistic_v10-v1/AODSIM',#T2_DE_DESY
-'ZJetsToNuNu_HT-400To600_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-400To600_13TeV-madgraph/RunIIFall17DRPremix-94X_mc2017_realistic_v10-v1/AODSIM',#T2_US_MIT
-'ZJetsToNuNu_HT-600To800_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-600To800_13TeV-madgraph/RunIIFall17DRPremix-94X_mc2017_realistic_v10-v1/AODSIM',#T2_DE_DESY
-'ZJetsToNuNu_HT-800To1200_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-800To1200_13TeV-madgraph/RunIIFall17DRPremix-94X_mc2017_realistic_v10-v1/AODSIM',#TAPE!!!
-'ZJetsToNuNu_HT-1200To2500_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-1200To2500_13TeV-madgraph/RunIIFall17DRPremix-94X_mc2017_realistic_v10-v1/AODSIM',#T2_DE_DESY
+#'ZJetsToNuNu_HT-100To200_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-100To200_13TeV-madgraph/RunIIFall17DRPremix-94X_mc2017_realistic_v10-v1/AODSIM',#Caltech
+#'ZJetsToNuNu_HT-200To400_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-200To400_13TeV-madgraph/RunIIFall17DRPremix-94X_mc2017_realistic_v10-v1/AODSIM',#T2_DE_DESY
+#'ZJetsToNuNu_HT-400To600_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-400To600_13TeV-madgraph/RunIIFall17DRPremix-94X_mc2017_realistic_v10-v1/AODSIM',#T2_US_MIT
+#'ZJetsToNuNu_HT-600To800_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-600To800_13TeV-madgraph/RunIIFall17DRPremix-94X_mc2017_realistic_v10-v1/AODSIM',#T2_DE_DESY
+#'ZJetsToNuNu_HT-800To1200_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-800To1200_13TeV-madgraph/RunIIFall17DRPremix-94X_mc2017_realistic_v10-v1/AODSIM',#Caltech
+#'ZJetsToNuNu_HT-1200To2500_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-1200To2500_13TeV-madgraph/RunIIFall17DRPremix-94X_mc2017_realistic_v10-v1/AODSIM',#T2_DE_DESY
 'ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/RunIIFall17DRPremix-94X_mc2017_realistic_v10-v1/AODSIM',#T2_IN_TIFR
 
 ##############################
@@ -108,7 +108,7 @@ requests = {
 #Inclusive
 #'WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8-v2' : '/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v3/AODSIM',#T1_DE_KIT_Disk
 #HT binned:
-'WJetsToLNu_HT-70To100_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/WJetsToLNu_HT-70To100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',
+##'WJetsToLNu_HT-70To100_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/WJetsToLNu_HT-70To100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',
 'WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8-v2' : '/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v2/AODSIM',
 'WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',
 'WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',

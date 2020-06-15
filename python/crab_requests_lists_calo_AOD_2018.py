@@ -12,21 +12,21 @@ requests = {
 ###QCD, HT50to100
 #/QCD_HT50to100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM at T1_UK_RAL
 ###QCD, HT100to200
-'QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#partially T2_IT_Pisa
+'QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#TAPE
 ###QCD, HT200to300
-'QCD_HT200to300_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT200to300_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#only 21% at T2_BE_UCL
+'QCD_HT200to300_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT200to300_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#TAPE
 ###QCD, HT300to500
-'QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#T2_DE_DESY
+'QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#TAPE
 ###QCD, HT500to700
-'QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#less than 1% at T2_BE_IIJE and T1_DE_KIT_Disk
+'QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#partially at T2
 ###QCD, HT700to1000
-'QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#23% at T2_ES_CIEMAT
+'QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#partially at T2
 ###QCD, HT1000to1500
-'QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#T2_EE_Estonia
+'QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#TAPE
 ###QCD, HT1500to2000
-'QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#T2_EE_Estonia
+'QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#TAPE
 ###QCD, HT2000toInf
-'QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#T2_BE_UCL
+'QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : '/QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#TAPE
 
 ##############################
 ###TTbar inclusive
@@ -50,8 +50,8 @@ requests = {
 
 ##############################
 #Dibosons
-'WW_TuneCP5_13TeV-pythia8-v2' : '/WW_TuneCP5_13TeV-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v2/AODSIM',#T2_US_MIT
-'WZ_TuneCP5_13TeV-pythia8-v3' : '/WZ_TuneCP5_13TeV-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v3/AODSIM',#T2_RU_JINR
+'WW_TuneCP5_13TeV-pythia8-v2' : '/WW_TuneCP5_13TeV-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v2/AODSIM',#partially at T2
+'WZ_TuneCP5_13TeV-pythia8-v3' : '/WZ_TuneCP5_13TeV-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v3/AODSIM',#T2_UK_London_IC
 'ZZ_TuneCP5_13TeV-pythia8-v2' : '/ZZ_TuneCP5_13TeV-pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v2/AODSIM',#T2_RU_JINR
 
 ##############################
@@ -66,7 +66,8 @@ requests = {
 ##############################
 #ZJetsToNuNu
 'ZJetsToNuNu_HT-100To200_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-100To200_13TeV-madgraph/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#TAPE
-'ZJetsToNuNu_HT-200To400_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-200To400_13TeV-madgraph/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#T2_ES_IFCA
+'ZJetsToNuNu_HT-200To400_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-200To400_13TeV-madgraph/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#TAPE
+#from now on, not checked anymore, it's clearly all on tape...
 'ZJetsToNuNu_HT-400To600_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-400To600_13TeV-madgraph/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v2/AODSIM',#TAPE
 'ZJetsToNuNu_HT-600To800_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-600To800_13TeV-madgraph/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#T2_BE_IIHE
 'ZJetsToNuNu_HT-800To1200_13TeV-madgraph-v1' : '/ZJetsToNuNu_HT-800To1200_13TeV-madgraph/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',#TAPE
