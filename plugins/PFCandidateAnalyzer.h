@@ -23,6 +23,7 @@ class PFCandidateAnalyzer {
  private:
   edm::EDGetTokenT<std::vector<pat::PackedCandidate> > PFCandidateToken;
   edm::EDGetTokenT<std::vector<pat::PackedCandidate> > LostTrackToken;
+  float PFCandMinPt;
 
 };
 
