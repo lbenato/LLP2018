@@ -144,7 +144,6 @@ void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::str
 std::vector<pat::TriggerObjectStandAlone> TriggerAnalyzer::FillTriggerObjectVector(const edm::Event& iEvent, std::string& TrigName) {
 //std::vector<pat::TriggerObjectStandAlone> TriggerAnalyzer::FillTriggerObjectVector(const edm::Event& iEvent) {
 
-
     edm::Handle<edm::TriggerResults> hltTriggerResults;
     iEvent.getByToken(TriggerToken, hltTriggerResults);
     const edm::TriggerNames& trigNames = iEvent.triggerNames(*hltTriggerResults);
@@ -225,7 +224,7 @@ std::vector<pat::TriggerObjectStandAlone> TriggerAnalyzer::FillTriggerObjectVect
 }
 
 
-void TriggerAnalyzer::FillMetFiltersMap(const edm::Event& iEvent, std::map<std::string, bool>& Map) { //, edm::EDGetTokenT<edm::TriggerResults>& iToken, std::vector<std::string>& iList) {
+void TriggerAnalyzer::FillMetFiltersMap(const edm::Event& iEvent, std::map<std::string, bool>& Map) { 
 
     edm::Handle<edm::TriggerResults> hltTriggerResults;
     iEvent.getByToken(MetFiltersToken, hltTriggerResults);//(iToken, hltTriggerResults);//
