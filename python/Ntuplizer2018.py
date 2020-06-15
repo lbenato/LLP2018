@@ -1684,6 +1684,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     pfCandidateSet = cms.PSet(
         pfCandidates = cms.InputTag('packedPFCandidates'),
         lostTracks = cms.InputTag('lostTracks'),
+        pfCandMinPt = cms.double(0.),
     ),
     #Define gen decay:
     idLLP = cms.int32(idLLP),
