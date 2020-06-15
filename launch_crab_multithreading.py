@@ -421,23 +421,44 @@ if __name__ == '__main__':
         from Analyzer.LLP2018.samplesAOD2017 import samples, sample
         pset = "AODNtuplizer2018.py"
         #folder = "v2_calo_AOD_2017_01May2020"#CHANGE here your crab folder name
-        folder = "v2_calo_AOD_2017_genmatching_22May2020"#CHANGE here your crab folder name
+        folder = "v2_calo_AOD_2017_genstudies_30May2020"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
         config.JobType.inputFiles = ['data']
         config.JobType.maxMemoryMB = 3000#15900 #more memory
         config.JobType.numCores = 4
         is2016 = False
-        is2017 = True
-        is2018 = False
+        is2017 = True#!!!
+        is2018 = False#!!!
         isMINIAOD = False
         isAOD  = True
         isCalo = True
         isVBF = False
         isggH = False
         isTwinHiggs = False
-        isHeavyHiggs = False#True#only for heavy higgs
-        isSUSY = True
+        isHeavyHiggs = False#False#only for heavy higgs
+        isSUSY = True#!!!
+    elif options.lists == "v3_calo_AOD_2018":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+        from Analyzer.LLP2018.samplesAOD2018 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        folder = "v3_calo_AOD_2018_11June2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['data']
+        config.JobType.maxMemoryMB = 3000#15900 #more memory
+        config.JobType.numCores = 4
+        is2016 = False
+        is2017 = False#!!!
+        is2018 = True#!!!
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = True#False#only for heavy higgs
+        isSUSY = False#!!!
 
     else:
         print "No list indicated, aborting!"
@@ -575,19 +596,19 @@ if __name__ == '__main__':
         if isAOD:
             if isData:
                 if is2016:
-                    GT = '80X_dataRun2_2016SeptRepro_v7'
+                    GT = '102X_dataRun2_v13'#'80X_dataRun2_2016SeptRepro_v7'
                 elif is2017:
-                    GT = '94X_dataRun2_v11'
+                    GT = '102X_dataRun2_v13'#'94X_dataRun2_v11'
                 elif is2018:
-                    if theRun2018ABC: GT = '102X_dataRun2_v12'
-                    if theRun2018D:   GT = '102X_dataRun2_Prompt_v15'
+                    if theRun2018ABC: GT = '102X_dataRun2_v13'
+                    if theRun2018D:   GT = '102X_dataRun2_Prompt_v16'
             elif not(isData):
                 if is2016:
-                    GT = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
+                    GT = '102X_mcRun2_asymptotic_v8'#'80X_mcRun2_asymptotic_2016_TrancheIV_v8'
                 elif is2017:
-                    GT = '94X_mc2017_realistic_v17'
+                    GT = '102X_mc2017_realistic_v8'
                 elif is2018:
-                    GT = '102X_upgrade2018_realistic_v20'
+                    GT = '102X_upgrade2018_realistic_v21'
 
         print "GT ->", GT
 
