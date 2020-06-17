@@ -73,6 +73,7 @@ if __name__ == '__main__':
     parser.add_option("-r", "--runera", action="store", type="string", dest="runera", default="2017")
     parser.add_option("-m", "--mode", action="store", type="string", dest="mode", default="")
     parser.add_option("-M", "--model", action="store", type="string", dest="model", default="SUSY")
+    parser.add_option("-C", "--centralproduction", action="store_true", dest="centralProd", default=False)
     (options, args) = parser.parse_args()
 
 
@@ -139,6 +140,11 @@ if __name__ == '__main__':
     else:
         print "Data era not recognized! Aborting . . ."
         exit()
+
+    if options.centralProd:
+        isCentralProd=True
+    else:
+        isCentralProd=False
 
     folder = ''
     pset = ''
@@ -662,6 +668,7 @@ if __name__ == '__main__':
         string_noLHEinfo = 'PnoLHEinfo='+str(noLHEinfo)
         string_isbbH = 'PisbbH='+str(isbbH)
         string_isSignal = 'PisSignal='+str(isSignal)
+        string_isCentralProd = 'PisCentralProd='+str(isCentralProd)
         string_GT = 'PGT='+str(GT)
         string_JECstring = 'PJECstring='+str(JECstring)
         string_jsonName = 'PjsonName='+str(jsonName)
@@ -676,7 +683,7 @@ if __name__ == '__main__':
 
         # submission of the python config
         if options.crabaction=="submit":
-            if "VBFH_HToSS" in j:
+            if "VBFH_HToSS" in j and not isCentralProd:
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
             elif "GluGluH_HToSS" in j:
@@ -708,7 +715,7 @@ if __name__ == '__main__':
                 #config.Data.splitting = 'Automatic'
                 #config.Data.unitsPerJob = 100000#comment, giving errors with new crab
             #config.JobType.pyCfgParams = ['runLocal=False']
-            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
             submit(config)
 
@@ -729,7 +736,7 @@ if __name__ == '__main__':
             os.system('echo report -d ' + workarea + '/crab_'+j+'\n')
             os.system('crab report -d ' + workarea + '/crab_'+j+'\n')
         elif options.crabaction=="test":
-            if "VBFH_HToSS" in j:
+            if "VBFH_HToSS" in j and not isCentralProd:
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
             elif "GluGluH_HToSS" in j:
@@ -760,7 +767,7 @@ if __name__ == '__main__':
                     config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
                 #config.Data.splitting = 'Automatic'
                 config.Data.unitsPerJob = 100000
-            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
         else:
             print "Invalid crab action. Please type: -a submit/status/resubmit/getoutput/kill"
