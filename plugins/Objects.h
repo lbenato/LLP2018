@@ -126,7 +126,7 @@ matchBquark(-1), matchLL(-1),
     nRecHitsHB(-1), timeRecHitsHB(-100.), timeRMSRecHitsHB(-1.), energyRecHitsHB(-1.), energyErrorRecHitsHB(-1.), xRecHitsHB(-1000.), yRecHitsHB(-1000.), zRecHitsHB(-1000.), radiusRecHitsHB(-1000.),
     nRecHitsHE(-1), timeRecHitsHE(-100.), timeRMSRecHitsHE(-1.), energyRecHitsHE(-1.), energyErrorRecHitsHE(-1.), xRecHitsHE(-1000.), yRecHitsHE(-1000.), zRecHitsHE(-1000.), radiusRecHitsHE(-1000.),
     //Imperial College tagger
-    pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP1000(-1.), deepCSV_probudsg(-99.), deepCSV_probb(-99.), deepCSV_probc(-99.), deepCSV_probbb(-99.), deepJet_probuds(-99.),deepJet_probg(-99.), deepJet_problepb(-99.), deepJet_probb(-99.), deepJet_probc(-99.), deepJet_probbb(-99.){}
+    pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP1000(-1.), deepCSV_probb_probbb(-99.), deepCSV_probc_probudsg(-99.), deepCSV_probudsg(-99.), deepCSV_probb(-99.), deepCSV_probc(-99.), deepCSV_probbb(-99.), deepJet_probc_probg_probuds(-99.), deepJet_probb_probbb_problepb(-99.), deepJet_probuds(-99.),deepJet_probg(-99.), deepJet_problepb(-99.), deepJet_probb(-99.), deepJet_probc(-99.), deepJet_probbb(-99.){}
     float pt;
     float eta;
     float phi;
@@ -394,10 +394,14 @@ matchBquark(-1), matchLL(-1),
     float pfXWP10; 
     float pfXWP100; 
     float pfXWP1000;
+    float deepCSV_probb_probbb;
+    float deepCSV_probc_probudsg;
     float deepCSV_probudsg;
     float deepCSV_probb;
     float deepCSV_probc;
     float deepCSV_probbb;
+    float deepJet_probc_probg_probuds;
+    float deepJet_probb_probbb_problepb;
     float deepJet_probuds;
     float deepJet_probg;
     float deepJet_problepb;
