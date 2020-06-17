@@ -653,22 +653,22 @@ if __name__ == '__main__':
         GT = ''
 
         if isMINIAOD:
+        #from https://indico.cern.ch/event/920726/contributions/3868370/attachments/2055396/3446379/20-06-11_News_PPD.pdf
             if isData:
                 if is2016:
-                    if isReMiniAod and any(s in j for s in theRunH2016): GT = '80X_dataRun2_Prompt_v16' 
-                    else: GT = '94X_dataRun2_v10'
+                    GT = '102X_dataRun2_v13'
                 elif is2017:
-                    GT = '94X_dataRun2_v11'
+                    GT = '102X_dataRun2_v13'
                 elif is2018:
-                    if theRun2018ABC: GT = '102X_dataRun2_v12'
-                    if theRun2018D:   GT = '102X_dataRun2_Prompt_v15'
+                    if theRun2018ABC: GT = '102X_dataRun2_v13'
+                    if theRun2018D:   GT = '102X_dataRun2_Prompt_v16'
             elif not(isData):
                 if is2016:
-                   GT = '94X_mcRun2_asymptotic_v3'
+                   GT = '102X_mcRun2_asymptotic_v8'
                 elif is2017:
-                   GT = '94X_mc2017_realistic_v17'
+                   GT = '102X_mc2017_realistic_v8'
                 elif is2018:
-                   GT = '102X_upgrade2018_realistic_v20'
+                   GT = '102X_upgrade2018_realistic_v21'
 
         if isAOD:
             if isData:
