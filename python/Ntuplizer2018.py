@@ -1745,6 +1745,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     signal = cms.bool(isSignal),
     iscalo = cms.bool(isCalo),
     iscentralprod = cms.bool(isCentralProd),
+
 )
 
 
