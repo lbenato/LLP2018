@@ -84,6 +84,12 @@ options.register(
     "isSignal parser flag"
 )
 options.register(
+    "PisCentralProd", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "isCentralProd parser flag"
+)
+options.register(
     "PGT", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
@@ -173,7 +179,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -193,11 +199,12 @@ if len(options.inputFiles) == 0:
             #'/store/mc/RunIIAutumn18DRPremix/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/3017154C-F483-964E-855B-E06F2590FD6B.root'#2018 MC with muons!  #
             #2016 background
             #'/store/mc/RunIISummer16MiniAODv2/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/E65DC503-55C9-E611-9A11-02163E019C7F.root',
+           '/store/mc/RunIISummer16MiniAODv3/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/270000/FE8AFB84-5DEA-E811-83C4-68CC6EA5BD1A.root',
             #2018 background
             #'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/270000/FFB1D063-1653-9441-BCE5-088A8DB0086D.root'
             #2017 background?
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
-            '/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
+           #'/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
             #'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/WW_TuneCP5_13TeV-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v2/80000/7639FB10-DF53-8242-89D8-7A5E5817A3E4.root'
             #'file:/afs/desy.de/user/e/eichm/public/forLisa/VBFH_m20_ctau500.root'
 #            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_Summer16_MINIAODSIM_calojets_Tranche2/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets/181218_125055/0000/miniaod_1.root',
@@ -234,7 +241,8 @@ if RunLocal:
     isPromptReco      = ('PromptReco' in process.source.fileNames[0])
     noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8' or 'WW_TuneCP5_13TeV-pythia8' or 'WZ_TuneCP5_13TeV-pythia8' or 'ZZ_TuneCP5_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
-    isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0]) else False
+    isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0] or 'HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
+    isCentralProd     = True if ('HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
     isCalo            = True #HERE for calo analyses!!!
     isVBF             = False
     isggH             = False
@@ -254,6 +262,7 @@ else:
     noLHEinfo         = options.PnoLHEinfo
     isbbH             = options.PisbbH
     isSignal          = options.PisSignal
+    isCentralProd     = options.PisCentralProd
     isCalo            = options.Pcalo
     isVBF             = options.PVBF
     isggH             = options.PggH
@@ -281,6 +290,7 @@ print 'isReReco',isReReco
 print 'isReMiniAod',isReMiniAod
 print 'isPromptReco',isPromptReco
 print 'isSignal', isSignal
+print 'isCentralProd', isCentralProd
 
 if(int(isTwinHiggs) + int(isHeavyHiggs) + int(isSUSY)>1):
    print "More than one theoretical model selected! Aborting...."
@@ -1734,6 +1744,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     verboseTrigger  = cms.bool(False),
     signal = cms.bool(isSignal),
     iscalo = cms.bool(isCalo),
+    iscentralprod = cms.bool(isCentralProd),
 )
 
 
