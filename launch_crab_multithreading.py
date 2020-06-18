@@ -16,7 +16,7 @@ config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = 'python/Ntuplizer2018.py'
 config.JobType.inputFiles = ['data']
 
-#config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_isPromptReco,string_noLHEinfo, string_isbbH, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString]
+#config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_isPromptReco,string_noLHEinfo, string_isbbH, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString]
 
 config.General.requestName = 'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MINIAOD'
 
@@ -709,6 +709,15 @@ if __name__ == '__main__':
 
         print "JEC ->",JECstring
 
+        JERstring = ''
+        if is2016:
+            JERstring = 'Summer16_25nsV1b_MC'
+        elif is2017:
+            JERstring = 'Fall17_V3b_MC'
+        elif is2018:
+            JERstring = 'Autumn18_V7b_MC'
+        print "JER ->", JERstring
+
         # JSON filter
         jsonName = ""
         if is2016:
@@ -746,6 +755,7 @@ if __name__ == '__main__':
         string_isCentralProd = 'PisCentralProd='+str(isCentralProd)
         string_GT = 'PGT='+str(GT)
         string_JECstring = 'PJECstring='+str(JECstring)
+        string_JERstring = 'PJERstring='+str(JERstring)
         string_jsonName = 'PjsonName='+str(jsonName)
         string_triggerTag = 'PtriggerTag='+str(triggerTag)
         string_filterString = 'PfilterString='+str(filterString)
@@ -794,7 +804,7 @@ if __name__ == '__main__':
                     config.Data.lumiMask = '/afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/'+selected_lumiMasks[j]+'.txt'
                     print "Use lumiMask: /afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/"+selected_lumiMasks[j]+".txt"
             #config.JobType.pyCfgParams = ['runLocal=False']
-            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
             if not isCentralProd or not isSignal:
                 submit(config)
@@ -855,7 +865,7 @@ if __name__ == '__main__':
                 if isSignal:
                     config.Data.lumiMask = '/afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/'+selected_lumiMasks[j]+'.txt'
                     print "Use lumiMask: /afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/"+selected_lumiMasks[j]+".txt"
-            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
         else:
             print "Invalid crab action. Please type: -a submit/status/resubmit/getoutput/kill"

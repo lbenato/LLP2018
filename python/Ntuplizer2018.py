@@ -102,6 +102,12 @@ options.register(
     "JECstring parser flag"
 )
 options.register(
+    "PJERstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "JERstring parser flag"
+)
+options.register(
     "PjsonName", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
@@ -199,9 +205,10 @@ if len(options.inputFiles) == 0:
             #'/store/mc/RunIIAutumn18DRPremix/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/3017154C-F483-964E-855B-E06F2590FD6B.root'#2018 MC with muons!  #
             #2016 background
             #'/store/mc/RunIISummer16MiniAODv2/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/E65DC503-55C9-E611-9A11-02163E019C7F.root',
-           #'/store/mc/RunIISummer16MiniAODv3/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/270000/FE8AFB84-5DEA-E811-83C4-68CC6EA5BD1A.root',
+            #'/store/mc/RunIISummer16MiniAODv3/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/270000/FE8AFB84-5DEA-E811-83C4-68CC6EA5BD1A.root',
+            #'/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
             #2018 background
-            #'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/270000/FFB1D063-1653-9441-BCE5-088A8DB0086D.root'
+            'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/270000/FFB1D063-1653-9441-BCE5-088A8DB0086D.root'
             #2017 background?
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
            #'/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
@@ -211,7 +218,7 @@ if len(options.inputFiles) == 0:
             #'/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MINIAODSIM_24May2018/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_24May2018/180529_093853/0000/miniaod_15.root'
 
             #2018 data:
-            'file:/pnfs/desy.de/cms/tier2//store/data/Run2018C/MET/MINIAOD/17Sep2018-v1/60000/ED1603BC-E2EC-D042-8262-6FF525FA0CA5.root'
+            #'file:/pnfs/desy.de/cms/tier2//store/data/Run2018C/MET/MINIAOD/17Sep2018-v1/60000/ED1603BC-E2EC-D042-8262-6FF525FA0CA5.root'
 
         )
     )
@@ -433,7 +440,7 @@ process.cleanedMuons = cms.EDProducer('PATMuonCleanerBySegments',
 task.add(process.cleanedMuons)
 
 #-----------------------#
-#         JEC           #
+#       JEC/JER         #
 #-----------------------#
 
 # Jet corrector https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookJetEnergyCorrections#CorrOnTheFly
@@ -462,6 +469,20 @@ if RunLocal:
 else:
     JECstring = options.PJECstring
 print "JEC ->",JECstring
+
+
+JERstring = ''
+
+if RunLocal:
+   if is2016:
+      JERstring = 'Summer16_25nsV1b_MC'
+   elif is2017:
+      JERstring = 'Fall17_V3b_MC'
+   elif is2018:
+      JERstring = 'Autumn18_V7b_MC'
+else:
+   JERstring = options.PJERstring
+print "JER ->", JERstring
 
 #-----------------------#
 #        FILTERS        #
@@ -654,7 +675,7 @@ if isCalo and pt_AK4<10:
       btagInfos = bTagInfos,
       jetCorrections = (chosen_JEC, ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),#correct JEC
       genJetCollection = cms.InputTag('ak4GenJetsNoNu'),
-      genParticles = cms.InputTag('packedGenParticles'),
+      genParticles = cms.InputTag('prunedGenParticles'),
       algo = 'AK',
       rParam = 0.4
       )
@@ -676,7 +697,7 @@ if pt_AK8<170:
    ### Gen jets
    if not isData:
       from RecoJets.JetProducers.ak4GenJets_cfi import ak4GenJets
-      process.ak8GenJetsNoNu = ak4GenJets.clone(src = 'packedGenParticlesForJetsNoNu', rParam = 0.8)
+      process.ak8GenJetsNoNu = ak4GenJets.clone(src = 'prunedGenParticlesForJetsNoNu', rParam = 0.8)
       task.add(process.ak8GenJetsNoNu)
 
    ### Reco AK8 CHS jets
@@ -727,7 +748,7 @@ if pt_AK8<170:
        btagInfos = bTagInfos,
        jetCorrections = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
        genJetCollection = cms.InputTag('ak8GenJetsNoNu'),
-       genParticles = cms.InputTag('packedGenParticles'),
+       genParticles = cms.InputTag('prunedGenParticles'),
        algo = 'AK',
        rParam = 0.8
    )
@@ -745,7 +766,7 @@ if pt_AK8<170:
        btagInfos = bTagInfos,
        jetCorrections = ('AK8PFPuppi', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
        genJetCollection = cms.InputTag('ak8GenJetsNoNu'),
-       genParticles = cms.InputTag('packedGenParticles'),
+       genParticles = cms.InputTag('prunedGenParticles'),
        algo = 'AK',
        rParam = 0.8
    )
@@ -761,7 +782,7 @@ if pt_AK8<170:
       pvSource = cms.InputTag('offlineSlimmedPrimaryVertices'),
       svSource = cms.InputTag('slimmedSecondaryVertices'),
       genJetCollection = cms.InputTag('ak8GenJetsNoNu'), # AK4 gen jets!
-      genParticles = cms.InputTag('packedGenParticles'),
+      genParticles = cms.InputTag('prunedGenParticles'),
       getJetMCFlavour = False # jet flavor disabled
       )
    task.add(process.patJetsAK8CHSSoftDrop)
@@ -783,7 +804,7 @@ if pt_AK8<170:
       explicitJTA = True,  # needed for subjet b tagging
       svClustering = True, # needed for subjet b tagging
       genJetCollection = cms.InputTag('ak4GenJetsNoNu'), # AK4 gen jets!
-      genParticles = cms.InputTag('packedGenParticles'),
+      genParticles = cms.InputTag('prunedGenParticles'),
       fatJets=cms.InputTag('ak8PFJetsCHSCustom'), # needed for subjet flavor clustering
       groomedFatJets=cms.InputTag('ak8PFJetsCHSSoftDropReclustered') # needed for subjet flavor clustering
    )
@@ -1212,7 +1233,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     genSet = cms.PSet(
         genProduct = cms.InputTag('generator'),
         lheProduct = cms.InputTag('externalLHEProducer'),
-        genParticles = cms.InputTag('packedGenParticles'),
+        genParticles = cms.InputTag('prunedGenParticles'),
         pdgId = cms.vint32(5,9000006,23,24,25),#(1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 21, 23, 24, 25, 36, 39, 1000022, 9100000, 9000001, 9000002, 9100012, 9100022, 9900032, 1023),
         status = cms.vint32(22,23),
         samplesDYJetsToLL = cms.vstring(),
@@ -1377,7 +1398,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         recalibrateMass = cms.bool(False),
         recalibratePuppiMass = cms.bool(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
-        smearJets = cms.bool(False),#(True),
+        smearJets = cms.bool(True),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
         jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK4PFchs.txt' % (JECstring, JECstring)),#updating
@@ -1413,8 +1434,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         metRecoilMC = cms.string('data/recoilfit_gjetsMC_Zu1_pf_v5.root'),
         metRecoilData = cms.string('data/recoilfit_gjetsData_Zu1_pf_v5.root'),
         metTriggerFileName = cms.string('data/MET_trigger_eff_data_SingleMuRunBH.root'),
-        jerNameRes = cms.string('data/JER/Spring16_25nsV10_MC_PtResolution_AK4PFchs.txt'),#v10 is the latest
-        jerNameSf = cms.string('data/JER/Spring16_25nsV10_MC_SF_AK4PFchs.txt'),#v10 is the latest
+        jerNameRes = cms.string('data/JER/%s/%s_PtResolution_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
+        jerNameSf = cms.string('data/JER/%s/%s_SF_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
     ),
     chsJetSet = cms.PSet(
         jets = cms.InputTag(jets_to_be_used),#(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
@@ -1431,7 +1452,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         recalibrateMass = cms.bool(False),
         recalibratePuppiMass = cms.bool(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
-        smearJets = cms.bool(False),#(True),
+        smearJets = cms.bool(True),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
         jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK4PFchs.txt' % (JECstring, JECstring)),#updating
@@ -1467,8 +1488,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         metRecoilMC = cms.string('data/recoilfit_gjetsMC_Zu1_pf_v5.root'),
         metRecoilData = cms.string('data/recoilfit_gjetsData_Zu1_pf_v5.root'),
         metTriggerFileName = cms.string('data/MET_trigger_eff_data_SingleMuRunBH.root'),
-        jerNameRes = cms.string('data/JER/Spring16_25nsV10_MC_PtResolution_AK4PFchs.txt'),#v10 is the latest
-        jerNameSf = cms.string('data/JER/Spring16_25nsV10_MC_SF_AK4PFchs.txt'),#v10 is the latest
+        jerNameRes = cms.string('data/JER/%s/%s_PtResolution_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
+        jerNameSf = cms.string('data/JER/%s/%s_SF_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
     ),
     vbfJetSet = cms.PSet(
         jets = cms.InputTag(jets_to_be_used),#(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
@@ -1489,7 +1510,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         recalibrateMass = cms.bool(False),
         recalibratePuppiMass = cms.bool(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
-        smearJets = cms.bool(False),#(True),
+        smearJets = cms.bool(True),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),# if not isAOD else 'offlinePrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
         jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK4PFchs.txt' % (JECstring, JECstring)),#updating
@@ -1525,8 +1546,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         metRecoilMC = cms.string('data/recoilfit_gjetsMC_Zu1_pf_v5.root'),
         metRecoilData = cms.string('data/recoilfit_gjetsData_Zu1_pf_v5.root'),
         metTriggerFileName = cms.string('data/MET_trigger_eff_data_SingleMuRunBH.root'),
-        jerNameRes = cms.string('data/JER/Spring16_25nsV10_MC_PtResolution_AK4PFchs.txt'),#v10 is the latest
-        jerNameSf = cms.string('data/JER/Spring16_25nsV10_MC_SF_AK4PFchs.txt'),#v10 is the latest
+        jerNameRes = cms.string('data/JER/%s/%s_PtResolution_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
+        jerNameSf = cms.string('data/JER/%s/%s_SF_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
     ),
     chsFatJetSet = cms.PSet(
         jets = cms.InputTag(chosen_AK8),#('slimmedJetsAK8'),
@@ -1543,7 +1564,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         recalibrateMass = cms.bool(False),#(True if is2016 else False),#(False),
         recalibratePuppiMass = cms.bool(False),#(True),#(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
-        smearJets = cms.bool(False),#(True),
+        smearJets = cms.bool(True),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
         jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK8PFchs.txt' % (JECstring, JECstring)),#updating
@@ -1579,8 +1600,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         metRecoilMC = cms.string('data/recoilfit_gjetsMC_Zu1_pf_v5.root'),
         metRecoilData = cms.string('data/recoilfit_gjetsData_Zu1_pf_v5.root'),
         metTriggerFileName = cms.string('data/MET_trigger_eff_data_SingleMuRunBH.root'),
-        jerNameRes = cms.string('data/JER/Spring16_25nsV10_MC_PtResolution_AK8PFchs.txt'),#v10 is the latest
-        jerNameSf = cms.string('data/JER/Spring16_25nsV10_MC_SF_AK8PFchs.txt'),#v10 is the latest
+        jerNameRes = cms.string('data/JER/%s/%s_PtResolution_AK8PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
+        jerNameSf = cms.string('data/JER/%s/%s_SF_AK8PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
     ),
 #    caloJetSet = cms.PSet(
 #        jets = cms.InputTag('ak4CaloJets'),
