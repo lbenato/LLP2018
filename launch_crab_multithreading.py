@@ -3,6 +3,7 @@
 import CRABClient
 from CRABClient.UserUtilities import config#, getUsernameFromSiteDB
 import sys
+from multiprocessing import Process 
 config = config()
 
 config.User.voGroup='dcms'
@@ -15,7 +16,7 @@ config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = 'python/Ntuplizer2018.py'
 config.JobType.inputFiles = ['data']
 
-#config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_isPromptReco,string_noLHEinfo, string_isbbH, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString]
+#config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_isPromptReco,string_noLHEinfo, string_isbbH, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString]
 
 config.General.requestName = 'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MINIAOD'
 
@@ -31,6 +32,9 @@ config.Data.publication = False
 config.Site.storageSite = 'T2_DE_DESY'
 #config.Site.whitelist   = ['T2_DE_DESY']
 #config.Site.blacklist   = ['T2_FR_IPHC']
+
+## Use this for central production 2016 signal as long as in status 'production'
+#config.Data.allowNonValidInputDataset = True
             
 #enable multi-threading
 #remove from being default!
@@ -55,7 +59,7 @@ if __name__ == '__main__':
     # Selection of samples via python lists
     import os
 
-    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT"]#,"data_obs"
+    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018"]#,"data_obs"
     print "Possible subgroups of samples:"
     for a in list_of_samples:
         print a
@@ -73,6 +77,7 @@ if __name__ == '__main__':
     parser.add_option("-r", "--runera", action="store", type="string", dest="runera", default="2017")
     parser.add_option("-m", "--mode", action="store", type="string", dest="mode", default="")
     parser.add_option("-M", "--model", action="store", type="string", dest="model", default="SUSY")
+    parser.add_option("-C", "--centralproduction", action="store_true", dest="centralProd", default=False)
     (options, args) = parser.parse_args()
 
 
@@ -139,6 +144,11 @@ if __name__ == '__main__':
     else:
         print "Data era not recognized! Aborting . . ."
         exit()
+
+    if options.centralProd:
+        isCentralProd=True
+    else:
+        isCentralProd=False
 
     folder = ''
     pset = ''
@@ -459,12 +469,69 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = True#False#only for heavy higgs
         isSUSY = False#!!!
-
+    elif options.lists == "v0_2016miniAOD_centrallyProduced":
+        from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2016 import sample, samples
+        pset = "Ntuplizer2018.py"
+        folder = "v0_production_centrallyProduced_LumiMask_full2016/"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/meich/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/eichm/" + folder #CHANGE here according to your username!
+        config.Data.totalUnits = 200
+        isCalo=False
+        isVBF = True
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False#True#only for heavy higgs
+        isSUSY = False
+        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples) else False
+        isMINIAOD = True
+        isAOD  = False
+        config.JobType.inputFiles = ['data']
+    elif options.lists == "v0_2017miniAOD_centrallyProduced":
+        from Analyzer.LLP2018.crab_requests_lists_2017MINIAOD_centrallyProduced import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2017 import sample, samples
+        pset = "Ntuplizer2018.py"
+        folder = "v0_production_centrallyProduced_LumiMask_full2017/"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/meich/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/eichm/" + folder #CHANGE here according to your username!
+        config.Data.totalUnits = 200
+        isCalo=False
+        isVBF = True
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False#True#only for heavy higgs
+        isSUSY = False
+        isCentralProd = True  if ("VBFH_MH-125_201" in options.groupofsamples) else False
+        isMINIAOD = True
+        isAOD  = False
+        config.JobType.inputFiles = ['data']
+    elif options.lists == "v0_2018miniAOD_centrallyProduced":
+        from Analyzer.LLP2018.crab_requests_lists_2018MINIAOD_centrallyProduced import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2018 import sample, samples
+        pset = "Ntuplizer2018.py"
+        folder = "v0_production_centrallyProduced_LumiMask_full2018/"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/meich/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/eichm/" + folder #CHANGE here according to your username!
+        config.Data.totalUnits = 200
+        isCalo=False
+        isVBF = True
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False#True#only for heavy higgs
+        isSUSY = False
+        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples) else False
+        isMINIAOD = True
+        isAOD  = False
+        config.JobType.inputFiles = ['data']
     else:
         print "No list indicated, aborting!"
         exit()
 
     selected_requests = {}
+    selected_lumiMasks = {} 
     if options.groupofsamples not in list_of_samples:
         print "Invalid subgroup of samples, aborting!"
         exit()
@@ -490,6 +557,16 @@ if __name__ == '__main__':
             if "GluGluH2_H2ToSSTobb" in k:
                 print k
                 selected_requests[k] = requests[k]
+        elif "VBFH_MH-125_201" in options.groupofsamples:
+            if "VBFH_HToSSTo4b" in k and "MS-" in k:
+                print k
+                selected_requests[k] = requests[k]
+                if k in masks.keys():
+                    selected_lumiMasks[k] = masks[k]
+                    print "lumi mask:", masks[k]
+                else:
+                    print "no mask available"
+                    exit()
         elif options.groupofsamples=="all":
             print "All samples considered"
             selected_requests[k] = requests[k]
@@ -572,26 +649,26 @@ if __name__ == '__main__':
 
         noLHEinfo = True if ('WW_TuneCUETP8M1_13TeV-pythia8' in j or 'WZ_TuneCUETP8M1_13TeV-pythia8' in j or 'ZZ_TuneCUETP8M1_13TeV-pythia8' in j or 'WW_TuneCP5_13TeV-pythia8' in j or 'WZ_TuneCP5_13TeV-pythia8' in j or 'ZZ_TuneCP5_13TeV-pythia8' in j) else False #check for PythiaLO samples
         isbbH = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in j) else False #bbH has a different label in LHEEventProduct
-        isSignal = True if ('HToSSTobbbb_MH-125' in j) else False
+        isSignal = True if ('HToSSTobbbb_MH-125' in j  or 'HToSSTo4b_MH-125' in j) else False
         GT = ''
 
         if isMINIAOD:
+        #from https://indico.cern.ch/event/920726/contributions/3868370/attachments/2055396/3446379/20-06-11_News_PPD.pdf
             if isData:
                 if is2016:
-                    if isReMiniAod and any(s in j for s in theRunH2016): GT = '80X_dataRun2_Prompt_v16' 
-                    else: GT = '94X_dataRun2_v10'
+                    GT = '102X_dataRun2_v13'
                 elif is2017:
-                    GT = '94X_dataRun2_v11'
+                    GT = '102X_dataRun2_v13'
                 elif is2018:
-                    if theRun2018ABC: GT = '102X_dataRun2_v12'
-                    if theRun2018D:   GT = '102X_dataRun2_Prompt_v15'
+                    if theRun2018ABC: GT = '102X_dataRun2_v13'
+                    if theRun2018D:   GT = '102X_dataRun2_Prompt_v16'
             elif not(isData):
                 if is2016:
-                   GT = '94X_mcRun2_asymptotic_v3'
+                   GT = '102X_mcRun2_asymptotic_v8'
                 elif is2017:
-                   GT = '94X_mc2017_realistic_v17'
+                   GT = '102X_mc2017_realistic_v8'
                 elif is2018:
-                   GT = '102X_upgrade2018_realistic_v20'
+                   GT = '102X_upgrade2018_realistic_v21'
 
         if isAOD:
             if isData:
@@ -632,13 +709,26 @@ if __name__ == '__main__':
 
         print "JEC ->",JECstring
 
+        JERstring = ''
+        if is2016:
+            JERstring = 'Summer16_25nsV1b_MC'
+        elif is2017:
+            JERstring = 'Fall17_V3b_MC'
+        elif is2018:
+            JERstring = 'Autumn18_V7b_MC'
+        print "JER ->", JERstring
+
         # JSON filter
+        jsonName = ""
         if is2016:
             jsonName = "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON"
         elif is2017:
             jsonName = "Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON"
         elif is2018:
             jsonName = "Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON"
+            
+        if isCentralProd and (is2016 or is2017 or is2018):
+            jsonName = selected_lumiMasks[j]
 
         # Trigger filter
         triggerTag = 'HLT2' if isReHLT else 'HLT'
@@ -662,8 +752,10 @@ if __name__ == '__main__':
         string_noLHEinfo = 'PnoLHEinfo='+str(noLHEinfo)
         string_isbbH = 'PisbbH='+str(isbbH)
         string_isSignal = 'PisSignal='+str(isSignal)
+        string_isCentralProd = 'PisCentralProd='+str(isCentralProd)
         string_GT = 'PGT='+str(GT)
         string_JECstring = 'PJECstring='+str(JECstring)
+        string_JERstring = 'PJERstring='+str(JERstring)
         string_jsonName = 'PjsonName='+str(jsonName)
         string_triggerTag = 'PtriggerTag='+str(triggerTag)
         string_filterString = 'PfilterString='+str(filterString)
@@ -676,7 +768,7 @@ if __name__ == '__main__':
 
         # submission of the python config
         if options.crabaction=="submit":
-            if "VBFH_HToSS" in j:
+            if "VBFH_HToSS" in j and not isCentralProd:
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
             elif "GluGluH_HToSS" in j:
@@ -707,10 +799,19 @@ if __name__ == '__main__':
                     config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
                 #config.Data.splitting = 'Automatic'
                 #config.Data.unitsPerJob = 100000#comment, giving errors with new crab
+            elif isCentralProd:
+                if isSignal:
+                    config.Data.lumiMask = '/afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/'+selected_lumiMasks[j]+'.txt'
+                    print "Use lumiMask: /afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/"+selected_lumiMasks[j]+".txt"
             #config.JobType.pyCfgParams = ['runLocal=False']
-            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
-            submit(config)
+            if not isCentralProd or not isSignal:
+                submit(config)
+            else:
+                p = Process(target=submit, args=(config,))
+                p.start()
+                p.join()
 
         elif options.crabaction=="status":
             os.system('echo status -d ' + workarea + '/crab_'+j+'\n')
@@ -729,7 +830,7 @@ if __name__ == '__main__':
             os.system('echo report -d ' + workarea + '/crab_'+j+'\n')
             os.system('crab report -d ' + workarea + '/crab_'+j+'\n')
         elif options.crabaction=="test":
-            if "VBFH_HToSS" in j:
+            if "VBFH_HToSS" in j and not isCentralProd:
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
             elif "GluGluH_HToSS" in j:
@@ -760,7 +861,11 @@ if __name__ == '__main__':
                     config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
                 #config.Data.splitting = 'Automatic'
                 config.Data.unitsPerJob = 100000
-            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+            elif isCentralProd:
+                if isSignal:
+                    config.Data.lumiMask = '/afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/'+selected_lumiMasks[j]+'.txt'
+                    print "Use lumiMask: /afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/"+selected_lumiMasks[j]+".txt"
+            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
         else:
             print "Invalid crab action. Please type: -a submit/status/resubmit/getoutput/kill"

@@ -86,7 +86,8 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     isVerbose(iConfig.getParameter<bool> ("verbose")),
     isVerboseTrigger(iConfig.getParameter<bool> ("verboseTrigger")),
     isSignal(iConfig.getParameter<bool> ("signal")),
-    isCalo(iConfig.getParameter<bool> ("iscalo"))
+    isCalo(iConfig.getParameter<bool> ("iscalo")),
+    isCentralProd(iConfig.getParameter<bool> ("iscentralprod"))
 
 
 {
@@ -254,9 +255,11 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     EventWeight *= GenEventWeight;
 
     //split up signal samples
-    edm::Handle<GenLumiInfoHeader> gen_header;
-    iEvent.getLuminosityBlock().getByToken(genLumiHeaderToken_,gen_header);
-    model_ = gen_header->configDescription();
+    if(isCentralProd){
+      edm::Handle<GenLumiInfoHeader> gen_header;
+      iEvent.getLuminosityBlock().getByToken(genLumiHeaderToken_,gen_header);
+      model_ = gen_header->configDescription();
+    }
 
     if(PerformVBF and PerformggH) throw cms::Exception("Configuration") << "VBF and ggH selections can't be performed together! Please choose one option only!";
 
