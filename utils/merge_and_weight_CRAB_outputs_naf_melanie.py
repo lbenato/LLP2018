@@ -79,7 +79,7 @@ elif options.lists == "v1_pfXTag_short":
     from Analyzer.LLP2018.crab_requests_lists_v0_pfXTag_short import *
     LUMI = 35867#36814# in pb-1 Full 2016 with normtag
 elif options.lists == "v0_2016miniAOD_centrallyProduced":
-    from Analyzer.LLP2018.merge_requests_lists_2016MINIAOD_centrallyProduced_short import *
+    from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced_short import *
     LUMI = 35867#36814# in pb-1 Full 2016 with normtag
 else:
     print "No sample list indicated, aborting!"
@@ -88,7 +88,7 @@ else:
 #from Analyzer.LLP2018.samples import sample, samples
 #from Analyzer.LLP2018.samples import sample
 from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2016 import sample, samples
-list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","QCD_HT50to100","QCD_HT100to200","QCD_HT200to300","QCD_HT300to500","QCD_HT500to700","QCD_HT700to1000","QCD_HT1000to1500","QCD_HT1500to2000","QCD_HT2000toInf", "VBFH_MH-125_2016"]
+list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","QCD_HT50to100","QCD_HT100to200","QCD_HT200to300","QCD_HT300to500","QCD_HT500to700","QCD_HT700to1000","QCD_HT1000to1500","QCD_HT1500to2000","QCD_HT2000toInf", "VBFH_MH-125_2016", "QCD_bEnriched"]
 print "Possible subgroups of samples:"
 for a in list_of_samples:
     print a
@@ -126,7 +126,6 @@ for b, k in enumerate(requests.keys()):
         if k in samples[options.groupofsamples]["files"]:
             print k
             selected_requests[k] = requests[k]
-print  selected_requests.keys()
 
 if options.output_folder == "":
     DEST = "/nfs/dust/cms/user/lbenato/v3/"
@@ -159,8 +158,6 @@ def hadd_outputs(fold,name):
 
 ######################This blocks naf machines
     #print name
-        print "fold", fold
-        print "name", name
     if "VBFH_MH-125_201" in options.groupofsamples:
         os.system('hadd -k -f '+DEST+name+'.root ' + fold + "/*/*/*.root")
     else:
@@ -218,12 +215,10 @@ for l in subdirs:
 os.chdir(options.input_folder)
 
 for l in subdirs:
-    print "subdir", l
     fold = ""
     name = ""
     if "VBFH_MH-125_201" in options.groupofsamples:
         a = l.replace("crab_", "")
-        print "new subdir", l
         if a in selected_requests.keys():
             fold = l
             name = a
@@ -235,7 +230,6 @@ for l in subdirs:
             print "##################################"
     else:
         for a in crab_subdirs:
-            print "crab subdir", a
             #if l in a:
             if l in a and a in selected_requests.keys():
                 fold = l
