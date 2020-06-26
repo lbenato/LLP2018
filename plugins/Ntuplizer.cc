@@ -192,6 +192,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     //if(isVerbose) std::cout << "STARTING ANALYZE METHOD!" << std::endl;
     auto start = std::chrono::system_clock::now();//time!
+
     using namespace edm;
     using namespace reco;
     using namespace std;
@@ -289,6 +290,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
 
     ////if(!AtLeastOneTrigger && WriteOnlyTriggerEvents) std::cout << "This event can be rejected" << std::endl;
+
     if(!AtLeastOneTrigger && WriteOnlyTriggerEvents) return;
 
     // 10 Dec 2018: saving only events that fired at least one L1 seed
@@ -1518,7 +1520,6 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //If you have a Jet, rather than a JetTag, and wish to know if it is b-tagged, there are several ways of doing so. One which always works is to perform angular matching between the Jet and the JetTag::jet(). (The match should be perfect if your JetCollection was used to produce the JetTagCollection).
 
 
-
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     // AK4 CALO Jets
@@ -2115,6 +2116,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     }//end of EXO-16-003 variables for AK4 Jets
 
+
     // AK8 jets
     for (unsigned int j = 0; j < CHSFatJetsVect.size(); j++){
       int jj = j;
@@ -2419,6 +2421,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "TREE FILL!" << std::endl;
     tree -> Fill();
     if(isVerbose) std::cout << "TREE FILLED!!!!!!!!!!!! Go to next event...--->" << std::endl;
+
 
 }
 

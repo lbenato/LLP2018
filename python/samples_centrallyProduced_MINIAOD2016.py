@@ -129,6 +129,13 @@ sample = {
         'kfactor' : 1.,
         },
 
+    'QCD_bEnriched_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v3': {
+        'nevents' : 1,
+        'xsec'    : 88320.,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+        },
+
     'TT_TuneCUETP8M2T4_13TeV-powheg-pythia8-v3': {
         'nevents' : 1,
         'xsec'    : 730.6,
@@ -365,6 +372,112 @@ samples = {
 
     ########################################################
 
+    'QCD_HT100to200':{
+        'files' : ['QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v3',],
+        'fillcolor' : 920,
+        'fillstyle' : 1001,
+        'linecolor' : 920,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : 'QCD',
+        'title' : 'QCD',
+        'weight': 1.,
+        'plot': True,
+        },
+
+    'QCD_HT200to300':{
+        'files' : ['QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v3',],
+        'fillcolor' : 920,
+        'fillstyle' : 1001,
+        'linecolor' : 920,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : 'QCD',
+        'title' : 'QCD',
+        'weight': 1.,
+        'plot': True,
+        },
+
+    'QCD_HT300to500':{
+        'files' : ['QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v3',],
+        'fillcolor' : 920,
+        'fillstyle' : 1001,
+        'linecolor' : 920,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : 'QCD',
+        'title' : 'QCD',
+        'weight': 1.,
+        'plot': True,
+        },
+
+    'QCD_HT500to700':{
+        'files' : ['QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v3',],
+        'fillcolor' : 920,
+        'fillstyle' : 1001,
+        'linecolor' : 920,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : 'QCD',
+        'title' : 'QCD',
+        'weight': 1.,
+        'plot': True,
+        },
+
+    'QCD_HT700to1000':{
+        'files' : ['QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v3',],
+        'fillcolor' : 920,
+        'fillstyle' : 1001,
+        'linecolor' : 920,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : 'QCD',
+        'title' : 'QCD',
+        'weight': 1.,
+        'plot': True,
+        },
+
+    'QCD_HT1000to1500':{
+        'files' : ['QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v3',],
+        'fillcolor' : 920,
+        'fillstyle' : 1001,
+        'linecolor' : 920,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : 'QCD',
+        'title' : 'QCD',
+        'weight': 1.,
+        'plot': True,
+        },
+
+    'QCD_HT1500to2000':{
+        'files' : ['QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v3',],
+        'fillcolor' : 920,
+        'fillstyle' : 1001,
+        'linecolor' : 920,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : 'QCD',
+        'title' : 'QCD',
+        'weight': 1.,
+        'plot': True,
+        },
+
+    'QCD_HT2000toInf':{
+        'files' : ['QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v3',],
+        'fillcolor' : 920,
+        'fillstyle' : 1001,
+        'linecolor' : 920,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : 'QCD',
+        'title' : 'QCD',
+        'weight': 1.,
+        'plot': True,
+        },
+
+
+
     #QCD combined
     'QCD' : {
         'files' : [
@@ -380,6 +493,20 @@ samples = {
         'weight': 1.,
         'plot': True,
     },
+
+    #Test QCD bEnriched
+    'QCD_bEnriched' : {
+        'files' : ['QCD_bEnriched_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v3'],
+        'fillcolor' : 923,
+        'fillstyle' : 1001,
+        'linecolor' : 923,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : 'QCD bEnriched',
+        'title' : 'QCD bEnriched',
+        'weight': 1.,
+        'plot': True,
+        },
 
     #TTbar
     'TTbar' : {
@@ -615,9 +742,21 @@ samples = {
         'plot': True,
     },
 
+    'bbHToBB' : {
+        'files' : ['bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo-v3'],
+        'fillcolor' : 825,
+        'fillstyle' : 1001,
+        'linecolor' : 825,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "bbHToBB",
+        'weight': 1.,
+        'plot': True,
+    },
+
     'SM_Higgs' : {
-#        'files' : ['VBFHToBB_M-125_13TeV_powheg_pythia8-v3','ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8-v3','ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext1-v3','ZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8-v3', 'WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8-v3','WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8-v3','WminusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8-v3','WplusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8-v3', 'GluGluHToBB_M125_13TeV_powheg_pythia8-v3', 'ttHTobb_M125_13TeV_powheg_pythia8-v3','VBFHHTo4B_CV_1_C2V_1_C3_1_13TeV-madgraph-v3',],#'bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo-v3'],
-        'files' : ['VBFHToBB_M-125_13TeV_powheg_pythia8-v3','ZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8-v3', 'WminusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8-v3','WplusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8-v3', 'GluGluHToBB_M125_13TeV_powheg_pythia8-v3',],#'bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo-v3'],
+        'files' : ['VBFHToBB_M-125_13TeV_powheg_pythia8-v3','ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8-v3','ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8_ext1-v3','ZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8-v3', 'WminusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8-v3','WplusH_HToBB_WToQQ_M125_13TeV_powheg_pythia8-v3','WminusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8-v3','WplusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8-v3', 'GluGluHToBB_M125_13TeV_powheg_pythia8-v3', 'ttHTobb_M125_13TeV_powheg_pythia8-v3','VBFHHTo4B_CV_1_C2V_1_C3_1_13TeV-madgraph-v3','bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo-v3'],
+#        'files' : ['VBFHToBB_M-125_13TeV_powheg_pythia8-v3','ZH_HToBB_ZToLL_M125_13TeV_powheg_pythia8-v3', 'WminusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8-v3','WplusH_HToBB_WToLNu_M125_13TeV_powheg_pythia8-v3', 'GluGluHToBB_M125_13TeV_powheg_pythia8-v3',],#'bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo-v3'],
         'fillcolor' : 825,
         'fillstyle' : 1001,
         'linecolor' : 825,

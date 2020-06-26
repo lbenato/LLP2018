@@ -185,7 +185,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -206,9 +206,10 @@ if len(options.inputFiles) == 0:
             #2016 background
             #'/store/mc/RunIISummer16MiniAODv2/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/E65DC503-55C9-E611-9A11-02163E019C7F.root',
             #'/store/mc/RunIISummer16MiniAODv3/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/270000/FE8AFB84-5DEA-E811-83C4-68CC6EA5BD1A.root',
-            #'/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
+          #'/store/mc/RunIISummer16MiniAODv3/QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/270000/D8B03507-F2E9-E811-84E1-7CD30ACDE0CC.root',
+            '/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
             #2018 background
-            'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/270000/FFB1D063-1653-9441-BCE5-088A8DB0086D.root'
+            #'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/270000/FFB1D063-1653-9441-BCE5-088A8DB0086D.root'
             #2017 background?
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
            #'/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
@@ -250,12 +251,12 @@ if RunLocal:
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
     isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0] or 'HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
     isCentralProd     = True if ('HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
-    isCalo            = True #HERE for calo analyses!!!
-    isVBF             = False
+    isCalo            = False #HERE for calo analyses!!!
+    isVBF             = True
     isggH             = False
-    isTwinHiggs       = False
+    isTwinHiggs       = True
     isHeavyHiggs      = False
-    isSUSY            = True
+    isSUSY            = False
 
 else:
     isData            = options.PisData
@@ -374,7 +375,7 @@ if isCalo:
 if(isTwinHiggs and isCalo):
     pt_AK4 = 5
 else:
-    pt_AK4 = 15
+    pt_AK4 = 20
 #-----------------------#
 #     GLOBAL TAG        #
 #-----------------------#
@@ -446,7 +447,6 @@ task.add(process.cleanedMuons)
 # Jet corrector https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookJetEnergyCorrections#CorrOnTheFly
 process.load('JetMETCorrections.Configuration.JetCorrectors_cff')
 
-
 JECstring = ''
 if RunLocal:
     if isData and (isReReco or isReMiniAod):
@@ -487,7 +487,6 @@ print "JER ->", JERstring
 #-----------------------#
 #        FILTERS        #
 #-----------------------#
-
 # JSON filter
 if isData:
     import FWCore.PythonUtilities.LumiList as LumiList
@@ -904,46 +903,46 @@ bTagInfos = [
    ,'pfInclusiveSecondaryVertexFinderCvsLTagInfos'
    ,'pfInclusiveSecondaryVertexFinderNegativeCvsLTagInfos'
    ,'pfDeepCSVTagInfos' #Imperial
-#   ,'pfDeepFlavourTagInfos' # not available for 2016
+   ,'pfDeepFlavourTagInfos' # not available for 2016
 ]
 
 
 bTagDiscriminators = set([
-    'pfJetBProbabilityBJetTags'
-   ,'pfJetProbabilityBJetTags'
-   ,'pfPositiveOnlyJetBProbabilityBJetTags'
-   ,'pfPositiveOnlyJetProbabilityBJetTags'
-   ,'pfNegativeOnlyJetBProbabilityBJetTags'
-   ,'pfNegativeOnlyJetProbabilityBJetTags'
-   ,'pfTrackCountingHighPurBJetTags'
-   ,'pfTrackCountingHighEffBJetTags'
-   ,'pfNegativeTrackCountingHighPurBJetTags'
-   ,'pfNegativeTrackCountingHighEffBJetTags'
-   ,'pfSimpleSecondaryVertexHighEffBJetTags'
-   ,'pfSimpleSecondaryVertexHighPurBJetTags'
-   ,'pfNegativeSimpleSecondaryVertexHighEffBJetTags'
-   ,'pfNegativeSimpleSecondaryVertexHighPurBJetTags'
-   ,'pfCombinedSecondaryVertexV2BJetTags'
-   ,'pfPositiveCombinedSecondaryVertexV2BJetTags'
-   ,'pfNegativeCombinedSecondaryVertexV2BJetTags'
-   ,'pfCombinedInclusiveSecondaryVertexV2BJetTags'
-   ,'pfPositiveCombinedInclusiveSecondaryVertexV2BJetTags'
-   ,'pfNegativeCombinedInclusiveSecondaryVertexV2BJetTags'
-   ,'softPFMuonBJetTags'
-   ,'positiveSoftPFMuonBJetTags'
-   ,'negativeSoftPFMuonBJetTags'
-   ,'softPFElectronBJetTags'
-   ,'positiveSoftPFElectronBJetTags'
-   ,'negativeSoftPFElectronBJetTags'
-   ,'pfCombinedMVAV2BJetTags'
-   ,'pfNegativeCombinedMVAV2BJetTags'
-   ,'pfPositiveCombinedMVAV2BJetTags'
-   ,'pfCombinedCvsBJetTags'
-   ,'pfNegativeCombinedCvsBJetTags'
-   ,'pfPositiveCombinedCvsBJetTags'
-   ,'pfCombinedCvsLJetTags'
-   ,'pfNegativeCombinedCvsLJetTags'
-   ,'pfPositiveCombinedCvsLJetTags'
+   #  'pfJetBProbabilityBJetTags'
+   # ,'pfJetProbabilityBJetTags'
+   # ,'pfPositiveOnlyJetBProbabilityBJetTags'
+   # ,'pfPositiveOnlyJetProbabilityBJetTags'
+   # ,'pfNegativeOnlyJetBProbabilityBJetTags'
+   # ,'pfNegativeOnlyJetProbabilityBJetTags'
+   # ,'pfTrackCountingHighPurBJetTags'
+   # ,'pfTrackCountingHighEffBJetTags'
+   # ,'pfNegativeTrackCountingHighPurBJetTags'
+   # ,'pfNegativeTrackCountingHighEffBJetTags'
+   # ,'pfSimpleSecondaryVertexHighEffBJetTags'
+   # ,'pfSimpleSecondaryVertexHighPurBJetTags'
+   # ,'pfNegativeSimpleSecondaryVertexHighEffBJetTags'
+   # ,'pfNegativeSimpleSecondaryVertexHighPurBJetTags'
+   'pfCombinedSecondaryVertexV2BJetTags'
+   # ,'pfPositiveCombinedSecondaryVertexV2BJetTags'
+   # ,'pfNegativeCombinedSecondaryVertexV2BJetTags'
+   # ,'pfCombinedInclusiveSecondaryVertexV2BJetTags'
+   # ,'pfPositiveCombinedInclusiveSecondaryVertexV2BJetTags'
+   # ,'pfNegativeCombinedInclusiveSecondaryVertexV2BJetTags'
+   # ,'softPFMuonBJetTags'
+   # ,'positiveSoftPFMuonBJetTags'
+   # ,'negativeSoftPFMuonBJetTags'
+   # ,'softPFElectronBJetTags'
+   # ,'positiveSoftPFElectronBJetTags'
+   # ,'negativeSoftPFElectronBJetTags'
+   # ,'pfCombinedMVAV2BJetTags'
+   # ,'pfNegativeCombinedMVAV2BJetTags'
+   # ,'pfPositiveCombinedMVAV2BJetTags'
+   # ,'pfCombinedCvsBJetTags'
+   # ,'pfNegativeCombinedCvsBJetTags'
+   # ,'pfPositiveCombinedCvsBJetTags'
+   # ,'pfCombinedCvsLJetTags'
+   # ,'pfNegativeCombinedCvsLJetTags'
+   # ,'pfPositiveCombinedCvsLJetTags'
   #   # DeepCSV # From here not available for 2016
   , 'pfDeepCSVJetTags:probudsg'
   , 'pfDeepCSVJetTags:probb'
@@ -1020,25 +1019,27 @@ updateJetCollection(
 for m in ['updatedPatJets'+postfix, 'updatedPatJetsTransientCorrected'+postfix]:
     setattr( getattr(process,m), 'addTagInfos', cms.bool(True) )
 
-
 #Imperial
 process.updatedPatJetsFinal.addBTagInfo = cms.bool(True)
 process.updatedPatJetsFinal.addDiscriminators = cms.bool(True)
 process.updatedPatJetsFinal.addJetCorrFactors = cms.bool(True)
 process.updatedPatJetsFinal.addTagInfos = cms.bool(True)
-#Imperial
-process.updatedPatJetsTransientCorrectedFinal.addBTagInfo = cms.bool(True)
-process.updatedPatJetsTransientCorrectedFinal.addDiscriminators = cms.bool(True)
-process.updatedPatJetsTransientCorrectedFinal.addJetCorrFactors = cms.bool(True)
-process.updatedPatJetsTransientCorrectedFinal.addTagInfos = cms.bool(True)
+#TODO: test reasons
+##Imperial
+#process.updatedPatJetsTransientCorrectedFinal.addBTagInfo = cms.bool(True)
+#process.updatedPatJetsTransientCorrectedFinal.addDiscriminators = cms.bool(True)
+#process.updatedPatJetsTransientCorrectedFinal.addJetCorrFactors = cms.bool(True)
+#process.updatedPatJetsTransientCorrectedFinal.addTagInfos = cms.bool(True)
 
-jets_after_btag_tools = 'updatedPatJetsTransientCorrected'+postfix
+#jets_after_btag_tools = 'updatedPatJetsTransientCorrected'+postfix
+jets_after_btag_tools = 'updatedPatJets'+postfix
 
 task.add(process.pfImpactParameterTagInfosFinal)
 task.add(process.pfInclusiveSecondaryVertexFinderTagInfosFinal)
 task.add(process.pfDeepCSVTagInfosFinal)
 task.add(process.updatedPatJetsFinal)
-task.add(process.updatedPatJetsTransientCorrectedFinal)
+#TODO: test reasons
+#task.add(process.updatedPatJetsTransientCorrectedFinal)
 
 #---------------------------------------#
 #   B Tag info for softdrop sub jets    #
@@ -1104,11 +1105,9 @@ if pt_AK8<170:
 chosen_AK8 = "packedPatJetsAK8" # including SoftDrop info
 #chosen_AK8 = "patJetsAK8CHSReclustered"#'slimmedJetsAK8'
 
-
 #-----------------------#
 #    Imperial Tagger    #
 #-----------------------#
-
 process.pfXTagInfos = cms.EDProducer("XTagInfoProducer",
     jets = cms.InputTag(jets_after_btag_tools),
     shallow_tag_infos = cms.InputTag('pfDeepCSVTagInfosFinal'),
@@ -1125,7 +1124,7 @@ process.pfXTags = cms.EDProducer("XTagProducer",
     ctau_descriptors=cms.vstring("0p01", "0p1", "1", "10", "100", "1000") # provide log(ctau/1mm) to be evaluated: i.e. 1 mum, 1 mm and 1 m here
 )
 
-#task.add(process.patJetCorrFactors)
+##task.add(process.patJetCorrFactors)
 task.add(process.pfXTagInfos)
 task.add(process.pfXTags)
 
@@ -1176,8 +1175,9 @@ task.add(process.pfXTags)
 #task.add(process.updatedJetsPUID)
 
 #jets_to_be_used = "updatedJetsPUID"
-jets_to_be_used = 'updatedPatJetsTransientCorrected'+postfix
-
+#TODO: test reasons
+#jets_to_be_used = 'updatedPatJetsTransientCorrected'+postfix
+jets_to_be_used = 'updatedJetsFinal'+postfix
 
 #---------------------------------#
 #       PU Jet ID-a-la-2016       #
@@ -1262,7 +1262,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
 *[
 #2016 menu!!!:
 ### b-like
-#'HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v', 'HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v', 'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v', 'HLT_QuadJet45_TripleBTagCSV_p087_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v',
+#'HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v', 'HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v', 
+'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v', 'HLT_QuadJet45_TripleBTagCSV_p087_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v',
 
 ### displaced tracks
 #'HLT_VBF_DisplacedJet40_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_DisplacedTrack_2TrackIP2DSig5_v', 'HLT_HT350_DisplacedDijet40_DisplacedTrack_v', 'HLT_HT350_DisplacedDijet80_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_VTightID_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_VVTightID_DisplacedTrack_v', 'HLT_HT350_DisplacedDijet80_Tight_DisplacedTrack_v', 'HLT_HT650_DisplacedDijet80_Inclusive_v', 'HLT_HT750_DisplacedDijet80_Inclusive_v',
@@ -1357,10 +1358,10 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
 #'HLT_PFMET200_HBHE_BeamHaloCleaned_v',
 #'HLT_PFMET250_HBHECleaned_v',
 #'HLT_PFMET300_HBHECleaned_v',
-'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v',
-'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
-'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
-'HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
+#'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v',
+#'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
+#'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
+#'HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
 #'HLT_PFMETTypeOne140_PFMHT140_IDTight_v',
 #'HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v',
 #'HLT_TripleJet110_35_35_Mjj650_PFMET110_v',
@@ -1698,9 +1699,9 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     photonSet = cms.PSet(
         photons = cms.InputTag('slimmedPhotons'),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
-        phoLooseId = cms.string('cutBasedPhotonID-Fall17-94X-V2-loose'),
-        phoMediumId = cms.string('cutBasedPhotonID-Fall17-94X-V2-medium'),
-        phoTightId = cms.string('cutBasedPhotonID-Fall17-94X-V2-tight'),
+        phoLooseId = cms.string('cutBasedPhotonID-Fall17-94X-V1-loose'),
+        phoMediumId = cms.string('cutBasedPhotonID-Fall17-94X-V1-medium'),
+        phoTightId = cms.string('cutBasedPhotonID-Fall17-94X-V1-tight'),
         phoMVANonTrigMediumId = cms.string('mvaPhoID-Spring16-nonTrig-V1-wp90'),
         phoEcalRecHitCollection = cms.InputTag("reducedEgamma:reducedEBRecHits"),
         phoLooseIdFileName = cms.string('data/phoLooseIDSF_MORIOND17.root'),
@@ -1781,14 +1782,43 @@ process.test = cms.EDAnalyzer('LLP2018',
     eleVetoIdMap = cms.untracked.string('cutBasedElectronID-Fall17-94X-V2-veto'),
 )
 
+#task.add(process.patAlgosToolsTask) # huge computing time consumed!Use instead the following ones:
+#task.add(process.candidateVertexArbitrator)
+#task.add(process.candidateVertexMerger)
+#task.add(process.inclusiveCandidateSecondaryVertices)
+#task.add(process.inclusiveCandidateVertexFinder)
+#task.add(process.inclusiveSecondaryVertices)
+#task.add(process.inclusiveVertexFinder)
 
-task.add(process.patAlgosToolsTask)
+task.add(process.patJetCorrFactorsFinal)
+task.add(process.pfDeepCSVJetTagsFinal)
+task.add(process.pfDeepCSVTagInfosFinal)
+task.add(process.pfDeepFlavourJetTagsFinal)
+task.add(process.pfDeepFlavourTagInfosFinal)
+task.add(process.pfImpactParameterTagInfosFinal)
+task.add(process.pfInclusiveSecondaryVertexFinderTagInfosFinal)
+task.add(process.pfSecondaryVertexTagInfosFinal)
+#task.add(process.selectedUpdatedPatJetsFinal)
+task.add(process.updatedPatJetsFinal)
+
+#consumes more computing power:
+#task.add(process.softPFElectronsTagInfosFinal)
+#task.add(process.softPFMuonsTagInfosFinal)
+#task.add(process.patJetCorrFactorsTransientCorrectedFinal)
+#task.add(process.pfCombinedSecondaryVertexV2BJetTagsFinal)
+#task.add(process.pfSecondaryVertexNegativeTagInfosFinal)
+#task.add(process.pfInclusiveSecondaryVertexFinderNegativeTagInfosFinal)
+#task.add(process.pfInclusiveSecondaryVertexFinderCvsLTagInfosFinal)
+#task.add(process.pfInclusiveSecondaryVertexFinderNegativeCvsLTagInfosFinal)
+#task.add(process.updatedPatJetsTransientCorrectedFinal)
+#task.add(process.)
+
 #maybe here?
 #task.add(process.pileupJetId, process.patAlgosToolsTask)
 #task.add(process.pileUpJetIDTask)
 
 process.seq = cms.Sequence(
-    process.egammaPostRecoSeq *
+    process.egammaPostRecoSeq * 
     #process.packedPFCandidates *
     #process.packedCandsForTkIso *
     #process.lostTracksForTkIso *

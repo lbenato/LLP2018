@@ -23,8 +23,13 @@ config.General.requestName = 'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MIN
 config.Data.inputDataset =  '/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_standard_mixing-Moriond17_80X_mcRun2_2016_MINIAOD-28028af67189b3de7224b79195bd0e1d/USER'
 config.Data.inputDBS = 'global'
 #config.Data.splitting = 'EventAwareLumiBased'
-#config.Data.unitsPerJob = 15000
-config.Data.splitting = 'Automatic'
+
+#submit with this setup for backgrounds (QCD, ttbar, SM_Higgs)
+config.Data.unitsPerJob = 1
+config.Data.splitting = 'FileBased'
+
+#submit instead with this setup signal (VBFH_MH-125_201*)
+#config.Data.splitting = 'Automatic'
 
 config.Data.outLFNDirBase = '/store/user/lbenato/choose_a_folder_name'
 config.Data.publication = False
@@ -34,11 +39,11 @@ config.Site.storageSite = 'T2_DE_DESY'
 #config.Site.blacklist   = ['T2_FR_IPHC']
 
 ## Use this for central production 2016 signal as long as in status 'production'
-#config.Data.allowNonValidInputDataset = True
+config.Data.allowNonValidInputDataset = True
             
 #enable multi-threading
 #remove from being default!
-#config.JobType.maxMemoryMB = 5000#15900 #more memory
+config.JobType.maxMemoryMB = 9000#15900 #more memory #(1+1*num_threads) GB may be a good starting point
 config.JobType.numCores = 8
 
 if __name__ == '__main__':
@@ -59,7 +64,7 @@ if __name__ == '__main__':
     # Selection of samples via python lists
     import os
 
-    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018"]#,"data_obs"
+    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "bbHToBB", "QCD_HT100to200", "QCD_HT1000to1500", "QCD_bEnriched"]#,"data_obs"
     print "Possible subgroups of samples:"
     for a in list_of_samples:
         print a
@@ -470,14 +475,14 @@ if __name__ == '__main__':
         isHeavyHiggs = True#False#only for heavy higgs
         isSUSY = False#!!!
     elif options.lists == "v0_2016miniAOD_centrallyProduced":
-        from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced import *
+        from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced_short import *
         from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
         from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2016 import sample, samples
         pset = "Ntuplizer2018.py"
-        folder = "v0_production_centrallyProduced_LumiMask_full2016/"#CHANGE here your crab folder name
+        folder = "v0_production_centrallyProduced_full2016_bgdParts/"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/meich/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/eichm/" + folder #CHANGE here according to your username!
-        config.Data.totalUnits = 200
+#        config.Data.totalUnits = 200
         isCalo=False
         isVBF = True
         isggH = False
