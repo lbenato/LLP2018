@@ -81,14 +81,14 @@ JetAnalyzer::JetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl
         massCorrDATA = boost::shared_ptr<FactorizedJetCorrector> ( new FactorizedJetCorrector(massParDATA) );
     }
     
-    if(SmearJets) {
-        resolution    = new JME::JetResolution(JerName_res);
-        resolution_sf = new JME::JetResolutionScaleFactor(JerName_sf);
-        if (JerName_res.find("AK8") != std::string::npos)
-            Rparameter = 0.8;
-        else 
-            Rparameter = 0.4;
-    }
+    //if(SmearJets) {
+    //    resolution    = JME::JetResolution::get(iSetup, JerName_res);//new JME::JetResolution(JerName_res);
+    //    resolution_sf = JME::JetResolutionScaleFactor::get(iSetup, JerName_sf);//new JME::JetResolutionScaleFactor(JerName_sf);
+    //    if (JerName_res.find("AK8") != std::string::npos)
+    //        Rparameter = 0.8;
+    //    else 
+    //        Rparameter = 0.4;
+    //}
     
     if(RecalibratePuppiMass) {
         PuppiCorrFile = new TFile(MassCorrectorPuppi.c_str(), "READ");
@@ -375,8 +375,21 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         
 
         // JER NEW IMPLEMENTATION
+
+
+
 	
         if(SmearJets) {
+
+        //if(SmearJets) {
+            resolution    = JME::JetResolution::get(iSetup, JerName_res);//new JME::JetResolution(JerName_res);
+            resolution_sf = JME::JetResolutionScaleFactor::get(iSetup, JerName_sf);//new JME::JetResolutionScaleFactor(JerName_sf);
+            if (JerName_res.find("AK8") != std::string::npos)
+                Rparameter = 0.8;
+            else 
+                Rparameter = 0.4;
+        //}
+
             JME::JetParameters TheJetParameters;
             TheJetParameters.setJetPt(jet.pt());
             TheJetParameters.setJetEta(jet.eta());
@@ -390,10 +403,15 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             float smearFactorDown = 1.;
 
             if(isMC) {
-                float JERresolution = resolution->getResolution(TheJetParameters);
-                float JERsf         = resolution_sf->getScaleFactor(TheJetParameters);
-                float JERsfUp       = resolution_sf->getScaleFactor(TheJetParameters, Variation::UP);
-                float JERsfDown     = resolution_sf->getScaleFactor(TheJetParameters, Variation::DOWN);
+                //float JERresolution = resolution->getResolution(TheJetParameters);
+                //float JERsf         = resolution_sf->getScaleFactor(TheJetParameters);
+                //float JERsfUp       = resolution_sf->getScaleFactor(TheJetParameters, Variation::UP);
+                //float JERsfDown     = resolution_sf->getScaleFactor(TheJetParameters, Variation::DOWN);
+
+                float JERresolution = resolution.getResolution(TheJetParameters);
+                float JERsf         = resolution_sf.getScaleFactor(TheJetParameters);
+                float JERsfUp       = resolution_sf.getScaleFactor(TheJetParameters, Variation::UP);
+                float JERsfDown     = resolution_sf.getScaleFactor(TheJetParameters, Variation::DOWN);
                 //std::cout << "JERresolution " << JERresolution << "\n";
                 //std::cout << "JERsf         " << JERsf << "\n";
                 //std::cout << "JERsfUp       " << JERsfUp << "\n";
@@ -1050,8 +1068,12 @@ float JetAnalyzer::CalculateHT(const edm::Event& iEvent, int id, float pt, float
             float smearFactor = 1.;
 
             if(isMC) {
-                float JERresolution = resolution->getResolution(TheJetParameters);
-                float JERsf         = resolution_sf->getScaleFactor(TheJetParameters);
+                //float JERresolution = resolution->getResolution(TheJetParameters);
+                //float JERsf         = resolution_sf->getScaleFactor(TheJetParameters);
+                
+                float JERresolution = resolution.getResolution(TheJetParameters);
+                float JERsf         = resolution_sf.getScaleFactor(TheJetParameters);
+                
                 const reco::GenJet* genJet=jet.genJet();
                 if(genJet) {
                     if ( ( sqrt( pow(jet.eta() - genJet->eta(),2) + pow(jet.phi() - genJet->phi(),2) ) < 0.5*Rparameter )  &&

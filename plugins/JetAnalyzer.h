@@ -168,9 +168,11 @@ class JetAnalyzer {
 	//	std::vector<edm::EDGetTokenT<edm::View<reco::BaseTagInfo> > > BTagInfos_;
         
         //JME
-        JME::JetResolution              * resolution;
-        JME::JetResolutionScaleFactor   * resolution_sf;        
-        
+        //JME::JetResolution              * resolution;
+        //JME::JetResolutionScaleFactor   * resolution_sf;        
+        JME::JetResolution              resolution;
+        JME::JetResolutionScaleFactor   resolution_sf; 
+                
         // Recoil corrections
         RecoilCorrector* recoilCorr;
 };
