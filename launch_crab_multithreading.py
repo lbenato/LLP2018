@@ -23,8 +23,9 @@ config.General.requestName = 'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MIN
 config.Data.inputDataset =  '/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_standard_mixing-Moriond17_80X_mcRun2_2016_MINIAOD-28028af67189b3de7224b79195bd0e1d/USER'
 config.Data.inputDBS = 'global'
 #config.Data.splitting = 'EventAwareLumiBased'
-#config.Data.unitsPerJob = 15000
-config.Data.splitting = 'Automatic'
+#config.Data.unitsPerJob = 100#15000
+#config.Data.totalUnits = 100#15000
+config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
 
 config.Data.outLFNDirBase = '/store/user/lbenato/choose_a_folder_name'
 config.Data.publication = False
@@ -47,9 +48,9 @@ if __name__ == '__main__':
     from CRABClient.ClientExceptions import ClientException
     from httplib import HTTPException
 
-    def submit(config):
+    def submit(config, dryrun = False):
         try:
-            crabCommand('submit', config = config)
+            crabCommand('submit', config = config, dryrun = dryrun)
         except HTTPException as hte:
             print "Failed submitting task: %s" % (hte.headers)
         except ClientException as cle:
@@ -649,7 +650,7 @@ if __name__ == '__main__':
 
         noLHEinfo = True if ('WW_TuneCUETP8M1_13TeV-pythia8' in j or 'WZ_TuneCUETP8M1_13TeV-pythia8' in j or 'ZZ_TuneCUETP8M1_13TeV-pythia8' in j or 'WW_TuneCP5_13TeV-pythia8' in j or 'WZ_TuneCP5_13TeV-pythia8' in j or 'ZZ_TuneCP5_13TeV-pythia8' in j) else False #check for PythiaLO samples
         isbbH = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in j) else False #bbH has a different label in LHEEventProduct
-        isSignal = True if ('HToSSTobbbb_MH-125' in j  or 'HToSSTo4b_MH-125' in j) else False
+        isSignal = True if ('HToSSTobbbb_MH-125' in j  or 'HToSSTo4b_MH-125' in j) else False #FIXME: Update with other signal modes & models?
         GT = ''
 
         if isMINIAOD:
@@ -767,7 +768,7 @@ if __name__ == '__main__':
         string_SUSY = 'PSUSY=True' if isSUSY else 'PSUSY=False'
 
         # Set parameters and print python config
-        if options.crabaction=="submit" or options.crabaction=="test":
+        if options.crabaction=="submit" or options.crabaction=="dryrun" or options.crabaction=="test":
             if "VBFH_HToSS" in j and not isCentralProd:
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
@@ -814,7 +815,13 @@ if __name__ == '__main__':
                     p = Process(target=submit, args=(config,))
                     p.start()
                     p.join()
-
+            if options.crabaction=="dryrun":
+                if not isCentralProd or not isSignal:
+                    submit(config, dryrun = True)
+                else:
+                    p = Process(target=submit, args=(config, True))
+                    p.start()
+                    p.join()
         elif options.crabaction=="status":
             os.system('echo status -d ' + workarea + '/crab_'+j+'\n')
             os.system('crab status -d ' + workarea + '/crab_'+j+'\n')
@@ -870,7 +877,7 @@ if __name__ == '__main__':
 #            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
 #            print config
         else:
-            print "Invalid crab action. Please type: -a submit/status/resubmit/getoutput/kill"
+            print "Invalid crab action. Please type: -a submit/status/resubmit/dryrun/getoutput/kill"
             exit()
     os.system('echo -%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-\n') 
 
