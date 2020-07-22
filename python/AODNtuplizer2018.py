@@ -149,7 +149,7 @@ options.register(
     VarParsing.varType.bool,
     "SUSY parser flag"
 )
-
+#FIXME Add PisCentralProd
 
 
 options.parseArguments()
@@ -431,8 +431,8 @@ if RunLocal:
         elif is2017:
             GT = '94X_dataRun2_v11'
         elif is2018:
-            if theRun2018ABC: GT = '102X_dataRun2_v12'
-            if theRun2018D:   GT = '102X_dataRun2_Prompt_v15'
+            if theRun2018ABC: GT = '102X_dataRun2_v12'#FIXME New GT:'102X_dataRun2_v13'
+            if theRun2018D:   GT = '102X_dataRun2_Prompt_v15'#FIXME New GT:'102X_dataRun2_Prompt_v16'
     elif not(isData):
         if is2016:
             GT = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'

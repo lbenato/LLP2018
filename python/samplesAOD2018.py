@@ -144,7 +144,7 @@ samples = {
     #DATA
     'data_obs' : {
         'order' : 0,
-        'files' : ['METRun2016B-03Feb2017_ver2-v2'],
+        'files' : ['METRun2018A-17Sep2018-v1'],#['METRun2016B-03Feb2017_ver2-v2'],
         'fillcolor' : 0,
         'fillstyle' : 1,
         'linecolor' : 1,

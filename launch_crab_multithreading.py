@@ -22,10 +22,10 @@ config.General.requestName = 'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MIN
 
 config.Data.inputDataset =  '/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_standard_mixing-Moriond17_80X_mcRun2_2016_MINIAOD-28028af67189b3de7224b79195bd0e1d/USER'
 config.Data.inputDBS = 'global'
-#config.Data.splitting = 'EventAwareLumiBased'
-#config.Data.unitsPerJob = 100#15000
-#config.Data.totalUnits = 100#15000
-config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
+config.Data.splitting = 'EventAwareLumiBased'
+config.Data.unitsPerJob = 100#15000
+config.Data.totalUnits = 100#15000
+#config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
 
 config.Data.outLFNDirBase = '/store/user/lbenato/choose_a_folder_name'
 config.Data.publication = False
@@ -527,6 +527,28 @@ if __name__ == '__main__':
         isMINIAOD = True
         isAOD  = False
         config.JobType.inputFiles = ['data']
+    elif options.lists == "test_calo_AOD_METRun2018A":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+        from Analyzer.LLP2018.samplesAOD2018 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        folder = "test_calo_AOD_METRun2018A_21Jul2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/kjpena/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/penaka/crabProjects/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['data']
+        config.JobType.maxMemoryMB = 3000#15900 #more memory
+        config.JobType.numCores = 8
+        is2016 = False
+        is2017 = False#!!!
+        is2018 = True#!!!
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = True#False#only for heavy higgs
+        isSUSY = False#!!!
+
     else:
         print "No list indicated, aborting!"
         exit()
@@ -704,12 +726,13 @@ if __name__ == '__main__':
            JECstring = "Spring16_25nsV6_DATA"
         elif not isData:
            JECstring = "Summer16_23Sep2016V3_MC"
-        else:#dummy!
+        else:#dummy!#FIXME Update JEC after current production is done?
            print "WARNING! Dummy JEC for other run eras!!!!!!!!!!!"
            JECstring = "Summer16_23Sep2016HV3_DATA"
 
         print "JEC ->",JECstring
 
+        #FIXME JERstring should not be needed anymore. Test miniAOD ntuplizer without this parameter!
         JERstring = ''
         if is2016:
             JERstring = 'Summer16_25nsV1b_MC'
@@ -805,7 +828,13 @@ if __name__ == '__main__':
                     config.Data.lumiMask = '/afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/'+selected_lumiMasks[j]+'.txt'
                     print "Use lumiMask: /afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/"+selected_lumiMasks[j]+".txt"
             #config.JobType.pyCfgParams = ['runLocal=False']
-            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+            #FIXME JERstring should not be needed anymore. Test miniAOD ntuplizer without this parameter!
+            #FIXME isCentralProd is not yet implemented in AOD ntuplizer. Add!
+            #FIXME Once those two parameters work similarly for AOD and miniAOD, remove the if...else below
+            if isAOD:
+                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+            else:
+                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
             # Submit config file
             if options.crabaction=="submit":
