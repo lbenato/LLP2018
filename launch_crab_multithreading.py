@@ -766,8 +766,8 @@ if __name__ == '__main__':
         string_HeavyHiggs = 'PHeavyHiggs=True' if isHeavyHiggs else 'PHeavyHiggs=False'
         string_SUSY = 'PSUSY=True' if isSUSY else 'PSUSY=False'
 
-        # submission of the python config
-        if options.crabaction=="submit":
+        # Set parameters and print python config
+        if options.crabaction=="submit" or options.crabaction=="test":
             if "VBFH_HToSS" in j and not isCentralProd:
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
@@ -806,12 +806,14 @@ if __name__ == '__main__':
             #config.JobType.pyCfgParams = ['runLocal=False']
             config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
-            if not isCentralProd or not isSignal:
-                submit(config)
-            else:
-                p = Process(target=submit, args=(config,))
-                p.start()
-                p.join()
+            # Submit config file
+            if options.crabaction=="submit":
+                if not isCentralProd or not isSignal:
+                    submit(config)
+                else:
+                    p = Process(target=submit, args=(config,))
+                    p.start()
+                    p.join()
 
         elif options.crabaction=="status":
             os.system('echo status -d ' + workarea + '/crab_'+j+'\n')
@@ -829,44 +831,44 @@ if __name__ == '__main__':
         elif options.crabaction=="report":
             os.system('echo report -d ' + workarea + '/crab_'+j+'\n')
             os.system('crab report -d ' + workarea + '/crab_'+j+'\n')
-        elif options.crabaction=="test":
-            if "VBFH_HToSS" in j and not isCentralProd:
-                #automatic implementation of the choice bewteen inputDBS global/phys03
-                config.Data.inputDBS = "phys03"
-            elif "GluGluH_HToSS" in j:
-                #automatic implementation of the choice bewteen inputDBS global/phys03
-                config.Data.inputDBS = "phys03"
-            elif "n3n2-n1-hbb-hbb" in j:
-                #automatic implementation of the choice bewteen inputDBS global/phys03
-                config.Data.inputDBS = "phys03"
-            elif "GluGluH2_H2ToSSTobb" in j:
-                #automatic implementation of the choice bewteen inputDBS global/phys03
-                config.Data.inputDBS = "phys03"
-            else:
-                config.Data.inputDBS = "global"
-
-            os.system('echo submitting this config...\n')
-            #modify parameters here
-            config.General.requestName = j
-            config.Data.inputDataset = selected_requests[j]
-            config.JobType.psetName = "python/" + pset
-            config.Data.outLFNDirBase = outLFNDirBase
-            config.General.workArea= workarea
-            if isData:
-                if is2016:
-                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
-                elif is2017:
-                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
-                elif is2018:
-                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
-                #config.Data.splitting = 'Automatic'
-                config.Data.unitsPerJob = 100000
-            elif isCentralProd:
-                if isSignal:
-                    config.Data.lumiMask = '/afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/'+selected_lumiMasks[j]+'.txt'
-                    print "Use lumiMask: /afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/"+selected_lumiMasks[j]+".txt"
-            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
-            print config
+#        elif options.crabaction=="test":
+#            if "VBFH_HToSS" in j and not isCentralProd:
+#                #automatic implementation of the choice bewteen inputDBS global/phys03
+#                config.Data.inputDBS = "phys03"
+#            elif "GluGluH_HToSS" in j:
+#                #automatic implementation of the choice bewteen inputDBS global/phys03
+#                config.Data.inputDBS = "phys03"
+#            elif "n3n2-n1-hbb-hbb" in j:
+#                #automatic implementation of the choice bewteen inputDBS global/phys03
+#                config.Data.inputDBS = "phys03"
+#            elif "GluGluH2_H2ToSSTobb" in j:
+#                #automatic implementation of the choice bewteen inputDBS global/phys03
+#                config.Data.inputDBS = "phys03"
+#            else:
+#                config.Data.inputDBS = "global"
+#
+#            os.system('echo submitting this config...\n')
+#            #modify parameters here
+#            config.General.requestName = j
+#            config.Data.inputDataset = selected_requests[j]
+#            config.JobType.psetName = "python/" + pset
+#            config.Data.outLFNDirBase = outLFNDirBase
+#            config.General.workArea= workarea
+#            if isData:
+#                if is2016:
+#                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+#                elif is2017:
+#                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
+#                elif is2018:
+#                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+#                #config.Data.splitting = 'Automatic'
+#                config.Data.unitsPerJob = 100000
+#            elif isCentralProd:
+#                if isSignal:
+#                    config.Data.lumiMask = '/afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/'+selected_lumiMasks[j]+'.txt'
+#                    print "Use lumiMask: /afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/"+selected_lumiMasks[j]+".txt"
+#            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+#            print config
         else:
             print "Invalid crab action. Please type: -a submit/status/resubmit/getoutput/kill"
             exit()
