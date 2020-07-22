@@ -825,8 +825,8 @@ if __name__ == '__main__':
                 #config.Data.unitsPerJob = 100000#comment, giving errors with new crab
             elif isCentralProd:
                 if isSignal:
-                    config.Data.lumiMask = '/afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/'+selected_lumiMasks[j]+'.txt'
-                    print "Use lumiMask: /afs/desy.de/user/e/eichm/xxl/af-cms/CMSSW_10_2_18/src/Analyzer/LLP2018/data_gen/JSON/"+selected_lumiMasks[j]+".txt"
+                    config.Data.lumiMask = os.environ['CMSSW_BASE']+'/src/Analyzer/LLP2018/data_gen/JSON/'+selected_lumiMasks[j]+'.txt'
+                    print "Use lumiMask: "+os.environ['CMSSW_BASE']+"/src/Analyzer/LLP2018/data_gen/JSON/"+selected_lumiMasks[j]+".txt"
             #config.JobType.pyCfgParams = ['runLocal=False']
             #FIXME JERstring should not be needed anymore. Test miniAOD ntuplizer without this parameter!
             #FIXME isCentralProd is not yet implemented in AOD ntuplizer. Add!

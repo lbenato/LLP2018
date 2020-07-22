@@ -859,7 +859,7 @@ if RunLocal:
         JECstring = "Spring16_25nsV6_DATA"
     elif not isData:
         JECstring = "Summer16_23Sep2016V3_MC"
-    else:#dummy!
+    else:#dummy!#FIXME Update JEC after current production is done?
        print "WARNING! Dummy JEC for other run eras!!!!!!!!!!!"
        JECstring = "Summer16_23Sep2016HV3_DATA" 
 
