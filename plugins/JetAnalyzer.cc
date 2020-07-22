@@ -378,8 +378,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 
 
 
-	
-        if(SmearJets) {
+        if(isMC && SmearJets) {//Note: Remove isMC to apply JER to data
 
         //if(SmearJets) {
             resolution    = JME::JetResolution::get(iSetup, JerName_res);//new JME::JetResolution(JerName_res);
@@ -1059,7 +1058,7 @@ float JetAnalyzer::CalculateHT(const edm::Event& iEvent, int id, float pt, float
 
         // JER NEW IMPLEMENTATION
 	
-        if(SmearJets) {
+        if(isMC && SmearJets) { //Note: Remove isMC to apply JER to data
             JME::JetParameters TheJetParameters;
             TheJetParameters.setJetPt(jet.pt());
             TheJetParameters.setJetEta(jet.eta());

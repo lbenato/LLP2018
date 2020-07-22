@@ -75,15 +75,17 @@ CaloJetAnalyzer::CaloJetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector
         massCorrMC = boost::shared_ptr<FactorizedJetCorrector> ( new FactorizedJetCorrector(massParMC) );
         massCorrDATA = boost::shared_ptr<FactorizedJetCorrector> ( new FactorizedJetCorrector(massParDATA) );
     }
+
+    // JER NEW IMPLEMENTATION
     
-    if(SmearJets) {
-        resolution    = new JME::JetResolution(JerName_res);
-        resolution_sf = new JME::JetResolutionScaleFactor(JerName_sf);
-        if (JerName_res.find("AK8") != std::string::npos)
-            Rparameter = 0.8;
-        else 
-            Rparameter = 0.4;
-    }
+    //if(SmearJets) {
+    //    resolution    = new JME::JetResolution(JerName_res);
+    //    resolution_sf = new JME::JetResolutionScaleFactor(JerName_sf);
+    //    if (JerName_res.find("AK8") != std::string::npos)
+    //        Rparameter = 0.8;
+    //    else 
+    //        Rparameter = 0.4;
+    //}
     
     /*
     if(RecalibratePuppiMass) {
