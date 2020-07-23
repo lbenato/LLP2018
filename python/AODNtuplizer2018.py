@@ -448,6 +448,9 @@ else:
 process.GlobalTag = GlobalTag(process.GlobalTag, GT)
 print 'GlobalTag loaded: ', GT
 
+# Print EventSetup (for debugging). Uncomment in process.seq if needed.
+process.dumpES = cms.EDAnalyzer("PrintEventSetupContent")
+
 
 #-----------------------#
 #        FILTERS        #
@@ -2110,6 +2113,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
 
 process.seq = cms.Sequence(
     process.counter *
+    #process.dumpES *
     #process.ParticleListDrawer #*
     #process.test
     process.metFilters *
