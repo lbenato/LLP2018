@@ -63,6 +63,123 @@ sample = {
         'kfactor' : 0.88,
     },
 
+
+    #WJetsToLNu HT binned
+    'WJetsToLNu_HT-70To100_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 1292.0,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 1395.0,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 407.9,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 57.48,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 12.87,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 5.366,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 1.074,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 0.008001,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+
+    #2017 numbers!!
+    'QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8-v1': {
+        'nevents' : 93954381,
+        #'xsec' : 28060000.0,#pb#2016 numbers
+        'xsec'    : 23700000.0,#XSDB for 2018 is empty..
+        #'xsec' : 19380000, #mcm, seems completely wrong
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'QCD_HT200to300_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 18722416,
+        #'xsec' : 1710000.0,#pb#2016
+        'xsec'    : 1547000.0,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 17035891,
+        #'xsec'   : 351300,#pb#B2G-17-005
+        'xsec'    : 322600.0,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 18929951,
+        #'xsec'   : 31630,#pb#B2G-17-005
+        'xsec'    : 29980.0,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 15629253,
+        #'xsec'   : 6802,#pb#B2G-17-005
+        'xsec'    : 6334.0,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 4767100,
+        #'xsec' : 1206,#pb#B2G-17-005
+        'xsec'    : 1088.0,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 3970819,
+        #'xsec' : 120.4,#pb
+        'xsec'    : 99.11,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 1991645,
+        #'xsec' : 25.25,#pb
+        'xsec'    : 20.23,#XSDB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    #TTbar
+    'TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_ext1-v2' : {
+        'nevents' : 1,
+        'xsec'    : 722.8,#x-sec DB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+
     'n3n2-n1-hbb-hbb_mh400_pl1000' : {
         'nevents' : 1,
         'xsec'    : 88.7325,
@@ -144,7 +261,7 @@ samples = {
     #DATA
     'data_obs' : {
         'order' : 0,
-        'files' : ['METRun2018A-17Sep2018-v1'],#['METRun2016B-03Feb2017_ver2-v2'],
+        'files' : ['METRun2018A-17Sep2018-v1'],
         'fillcolor' : 0,
         'fillstyle' : 1,
         'linecolor' : 1,
@@ -173,7 +290,8 @@ samples = {
     #QCD
     'QCD' : {
         'files' : [
-             'QCD_HT50to100_TuneCP5_13TeV-madgraphMLM-pythia8-v1','QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8-v1','QCD_HT200to300_TuneCP5_13TeV-madgraphMLM-pythia8-v1','QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8-v1'],
+             #'QCD_HT50to100_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+             'QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8-v1','QCD_HT200to300_TuneCP5_13TeV-madgraphMLM-pythia8-v1','QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8-v1'],
         'fillcolor' : 920,
         'fillstyle' : 1001,
         'linecolor' : 920,
@@ -219,7 +337,7 @@ samples = {
         'linecolor' : 856,
         'linewidth' : 2,
         'linestyle' : 1,
-        'label' : "Z jets to NuNu",
+        'label' : "Z #rightarrow #nu #nu + jets",
         'weight': 1.,
         'plot': True,
     },
@@ -244,7 +362,7 @@ samples = {
     },
 
     #WJets
-    'WJetsToLNu' : { 
+    'WJetsToLNuIncl' : { 
         'files' : ['WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8-v2'],
         'fillcolor' : 881,
         'fillstyle' : 1001,
@@ -255,12 +373,32 @@ samples = {
         'weight': 1.,
         'plot': True,
     },
-
+    #HT binned
+    'WJetsToLNu' : { 
+        'files' : [
+            ##'WJetsToLNu_HT-70To100_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            ],
+        'fillcolor' : 881,
+        'fillstyle' : 1001,
+        'linecolor' : 881,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "W #rightarrow l #nu + jets",
+        'weight': 1.,
+        'plot': True,
+    },
     #Dibosons
     'VV' : {
         'files' : [
             'WW_TuneCP5_13TeV-pythia8-v2', 
-            #'WZ_TuneCP5_13TeV-pythia8-v3', 
+            'WZ_TuneCP5_13TeV-pythia8-v3', 
             'ZZ_TuneCP5_13TeV-pythia8-v2'
         ],  
         'fillcolor' : 602,
@@ -402,7 +540,8 @@ samples = {
         'linecolor' : 2,
         'linewidth' : 3,
         'linestyle' : 1,
-        'label' : "m_{H} = 1 TeV, m_{S} = 400 GeV, c#tau_{0} = 1 m",
+        #'label' : "m_{H} = 1 TeV, m_{S} = 400 GeV, c#tau_{0} = 1 m",
+        'label' : "m_{H/S} = 1 TeV/400 GeV, c#tau_{0} = 1 m",
         'weight': 1.,
         'plot': True,
     },
@@ -469,12 +608,13 @@ samples = {
         'MH' : 1000,
         'MS' : 150,
         'ctau' : 1000,
-        'fillcolor' : 2,
+        'fillcolor' : 418,
         'fillstyle' : 0,
-        'linecolor' : 2,
+        'linecolor' : 418,
         'linewidth' : 3,
         'linestyle' : 1,
-        'label' : "m_{H} = 1 TeV, m_{S} = 150 GeV, c#tau_{0} = 1 m",
+        #'label' : "m_{H} = 1 TeV, m_{S} = 150 GeV, c#tau_{0} = 1 m",
+        'label' : "m_{H/S} = 1 TeV/150 GeV, c#tau_{0} = 1 m",
         'weight': 1.,
         'plot': True,
     },
@@ -520,5 +660,70 @@ samples = {
         'weight': 1.,
         'plot': True,
     },
+
+ #MH400
+    'ggH_MH400_MS100_ctau1000' : {
+        'files' : ['GluGluH2_H2ToSSTobbbb_MH-400_MS-100_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC'],
+        'MH' : 1000,
+        'MS' : 400,
+        'ctau' : 1000,
+        'fillcolor' : 801,
+        'fillstyle' : 0,
+        'linecolor' : 801,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        #'label' : "m_{H} = 1 TeV, m_{S} = 400 GeV, c#tau_{0} = 1 m",
+        'label' : "m_{H/S} = 400/100 GeV, c#tau_{0} = 1 m",
+        'weight': 1.,
+        'plot': True,
+    },
+    'ggH_MH400_MS50_ctau1000' : {
+        'files' : ['GluGluH2_H2ToSSTobbbb_MH-400_MS-50_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC'],
+        'MH' : 1000,
+        'MS' : 400,
+        'ctau' : 1000,
+        'fillcolor' : 825,
+        'fillstyle' : 0,
+        'linecolor' : 825,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        #'label' : "m_{H} = 1 TeV, m_{S} = 400 GeV, c#tau_{0} = 1 m",
+        'label' : "m_{H/S} = 400/50 GeV, c#tau_{0} = 1 m",
+        'weight': 1.,
+        'plot': True,
+    },
+
+ #MH200
+    'ggH_MH200_MS50_ctau1000' : {
+        'files' : ['GluGluH2_H2ToSSTobbbb_MH-200_MS-50_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC'],
+        'MH' : 1000,
+        'MS' : 400,
+        'ctau' : 1000,
+        'fillcolor' : 1,
+        'fillstyle' : 0,
+        'linecolor' : 1,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        #'label' : "m_{H} = 1 TeV, m_{S} = 400 GeV, c#tau_{0} = 1 m",
+        'label' : "m_{H/S} = 200/50 GeV, c#tau_{0} = 1 m",
+        'weight': 1.,
+        'plot': True,
+    },
+    'ggH_MH200_MS25_ctau1000' : {
+        'files' : ['GluGluH2_H2ToSSTobbbb_MH-200_MS-25_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC'],
+        'MH' : 1000,
+        'MS' : 400,
+        'ctau' : 1000,
+        'fillcolor' : 7,
+        'fillstyle' : 0,
+        'linecolor' : 7,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        #'label' : "m_{H} = 1 TeV, m_{S} = 400 GeV, c#tau_{0} = 1 m",
+        'label' : "m_{H/S} = 200/25 GeV, c#tau_{0} = 1 m",
+        'weight': 1.,
+        'plot': True,
+    },
+
 
 }
