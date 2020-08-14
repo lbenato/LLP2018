@@ -46,8 +46,10 @@ elif options.channel=="ggHeavyHiggs":
     isMM = isEE = isComb = False
     xs = 1#0.1#1
     #from Analyzer.LLP2018.HeavyHiggs_DNN_setting import *
-    from Analyzer.LLP2018.HeavyHiggs_setting_higherpt import *
-    from Analyzer.LLP2018.samplesMINIAOD2018 import *
+    #from Analyzer.LLP2018.HeavyHiggs_setting_higherpt import *
+    #from Analyzer.LLP2018.samplesMINIAOD2018 import *
+    from Analyzer.LLP2018.HeavyHiggs_setting_AK4AK8 import *
+    from Analyzer.LLP2018.samplesAOD2018 import *
 else:
     print "Channel not recognized for plotting limits/significance!"
 
@@ -115,7 +117,7 @@ def fillValues(filename):
                 print "File", (filename % (s,r)), "does not exist"
     return mass, ctau,  val
 
-def limit_vs_mass(channel, ctaupoint, tagvar):
+def limit_vs_mass(channel, ctaupoint, tagvar, save=False):
     particle = "#chi" if "SUSY" in options.channel else "#pi"
     if "HeavyHiggs" in options.channel: particle = "S" 
     #suffix = "_"+method
@@ -140,13 +142,13 @@ def limit_vs_mass(channel, ctaupoint, tagvar):
     Exp2s = TGraphAsymmErrors()
 
     multF = 1.
-    print "----------------"
-    print "Ctau: ", ctaupoint
+    #print "----------------"
+    #print "Ctau: ", ctaupoint
 
     #here loop for filling the plots
     n = 0
     for j, m in enumerate(mass):
-        print "mass: ", m
+        #print "mass: ", m
         name = chan+"_"+mass_string+str(m)+"_"+ctau_string+str(ctaupoint)#key index of val
         if isMM:
             name += "_MM"
@@ -162,12 +164,12 @@ def limit_vs_mass(channel, ctaupoint, tagvar):
         
         Exp0s.SetPoint(n, m, val[name][2]*multF)
         Exp1s.SetPoint(n, m, val[name][2]*multF)
-        print "Median: ", val[name][2]*multF
+        #print "Median: ", val[name][2]*multF
         Exp1s.SetPointError(n, 0., 0., val[name][2]*multF-val[name][1]*multF, val[name][3]*multF-val[name][2]*multF)
-        print "-1 sigma: ", val[name][2]*multF-val[name][1]*multF, "+ 1 sigma: ", val[name][4]*multF-val[name][3]*multF
+        #print "-1 sigma: ", val[name][2]*multF-val[name][1]*multF, "+ 1 sigma: ", val[name][4]*multF-val[name][3]*multF
         Exp2s.SetPoint(n, m, val[name][2]*multF)
         Exp2s.SetPointError(n, 0., 0., val[name][2]*multF-val[name][0]*multF, (val[name][4]*multF-val[name][2]*multF))
-        print "-2 sigma: ", val[name][2]*multF-val[name][0]*multF, "+ 2 sigma: ", (val[name][4]*multF-val[name][2]*multF)
+        #print "-2 sigma: ", val[name][2]*multF-val[name][0]*multF, "+ 2 sigma: ", (val[name][4]*multF-val[name][2]*multF)
         n = n+1
 
     n = 0
@@ -245,13 +247,14 @@ def limit_vs_mass(channel, ctaupoint, tagvar):
         OUTSTRING += "_EE"
     elif isComb:
         OUTSTRING += "_comb"
-    c1.Print(OUTSTRING+".png")
-    c1.Print(OUTSTRING+".pdf")       
+    if save:
+        c1.Print(OUTSTRING+".png")
+        c1.Print(OUTSTRING+".pdf")       
     c1.Close()
     if not gROOT.IsBatch(): raw_input("Press Enter to continue...")
     return Exp0s, Exp1s
 
-def limit_vs_ctau(channel, masspoint, tagvar):
+def limit_vs_ctau(channel, masspoint, tagvar, save=False):
     particle = "#chi" if "SUSY" in options.channel else "#pi"
     if "HeavyHiggs" in options.channel: particle = "S"
     #suffix = "_"+method
@@ -276,13 +279,13 @@ def limit_vs_ctau(channel, masspoint, tagvar):
     Exp2s = TGraphAsymmErrors()
 
     multF = 1.
-    print "----------------"
-    print "Mass: ", masspoint
+    #print "----------------"
+    #print "Mass: ", masspoint
 
     #here loop for filling the plots
     n = 0
     for j, c in enumerate(ctau):
-        print "ctau: ", c
+        #print "ctau: ", c
         name = chan+"_"+mass_string+str(masspoint)+"_"+ctau_string+str(c)#key index of val
         if isMM:
             name += "_MM"
@@ -298,12 +301,12 @@ def limit_vs_ctau(channel, masspoint, tagvar):
         
         Exp0s.SetPoint(n, c, val[name][2]*multF)
         Exp1s.SetPoint(n, c, val[name][2]*multF)
-        print "Median: ", val[name][2]*multF
+        #print "Median: ", val[name][2]*multF
         Exp1s.SetPointError(n, 0., 0., val[name][2]*multF-val[name][1]*multF, val[name][3]*multF-val[name][2]*multF)
-        print "-1 sigma: ", val[name][2]*multF-val[name][1]*multF, "+ 1 sigma: ", val[name][4]*multF-val[name][3]*multF
+        #print "-1 sigma: ", val[name][2]*multF-val[name][1]*multF, "+ 1 sigma: ", val[name][4]*multF-val[name][3]*multF
         Exp2s.SetPoint(n, c, val[name][2]*multF)
         Exp2s.SetPointError(n, 0., 0., val[name][2]*multF-val[name][0]*multF, (val[name][4]*multF-val[name][2]*multF))
-        print "-2 sigma: ", val[name][2]*multF-val[name][0]*multF, "+ 2 sigma: ", (val[name][4]*multF-val[name][2]*multF)
+        #print "-2 sigma: ", val[name][2]*multF-val[name][0]*multF, "+ 2 sigma: ", (val[name][4]*multF-val[name][2]*multF)
         n = n+1
 
     n = 0
@@ -381,18 +384,19 @@ def limit_vs_ctau(channel, masspoint, tagvar):
         OUTSTRING += "_EE"
     elif isComb:
         OUTSTRING += "_comb"
-    c1.Print(OUTSTRING+".png")
-    c1.Print(OUTSTRING+".pdf")       
+    if save:
+        c1.Print(OUTSTRING+".png")
+        c1.Print(OUTSTRING+".pdf")       
     c1.Close()
     if not gROOT.IsBatch(): raw_input("Press Enter to continue...")
     return Exp0s, Exp1s
 
-def significance_vs_ctau(channel, masspoint, tagvar):
+def significance_vs_ctau(channel, masspoint, tagvar, save=False):
     particle = "#chi" if "SUSY" in options.channel else "#pi"
     if "HeavyHiggs" in options.channel: particle = "S"
     drawTheory = False
     
-    print OUTPUTFOLDER
+    #print OUTPUTFOLDER
     filename = OUTPUTFOLDER +"/Significance_" + chan+"_"+mass_string+"%d_"+ctau_string+"%d"
     if isMM:
        filename += "_MM"
@@ -404,17 +408,17 @@ def significance_vs_ctau(channel, masspoint, tagvar):
 
     mass, ctau, val = fillValues(filename)
 
-    print mass, ctau, val
+    #print mass, ctau, val
     Sign  = TGraph()
 
     multF = 1.
-    print "----------------"
-    print "Mass: ", masspoint
+    #print "----------------"
+    #print "Mass: ", masspoint
 
     #here loop for filling the plots
     n = 0
     for j, c in enumerate(ctau):
-        print "ctau: ", c
+        #print "ctau: ", c
         name = chan+"_"+mass_string+str(masspoint)+"_"+ctau_string+str(c)#key index of val
         if isMM:
             name += "_MM"
@@ -482,19 +486,20 @@ def significance_vs_ctau(channel, masspoint, tagvar):
         OUTSTRING += "_EE"
     elif isComb:
         OUTSTRING += "_comb"
-    c2.Print(OUTSTRING+".png")
-    c2.Print(OUTSTRING+".pdf")       
+    if save:
+        c2.Print(OUTSTRING+".png")
+        c2.Print(OUTSTRING+".pdf")       
     c2.Close()
 
     if not gROOT.IsBatch(): raw_input("Press Enter to continue...")
     return Sign
 
-def significance_vs_mass(channel, ctaupoint, tagvar):
+def significance_vs_mass(channel, ctaupoint, tagvar, save=False):
     particle = "#chi" if "SUSY" in options.channel else "#pi"
     if "HeavyHiggs" in options.channel: particle = "S"
     drawTheory = False
     
-    print OUTPUTFOLDER
+    #print OUTPUTFOLDER
     filename = OUTPUTFOLDER +"/Significance_" + chan+"_"+mass_string+"%d_"+ctau_string+"%d"
     if isMM:
        filename += "_MM"
@@ -506,17 +511,17 @@ def significance_vs_mass(channel, ctaupoint, tagvar):
 
     mass, ctau, val = fillValues(filename)
 
-    print mass, ctau, val
+    #print mass, ctau, val
     Sign  = TGraph()
 
     multF = 1.
-    print "----------------"
-    print "Ctau: ", ctaupoint
+    #print "----------------"
+    #print "Ctau: ", ctaupoint
 
     #here loop for filling the plots
     n = 0
     for j, m in enumerate(mass):
-        print "mass: ", m
+        #print "mass: ", m
         name = chan+"_"+mass_string+str(m)+"_"+ctau_string+str(ctaupoint)#key index of val
         if isMM:
             name += "_MM"
@@ -584,8 +589,9 @@ def significance_vs_mass(channel, ctaupoint, tagvar):
         OUTSTRING += "_EE"
     elif isComb:
         OUTSTRING += "_comb"
-    c2.Print(OUTSTRING+".png")
-    c2.Print(OUTSTRING+".pdf")       
+    if save:
+        c2.Print(OUTSTRING+".png")
+        c2.Print(OUTSTRING+".pdf")       
     c2.Close()
 
     if not gROOT.IsBatch(): raw_input("Press Enter to continue...")
@@ -816,12 +822,12 @@ def plot_all_significance_vs_ctau(vector_expected, channel, tagvar):
         vector_expected[b].GetYaxis().SetTitleOffset(0.8)
         vector_expected[b].GetXaxis().SetTitleOffset(0.9)
         if i==0:
-            vector_expected[b].SetMinimum(0.005)
-            vector_expected[b].SetMaximum(2)
+            vector_expected[b].SetMinimum(0.00005)
+            vector_expected[b].SetMaximum(0.01)
             vector_expected[b].Draw("AL3")
         else:
-            vector_expected[b].SetMinimum(0.005)
-            vector_expected[b].SetMaximum(2)
+            vector_expected[b].SetMinimum(0.00005)
+            vector_expected[b].SetMaximum(0.01)
             vector_expected[b].Draw("SAME,L3")
 
 
@@ -891,12 +897,12 @@ def plot_all_significance_vs_mass(vector_expected, channel, tagvar):
         vector_expected[b].GetYaxis().SetTitleOffset(0.8)
         vector_expected[b].GetXaxis().SetTitleOffset(0.9)
         if i==0:
-            vector_expected[b].SetMinimum(0.005)
-            vector_expected[b].SetMaximum(40)
+            vector_expected[b].SetMinimum(0.0005)
+            #vector_expected[b].SetMaximum(40)
             vector_expected[b].Draw("AL3")
         else:
-            vector_expected[b].SetMinimum(0.005)
-            vector_expected[b].SetMaximum(40)
+            vector_expected[b].SetMinimum(0.0005)
+            #vector_expected[b].SetMaximum(40)
             vector_expected[b].Draw("SAME,L3")
 
 

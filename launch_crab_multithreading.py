@@ -23,8 +23,8 @@ config.General.requestName = 'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MIN
 config.Data.inputDataset =  '/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_standard_mixing-Moriond17_80X_mcRun2_2016_MINIAOD-28028af67189b3de7224b79195bd0e1d/USER'
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'EventAwareLumiBased'
-config.Data.unitsPerJob = 100#15000
-config.Data.totalUnits = 100#15000
+#config.Data.unitsPerJob = 100#15000
+#config.Data.totalUnits = 100#15000
 #config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
 
 config.Data.outLFNDirBase = '/store/user/lbenato/choose_a_folder_name'
@@ -457,8 +457,9 @@ if __name__ == '__main__':
         outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
         config.JobType.inputFiles = ['data']
-        config.JobType.maxMemoryMB = 3000#15900 #more memory
-        config.JobType.numCores = 4
+        config.JobType.maxMemoryMB = 5000#15900 #more memory
+        config.JobType.numCores = 8
+        config.Data.splitting = 'Automatic'
         is2016 = False
         is2017 = False#!!!
         is2018 = True#!!!

@@ -121,8 +121,9 @@ elif options.lists == "v2_calo_AOD_2017":
 elif options.lists == "v3_calo_AOD_2018":
     from Analyzer.LLP2018.samplesAOD2018 import sample, samples
     from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
-    LUMI = 1
-    
+    #LUMI = 6.815605990*1000.# METRun2018A-17Sep2018-v1 partial # 59690 #2018 from ppd
+    #LUMI = 11.816443876*1000.
+    LUMI = 13.906390984*1000.# METRun2018A-17Sep2018-v1 all done, 28 Jul 2020
 else:
     print "No sample list indicated, aborting!"
     exit()
@@ -209,7 +210,7 @@ pass
 def weight(name):
     weight = 1.
     filename = TFile(DEST+name+'.root', "UPDATE")
-    if ('Run2016') in name: weight = 1.
+    if ('Run201') in name: weight = 1.
     ###
     # If you want to weight only one sample, specify
     #elif ('TT_TuneCUETP8M2T4_13TeV') in name:

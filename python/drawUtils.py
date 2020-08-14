@@ -180,19 +180,25 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
         if samples[s]['plot']:
             hist[s].DrawNormalized("SAME, HIST", hist[s].Integral()*snorm) # signals
 
-    bkg.GetYaxis().SetTitleOffset(bkg.GetYaxis().GetTitleOffset()*1.075)
 
     # Determine range
     if 'data_obs' in hist:
         bkg.SetMaximum((2.5 if log else 1.2)*max(bkg.GetMaximum(), hist['data_obs'].GetBinContent(hist['data_obs'].GetMaximumBin())+hist['data_obs'].GetBinError(hist['data_obs'].GetMaximumBin())))
         bkg.SetMinimum(max(min(hist['BkgSum'].GetBinContent(hist['BkgSum'].GetMinimumBin()), hist['data_obs'].GetMinimum()), 5.e-1)  if log else 0.)
+        bkg.SetMinimum(5.e-1)#!!
+        bkg.GetYaxis().SetTitleOffset(bkg.GetYaxis().GetTitleOffset()*1.075)
     else:
         bkg.SetMaximum(bkg.GetMaximum()*(2.5 if log else 1.2))
         bkg.SetMinimum(5.e-1 if log else 0.)
+        bkg.SetMinimum(5.e-1)#!!
+        bkg.GetYaxis().SetTitleOffset(bkg.GetYaxis().GetTitleOffset()*1.075)
     if log:
         bkg.GetYaxis().SetNoExponent(bkg.GetMaximum() < 1.e4)
         bkg.GetYaxis().SetMoreLogLabels(True)
-    
+        bkg.SetMinimum(5.e-1)#!!
+        bkg.GetYaxis().SetTitleOffset(bkg.GetYaxis().GetTitleOffset()*1.075)
+
+    #w##bkg.SetMaximum(2.e10)
     leg.Draw()
     #drawCMS(LUMI, "Preliminary")
     #drawRegion(channel)
@@ -437,7 +443,7 @@ def drawCMS(samples, LUMI, text, onTop=False, left_marg_CMS=0.15,data_obs=[]):
     latex.SetTextSize(0.045)
     latex.SetTextFont(52)
     if not onTop:
-        latex.DrawLatex(left_marg_CMS, 0.75, text)
+        latex.DrawLatex(left_marg_CMS, 0.89, text)#0.7
     else:
         #latex.DrawLatex(0.40, 0.98, text)
         latex.DrawLatex(0.35, 0.89, text)#DCMS
@@ -515,6 +521,10 @@ def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75):
         "METHTVeto": "E_{T}^{miss}>200 GeV & H_{T}>200 GeV & veto #l, #gamma",
         "METHTNoVeto": "MEt.pt>200 & HT>100, no veto",
         "METPreSel": "E_{T}^{miss}>200 GeV & H_{T}>100 GeV & veto #l, #gamma",
+        "METPreSelSUSYAODAK4ECAL" : "LL decay in ECAL barr.",
+        "METPreSelSUSYAODAK4HCAL" : "LL decay in HCAL barr.",
+        "METPreSelSUSYAODAK8ECAL" : "LL decay in ECAL barr.",
+        "METPreSelSUSYAODAK8HCAL" : "LL decay in HCAL barr.",
         }
     
     text = ""
