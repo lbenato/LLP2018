@@ -431,8 +431,10 @@ if RunLocal:
         elif is2017:
             GT = '94X_dataRun2_v11'
         elif is2018:
-            if theRun2018ABC: GT = '102X_dataRun2_v12'#FIXME New GT:'102X_dataRun2_v13'
-            if theRun2018D:   GT = '102X_dataRun2_Prompt_v15'#FIXME New GT:'102X_dataRun2_Prompt_v16'
+            if any(s in process.source.fileNames[0] for s in theRun2018ABC): 
+                GT = '102X_dataRun2_v13'
+            if any(s in process.source.fileNames[0] for s in theRun2018D):
+                GT = '102X_dataRun2_Prompt_v16'
     elif not(isData):
         if is2016:
             GT = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
@@ -445,6 +447,9 @@ else:
 
 process.GlobalTag = GlobalTag(process.GlobalTag, GT)
 print 'GlobalTag loaded: ', GT
+
+# Print EventSetup (for debugging). Uncomment in process.seq if needed.
+process.dumpES = cms.EDAnalyzer("PrintEventSetupContent")
 
 
 #-----------------------#
@@ -1924,7 +1929,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         metRecoilData = cms.string('data/recoilfit_gjetsData_Zu1_pf_v5.root'),
         metTriggerFileName = cms.string('data/MET_trigger_eff_data_SingleMuRunBH.root'),
         jerNameRes = cms.string("AK8PFchs_pt"),#('data/JER/Spring16_25nsV10_MC_PtResolution_AK8PFchs.txt'),#v10 is the latest
-        jerNameSf = cms.string("AK8PFchs_pt"),#('data/JER/Spring16_25nsV10_MC_SF_AK8PFchs.txt'),#v10 is the latest
+        jerNameSf = cms.string("AK8PFchs"),#('data/JER/Spring16_25nsV10_MC_SF_AK8PFchs.txt'),#v10 is the latest
     ),
     caloJetSet = cms.PSet(
         jets = cms.InputTag('ak4CaloJets'),
@@ -2108,6 +2113,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
 
 process.seq = cms.Sequence(
     process.counter *
+    #process.dumpES *
     #process.ParticleListDrawer #*
     #process.test
     process.metFilters *
