@@ -194,9 +194,6 @@ JetAnalyzer::~JetAnalyzer() {
 }
 
 
-
-
-
 std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
     bool isMC(!iEvent.isRealData());
     int BTagTh(Jet1BTag);
@@ -1009,7 +1006,7 @@ void JetAnalyzer::ApplyRecoilCorrections(pat::MET& MET, const reco::Candidate::L
 }
 
 
-float JetAnalyzer::CalculateHT(const edm::Event& iEvent, int id, float pt, float eta) {
+float JetAnalyzer::CalculateHT(const edm::Event& iEvent, const edm::EventSetup& iSetup, int id, float pt, float eta) {
 
     std::vector<pat::Jet> Vect;
     // Declare and open collection
@@ -1059,6 +1056,13 @@ float JetAnalyzer::CalculateHT(const edm::Event& iEvent, int id, float pt, float
         // JER NEW IMPLEMENTATION
 	
         if(SmearJets) {//Note: use (isMC && SmearJets) to apply JER only to data
+            resolution    = JME::JetResolution::get(iSetup, JerName_res);//new JME::JetResolution(JerName_res);
+            resolution_sf = JME::JetResolutionScaleFactor::get(iSetup, JerName_sf);//new JME::JetResolutionScaleFactor(JerName_sf);
+            if (JerName_res.find("AK8") != std::string::npos)
+                Rparameter = 0.8;
+            else
+                Rparameter = 0.4;
+
             JME::JetParameters TheJetParameters;
             TheJetParameters.setJetPt(jet.pt());
             TheJetParameters.setJetEta(jet.eta());
@@ -1294,5 +1298,3 @@ bool JetAnalyzer::isTightJet(pat::Jet& jet) {
 }
 
 */
-
-
