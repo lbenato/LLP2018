@@ -1434,8 +1434,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         metRecoilMC = cms.string('data/recoilfit_gjetsMC_Zu1_pf_v5.root'),
         metRecoilData = cms.string('data/recoilfit_gjetsData_Zu1_pf_v5.root'),
         metTriggerFileName = cms.string('data/MET_trigger_eff_data_SingleMuRunBH.root'),
-        jerNameRes = cms.string('data/JER/%s/%s_PtResolution_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
-        jerNameSf = cms.string('data/JER/%s/%s_SF_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
+        jerNameRes = cms.string("AK4PFchs_pt"),#('data/JER/%s/%s_PtResolution_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
+        jerNameSf = cms.string("AK4PFchs"),#('data/JER/%s/%s_SF_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
     ),
     chsJetSet = cms.PSet(
         jets = cms.InputTag(jets_to_be_used),#(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
@@ -1488,8 +1488,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         metRecoilMC = cms.string('data/recoilfit_gjetsMC_Zu1_pf_v5.root'),
         metRecoilData = cms.string('data/recoilfit_gjetsData_Zu1_pf_v5.root'),
         metTriggerFileName = cms.string('data/MET_trigger_eff_data_SingleMuRunBH.root'),
-        jerNameRes = cms.string('data/JER/%s/%s_PtResolution_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
-        jerNameSf = cms.string('data/JER/%s/%s_SF_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
+        jerNameRes = cms.string("AK4PFchs_pt"),#('data/JER/%s/%s_PtResolution_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
+        jerNameSf = cms.string("AK4PFchs"),#('data/JER/%s/%s_SF_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
     ),
     vbfJetSet = cms.PSet(
         jets = cms.InputTag(jets_to_be_used),#(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
@@ -1546,8 +1546,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         metRecoilMC = cms.string('data/recoilfit_gjetsMC_Zu1_pf_v5.root'),
         metRecoilData = cms.string('data/recoilfit_gjetsData_Zu1_pf_v5.root'),
         metTriggerFileName = cms.string('data/MET_trigger_eff_data_SingleMuRunBH.root'),
-        jerNameRes = cms.string('data/JER/%s/%s_PtResolution_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
-        jerNameSf = cms.string('data/JER/%s/%s_SF_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
+        jerNameRes = cms.string("AK4PFchs_pt"),#('data/JER/%s/%s_PtResolution_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
+        jerNameSf = cms.string("AK4PFchs"),#('data/JER/%s/%s_SF_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
     ),
     chsFatJetSet = cms.PSet(
         jets = cms.InputTag(chosen_AK8),#('slimmedJetsAK8'),
@@ -1600,8 +1600,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         metRecoilMC = cms.string('data/recoilfit_gjetsMC_Zu1_pf_v5.root'),
         metRecoilData = cms.string('data/recoilfit_gjetsData_Zu1_pf_v5.root'),
         metTriggerFileName = cms.string('data/MET_trigger_eff_data_SingleMuRunBH.root'),
-        jerNameRes = cms.string('data/JER/%s/%s_PtResolution_AK8PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
-        jerNameSf = cms.string('data/JER/%s/%s_SF_AK8PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
+        jerNameRes = cms.string("AK8PFchs_pt"),#('data/JER/%s/%s_PtResolution_AK8PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
+        jerNameSf = cms.string("AK8PFchs"),#('data/JER/%s/%s_SF_AK8PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
     ),
 #    caloJetSet = cms.PSet(
 #        jets = cms.InputTag('ak4CaloJets'),
