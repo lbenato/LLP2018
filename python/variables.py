@@ -9,6 +9,13 @@ var_template = {
       "max" : 1.,
       "log" : True,
     },
+    "EventWeight": {
+      "title" : "event weight",
+      "nbins" : 200,
+      "min" : -200,
+      "max" : 200,
+      "log" : False,
+    },
 
     "EventNumber": {
       "title" : "event number",
@@ -369,9 +376,23 @@ var_template = {
     },
     "Jets.FracCal": {
       "title" : "jets ECAL energy/HCAL energy",
+      "nbins" : 20,#50
+      "min" : 0,
+      "max" : 100,#10
+      "log" : True,
+    },
+    "Jets.hcalE": {
+      "title" : "jets HCAL energy",
       "nbins" : 50,
       "min" : 0,
-      "max" : 10,
+      "max" : 2500,
+      "log" : True,
+    },
+    "Jets.ecalE": {
+      "title" : "jets ECAL energy",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 2500,
       "log" : True,
     },
     "Jets[[N]].hcalE": {
@@ -397,6 +418,35 @@ var_template = {
     },
     "Jets[[N]].hcalE/Jets[[N]].energyRaw": {
       "title" : "jet [[N]] HCAL energy fraction",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "Jets.ecalE/Jets.energyRaw": {
+      "title" : "jets ECAL energy fraction",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "Jets.hcalE/Jets.energyRaw": {
+      "title" : "jets HCAL energy fraction",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+
+    "Jets.ecalE/Jets.energy": {
+      "title" : "jets ECAL energy fraction",
+      "nbins" : 20,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "Jets.hcalE/Jets.energy": {
+      "title" : "jets HCAL energy fraction",
       "nbins" : 20,
       "min" : 0,
       "max" : 1,
@@ -1064,6 +1114,13 @@ var_template = {
         "max" : 50,
         "log" : True,
     },
+    "Jets.energyRecHitsEB/Jets.energy": {
+        "title" : "energyRecHitsEB/energy AK4 jets",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 0.2,
+        "log" : True,
+    },
     "Jets.timeRecHitsEB": {
         "title" : "AK4 jets: ECAL barr. rec hits time (ns)",
         "nbins" : 50,
@@ -1206,8 +1263,22 @@ var_template = {
         "max" : 50,
         "log" : True,
     },
+    "Jets.energyRecHitsHB/Jets.energy": {
+        "title" : "energyRecHitsHB/energy AK4 jets",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 0.2,
+        "log" : True,
+    },
     "Jets.timeRecHitsHB": {
         "title" : "timeRecHitsHB jets",
+        "nbins" : 50,
+        "min" : -10,
+        "max" : 10,
+        "log" : True,
+    },
+    "Jets[[N]].timeRecHitsHB": {
+        "title" : "timeRecHitsHB jet [[N]]",
         "nbins" : 50,
         "min" : -10,
         "max" : 10,
@@ -2199,6 +2270,13 @@ var_template = {
         "max" : 3,#10,
         "log" : True,
     },
+    "FatJets[[N]].timeRecHitsHB": {
+        "title" : "timeRecHitsHB AK8 jet [[N]]",
+        "nbins" : 50,
+        "min" : -2,#-10,
+        "max" : 3,#10,
+        "log" : True,
+    },
     "FatJets.xRecHitsHB": {
         "title" : "xRecHitsHB AK8 jets",
         "nbins" : 50,
@@ -2629,7 +2707,7 @@ var_template = {
     },
     "MEt_pt": {
       "title" : "E^{T}_{miss} (GeV)",
-      "nbins" : 100,#45,
+      "nbins" : 50,#45,
       "min" : 200,#100,
       "max" : 2200,
       "log" : True,
@@ -2799,44 +2877,101 @@ var_template = {
     },
     "nTags_sigprob_wp0p5": {
       "title" : "n. of jets with DNN output > 0.5",
-      "nbins" : 7,
+      "nbins" : 7+4,
       "min" : -0.5,
-      "max" : 6.5,
+      "max" : 6.5+4,
       "log" : True,
     },
     "nTags_sigprob_wp0p6": {
       "title" : "n. of jets with DNN output > 0.6",
-      "nbins" : 7,
+      "nbins" : 7+4,
       "min" : -0.5,
-      "max" : 6.5,
+      "max" : 6.5+4,
       "log" : True,
     },
     "nTags_sigprob_wp0p7": {
       "title" : "n. of jets with DNN output > 0.7",
-      "nbins" : 7,
+      "nbins" : 7+4,
       "min" : -0.5,
-      "max" : 6.5,
+      "max" : 6.5+4,
       "log" : True,
     },
     "nTags_sigprob_wp0p8": {
       "title" : "n. of jets with DNN output > 0.8",
-      "nbins" : 7,
+      "nbins" : 7+4,
       "min" : -0.5,
-      "max" : 6.5,
+      "max" : 6.5+4,
       "log" : True,
     },
     "nTags_sigprob_wp0p9": {
       "title" : "n. of jets with DNN output > 0.9",
-      "nbins" : 7,
+      "nbins" : 7+4,
       "min" : -0.5,
-      "max" : 6.5,
+      "max" : 6.5+4,
       "log" : True,
     },
     "nTags_sigprob_wp0p95": {
       "title" : "n. of jets with DNN output > 0.95",
-      "nbins" : 7,
+      "nbins" : 7+4,
       "min" : -0.5,
-      "max" : 6.5,
+      "max" : 6.5+4,
+      "log" : True,
+    },
+    "nTags_sigprob_wp0p96": {
+      "title" : "n. of jets with DNN output > 0.96",
+      "nbins" : 7+4,
+      "min" : -0.5,
+      "max" : 6.5+4,
+      "log" : True,
+    },
+    "nTags_sigprob_wp0p97": {
+      "title" : "n. of jets with DNN output > 0.97",
+      "nbins" : 7+4,
+      "min" : -0.5,
+      "max" : 6.5+4,
+      "log" : True,
+    },
+    "nTags_sigprob_wp0p975": {
+      "title" : "n. of jets with DNN output > 0.95",
+      "nbins" : 7+4,
+      "min" : -0.5,
+      "max" : 6.5+4,
+      "log" : True,
+    },
+    "nTags_sigprob_wp0p98": {
+      "title" : "n. of jets with DNN output > 0.98",
+      "nbins" : 7+4,
+      "min" : -0.5,
+      "max" : 6.5+4,
+      "log" : True,
+    },
+    "nTags_sigprob_wp0p99": {
+      "title" : "n. of jets with DNN output > 0.99",
+      "nbins" : 7+4,
+      "min" : -0.5,
+      "max" : 6.5+4,
+      "log" : True,
+    },
+    "nTags_sigprob_wp0p995": {
+      "title" : "n. of jets with DNN output > 0.995",
+      "nbins" : 7+4,
+      "min" : -0.5,
+      "max" : 6.5+4,
+      "log" : True,
+    },
+    "nTags_sigprob_wp0p9975": {
+      "title" : "n. of jets with DNN output > 0.9975",
+      "nbins" : 7+4,
+      "min" : -0.5,
+      "max" : 6.5+4,
+      "log" : True,
+    },
+
+    "nTags_cutbased": {
+      "title" : "n. of jets passing cut based selections",
+      "nbins" : 7+4,
+      "min" : -0.5,
+      "max" : 6.5+4,
       "log" : True,
     },
     "nTags_cHadEFrac_wp0p2": {
@@ -2868,12 +3003,147 @@ var_template = {
       "log" : True,
     },
 
+    ##skim tree
+    "Jet_[N]_sigprob": {
+      "title" : "AK4 jet [[N]] DNN output",
+      "nbins" : 25,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    #gammaMaxET
+    "Jet_[N]_gammaMaxET": {
+      "title" : "AK4 jet [[N]] gammaMaxET",
+      "nbins" : 40,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },       
+    #cHadEFrac
+    "Jet_[N]_cHadEFrac": {
+      "title" : "AK4 jet [[N]] charged hadron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "Jet_[N]_eleEFrac": {
+      "title" : "AK4 jet [[N]] electron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    #timeRecHitsEB
+    "Jet_[N]_timeRecHitsEB": {
+        "title" : "AK4 jet [[N]] ECAL barr. rec hits time (ns)",
+        "nbins" : 50,
+        "min" : -10,
+        "max" : 10,
+        "log" : True,
+    },
+    #timeRecHitsEB
+    "Jet_[N]_timeRecHitsHB": {
+        "title" : "AK4 jet [[N]] HCAL barr. rec hits time (ns)",
+        "nbins" : 50,
+        "min" : -10,
+        "max" : 10,
+        "log" : True,
+    },
+
+
+    "Jet_[N]_nRecHitsHB": {
+        "title" : "nRecHitsHB jet [[N]]",
+        "nbins" : 51,
+        "min" : 0-0.5,
+        "max" : 51-0.5,
+        "log" : True,
+    },
+    "Jet_[N]_energyRecHitsHB": {
+        "title" : "energyRecHitsHB jet [[N]]",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 50,
+        "log" : True,
+    },
+
+
+
+    #minDeltaRPVTracks
+    "Jet_[N]_minDeltaRPVTracks": {
+      "title" : "AK4 jet [[N]] min #Delta R with tracks from PV",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    "Jet_[N]_pt": {
+      "title" : "AK4 jet [[N]] p_{T} (GeV)",
+      "nbins" : 50,#40
+      "min" : 0,
+      "max" : 1000,
+      "log" : True,
+    },
+
+    #AK8
+    "FatJet_[N]_sigprob": {
+      "title" : "AK8 jet [[N]] DNN output",
+      "nbins" : 25,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    #gammaMaxET
+    "FatJet_[N]_gammaMaxET": {
+      "title" : "AK8 jet [[N]] gammaMaxET",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 2.,
+      "log" : True,
+    },       
+    #cHadEFrac
+    "FatJet_[N]_cHadEFrac": {
+      "title" : "AK8 jet [[N]] charged hadron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    #timeRecHitsEB
+    "FatJet_[N]_timeRecHitsEB": {
+        "title" : "AK8 jet [[N]]  ECAL barr. rec hits time (ns)",
+        "nbins" : 50,
+        "min" : -10,
+        "max" : 10,
+        "log" : True,
+    },
+    #minDeltaRPVTracks
+    "FatJet_[N]_minDeltaRPVTracks": {
+      "title" : "AK8 jet [[N]] min #Delta R with tracks from PV",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    "FatJet_[N]_pt": {
+      "title" : "AK8 jet [[N]] p_{T} (GeV)",
+      "nbins" : 40,#40
+      "min" : 170,
+      "max" : 2000,
+      "log" : True,
+    },
+
+
+
 }
+
+
+
 
 
 for n, v in var_template.iteritems():
     if '[N]' in n:
-        for i in range(0, 5):
+        for i in range(0, 9):
             ni = n.replace('[N]', "%d" % i)
             variable[ni] = v.copy()
             variable[ni]['title'] = variable[ni]['title'].replace('[N]', "%d" % i)
