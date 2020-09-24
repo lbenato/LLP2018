@@ -32,7 +32,7 @@ void skimJets(
 		 "output_4ML.root",
 		 Long64_t first_event=0,
 		 Long64_t last_event=-1,
-		 Bool_t doPFCand=false
+		 Bool_t doPFCand=true
              )
 
 {//"GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC_ML.root") {
