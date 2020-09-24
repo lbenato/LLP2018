@@ -96,4 +96,3 @@ process.outputSkim = cms.OutputModule("PoolOutputModule",
 )
 
 process.outputPath = cms.EndPath(process.outputSkim)
-
