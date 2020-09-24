@@ -38,8 +38,10 @@ elif options.channel=="SUSY":
     isMM = isEE = isComb = False
     xs = 1
     #from Analyzer.LLP2018.SUSY_DNN_setting import *
-    from Analyzer.LLP2018.SUSY_setting_higherpt import *
-    from Analyzer.LLP2018.samplesMINIAOD2018 import *
+    #from Analyzer.LLP2018.SUSY_setting_higherpt import *
+    #from Analyzer.LLP2018.samplesMINIAOD2018 import *
+    from Analyzer.LLP2018.SUSY_DNN_setting_v3 import *
+    from Analyzer.LLP2018.samplesAOD2018 import *
 elif options.channel=="ggHeavyHiggs":
     print "HeavyHiggs"
     chan = "ggH"
@@ -48,10 +50,18 @@ elif options.channel=="ggHeavyHiggs":
     #from Analyzer.LLP2018.HeavyHiggs_DNN_setting import *
     #from Analyzer.LLP2018.HeavyHiggs_setting_higherpt import *
     #from Analyzer.LLP2018.samplesMINIAOD2018 import *
-    from Analyzer.LLP2018.HeavyHiggs_setting_AK4AK8 import *
+    #from Analyzer.LLP2018.HeavyHiggs_setting_AK4AK8 import *
+    from Analyzer.LLP2018.HeavyHiggs_DNN_setting_v3 import *
     from Analyzer.LLP2018.samplesAOD2018 import *
 else:
     print "Channel not recognized for plotting limits/significance!"
+
+if SIGNAL_SUPPRESSION_FACTOR == 1000:
+    unit = "fb"
+else:
+    unit = "pb"
+
+unit = "pb"
 
 from Analyzer.LLP2018.drawUtils import *
 
@@ -109,8 +119,9 @@ def fillValues(filename):
                     continue
                 for i, f in enumerate(val[card]): 
                     val[card][i] = float(val[card][i])
-                    if options.channel=="ggHeavyHiggs":
-                    	val[card][i] = float(val[card][i])*xs/SIGNAL_SUPPRESSION_FACTOR
+                    #if options.channel=="SUSY":#"ggHeavyHiggs":
+                        #print "Applied signal suppression, need to reweight the exclusion limit power!!!"
+                    	#val[card][i] = float(val[card][i])*xs/SIGNAL_SUPPRESSION_FACTOR
                 if not s in mass: mass.append(s)
                 if not r in ctau: ctau.append(r)
             except:
@@ -214,7 +225,7 @@ def limit_vs_mass(channel, ctaupoint, tagvar, save=False):
     leg.AddEntry(Exp2s, "#pm 2 std. deviations", "f")
 
     Exp2s.GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b})/#sigma_{SM}")
-    if options.channel=="ggHeavyHiggs": Exp2s.GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b}) (pb)")
+    if options.channel=="ggHeavyHiggs": Exp2s.GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b}) ("+unit+")")
     Exp2s.GetXaxis().SetTitle("m_{"+particle+"} (GeV)")
     Exp1s.GetXaxis().SetTitle("m_{"+particle+"} (GeV)")
     Exp0s.GetXaxis().SetTitle("m_{"+particle+"} (GeV)")
@@ -351,7 +362,7 @@ def limit_vs_ctau(channel, masspoint, tagvar, save=False):
     leg.AddEntry(Exp2s, "#pm 2 std. deviations", "f")
 
     Exp2s.GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b})/#sigma_{SM}")
-    if options.channel=="ggHeavyHiggs": Exp2s.GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b}) (pb)")
+    if options.channel=="ggHeavyHiggs": Exp2s.GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b}) ("+unit+")")
     Exp2s.GetXaxis().SetTitle("c#tau_{"+particle+"} (mm)")
     Exp1s.GetXaxis().SetTitle("c#tau_{"+particle+"} (mm)")
     Exp0s.GetXaxis().SetTitle("c#tau_{"+particle+"} (mm)")
@@ -386,7 +397,7 @@ def limit_vs_ctau(channel, masspoint, tagvar, save=False):
         OUTSTRING += "_comb"
     if save:
         c1.Print(OUTSTRING+".png")
-        c1.Print(OUTSTRING+".pdf")       
+        c1.Print(OUTSTRING+".pdf")
     c1.Close()
     if not gROOT.IsBatch(): raw_input("Press Enter to continue...")
     return Exp0s, Exp1s
@@ -628,7 +639,7 @@ def plot_all_limits_vs_ctau(vector_expected, vector_1sigma, channel, tagvar):
         vector_1sigma[b].SetFillStyle(3002)
         vector_1sigma[b].SetFillColorAlpha(colors[i],0.3)
         vector_1sigma[b].GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b})/#sigma_{SM}")
-        if (options.channel=="ggHeavyHiggs" or options.channel=="SUSY"): vector_1sigma[b].GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b}) (pb)")
+        if (options.channel=="ggHeavyHiggs" or options.channel=="SUSY"): vector_1sigma[b].GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b}) ("+unit+")")
         vector_1sigma[b].GetXaxis().SetNoExponent(True)
         vector_1sigma[b].GetXaxis().SetMoreLogLabels(True)
         vector_1sigma[b].GetXaxis().SetTitleSize(0.048)
@@ -640,21 +651,21 @@ def plot_all_limits_vs_ctau(vector_expected, vector_1sigma, channel, tagvar):
             vector_1sigma[b].SetMinimum(0.1)
             vector_1sigma[b].SetMaximum(50.)
             if options.channel=="ggHeavyHiggs":
-            	vector_1sigma[b].SetMinimum(0.001)
+            	vector_1sigma[b].SetMinimum(0.0001)
             	vector_1sigma[b].SetMaximum(1.)            
             vector_1sigma[b].Draw("A3")
         else:
             vector_1sigma[b].SetMinimum(0.1)
             vector_1sigma[b].SetMaximum(50.)
             if options.channel=="ggHeavyHiggs":
-            	vector_1sigma[b].SetMinimum(0.001)
+            	vector_1sigma[b].SetMinimum(0.0001)
             	vector_1sigma[b].SetMaximum(1.)            
             vector_1sigma[b].Draw("SAME,3")
 
     for i, b in enumerate(vector_expected):
         vector_expected[b].SetLineColor(colors[i])
         vector_expected[b].GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b})/#sigma_{SM}")
-        if (options.channel=="ggHeavyHiggs" or options.channel=="SUSY"): vector_expected[b].GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b}) (pb)")
+        if (options.channel=="ggHeavyHiggs" or options.channel=="SUSY"): vector_expected[b].GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b}) ("+unit+")")
         vector_expected[b].GetXaxis().SetTitle("c#tau_{"+particle+"} (mm)")
         vector_expected[b].GetXaxis().SetNoExponent(True)
         vector_expected[b].GetXaxis().SetMoreLogLabels(True)
@@ -726,7 +737,7 @@ def plot_all_limits_vs_mass(vector_expected, vector_1sigma, channel, tagvar):
         vector_1sigma[b].SetFillStyle(3002)
         vector_1sigma[b].SetFillColorAlpha(colors[i],0.3)
         vector_1sigma[b].GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b})/#sigma_{SM}")
-        if (options.channel=="ggHeavyHiggs" or options.channel=="SUSY"): vector_1sigma[b].GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b}) (pb)")
+        if (options.channel=="ggHeavyHiggs" or options.channel=="SUSY"): vector_1sigma[b].GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b}) ("+unit+")")
         vector_1sigma[b].GetXaxis().SetNoExponent(True)
         vector_1sigma[b].GetXaxis().SetMoreLogLabels(True)
         vector_1sigma[b].GetXaxis().SetTitleSize(0.048)
@@ -735,18 +746,18 @@ def plot_all_limits_vs_mass(vector_expected, vector_1sigma, channel, tagvar):
         vector_1sigma[b].GetXaxis().SetTitleOffset(0.9)
         vector_1sigma[b].GetXaxis().SetTitle("m_{"+particle+"} (GeV)")
         if i == 0:
-            vector_1sigma[b].SetMinimum(0.005)
+            vector_1sigma[b].SetMinimum(0.0005)
             vector_1sigma[b].SetMaximum(50.)
             vector_1sigma[b].Draw("A3")
         else:
-            vector_1sigma[b].SetMinimum(0.005)
+            vector_1sigma[b].SetMinimum(0.0005)
             vector_1sigma[b].SetMaximum(50.)
             vector_1sigma[b].Draw("SAME,3")
 
     for i, b in enumerate(vector_expected):
         vector_expected[b].SetLineColor(colors[i])
         vector_expected[b].GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b})/#sigma_{SM}")
-        if (options.channel=="ggHeavyHiggs" or options.channel=="SUSY"): vector_expected[b].GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b}) (pb)")
+        if (options.channel=="ggHeavyHiggs" or options.channel=="SUSY"): vector_expected[b].GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b}) ("+unit+")")
         vector_expected[b].GetXaxis().SetTitle("m_{"+particle+"} (GeV)")
         vector_expected[b].GetXaxis().SetNoExponent(True)
         vector_expected[b].GetXaxis().SetMoreLogLabels(True)
@@ -759,13 +770,13 @@ def plot_all_limits_vs_mass(vector_expected, vector_1sigma, channel, tagvar):
     for b in sorted(vector_expected.keys()):
         leg.AddEntry(vector_expected[b],  "c#tau_{"+particle+"} = "+str(b)+" mm", "l")
 
-    lineY = TLine(ctauPoints[0],1.,ctauPoints[len(ctauPoints)-1],1.)
+    lineY = TLine(massPoints[0],1.,massPoints[len(massPoints)-1],1.)
     lineY.SetLineColor(2)
     lineY.SetLineWidth(2)
     lineY.SetLineStyle(2)
     lineY.Draw()
-
     leg.Draw()
+
     if PRELIMINARY:
         drawCMS(samples, LUMI, "Preliminary",left_marg_CMS=0.3)
     else:
@@ -785,6 +796,14 @@ def plot_all_limits_vs_mass(vector_expected, vector_1sigma, channel, tagvar):
         OUTSTRING+="_BR"+str(xs).replace('.','p')
     c2.Print(OUTSTRING + ".png")
     c2.Print(OUTSTRING + ".pdf")
+    newFile = TFile(OUTSTRING+".root", "RECREATE")
+    newFile.cd()
+    for i, b in enumerate(vector_expected):
+        vector_expected[b].Write(tagvar+"_exp")
+    for i, b in enumerate(vector_1sigma):
+        vector_1sigma[b].Write(tagvar+"_1sigma")
+    c2.Write()
+    newFile.Close()
 
     if not gROOT.IsBatch(): raw_input("Press Enter to continue...")
     
