@@ -180,48 +180,60 @@ sample = {
         'kfactor' : 1.,
     },
 
+
+    'TChiHH_mass400_pl1000' : {
+        'nevents' : 1,
+        'xsec'    : 1e-03*88.7372*0.5824*0.5824,#88.7325,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+
+
     'n3n2-n1-hbb-hbb_mh400_pl1000' : {
         'nevents' : 1,
-        'xsec'    : 88.7325,
+        'xsec'    : 1e-03*88.7372*0.5824*0.5824,#88.7325,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'n3n2-n1-hbb-hbb_mh300_pl1000' : {
         'nevents' : 1,
-        'xsec'    : 284.855,
+        'xsec'    : 1e-03*284.855*0.5824*0.5824,#284.855,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'n3n2-n1-hbb-hbb_mh250_pl1000' : {
         'nevents' : 1,
-        'xsec'    : 577.314,
+        'xsec'    : 1e-03*810.24*0.5824*0.5824,#577.314,#mine was wrong!
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'n3n2-n1-hbb-hbb_mh200_pl1000' : {
         'nevents' : 1,
-        'xsec'    : 1335.62,
+        'xsec'    : 1e-03*1335.62*0.5824*0.5824,#1335.62,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'n3n2-n1-hbb-hbb_mh175_pl1000' : {
         'nevents' : 1,
-        'xsec'    : 2583.965,
+        'xsec'    : 1e-03*2583.96*0.5824*0.5824,#2583.965,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'n3n2-n1-hbb-hbb_mh150_pl1000' : {
         'nevents' : 1,
-        'xsec'    : 3832.31,
+        'xsec'    : 1e-03*3832.31*0.5824*0.5824,#3832.31,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'n3n2-n1-hbb-hbb_mh127_pl1000' : {
         'nevents' : 1,
-        'xsec'    : 10314.755,
+        'xsec'    : 10.31*0.5824*0.5824,#10314.755,
         'matcheff': 1.,
         'kfactor' : 1.,
     },    
+
+
+
 
     ##Dibosons
     ##WW
@@ -413,6 +425,22 @@ samples = {
    
     #SIGNAL
 ######################################
+
+## High stat
+    'SUSY_mh400_pl1000_XL' : {
+        'files' : ['TChiHH_mass400_pl1000'],
+        'mass' : 400,
+        'ctau' : 1000,
+        'fillcolor' : 1,
+        'fillstyle' : 0,
+        'linecolor' : 1,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{#chi} = 400 GeV, c#tau_{0} = 1 m",
+        'weight': 1.,
+        'plot': True,
+    },
+
 #
 #  JiaJing's AOD
     'SUSY_mh400_pl1000' : {
