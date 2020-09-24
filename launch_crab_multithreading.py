@@ -60,7 +60,7 @@ if __name__ == '__main__':
     # Selection of samples via python lists
     import os
 
-    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018"]#,"data_obs"
+    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB"]#,"data_obs"
     print "Possible subgroups of samples:"
     for a in list_of_samples:
         print a
@@ -112,6 +112,12 @@ if __name__ == '__main__':
         isHeavyHiggs = True
         isSUSY = False
     elif options.model=="SUSY":
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False
+        isSUSY = True
+    elif options.model=="gluinoGMSB":
         isVBF = False
         isggH = False
         isTwinHiggs = False
@@ -469,8 +475,8 @@ if __name__ == '__main__':
         isVBF = False
         isggH = False
         isTwinHiggs = False
-        isHeavyHiggs = True#False#only for heavy higgs
-        isSUSY = False#!!!
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
     elif options.lists == "v0_2016miniAOD_centrallyProduced":
         from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced import *
         from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
@@ -574,11 +580,15 @@ if __name__ == '__main__':
                 print k
                 selected_requests[k] = requests[k]
         elif options.groupofsamples=="SUSY":
-            if "n3n2-n1-hbb-hbb" in k:
+            if ("n3n2-n1-hbb-hbb" in k) or ("TChiHH" in k):
                 print k
                 selected_requests[k] = requests[k]
         elif options.groupofsamples=="ggHeavyHiggs":
             if "GluGluH2_H2ToSSTobb" in k:
+                print k
+                selected_requests[k] = requests[k]
+        elif options.groupofsamples=="gluinoGMSB":
+            if "gluinoGMSB" in k:
                 print k
                 selected_requests[k] = requests[k]
         elif "VBFH_MH-125_201" in options.groupofsamples:
@@ -800,6 +810,9 @@ if __name__ == '__main__':
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
             elif "n3n2-n1-hbb-hbb" in j:
+                #automatic implementation of the choice bewteen inputDBS global/phys03
+                config.Data.inputDBS = "phys03"
+            elif "TChiHH" in j:
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
             elif "GluGluH2_H2ToSSTobb" in j:
