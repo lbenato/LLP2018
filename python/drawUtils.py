@@ -7,7 +7,7 @@ from array import array
 from ROOT import ROOT, gROOT, gStyle, gRandom, TSystemDirectory, gPad
 from ROOT import TFile, TChain, TTree, TCut, TH1, TH1F, TH2F, THStack, TGraph, TGraphAsymmErrors
 from ROOT import TStyle, TCanvas, TPad
-from ROOT import TLegend, TLatex, TText, TLine, TBox, TGaxis
+from ROOT import TLegend, TLatex, TText, TLine, TBox, TGaxis, TAxis
 
 #### IMPORT SAMPLES AND VARIABLES DICTIONARIES ####
 
@@ -106,6 +106,7 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
         hist[s].SetMarkerSize(1.25)
     for i, s in enumerate(sign):
         hist[s].SetLineWidth(3)
+        hist[s].SetLineStyle(samples[s]['linestyle'])
         
     for i, s in enumerate(data+back+sign+['BkgSum']):
         addOverflow(hist[s], False) # Add overflow
@@ -198,7 +199,7 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
         bkg.SetMinimum(5.e-1)#!!
         bkg.GetYaxis().SetTitleOffset(bkg.GetYaxis().GetTitleOffset()*1.075)
 
-    #w##bkg.SetMaximum(2.e10)
+    #w#bkg.SetMaximum(2.e7)
     leg.Draw()
     #drawCMS(LUMI, "Preliminary")
     #drawRegion(channel)
@@ -280,6 +281,7 @@ def drawSignal(samples, hist, sign, log=False, logx=False):
     max_val = 0
     for i, s in enumerate(sign): 
         hist[s].SetLineWidth(3)
+        hist[s].SetLineStyle(samples[s]['linestyle'])
         hist[s].Draw("SAME, HIST" if i>0 else "HIST") # signals
         max_val = max(max_val,hist[s].GetMaximum())
         addOverflow(hist[s], True) # Add overflow
