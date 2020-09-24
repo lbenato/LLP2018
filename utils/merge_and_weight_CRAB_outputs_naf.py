@@ -124,6 +124,7 @@ elif options.lists == "v3_calo_AOD_2018":
     #LUMI = 6.815605990*1000.# METRun2018A-17Sep2018-v1 partial # 59690 #2018 from ppd
     #LUMI = 11.816443876*1000.
     LUMI = 13.906390984*1000.# METRun2018A-17Sep2018-v1 all done, 28 Jul 2020
+    #LUMI = 59690#2018 lumi with normtag, from pdvm2018 twiki
 else:
     print "No sample list indicated, aborting!"
     exit()
