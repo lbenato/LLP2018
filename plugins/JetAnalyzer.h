@@ -76,12 +76,15 @@
 #include "TRandom3.h"
 #include "FWCore/Utilities/interface/TypeID.h"
 
+#include "Objects.h"
 
 class JetAnalyzer {
     public:
         JetAnalyzer(edm::ParameterSet&, edm::ConsumesCollector&&);
         ~JetAnalyzer();
         virtual std::vector<pat::Jet> FillJetVector(const edm::Event&, const edm::EventSetup&);
+        virtual std::vector<ecalRecHitType> FillEcalRecHitVector(const edm::Event&, const edm::EventSetup&, std::vector<pat::Jet> &);
+        virtual std::vector<hcalRecHitType> FillHcalRecHitVector(const edm::Event&, const edm::EventSetup&, std::vector<pat::Jet> &);
         virtual void CorrectJet(pat::Jet&, float, float, bool);
         virtual void CorrectMass(pat::Jet&, float, float, bool);
         virtual void CorrectPuppiMass(pat::Jet&, bool);
@@ -137,6 +140,7 @@ class JetAnalyzer {
         std::string JerName_sf;
 	std::vector<std::string> BTagNames;
         float Rparameter;
+	float dRMatch;
         //Ecal RecHits
         const float Rechit_cut = 0.5;
         

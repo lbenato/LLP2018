@@ -50,6 +50,19 @@ JetAnalyzer::JetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl
     jecUncDATA = new JetCorrectionUncertainty(JECUncertaintyDATA);
 
     isMetTriggerFile = false;
+
+    if (JECUncertaintyMC.find("AK8") != std::string::npos)
+      {
+	Rparameter = 0.8;
+	dRMatch=1.0;
+      }
+
+    else 
+      {
+	Rparameter = 0.4;
+	dRMatch=0.5;
+      }
+
     
     if(RecalibrateJets) {
         std::vector<JetCorrectorParameters> jetParMC;
@@ -172,6 +185,7 @@ JetAnalyzer::JetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl
     std::cout << "  jet Id            :\t" << JetId << std::endl;
     std::cout << "  jet pT [1, 2]     :\t" << Jet1Pt << "\t" << Jet2Pt << std::endl;
     std::cout << "  jet eta           :\t" << JetEta << std::endl;
+    std::cout << "  R parameter       :\t" << Rparameter << std::endl;
     std::cout << "  b-tagging algo    :\t" << BTag << std::endl;
     std::cout << "  b-tag cut [1, 2]  :\t" << Jet1BTag << "\t" << Jet2BTag << std::endl;
     std::cout << "  apply recoil corr :\t" << (UseRecoil ? "YES" : "NO") << std::endl;
@@ -573,9 +587,25 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         float jetRechitZ_HE(0.);
         float jetRechitRadius_HE(0.);
         int n_matched_rechits_HE(0);
+
+	//vectors used to calculate hit showers spread
+	std::vector<double> EB_eta;
+	std::vector<double> EB_et;
+	std::vector<double> EB_phi;
+	std::vector<double> EE_eta;
+	std::vector<double> EE_et;
+	std::vector<double> EE_phi;
+	std::vector<double> HB_eta;
+	std::vector<double> HB_et;
+	std::vector<double> HB_phi;
+	
+
         
         if(IsAOD)
         {
+	  //Just for debugging purposes
+	  jet.addUserFloat("Rparameter", Rparameter);
+
           //Loop on EB rec hits
           for(unsigned int q=0; q<ebRecHitsCollection->size(); q++){
             const EcalRecHit *recHit = &(*ebRecHitsCollection)[q];
@@ -588,10 +618,15 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             if (abs(recHit->time()) > 12.5) continue;
             
             //Calculate jet timestamps
-            if ( reco::deltaR(jet.eta(), jet.phi(), recHitPos.eta(), recHitPos.phi()) < 0.4) {
+            if ( reco::deltaR(jet.eta(), jet.phi(), recHitPos.eta(), recHitPos.phi()) < Rparameter) {
                 //if (reco::deltaR(jet.eta(), jet.phi(), recHitPos.eta(), recHitPos.phi()) < 0.15 && recHit->energy() > Rechit_cut) jet_energy_frac += recHit->energy();//needed???
 
                 if (recHit->energy() > Rechit_cut) {
+
+ 		    EB_eta.push_back(recHitPos.eta());
+		    EB_phi.push_back(recHitPos.phi());
+		    EB_et.push_back(recHit->energy()/cosh(recHitPos.eta()));
+
                     jetRechitE_Error_EB += recHit->energyError() * recHit->energyError();
                     jetRechitE_EB += recHit->energy();
                     jetRechitT_EB += recHit->time()*recHit->energy();
@@ -621,10 +656,15 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             if (abs(recHit->time()) > 12.5) continue;
             
             //Calculate jet timestamps
-            if ( reco::deltaR(jet.eta(), jet.phi(), recHitPos.eta(), recHitPos.phi()) < 0.4) {
+            if ( reco::deltaR(jet.eta(), jet.phi(), recHitPos.eta(), recHitPos.phi()) < Rparameter) {
                 //if (reco::deltaR(jet.eta(), jet.phi(), recHitPos.eta(), recHitPos.phi()) < 0.15 && recHit->energy() > Rechit_cut) jet_energy_frac += recHit->energy();//needed???
 
                 if (recHit->energy() > Rechit_cut) {
+
+ 		    EE_eta.push_back(recHitPos.eta());
+		    EE_phi.push_back(recHitPos.phi());
+		    EE_et.push_back(recHit->energy()/cosh(recHitPos.eta()));
+
                     jetRechitE_Error_EE += recHit->energyError() * recHit->energyError();
                     jetRechitE_EE += recHit->energy();
                     jetRechitT_EE += recHit->time()*recHit->energy();
@@ -652,20 +692,32 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 	    float hitz   = -99999999.;
 	    if (recHit->energy() < 0.1) continue;
 	    const HcalDetId recHitId = recHit->detid();
+	    //std::cout << "valid HCAL rec hit n. " << iHit << std::endl;
+	    //std::cout << "depth " << recHitId.depth() << std::endl;
+	    //std::cout << "eta id " << recHitId.ieta() << std::endl;
+	    //std::cout << "phi id " << recHitId.iphi() << std::endl;
 	    if (recHit->detid().subdetId() == HcalBarrel)
 	      {
 	        //std::cout << "Debug, segfault at HB? " << std::endl;
 		const auto recHitPos = hbGeometry->getGeometry(recHitId)->getPosition();
 		hiteta = recHitPos.eta();
 		hitphi = recHitPos.phi();
+		//std::cout << " passed id barrel " << std::endl;
+		//std::cout << "eta " << hiteta  << std::endl;
+		//std::cout << "phi " << hitphi  << std::endl;
 		hitx   = recHitPos.x();
 		hity   = recHitPos.y();
 		hitz   = recHitPos.z();
 	      
-		if ( reco::deltaR(jet.eta(), jet.phi(), hiteta, hitphi) < 0.4 )//why 0.5??
+		if ( reco::deltaR(jet.eta(), jet.phi(), hiteta, hitphi) < Rparameter )//why 0.5??
 		  {
   		    //std::cout << "Debug, segfault at matching AK4 and HB? " << std::endl;
 		    //jetRechitE_Error_HBHE += recHit->energyError() * recHit->energyError();
+
+ 		    HB_eta.push_back(recHitPos.eta());
+		    HB_phi.push_back(recHitPos.phi());
+		    HB_et.push_back(recHit->energy()/cosh(recHitPos.eta()));
+
 		    jetRechitE_HB += recHit->energy();
 		    jetRechitT_HB += recHit->time()*recHit->energy();
 		    jetRechitT_rms_HB += recHit->time()*recHit->time();
@@ -689,7 +741,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 		hity   = recHitPos.y();
 		hitz   = recHitPos.z();
 	      
-		if ( reco::deltaR(jet.eta(), jet.phi(), hiteta, hitphi) < 0.4 )//why 0.5??
+		if ( reco::deltaR(jet.eta(), jet.phi(), hiteta, hitphi) < Rparameter )//why 0.5??
 		  {
 		    std::cout << "Debug, segfault at matching AK4 and HE? " << std::endl;
 		    //jetRechitE_Error_HBHE += recHit->energyError() * recHit->energyError();
@@ -1101,6 +1153,140 @@ float JetAnalyzer::CalculateHT(const edm::Event& iEvent, const edm::EventSetup& 
     }
     return HT;
 }
+
+
+std::vector<ecalRecHitType> JetAnalyzer::FillEcalRecHitVector(const edm::Event& iEvent, const edm::EventSetup& iSetup, std::vector<pat::Jet>& Jets) {
+
+    // ECAL rechits
+    edm::Handle<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > ebRecHitsCollection;
+    iEvent.getByToken(ebRecHitsToken, ebRecHitsCollection);    
+    //edm::Handle<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > eeRecHitsCollection;
+    //iEvent.getByToken(eeRecHitsToken, eeRecHitsCollection);
+    edm::ESHandle<CaloGeometry> geoHandle;
+    iSetup.get<CaloGeometryRecord>().get(geoHandle);
+    const CaloSubdetectorGeometry *barrelGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalBarrel);
+    //const CaloSubdetectorGeometry *endcapGeometry = geoHandle->getSubdetectorGeometry(DetId::Ecal, EcalEndcap);
+
+    std::vector<ecalRecHitType> Vect;
+
+    //First loop on the rec hits, that are a larger collection
+    //Then loop over surviving jets, that are less
+    //for(unsigned int a = 0; a<Jets.size(); a++)
+    //  {
+    //  }
+
+    
+    if(IsAOD)
+      {
+	//Loop on EB rec hits
+	for(unsigned int q=0; q<ebRecHitsCollection->size(); q++)
+	  {
+	    const EcalRecHit *recHit = &(*ebRecHitsCollection)[q];
+	    const DetId recHitId = recHit->detid();
+	    const auto recHitPos = barrelGeometry->getGeometry(recHitId)->getPosition();
+	    ecalRecHitType recHitStruct;
+
+	    //Discard "bad" rechits            
+	    if (recHit->checkFlag(EcalRecHit::kSaturated) || recHit->checkFlag(EcalRecHit::kLeadingEdgeRecovered) || recHit->checkFlag(EcalRecHit::kPoorReco) || recHit->checkFlag(EcalRecHit::kWeird) || recHit->checkFlag(EcalRecHit::kDiWeird)) continue;
+	    if (recHit->timeError() < 0 || recHit->timeError() > 100) continue;
+	    if (abs(recHit->time()) > 12.5) continue;
+            
+
+	    //Jet matching
+	    for(unsigned int a = 0; a<Jets.size(); a++)
+	      {
+		if (reco::deltaR(Jets.at(a).eta(), Jets.at(a).phi(), recHitPos.eta(), recHitPos.phi()) < dRMatch)
+		  {
+		    if(recHit->energy() > Rechit_cut)
+		      {
+			recHitStruct.eta = recHitPos.eta();
+			recHitStruct.phi = recHitPos.phi();
+			recHitStruct.x = recHitPos.x();
+			recHitStruct.y = recHitPos.y();
+			recHitStruct.z = recHitPos.z();
+			recHitStruct.energy = recHit->energy();
+			recHitStruct.time = recHit->time();
+			recHitStruct.energyError = recHit->energyError();
+			recHitStruct.timeError = recHit->timeError();
+			recHitStruct.jetPt = Jets.at(a).pt(); 
+			recHitStruct.jetIndex = a; 
+			recHitStruct.jetDR = reco::deltaR(Jets.at(a).eta(), Jets.at(a).phi(), recHitPos.eta(), recHitPos.phi()); 
+			Vect.push_back(recHitStruct);
+		      }//valid rec hit
+		  }//matched rec hit
+	      }//loop on jets
+	  }//loop on rec hits
+      }//if AOD
+    
+    return Vect;
+
+}
+
+
+std::vector<hcalRecHitType> JetAnalyzer::FillHcalRecHitVector(const edm::Event& iEvent, const edm::EventSetup& iSetup, std::vector<pat::Jet>& Jets) {
+
+    //hereeee
+    // HCAL rechits
+    //edm::Handle<edm::SortedCollection<HORecHit,edm::StrictWeakOrdering<HORecHit>>> hcalRecHitsHOCollection;
+    //iEvent.getByToken(hcalRecHitsHOToken, hcalRecHitsHOCollection);
+    edm::Handle<edm::SortedCollection<HBHERecHit,edm::StrictWeakOrdering<HBHERecHit>>> hcalRecHitsHBHECollection;
+    iEvent.getByToken(hcalRecHitsHBHEToken, hcalRecHitsHBHECollection);
+
+    edm::ESHandle<CaloGeometry> geoHandle;
+    iSetup.get<CaloGeometryRecord>().get(geoHandle);
+    const CaloSubdetectorGeometry *hbGeometry = geoHandle->getSubdetectorGeometry(DetId::Hcal, HcalBarrel);
+    //const CaloSubdetectorGeometry *heGeometry = geoHandle->getSubdetectorGeometry(DetId::Hcal, HcalEndcap);
+    //const CaloSubdetectorGeometry *hoGeometry = geoHandle->getSubdetectorGeometry(DetId::Hcal, HcalOuter);
+
+    std::vector<hcalRecHitType> Vect;
+
+    
+    if(IsAOD)
+      {
+	//Loop on HB rec hits
+	for(unsigned int q=0; q<hcalRecHitsHBHECollection->size(); q++)
+	  {
+	    const HBHERecHit *recHit = &(*hcalRecHitsHBHECollection)[q];
+	    hcalRecHitType recHitStruct;
+
+	    //Discard "bad" rechits            
+	    if (recHit->energy() < 0.1) continue;
+            const HcalDetId recHitId = recHit->detid();
+	    if (recHit->detid().subdetId() == HcalBarrel)
+	      {
+		const auto recHitPos = hbGeometry->getGeometry(recHitId)->getPosition();
+
+		//Jet matching
+		for(unsigned int a = 0; a<Jets.size(); a++)
+		  {
+		    if (reco::deltaR(Jets.at(a).eta(), Jets.at(a).phi(), recHitPos.eta(), recHitPos.phi()) < dRMatch)
+		      {
+			recHitStruct.eta = recHitPos.eta();
+			recHitStruct.phi = recHitPos.phi();
+			recHitStruct.x = recHitPos.x();
+			recHitStruct.y = recHitPos.y();
+			recHitStruct.z = recHitPos.z();
+			recHitStruct.energy = recHit->energy();
+			recHitStruct.time = recHit->time();
+			recHitStruct.depth = recHitId.depth();
+			recHitStruct.iEta = recHitId.ieta();
+			recHitStruct.iPhi = recHitId.iphi();
+			recHitStruct.jetPt = Jets.at(a).pt(); 
+			recHitStruct.jetIndex = a; 
+			recHitStruct.jetDR = reco::deltaR(Jets.at(a).eta(), Jets.at(a).phi(), recHitPos.eta(), recHitPos.phi()); 
+			Vect.push_back(recHitStruct);			
+		      }//if DR matching
+		  }//loop on Jets
+
+	      }//select only HcalBarrel
+
+	  }//loop on hcal rec hits
+      }//isAOD
+
+    return Vect;
+
+}
+
 
 
 // // https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution
