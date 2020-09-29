@@ -88,10 +88,9 @@ TauType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), pfIso(-1.), dz(-
 
 
 struct JetType {
-JetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), energyRaw(-1.), ptRaw(-1.), ptUnc(-1.), CSV(-99.), CMVA(-99.),
- dPhi_met(-99.),// dPhi_Jet1(-1.), puId(-1.),
-//CSVR(-99.), CSVRUp(-99.), CSVRDown(-99.),
-//CMVAR(-99.), CMVARUp(-99.), CMVARDown(-99.), QGLikelihood(-1.),
+JetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), energyRaw(-1.), ptRaw(-1.), ptUnc(-1.), CSV(-99.), CMVA(-99.), dPhi_met(-99.),
+// dPhi_Jet1(-1.), puId(-1.),
+//CSVR(-99.), CSVRUp(-99.), CSVRDown(-99.), CMVAR(-99.), CMVARUp(-99.), CMVARDown(-99.), QGLikelihood(-1.),
 //energies
 cHadE(-1.), nHadE (-1.), eleE(-1.), photonE(-1.), muE(-1.), nEmE(-1.), cEmE(-1.), cmuE(-1.),
 //energy fractions
@@ -100,33 +99,35 @@ cHadEFrac(-1.), nHadEFrac(-1.), eleEFrac(-1.), photonEFrac(-1.), muEFrac(-1.), n
 cHadMulti(-1.), nHadMulti(-1.), eleMulti(-1.), photonMulti(-1.), muMulti(-1.), cMulti(-1.), nMulti(-1.), npr(-1.),
 //multiplicity fractions
 cHadMultiFrac(-1.), nHadMultiFrac(-1.), eleMultiFrac(-1.), photonMultiFrac(-1.), muMultiFrac(-1.), cMultiFrac(-1.), nMultiFrac(-1.),
-
-	   //emEFrac(-1.), emEinEB(-1.), emEinEE(-1.), emEinHF(-1.), EFracHad(-1.), hadEinHB(-1.), hadEinHE(-1.), hadEinHF(-1.), hadEinHO(-1.),
+//emEFrac(-1.), emEinEB(-1.), emEinEE(-1.), emEinHF(-1.), EFracHad(-1.), hadEinHB(-1.), hadEinHE(-1.), hadEinHF(-1.), hadEinHO(-1.),
 ptGenJ(-10.), etaGenJ(-4.), phiGenJ(-4.), massGenJ(-10.),ptGen(-10.), etaGen(-4.), phiGen(-4.), massGen(-10.), pdgIdGen(0.),
 // ptLhe(-10.), etaLhe(-4.), phiLhe(-4.),
-    partonFlavour(0), hadronFlavour(0), mother(0), isLoose(false), isMedium(false), isTight(false), isTightLepVeto(false), isCSVL(false), isCSVM(false), isCSVT(false),
+partonFlavour(0), hadronFlavour(0), mother(0), isLoose(false), isMedium(false), isTight(false), isTightLepVeto(false), isCSVL(false), isCSVM(false), isCSVT(false),
 PUId(-1), PUIdLoose(false), PUIdMedium(false), PUIdTight(false), PUDiscriminant(-2.),
 //isMatched(false), dR_q1(1000), dR_q2(1000), dR_q3(1000), dR_q4(1000), m_q1(false), m_q2(false), m_q3(false), m_q4(false), dR_pi1(1000), dR_pi2(1000),
 matchBquark(-1), matchLL(-1),
 //original_jet_index(-1),
-    isGenMatched(0), isGenMatchedCaloCorr(0), isGenMatchedLLPAccept(0), isGenMatchedCaloCorrLLPAccept(0), radiusLLP(-1000.), xLLP(-10000.), yLLP(-10000.), zLLP(-10000.), radiusLLPCaloCorr(-1000.), xLLPCaloCorr(-10000.), yLLPCaloCorr(-10000.), zLLPCaloCorr(-10000.), xGenb(-10000.), yGenb(-10000.), zGenb(-10000.), xGenbCaloCorr(-10000.), yGenbCaloCorr(-10000.), zGenbCaloCorr(-10000.), isVBFGenMatched(0),
-    //track variables, old implementation
-    alphaMaxOld(-100.), sumPtJetOld(-1.), betaMaxOld(-100.), gammaMaxOld(-100.), gammaMaxEMOld(-100.), gammaMaxHadronicOld(-100.), gammaMaxETOld(-100.), sigIP2DMedianOld(-10000.), theta2DMedianOld(-100.), POCA_theta2DMedianOld(-100.), nPixelHitsMedianOld(-1.0), nHitsMedianOld(-1.0), dxyMedianOld(-9999.), dzMedianOld(-9999.),//minDeltaRAllTracksOld(999.), minDeltaRPVTracksOld(999.), minDeltaRAllTracksInJetOld(999.), minDeltaRPVTracksInJetOld(999.),
-    //track variables, new implementation
-    ptAllTracks(-1.), ptAllPVTracks(-1.), ptPVTracksMax(-1.), nTracksAll(-1), nTracksPVMax(-1), medianIP2D(-10000.), medianTheta2D(-100.), alphaMax(-100.), betaMax(-100.), gammaMax(-100.), gammaMaxEM(-100.), gammaMaxHadronic(-100.), gammaMaxET(-100.), minDeltaRAllTracks(999.), minDeltaRPVTracks(999.), nPixelHitsMedian(-1.0), nHitsMedian(-1.0), dzMedian(-9999.), dxyMedian(-9999.),
-    hcalE(-100.), ecalE(-100.), FracCal(-100.), flightDist2d(-100.), flightDist2dError(-100.), flightDist3d(-100.), flightDist3dError(-100.), nSV(-1), nSVCand(-1), nVertexTracks(-1), nSelectedTracks(-1), dRSVJet(-100.), SV_x(-1000.), SV_y(-1000.), SV_z(-1000.), SV_dx(-100.), SV_dy(-100.), SV_dz(-100.), nTracksSV(-1), SV_mass(-100.),  isCaloTag(0),
+isGenMatched(0), isGenMatchedCaloCorr(0), isGenMatchedLLPAccept(0), isGenMatchedCaloCorrLLPAccept(0), radiusLLP(-1000.), xLLP(-10000.), yLLP(-10000.), zLLP(-10000.), radiusLLPCaloCorr(-1000.), xLLPCaloCorr(-10000.), yLLPCaloCorr(-10000.), zLLPCaloCorr(-10000.), xGenb(-10000.), yGenb(-10000.), zGenb(-10000.), xGenbCaloCorr(-10000.), yGenbCaloCorr(-10000.), zGenbCaloCorr(-10000.), isVBFGenMatched(0),
+//track variables, old implementation
+alphaMaxOld(-100.), sumPtJetOld(-1.), betaMaxOld(-100.), gammaMaxOld(-100.), gammaMaxEMOld(-100.), gammaMaxHadronicOld(-100.), gammaMaxETOld(-100.), sigIP2DMedianOld(-10000.), theta2DMedianOld(-100.), POCA_theta2DMedianOld(-100.), nPixelHitsMedianOld(-1.0), nHitsMedianOld(-1.0), dxyMedianOld(-9999.), dzMedianOld(-9999.),//minDeltaRAllTracksOld(999.), minDeltaRPVTracksOld(999.), minDeltaRAllTracksInJetOld(999.), minDeltaRPVTracksInJetOld(999.),
+//track variables, new implementation
+ptAllTracks(-1.), ptAllPVTracks(-1.), ptPVTracksMax(-1.), nTracksAll(-1), nTracksPVMax(-1), medianIP2D(-10000.), medianTheta2D(-100.), alphaMax(-100.), betaMax(-100.), gammaMax(-100.), gammaMaxEM(-100.), gammaMaxHadronic(-100.), gammaMaxET(-100.), minDeltaRAllTracks(999.), minDeltaRPVTracks(999.), nPixelHitsMedian(-1.0), nHitsMedian(-1.0), dzMedian(-9999.), dxyMedian(-9999.),
+hcalE(-100.), ecalE(-100.), FracCal(-100.), flightDist2d(-100.), flightDist2dError(-100.), flightDist3d(-100.), flightDist3dError(-100.), nSV(-1), nSVCand(-1), nVertexTracks(-1), nSelectedTracks(-1), dRSVJet(-100.), SV_x(-1000.), SV_y(-1000.), SV_z(-1000.), SV_dx(-100.), SV_dy(-100.), SV_dz(-100.), nTracksSV(-1), SV_mass(-100.),  isCaloTag(0),
 //VBF_DisplacedJet40_VTightID_Hadronic_match(0), VBF_DisplacedJet40_VVTightID_Hadronic_match(0),
-    ptJESUp (-1.), ptJESDown (-1.), ptJERUp (-1.), ptJERDown (-1.), tau1(-1.), tau2(-1.), tau3(-1.), nSubJets(-1), tau21(-1.), tau31(-1.), tau32(-1.), tau1_neutral(-1.), tau2_neutral(-1.), tau21_neutral(-1.), tau1_charged(-1.), tau2_charged(-1.), tau21_charged(-1.), 
-    //TriggerMatched_VBFJet(0), TriggerMatched_DisplacedJet(0), TriggerMatched_TripleJet50(0),//currently not used
-    nConstituents (-1), nTrackConstituents (-1), nTracks0PixelHits(-1), nTracks1PixelHit(-1),nTracks2PixelHits(-1),nTracks3PixelHits(-1),nTracks4PixelHits(-1),nTracks5PixelHits(-1),nTracksAtLeast6PixelHits(-1),
-    nTracksValidHitInBPix1(-1),nTracks0LostInnerHits(-1), nTracks1LostInnerHit(-1), nTracksAtLeast2LostInnerHits(-1), nTrackConstituentsWithPtLarger0p95(-1), nTrackConstituentsWithTrackDetails(-1), nTrackConstituentsWithTrackDetailsPtLarger0p95(-1), nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1),
-    //recHits time
-    nRecHitsEB(-1), timeRecHitsEB(-100.), timeRMSRecHitsEB(-1.), energyRecHitsEB(-1.), energyErrorRecHitsEB(-1.), xRecHitsEB(-1000.), yRecHitsEB(-1000.), zRecHitsEB(-1000.), radiusRecHitsEB(-1000.),
-    nRecHitsEE(-1), timeRecHitsEE(-100.), timeRMSRecHitsEE(-1.), energyRecHitsEE(-1.), energyErrorRecHitsEE(-1.), xRecHitsEE(-1000.), yRecHitsEE(-1000.), zRecHitsEE(-1000.), radiusRecHitsEE(-1000.),
-    nRecHitsHB(-1), timeRecHitsHB(-100.), timeRMSRecHitsHB(-1.), energyRecHitsHB(-1.), energyErrorRecHitsHB(-1.), xRecHitsHB(-1000.), yRecHitsHB(-1000.), zRecHitsHB(-1000.), radiusRecHitsHB(-1000.),
-    nRecHitsHE(-1), timeRecHitsHE(-100.), timeRMSRecHitsHE(-1.), energyRecHitsHE(-1.), energyErrorRecHitsHE(-1.), xRecHitsHE(-1000.), yRecHitsHE(-1000.), zRecHitsHE(-1000.), radiusRecHitsHE(-1000.),
-    //Imperial College tagger
-    pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP1000(-1.), deepCSV_probb_probbb(-99.), deepCSV_probc_probudsg(-99.), deepCSV_probudsg(-99.), deepCSV_probb(-99.), deepCSV_probc(-99.), deepCSV_probbb(-99.), deepJet_probc_probg_probuds(-99.), deepJet_probb_probbb_problepb(-99.), deepJet_probuds(-99.),deepJet_probg(-99.), deepJet_problepb(-99.), deepJet_probb(-99.), deepJet_probc(-99.), deepJet_probbb(-99.){}
+ptJESUp (-1.), ptJESDown (-1.), ptJERUp (-1.), ptJERDown (-1.), tau1(-1.), tau2(-1.), tau3(-1.), nSubJets(-1), tau21(-1.), tau31(-1.), tau32(-1.), tau1_neutral(-1.), tau2_neutral(-1.), tau21_neutral(-1.), tau1_charged(-1.), tau2_charged(-1.), tau21_charged(-1.), 
+//TriggerMatched_VBFJet(0), TriggerMatched_DisplacedJet(0), TriggerMatched_TripleJet50(0),//currently not used
+nConstituents (-1), nTrackConstituents (-1), nTracks0PixelHits(-1), nTracks1PixelHit(-1),nTracks2PixelHits(-1),nTracks3PixelHits(-1),nTracks4PixelHits(-1),nTracks5PixelHits(-1),nTracksAtLeast6PixelHits(-1),
+nTracksValidHitInBPix1(-1),nTracks0LostInnerHits(-1), nTracks1LostInnerHit(-1), nTracksAtLeast2LostInnerHits(-1), nTrackConstituentsWithPtLarger0p95(-1), nTrackConstituentsWithTrackDetails(-1), nTrackConstituentsWithTrackDetailsPtLarger0p95(-1), nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1),
+//recHits
+nRecHitsEB(-1), timeRecHitsEB(-100.), timeRMSRecHitsEB(-1.), energyRecHitsEB(-1.), energyErrorRecHitsEB(-1.), xRecHitsEB(-1000.), yRecHitsEB(-1000.), zRecHitsEB(-1000.), radiusRecHitsEB(-1000.),
+nRecHitsEE(-1), timeRecHitsEE(-100.), timeRMSRecHitsEE(-1.), energyRecHitsEE(-1.), energyErrorRecHitsEE(-1.), xRecHitsEE(-1000.), yRecHitsEE(-1000.), zRecHitsEE(-1000.), radiusRecHitsEE(-1000.),
+nRecHitsHB(-1), timeRecHitsHB(-100.), timeRMSRecHitsHB(-1.), energyRecHitsHB(-1.), energyErrorRecHitsHB(-1.), xRecHitsHB(-1000.), yRecHitsHB(-1000.), zRecHitsHB(-1000.), radiusRecHitsHB(-1000.),
+nRecHitsHE(-1), timeRecHitsHE(-100.), timeRMSRecHitsHE(-1.), energyRecHitsHE(-1.), energyErrorRecHitsHE(-1.), xRecHitsHE(-1000.), yRecHitsHE(-1000.), zRecHitsHE(-1000.), radiusRecHitsHE(-1000.),
+eFracRecHitsEB(-1.), eFracRecHitsEE(-1.), eFracRecHitsHB(-1.), eFracRecHitsHE(-1.),
+//LLP calo tagger
+sigprob(-1.),
+//Imperial College tagger
+pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP1000(-1.), deepCSV_probb_probbb(-99.), deepCSV_probc_probudsg(-99.), deepCSV_probudsg(-99.), deepCSV_probb(-99.), deepCSV_probc(-99.), deepCSV_probbb(-99.), deepJet_probc_probg_probuds(-99.), deepJet_probb_probbb_problepb(-99.), deepJet_probuds(-99.),deepJet_probg(-99.), deepJet_problepb(-99.), deepJet_probb(-99.), deepJet_probc(-99.), deepJet_probbb(-99.){}
     float pt;
     float eta;
     float phi;
@@ -387,7 +388,14 @@ matchBquark(-1), matchLL(-1),
     float xRecHitsHE;
     float yRecHitsHE;
     float zRecHitsHE;
-    float radiusRecHitsHE;    
+    float radiusRecHitsHE;
+
+    float eFracRecHitsEB;
+    float eFracRecHitsEE;
+    float eFracRecHitsHB;
+    float eFracRecHitsHE;
+    
+    float sigprob;
     float pfXWP0p01; 
     float pfXWP0p1;
     float pfXWP1; 
@@ -413,17 +421,16 @@ matchBquark(-1), matchLL(-1),
 
 
 struct FatJetType {
-FatJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), ptRaw(-1.), ptUnc(-1.), 
+FatJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), energyRaw(-1.), ptRaw(-1.), ptUnc(-1.), 
 dPhi_met(-99.), //L//dPhi_Jet1(-1.), 
-puId(-1.), CSV(-99.), CSVR(-99.), 
-//L//CSVRUp(-99.), CSVRDown(-99.), 
+puId(-1.), CSV(-99.), CSVR(-99.),//L//CSVRUp(-99.), CSVRDown(-99.), 
 pfBoostedDoubleSVAK8(-1.), CHSprunedMass(-1.), CHSsoftdropMass(-1.), softdropPuppiMass(-1.), 
 //L//CHSprunedMassCorr(-1.), CHSsoftdropMassCorr(-1.), softdropPuppiMassCorr(-1.), softdropPuppiMassCorrNotSmeared(-1.), 
 nSoftDropSubJets(-1), pt1(-1.), eta1(-9.), phi1(-9.), mass1(-1.), CSV1(-99.), //CSVR1(-99.), CSVR1Up(-99.), CSVR1Down(-99.),
-    CMVA1(-99.), //CMVAR1(-99.), CMVAR1Up(-99.), CMVAR1Down(-99.),
-    flavour1(-1.), nSV1(-1), nVertexTracks1(-1), pt2(-1.), eta2(-9.), phi2(-9.), mass2(-1.), CSV2(-99.), //CSVR2(-99.), CSVR2Up(-99.), CSVR2Down(-99.),
-    CMVA2(-99.), //CMVAR2(-99.), CMVAR2Up(-99.), CMVAR2Down(-99.),
-    flavour2(-1.), nSV2(-1), nVertexTracks2(-1), dR(-1.), chsTau21(-1.), puppiTau21(-1.), BDSV(-1.),
+CMVA1(-99.), //CMVAR1(-99.), CMVAR1Up(-99.), CMVAR1Down(-99.),
+flavour1(-1.), nSV1(-1), nVertexTracks1(-1), pt2(-1.), eta2(-9.), phi2(-9.), mass2(-1.), CSV2(-99.), //CSVR2(-99.), CSVR2Up(-99.), CSVR2Down(-99.),
+CMVA2(-99.), //CMVAR2(-99.), CMVAR2Up(-99.), CMVAR2Down(-99.),
+flavour2(-1.), nSV2(-1), nVertexTracks2(-1), dR(-1.), chsTau21(-1.), puppiTau21(-1.), BDSV(-1.),
 //energies
 cHadE(-1.), nHadE (-1.), eleE(-1.), photonE(-1.), muE(-1.), nEmE(-1.), cEmE(-1.), cmuE(-1.),
 //energy fractions
@@ -432,17 +439,21 @@ cHadEFrac(-1.), nHadEFrac(-1.), eleEFrac(-1.), photonEFrac(-1.), muEFrac(-1.), n
 cHadMulti(-1.), nHadMulti(-1.), eleMulti(-1.), photonMulti(-1.), muMulti(-1.), cMulti(-1.), nMulti(-1.), npr(-1.),
 //multiplicity fractions
 cHadMultiFrac(-1.), nHadMultiFrac(-1.), eleMultiFrac(-1.), photonMultiFrac(-1.), muMultiFrac(-1.), cMultiFrac(-1.), nMultiFrac(-1.),
+hcalE(-100.), ecalE(-100.), FracCal(-100.),
 partonFlavour(0), hadronFlavour(0), mother(0), isLoose(false), isMedium(false), isTight(false), isTightLepVeto(false), isMatched(false), 
 //L//JESUnc(-1.), ptJERUp(-1.), etaJERUp(-1.), phiJERUp(-9.), energyJERUp(-1.), ptJERDown(-1.), etaJERDown(-1.), phiJERDown(-9.), energyJERDown(-1.), smearFact(-1.), smearFactUp(-1.), smearFactDown(-1.), softdropPuppiMassCorrJMS(-1.), softdropPuppiMassCorrJMSUp(-1.), softdropPuppiMassCorrJMSDown(-1.), softdropPuppiMassCorrJMR(-1.), softdropPuppiMassCorrJMRUp(-1.), softdropPuppiMassCorrJMRDown(-1.), dR_q1(1000), dR_q2(1000), dR_q3(1000), dR_q4(1000), m_q1(false), m_q2(false), m_q3(false), m_q4(false), dR_pi1(1000), dR_pi2(1000), matchBquark(-1), matchLL(-1), 
-isGenMatched(0), isGenMatchedCaloCorr(0), radiusLLP(-1000.), xLLP(-10000.), yLLP(-10000.), zLLP(-10000.), radiusLLPCaloCorr(-1000.), xLLPCaloCorr(-10000.), yLLPCaloCorr(-10000.), zLLPCaloCorr(-10000.), xGenb(-10000.), yGenb(-10000.), zGenb(-10000.), xGenbCaloCorr(-10000.), yGenbCaloCorr(-10000.), zGenbCaloCorr(-10000.),
-    //recHits time
-    nRecHitsEB(-1), timeRecHitsEB(-100.), timeRMSRecHitsEB(-1.), energyRecHitsEB(-1.), energyErrorRecHitsEB(-1.), xRecHitsEB(-1000.), yRecHitsEB(-1000.), zRecHitsEB(-1000.), radiusRecHitsEB(-1000.),
-    nRecHitsEE(-1), timeRecHitsEE(-100.), timeRMSRecHitsEE(-1.), energyRecHitsEE(-1.), energyErrorRecHitsEE(-1.), xRecHitsEE(-1000.), yRecHitsEE(-1000.), zRecHitsEE(-1000.), radiusRecHitsEE(-1000.),
-    nRecHitsHB(-1), timeRecHitsHB(-100.), timeRMSRecHitsHB(-1.), energyRecHitsHB(-1.), energyErrorRecHitsHB(-1.), xRecHitsHB(-1000.), yRecHitsHB(-1000.), zRecHitsHB(-1000.), radiusRecHitsHB(-1000.),
-    nRecHitsHE(-1), timeRecHitsHE(-100.), timeRMSRecHitsHE(-1.), energyRecHitsHE(-1.), energyErrorRecHitsHE(-1.), xRecHitsHE(-1000.), yRecHitsHE(-1000.), zRecHitsHE(-1000.), radiusRecHitsHE(-1000.),
-    //track variables, new implementation
-    nConstituents (-1), nTrackConstituents (-1),
-    ptAllTracks(-1.), ptAllPVTracks(-1.), ptPVTracksMax(-1.), nTracksAll(-1), nTracksPVMax(-1), medianIP2D(-10000.), medianTheta2D(-100.), alphaMax(-100.), betaMax(-100.), gammaMax(-100.), gammaMaxEM(-100.), gammaMaxHadronic(-100.), gammaMaxET(-100.), minDeltaRAllTracks(999.), minDeltaRPVTracks(999.), nPixelHitsMedian(-1.0), nHitsMedian(-1.0), dzMedian(-9999.), dxyMedian(-9999.),
+isGenMatched(0), isGenMatchedCaloCorr(0), isGenMatchedLLPAccept(0), isGenMatchedCaloCorrLLPAccept(0), radiusLLP(-1000.), xLLP(-10000.), yLLP(-10000.), zLLP(-10000.), radiusLLPCaloCorr(-1000.), xLLPCaloCorr(-10000.), yLLPCaloCorr(-10000.), zLLPCaloCorr(-10000.), xGenb(-10000.), yGenb(-10000.), zGenb(-10000.), xGenbCaloCorr(-10000.), yGenbCaloCorr(-10000.), zGenbCaloCorr(-10000.),
+//recHits
+nRecHitsEB(-1), timeRecHitsEB(-100.), timeRMSRecHitsEB(-1.), energyRecHitsEB(-1.), energyErrorRecHitsEB(-1.), xRecHitsEB(-1000.), yRecHitsEB(-1000.), zRecHitsEB(-1000.), radiusRecHitsEB(-1000.),
+nRecHitsEE(-1), timeRecHitsEE(-100.), timeRMSRecHitsEE(-1.), energyRecHitsEE(-1.), energyErrorRecHitsEE(-1.), xRecHitsEE(-1000.), yRecHitsEE(-1000.), zRecHitsEE(-1000.), radiusRecHitsEE(-1000.),
+nRecHitsHB(-1), timeRecHitsHB(-100.), timeRMSRecHitsHB(-1.), energyRecHitsHB(-1.), energyErrorRecHitsHB(-1.), xRecHitsHB(-1000.), yRecHitsHB(-1000.), zRecHitsHB(-1000.), radiusRecHitsHB(-1000.),
+nRecHitsHE(-1), timeRecHitsHE(-100.), timeRMSRecHitsHE(-1.), energyRecHitsHE(-1.), energyErrorRecHitsHE(-1.), xRecHitsHE(-1000.), yRecHitsHE(-1000.), zRecHitsHE(-1000.), radiusRecHitsHE(-1000.),
+eFracRecHitsEB(-1.), eFracRecHitsEE(-1.), eFracRecHitsHB(-1.), eFracRecHitsHE(-1.),
+//track variables, new implementation
+nConstituents (-1), nTrackConstituents (-1), nSelectedTracks(-1),
+ptAllTracks(-1.), ptAllPVTracks(-1.), ptPVTracksMax(-1.), nTracksAll(-1), nTracksPVMax(-1), medianIP2D(-10000.), medianTheta2D(-100.), alphaMax(-100.), betaMax(-100.), gammaMax(-100.), gammaMaxEM(-100.), gammaMaxHadronic(-100.), gammaMaxET(-100.), minDeltaRAllTracks(999.), minDeltaRPVTracks(999.), nPixelHitsMedian(-1.0), nHitsMedian(-1.0), dzMedian(-9999.), dxyMedian(-9999.),
+//LLP calo tagger
+sigprob(-1.),
 //From PFCandidates
 //L//alphaMax(-100.), sigIP2DMedian(-100.), theta2DMedian(-100.), POCA_theta2DMedian(-100.), nPixelHitsMedian(-1.0), nHitsMedian(-1.0), nConstituents(-1), nTrackConstituents(-1),
 //L//nTracks0PixelHits(-1), nTracks1PixelHit(-1), nTracks2PixelHits(-1), nTracks3PixelHits(-1), nTracks4PixelHits(-1), nTracks5PixelHits(-1), nTracksAtLeast6PixelHits(-1),
@@ -454,6 +465,7 @@ nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1) {}
     float phi;
     float mass;
     float energy;
+    float energyRaw;
     float ptRaw;
     float ptUnc;
     float dPhi_met;
@@ -538,6 +550,9 @@ nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1) {}
     float muMultiFrac;
     float cMultiFrac;
     float nMultiFrac;
+    float hcalE;
+    float ecalE;
+    float FracCal;
     int partonFlavour;
     int hadronFlavour;
     int mother;
@@ -652,9 +667,16 @@ nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1) {}
     float yRecHitsHE;
     float zRecHitsHE;
     float radiusRecHitsHE;
+
+    float eFracRecHitsEB;
+    float eFracRecHitsEE;
+    float eFracRecHitsHB;
+    float eFracRecHitsHE;
     
     int   nConstituents;
     int   nTrackConstituents; 
+    int   nSelectedTracks;
+
     float ptAllTracks;
     float ptAllPVTracks;
     float ptPVTracksMax;
@@ -674,6 +696,9 @@ nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1) {}
     float nHitsMedian;
     float dzMedian;
     float dxyMedian;
+
+    float sigprob;
+
     int nMatchedGenBquarks;
     int nMatchedGenBquarksCaloCorr;
 };
@@ -1197,5 +1222,41 @@ CSCSegmentType(): eta(-9.), phi(-9.), time(-9.), layer(-9), ring(-9) , station(-
     int endcap;
 
 };
+
+struct ecalRecHitType {
+ecalRecHitType(): eta(-9.), phi(-9.), x(-1000.), y(-1000.), z(-1000.), energy(-1.), time(-100.), energyError(-1.), timeError(-100.), jetPt(-1.), jetIndex(-1), jetDR(999.) {}
+
+    float eta;
+    float phi;
+    float x;
+    float y;
+    float z;
+    float energy;
+    float time;
+    float energyError;
+    float timeError;
+    float jetPt;
+    unsigned int jetIndex;
+    float jetDR;
+};
+
+struct hcalRecHitType {
+hcalRecHitType(): eta(-9.), phi(-9.), x(-1000.), y(-1000.), z(-1000.), energy(-1.), time(-100.), depth(-100), iEta(-100), iPhi(-100), jetPt(-1.), jetIndex(-1), jetDR(999.) {}
+
+    float eta;
+    float phi;
+    float x;
+    float y;
+    float z;
+    float energy;
+    float time;
+    int depth;
+    int iEta;
+    int iPhi;
+    float jetPt;
+    unsigned int jetIndex;
+    float jetDR;
+};
+
 
 #endif

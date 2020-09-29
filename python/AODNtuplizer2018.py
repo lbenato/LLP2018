@@ -174,7 +174,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -185,9 +185,9 @@ if len(options.inputFiles) == 0:
 
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
+            #SUSY high stat, Si
+            #'/store/group/phys_exotica/privateProduction/DR/step2_AODSIM/RunIIFall18/TChiHH_mass400_pl1000/batch1/v1/TChiHH_mass400_pl1000/crab_PrivateProduction_Fall18_DR_step2_TChiHH_mass400_pl1000_batch1_v1/200911_133803/0004/AODSIM_4998.root',
             #GENSIMRECO twin higgs
-
-            '/store/group/phys_exotica/privateProduction/DR/step2_AODSIM/RunIIFall18/TChiHH_mass400_pl1000/batch1/v1/TChiHH_mass400_pl1000/crab_PrivateProduction_Fall18_DR_step2_TChiHH_mass400_pl1000_batch1_v1/200911_133803/0004/AODSIM_4998.root',
             #'/store/mc/RunIIFall17DRPremix/VBFH_HToSSTo4b_MH-125_TuneCP5_13TeV-powheg-pythia8/GEN-SIM-RECO/PU2017_rp_94X_mc2017_realistic_v11-v2/260001/189F132B-9F60-EA11-ADD2-A0369F7F9B10.root',
             #'/store/mc/RunIIFall17DRPremix/VBFH_HToSSTo4b_MH-125_TuneCP5_13TeV-powheg-pythia8/GEN-SIM-RECO/PU2017_rp_94X_mc2017_realistic_v11-v2/00000/CE1EEF79-D85D-EA11-B8FC-B42E99AB0138.root',#DOES NOT EXIST????
             #'/store/mc/RunIISummer16DR80Premix/VBFH_HToSSTo4b_MH-125_TuneCUETP8M1_13TeV-powheg-pythia8/GEN-SIM-RECO/PUMoriond17_rp_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/510000/D8C41404-866E-EA11-9341-001E67DBE3EF.root'#Why is this listed in 2017 dataset????
@@ -195,7 +195,7 @@ if len(options.inputFiles) == 0:
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/40000/002DE866-7407-E811-ABBB-0CC47AA989C0.root',
             #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/40000/002DE866-7407-E811-ABBB-0CC47AA989C0.root',
             #'/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/70000/1CA26DE4-8E1C-E811-9283-20CF305616FF.root',
-            #'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
+            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
             #Data
             #UL requires newer release
             ##'/store/data/Run2017E/MET/AOD/09Aug2019_UL2017-v1/310002/FF956FC3-F457-6848-BC34-9972B048DD47.root'
@@ -1166,6 +1166,7 @@ from PhysicsTools.PatAlgos.tools.jetTools import *
 #Seth
 jetSource = chosen_jets
 jetCorrectionsAK4 = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None')
+jetCorrectionsAK8 = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None')
 pfCandidates = 'particleFlow'#'packedPFCandidates'#???
 pvSource = 'offlinePrimaryVertices'#'offlineSlimmedPrimaryVertices'#???
 svSource = 'inclusiveCandidateSecondaryVertices'#'slimmedSecondaryVertices'#???
@@ -1285,6 +1286,7 @@ postfix = "" #"Update"
 
 postfix = 'Final'#TODO
 
+#Update AK4
 updateJetCollection(
     process,
     jetSource = cms.InputTag(jetSource),
@@ -1303,6 +1305,8 @@ updateJetCollection(
 
 for m in ['updatedPatJets'+postfix, 'updatedPatJetsTransientCorrected'+postfix]:
     setattr( getattr(process,m), 'addTagInfos', cms.bool(True) )
+
+
 
 
 #Imperial
@@ -1384,8 +1388,42 @@ if pt_AK8<170:
 
    task.add(process.packedPatJetsAK8Reclustered)
 
+
+#Update AK8 if pt>=170?
+#issues with: Path 'p' contains a module of type 'CandIPProducer' which has no assigned label.
+elif pt_AK8>=170:
+   postfix = 'FinalAK8'#TODO
+
+   bTagInfosFat = [
+      'pfImpactParameterAK8TagInfos',
+      'pfInclusiveSecondaryVertexFinderAK8TagInfos',
+      'pfBoostedDoubleSVAK8TagInfos',
+      'pfDeepDoubleXTagInfos',
+      ]
+
+   updateJetCollection(
+      process,
+      jetSource = cms.InputTag("slimmedJetsAK8"),
+      jetCorrections = jetCorrectionsAK8,
+      pfCandidates = cms.InputTag(pfCandidates),
+      pvSource = cms.InputTag(pvSource),
+      svSource = cms.InputTag(svSource),
+      muSource = cms.InputTag(muSource),
+      elSource = cms.InputTag(elSource),
+      #runIVF   = runIVF,
+      btagInfos = bTagInfosFat,
+      btagDiscriminators = list(bTagDiscriminators),
+      explicitJTA = useExplicitJTA,
+      postfix = postfix#,
+      )
+
+   for m in ['updatedPatJets'+postfix, 'updatedPatJetsTransientCorrected'+postfix]:
+      setattr( getattr(process,m), 'addTagInfos', cms.bool(True) )
+
+
+
 #patJetsAK8Reclustered
-chosen_AK8 =  "packedPatJetsAK8Reclustered" if pt_AK8<170 else "slimmedJetsAK8"# including SoftDrop info
+chosen_AK8 =  "packedPatJetsAK8Reclustered" if pt_AK8<170 else "updatedPatJetsFinalAK8"#"slimmedJetsAK8"# including SoftDrop info
 #chosen_AK8 = "patJetsAK8CHSReclustered"#'slimmedJetsAK8'
 
 

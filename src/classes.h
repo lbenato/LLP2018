@@ -20,6 +20,8 @@ namespace {
     PhotonType dummy11;
     TauType dummy12;
     MEtType dummy13;
+    ecalRecHitType dummy14;
+    hcalRecHitType dummy15;
 
     //Vector of structures
     std::vector<JetType> dummyVector0;
@@ -36,6 +38,8 @@ namespace {
     std::vector<PhotonType> dummyVector11;
     std::vector<TauType> dummyVector12;
     std::vector<MEtType> dummyVector13;
+    std::vector<ecalRecHitType> dummyVector14;
+    std::vector<hcalRecHitType> dummyVector15;
 
   };
 }

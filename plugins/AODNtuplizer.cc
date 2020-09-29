@@ -220,6 +220,10 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     bool PerformggH;
 
     std::vector<JetType> CHSJets;
+    std::vector<ecalRecHitType> EcalRecHitsAK4;
+    std::vector<hcalRecHitType> HcalRecHitsAK4;
+    std::vector<ecalRecHitType> EcalRecHitsAK8;
+    std::vector<hcalRecHitType> HcalRecHitsAK8;
     std::vector<JetType> VBFPairJets;
     std::vector<FatJetType> CHSFatJets;
     std::vector<JetType> ggHJet;
@@ -1186,6 +1190,10 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "AK4 CHS jets" << std::endl;
     std::vector<pat::Jet> CHSJetsVect = theCHSJetAnalyzer->FillJetVector(iEvent,iSetup);
 
+    //Ecal and Hcal rec hits
+    EcalRecHitsAK4 = theCHSJetAnalyzer->FillEcalRecHitVector(iEvent,iSetup,CHSJetsVect);
+    HcalRecHitsAK4 = theCHSJetAnalyzer->FillHcalRecHitVector(iEvent,iSetup,CHSJetsVect);
+
     for(unsigned int a = 0; a<CHSJetsVect.size(); a++)
       {
 	CHSJetsVect.at(a).addUserFloat( "dPhi_met",reco::deltaPhi(CHSJetsVect.at(a).phi(),MET.phi()) );
@@ -1819,12 +1827,19 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     if(isVerbose) std::cout << "AK8 CHS jets" << std::endl;
     std::string SoftdropPuppiMassString(CHSFatJetPSet.getParameter<std::string>("softdropPuppiMassString"));
-    //std::cout << "Here fillinh ak8 " << std::endl;
+    //std::cout << "Here filling AK8, calling FillJetVector method " << std::endl;
     //std::cout << "softdrop mass string: " << SoftdropPuppiMassString << std::endl;
     std::vector<pat::Jet> CHSFatJetsVect = theCHSFatJetAnalyzer->FillJetVector(iEvent,iSetup);
 
+    EcalRecHitsAK8 = theCHSFatJetAnalyzer->FillEcalRecHitVector(iEvent,iSetup,CHSFatJetsVect);
+    HcalRecHitsAK8 = theCHSFatJetAnalyzer->FillHcalRecHitVector(iEvent,iSetup,CHSFatJetsVect);
+
+
     for(unsigned int a = 0; a<CHSFatJetsVect.size(); a++)
       {
+	//std::cout << "Check tag info of fat jet n. " << a << std::endl;
+	//std::cout << "R param: " << CHSFatJetsVect.at(a).userFloat("Rparameter") << std::endl;
+	if(CHSFatJetsVect.at(a).tagInfoLabels().size() > 0 and CHSFatJetsVect.at(a).hasTagInfo("pfSecondaryVertex")) std::cout << " nselected tracks " << CHSFatJetsVect.at(a).tagInfoCandSecondaryVertex("pfSecondaryVertex")->nSelectedTracks() << std::endl;
 	CHSFatJetsVect.at(a).addUserFloat( "dPhi_met",reco::deltaPhi(CHSFatJetsVect.at(a).phi(),MET.phi()) );
       }
 
@@ -1945,7 +1960,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     
 
-    // Gen-matching: calo corrections LATER
+    // Gen-matching: calo corrections
     std::vector<pat::Jet> TempMatchedFatJetsVect;
     
     //Loop over GenBquarks structure, we need corrections and gen info
@@ -2007,6 +2022,50 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       
     TempMatchedFatJetsVect.clear();
      
+
+
+
+
+    // Gen-matching: calo corrections and LLP in acceptance 
+    //Loop over GenBquarks structure, we need corrections and gen info
+    for(unsigned int b = 0; b<GenBquarks.size(); b++)
+      {
+	delta_R = 1000.;
+	current_delta_R = 1000.;
+	for(unsigned int a = 0; a<CHSFatJetsVect.size(); a++)
+	  {
+	    current_delta_R = fabs(reco::deltaR(CHSFatJetsVect[a].eta(),CHSFatJetsVect[a].phi(),GenBquarks[b].corrCaloEta,GenBquarks[b].corrCaloPhi));
+	    if(current_delta_R<0.8 && current_delta_R<delta_R && GenBquarks[b].isLLPInCaloAcceptance)
+
+	      {
+		delta_R = min(delta_R,current_delta_R);
+		TempMatchedFatJetsVect.push_back(CHSFatJetsVect[a]);//duplicates possible, must be removed afterwards!
+	      }
+	  }
+
+      }
+
+    //Remove duplicates from Temp Matched CHSJets Vector
+    //auto comp_tmp = [] ( const pat::Jet& lhs, const pat::Jet& rhs ) {return lhs.pt() ==rhs.pt();};
+    last_tmp = std::unique(TempMatchedFatJetsVect.begin(), TempMatchedFatJetsVect.end(),comp_tmp);
+    TempMatchedFatJetsVect.erase(last_tmp, TempMatchedFatJetsVect.end());
+
+
+    // add b-matching infos into original jet
+    for(unsigned int r = 0; r<CHSFatJetsVect.size(); r++)
+      {
+	for(unsigned int s = 0; s<TempMatchedFatJetsVect.size(); s++)
+	  {
+
+	    if(TempMatchedFatJetsVect[s].pt()==CHSFatJetsVect[r].pt()) CHSFatJetsVect[r].addUserInt("isGenMatchedCaloCorrLLPAccept",1);
+
+	  }
+
+      }
+      
+    TempMatchedFatJetsVect.clear();      
+
+
 
 
     /////////////////////////////////////////////////////////////
@@ -3324,6 +3383,10 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     //ManualJets.clear();
     CHSJets.clear();
+    EcalRecHitsAK4.clear();
+    HcalRecHitsAK4.clear();
+    EcalRecHitsAK8.clear();
+    HcalRecHitsAK8.clear();
     CaloJets.clear();
     VBFPairJets.clear();
     CHSFatJets.clear();
@@ -3462,6 +3525,10 @@ AODNtuplizer::beginJob()
    tree -> Branch("MEt", &MEt);
    tree -> Branch("Jets", &CHSJets);
    tree -> Branch("FatJets", &CHSFatJets);
+   tree -> Branch("EcalRecHitsAK4", &EcalRecHitsAK4);
+   tree -> Branch("HcalRecHitsAK4", &HcalRecHitsAK4);
+   tree -> Branch("EcalRecHitsAK8", &EcalRecHitsAK8);
+   tree -> Branch("HcalRecHitsAK8", &HcalRecHitsAK8);
    //tree -> Branch("VBFPairJets", &VBFPairJets);//slim ntuples
    //tree -> Branch("ggHJet", &ggHJet);//slim ntuples
    //tree -> Branch("CaloJets", &CaloJets);//slim ntuples
