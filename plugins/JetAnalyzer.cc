@@ -777,7 +777,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         jet.addUserInt("nRecHitsEB", n_matched_rechits_EB);
         jet.addUserFloat("timeRecHitsEB", jetRechitE_EB>0 ? jetRechitT_EB/jetRechitE_EB : -100.);
         jet.addUserFloat("timeRMSRecHitsEB", n_matched_rechits_EB>0 ? sqrt(jetRechitT_rms_EB) : -1.);
-        jet.addUserFloat("energyRecHitsEB", n_matched_rechits_EB>0 ? sqrt(jetRechitE_EB) : -1.);
+        jet.addUserFloat("energyRecHitsEB", n_matched_rechits_EB>0 ? jetRechitE_EB : -1.);
         jet.addUserFloat("energyErrorRecHitsEB", n_matched_rechits_EB>0 ? sqrt(jetRechitE_Error_EB) : -1.);
         jet.addUserFloat("xRecHitsEB", jetRechitE_EB>0 ? jetRechitX_EB/jetRechitE_EB : -1000.);
         jet.addUserFloat("yRecHitsEB", jetRechitE_EB>0 ? jetRechitY_EB/jetRechitE_EB : -1000.);
@@ -787,7 +787,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         jet.addUserInt("nRecHitsEE", n_matched_rechits_EE);
         jet.addUserFloat("timeRecHitsEE", jetRechitE_EE>0 ? jetRechitT_EE/jetRechitE_EE : -100.);
         jet.addUserFloat("timeRMSRecHitsEE", n_matched_rechits_EE>0 ? sqrt(jetRechitT_rms_EE) : -1.);
-        jet.addUserFloat("energyRecHitsEE", n_matched_rechits_EE>0 ? sqrt(jetRechitE_EE) : -1.);
+        jet.addUserFloat("energyRecHitsEE", n_matched_rechits_EE>0 ? jetRechitE_EE : -1.);
         jet.addUserFloat("energyErrorRecHitsEE", n_matched_rechits_EE>0 ? sqrt(jetRechitE_Error_EE) : -1.);
         jet.addUserFloat("xRecHitsEE", jetRechitE_EE>0 ? jetRechitX_EE/jetRechitE_EE : -1000.);
         jet.addUserFloat("yRecHitsEE", jetRechitE_EE>0 ? jetRechitY_EE/jetRechitE_EE : -1000.);
@@ -797,7 +797,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         jet.addUserInt("nRecHitsHB", n_matched_rechits_HB);
         jet.addUserFloat("timeRecHitsHB", jetRechitE_HB>0 ? jetRechitT_HB/jetRechitE_HB : -100.);
         jet.addUserFloat("timeRMSRecHitsHB", n_matched_rechits_HB>0 ? sqrt(jetRechitT_rms_HB) : -1.);
-        jet.addUserFloat("energyRecHitsHB", n_matched_rechits_HB>0 ? sqrt(jetRechitE_HB) : -1.);
+        jet.addUserFloat("energyRecHitsHB", n_matched_rechits_HB>0 ? jetRechitE_HB : -1.);
         jet.addUserFloat("energyErrorRecHitsHB", n_matched_rechits_HB>0 ? sqrt(jetRechitE_Error_HB) : -1.);
         jet.addUserFloat("xRecHitsHB", jetRechitE_HB>0 ? jetRechitX_HB/jetRechitE_HB : -1000.);
         jet.addUserFloat("yRecHitsHB", jetRechitE_HB>0 ? jetRechitY_HB/jetRechitE_HB : -1000.);
@@ -807,7 +807,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         jet.addUserInt("nRecHitsHE", n_matched_rechits_HE);
         jet.addUserFloat("timeRecHitsHE", jetRechitE_HE>0 ? jetRechitT_HE/jetRechitE_HE : -100.);
         jet.addUserFloat("timeRMSRecHitsHE", n_matched_rechits_HE>0 ? sqrt(jetRechitT_rms_HE) : -1.);
-        jet.addUserFloat("energyRecHitsHE", n_matched_rechits_HE>0 ? sqrt(jetRechitE_HE) : -1.);
+        jet.addUserFloat("energyRecHitsHE", n_matched_rechits_HE>0 ? jetRechitE_HE : -1.);
         jet.addUserFloat("energyErrorRecHitsHE", n_matched_rechits_HE>0 ? sqrt(jetRechitE_Error_HE) : -1.);
         jet.addUserFloat("xRecHitsHE", jetRechitE_HE>0 ? jetRechitX_HE/jetRechitE_HE : -1000.);
         jet.addUserFloat("yRecHitsHE", jetRechitE_HE>0 ? jetRechitY_HE/jetRechitE_HE : -1000.);
