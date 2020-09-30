@@ -85,6 +85,7 @@ class JetAnalyzer {
         virtual std::vector<pat::Jet> FillJetVector(const edm::Event&, const edm::EventSetup&);
         virtual std::vector<ecalRecHitType> FillEcalRecHitVector(const edm::Event&, const edm::EventSetup&, std::vector<pat::Jet> &);
         virtual std::vector<hcalRecHitType> FillHcalRecHitVector(const edm::Event&, const edm::EventSetup&, std::vector<pat::Jet> &);
+	virtual std::pair< std::pair<float,float> , float> JetSecondMoments(std::vector<double> &,std::vector<double> &,std::vector<double> &);
         virtual void CorrectJet(pat::Jet&, float, float, bool);
         virtual void CorrectMass(pat::Jet&, float, float, bool);
         virtual void CorrectPuppiMass(pat::Jet&, bool);

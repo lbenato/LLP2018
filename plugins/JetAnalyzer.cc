@@ -598,9 +598,13 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 	std::vector<double> HB_eta;
 	std::vector<double> HB_et;
 	std::vector<double> HB_phi;
-	
 
-        
+	std::pair< std::pair<float,float> ,float> sigEB;
+	std::pair< std::pair<float,float> ,float> sigEE;
+	std::pair< std::pair<float,float> ,float> sigHB;
+
+	//std::cout << " - - Jet pt: " << jet.pt() << std::endl;
+
         if(IsAOD)
         {
 	  //Just for debugging purposes
@@ -774,6 +778,16 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
           
         }//IsAOD condition
 
+	//Wrap up second momenta
+	sigEB = JetAnalyzer::JetSecondMoments(EB_et, EB_eta, EB_phi);
+	sigEE = JetAnalyzer::JetSecondMoments(EE_et, EE_eta, EE_phi);
+	sigHB = JetAnalyzer::JetSecondMoments(HB_et, HB_eta, HB_phi);
+
+	//std::cout << sigEB.first.first << std::endl;
+	//std::cout << sigEB.first.second << std::endl;
+	//std::cout << sigEB.second << std::endl;
+	//std::cout<< "Check values of second moments: " << sigEB.first << sigEB.second << std::endl;
+
         jet.addUserInt("nRecHitsEB", n_matched_rechits_EB);
         jet.addUserFloat("timeRecHitsEB", jetRechitE_EB>0 ? jetRechitT_EB/jetRechitE_EB : -100.);
         jet.addUserFloat("timeRMSRecHitsEB", n_matched_rechits_EB>0 ? sqrt(jetRechitT_rms_EB) : -1.);
@@ -784,6 +798,11 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         jet.addUserFloat("zRecHitsEB", jetRechitE_EB>0 ? jetRechitZ_EB/jetRechitE_EB : -1000.);
         jet.addUserFloat("radiusRecHitsEB", jetRechitE_EB>0 ? jetRechitRadius_EB/jetRechitE_EB : -1000.);
 
+        jet.addUserFloat("sig1EB", sigEB.first.first>0 ? sigEB.first.first : -1.);
+        jet.addUserFloat("sig2EB", sigEB.first.second>0 ? sigEB.first.second : -1.);
+        jet.addUserFloat("sigAvEB", (sigEB.first.first>0 and sigEB.first.second>0) ? sqrt( pow(sigEB.first.first,2) + pow(sigEB.first.second,2) ) : -1.);
+        jet.addUserFloat("tan2thetaEB", sigEB.second);
+
         jet.addUserInt("nRecHitsEE", n_matched_rechits_EE);
         jet.addUserFloat("timeRecHitsEE", jetRechitE_EE>0 ? jetRechitT_EE/jetRechitE_EE : -100.);
         jet.addUserFloat("timeRMSRecHitsEE", n_matched_rechits_EE>0 ? sqrt(jetRechitT_rms_EE) : -1.);
@@ -793,6 +812,11 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         jet.addUserFloat("yRecHitsEE", jetRechitE_EE>0 ? jetRechitY_EE/jetRechitE_EE : -1000.);
         jet.addUserFloat("zRecHitsEE", jetRechitE_EE>0 ? jetRechitZ_EE/jetRechitE_EE : -1000.);
         jet.addUserFloat("radiusRecHitsEE", jetRechitE_EE>0 ? jetRechitRadius_EE/jetRechitE_EE : -1000.);        
+
+        jet.addUserFloat("sig1EE", sigEE.first.first>0 ? sigEE.first.first : -1.);
+        jet.addUserFloat("sig2EE", sigEE.first.second>0 ? sigEE.first.second : -1.);
+        jet.addUserFloat("sigAvEE", (sigEE.first.first>0 and sigEE.first.second>0) ? sqrt( pow(sigEE.first.first,2) + pow(sigEE.first.second,2) ) : -1.);
+        jet.addUserFloat("tan2thetaEE", sigEE.second);
         
         jet.addUserInt("nRecHitsHB", n_matched_rechits_HB);
         jet.addUserFloat("timeRecHitsHB", jetRechitE_HB>0 ? jetRechitT_HB/jetRechitE_HB : -100.);
@@ -803,6 +827,12 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         jet.addUserFloat("yRecHitsHB", jetRechitE_HB>0 ? jetRechitY_HB/jetRechitE_HB : -1000.);
         jet.addUserFloat("zRecHitsHB", jetRechitE_HB>0 ? jetRechitZ_HB/jetRechitE_HB : -1000.);
         jet.addUserFloat("radiusRecHitsHB", jetRechitE_HB>0 ? jetRechitRadius_HB/jetRechitE_HB : -1000.);
+
+        jet.addUserFloat("sig1HB", sigHB.first.first>0 ? sigHB.first.first : -1.);
+        jet.addUserFloat("sig2HB", sigHB.first.second>0 ? sigHB.first.second : -1.);
+        jet.addUserFloat("sigAvHB", (sigHB.first.first>0 and sigHB.first.second>0) ? sqrt( pow(sigHB.first.first,2) + pow(sigHB.first.second,2) ) : -1.);
+        jet.addUserFloat("tan2thetaHB", sigHB.second);
+
         /*
         jet.addUserInt("nRecHitsHE", n_matched_rechits_HE);
         jet.addUserFloat("timeRecHitsHE", jetRechitE_HE>0 ? jetRechitT_HE/jetRechitE_HE : -100.);
@@ -1195,8 +1225,10 @@ std::vector<ecalRecHitType> JetAnalyzer::FillEcalRecHitVector(const edm::Event& 
 	    //Jet matching
 	    for(unsigned int a = 0; a<Jets.size(); a++)
 	      {
+		//if(a==1 and Jets.at(a).pt()>=242 and Jets.at(a).pt()<250) std::cout<< "THIS jet n.1! " <<  Jets.at(a).pt()   << std::endl;
 		if (reco::deltaR(Jets.at(a).eta(), Jets.at(a).phi(), recHitPos.eta(), recHitPos.phi()) < dRMatch)
 		  {
+		    //if(a==1 and Jets.at(a).pt()>=242 and Jets.at(a).pt()<250) std::cout<< "Rec hit: " << recHit->energy()  << std::endl;
 		    if(recHit->energy() > Rechit_cut)
 		      {
 			recHitStruct.eta = recHitPos.eta();
@@ -1287,7 +1319,40 @@ std::vector<hcalRecHitType> JetAnalyzer::FillHcalRecHitVector(const edm::Event& 
 
 }
 
+std::pair< std::pair<float,float>  , float> JetAnalyzer::JetSecondMoments(std::vector<double> &et,std::vector<double> &eta,std::vector<double> &phi) {
+  
+  float tan2theta = -99999999.;
+  float sig1 = -1.0;
+  float sig2 = -1.0;
+  float mean_eta = 0.0;
+  float mean_phi = 0.0;
+  float et_squared = 0.0;
+  for(unsigned int i = 0;i < eta.size();i++)
+    {
+      mean_eta += float(et[i]*et[i]*eta[i]);
+      mean_phi += float(et[i]*et[i]*phi[i]);
+      et_squared += float(et[i]*et[i]);
+    }
+  mean_eta = mean_eta/et_squared;
+  mean_phi = mean_phi/et_squared;
 
+  float m11(0.0),m22(0.0),m12(0.0);
+  for(unsigned int i = 0;i < eta.size();i++)
+    {
+      m11 += et[i]*et[i]*(eta[i]-mean_eta)*(eta[i]-mean_eta);
+      m22 += et[i]*et[i]*(phi[i]-mean_phi)*(phi[i]-mean_phi);
+      m12 += et[i]*et[i]*(phi[i]-mean_phi)*(eta[i]-mean_eta);
+    }
+  float a = (m11+m22)/2;
+  float b = 0.5*sqrt(pow(m11+m22,2)-4*(m11*m22-m12*m12));
+  sig1 = sqrt(abs(a+b)/et_squared);
+  sig2 = sqrt(abs(a-b)/et_squared);
+  tan2theta = abs(m11-m22)>0 ? (2*m12)/(m11-m22) : -99999999.;//https://arxiv.org/pdf/1306.6291.pdf
+  std::pair<float,float> sig;
+  sig.first  = sig1;
+  sig.second = sig2;
+  return std::pair< std::pair<float,float>, float>(sig, tan2theta);
+}
 
 // // https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution
 // float JetAnalyzer::GetResolutionRatio(float eta) {

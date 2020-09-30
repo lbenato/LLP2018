@@ -534,6 +534,19 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     I.eFracRecHitsHB = (R->hasUserFloat("energyRecHitsHB") and R->userFloat("energyRecHitsHB")>-1 and R->correctedJet(0).energy()>0) ? R->userFloat("energyRecHitsHB")/R->correctedJet(0).energy() : -1.;
     I.eFracRecHitsHE = (R->hasUserFloat("energyRecHitsHE") and R->userFloat("energyRecHitsHE")>-1 and R->correctedJet(0).energy()>0) ? R->userFloat("energyRecHitsHE")/R->correctedJet(0).energy() : -1.;
 
+    I.sig1EB  = R->hasUserFloat("sig1EB") ? R->userFloat("sig1EB")  : -1.;
+    I.sig2EB  = R->hasUserFloat("sig2EB") ? R->userFloat("sig2EB")  : -1.;
+    I.sigAvEB = R->hasUserFloat("sigAvEB") ? R->userFloat("sigAvEB")  : -1.;
+    I.tan2thetaEB  = R->hasUserFloat("tan2thetaEB") ? R->userFloat("tan2thetaEB")  : -99999999.;
+    I.sig1EE  = R->hasUserFloat("sig1EE") ? R->userFloat("sig1EE")  : -1.;
+    I.sig2EE  = R->hasUserFloat("sig2EE") ? R->userFloat("sig2EE")  : -1.;
+    I.sigAvEE = R->hasUserFloat("sigAvEE") ? R->userFloat("sigAvEE")  : -1.;
+    I.tan2thetaEE  = R->hasUserFloat("tan2thetaEE") ? R->userFloat("tan2thetaEE")  : -99999999.;
+    I.sig1HB  = R->hasUserFloat("sig1HB") ? R->userFloat("sig1HB")  : -1.;
+    I.sig2HB  = R->hasUserFloat("sig2HB") ? R->userFloat("sig2HB")  : -1.;
+    I.sigAvHB = R->hasUserFloat("sigAvHB") ? R->userFloat("sigAvHB")  : -1.;
+    I.tan2thetaHB  = R->hasUserFloat("tan2thetaHB") ? R->userFloat("tan2thetaHB")  : -99999999.;
+
     I.sigprob     = R->hasUserFloat("sigprob") ? R->userFloat("sigprob") : -1.;
     I.pfXWP0p01   = R->hasUserFloat("pfXWP0p01") ? R->userFloat("pfXWP0p01") : -1.; 
     I.pfXWP0p1    = R->hasUserFloat("pfXWP0p1") ? R->userFloat("pfXWP0p1") : -1.;
@@ -1084,6 +1097,19 @@ void ObjectsFormat::FillFatJetType(FatJetType& I, const pat::Jet* R, std::string
     I.eFracRecHitsEE = (R->hasUserFloat("energyRecHitsEE") and R->userFloat("energyRecHitsEE")>-1 and R->correctedJet(0).energy()>0) ? R->userFloat("energyRecHitsEE")/R->correctedJet(0).energy() : -1.;
     I.eFracRecHitsHB = (R->hasUserFloat("energyRecHitsHB") and R->userFloat("energyRecHitsHB")>-1 and R->correctedJet(0).energy()>0) ? R->userFloat("energyRecHitsHB")/R->correctedJet(0).energy() : -1.;
     I.eFracRecHitsHE = (R->hasUserFloat("energyRecHitsHE") and R->userFloat("energyRecHitsHE")>-1 and R->correctedJet(0).energy()>0) ? R->userFloat("energyRecHitsHE")/R->correctedJet(0).energy() : -1.;
+
+    I.sig1EB  = R->hasUserFloat("sig1EB") ? R->userFloat("sig1EB")  : -1.;
+    I.sig2EB  = R->hasUserFloat("sig2EB") ? R->userFloat("sig2EB")  : -1.;
+    I.sigAvEB = R->hasUserFloat("sigAvEB") ? R->userFloat("sigAvEB")  : -1.;
+    I.tan2thetaEB  = R->hasUserFloat("tan2thetaEB") ? R->userFloat("tan2thetaEB")  : -99999999.;
+    I.sig1EE  = R->hasUserFloat("sig1EE") ? R->userFloat("sig1EE")  : -1.;
+    I.sig2EE  = R->hasUserFloat("sig2EE") ? R->userFloat("sig2EE")  : -1.;
+    I.sigAvEE = R->hasUserFloat("sigAvEE") ? R->userFloat("sigAvEE")  : -1.;
+    I.tan2thetaEE  = R->hasUserFloat("tan2thetaEE") ? R->userFloat("tan2thetaEE")  : -99999999.;
+    I.sig1HB  = R->hasUserFloat("sig1HB") ? R->userFloat("sig1HB")  : -1.;
+    I.sig2HB  = R->hasUserFloat("sig2HB") ? R->userFloat("sig2HB")  : -1.;
+    I.sigAvHB = R->hasUserFloat("sigAvHB") ? R->userFloat("sigAvHB")  : -1.;
+    I.tan2thetaHB  = R->hasUserFloat("tan2thetaHB") ? R->userFloat("tan2thetaHB")  : -99999999.;
 
     //track, new implementation
     I.nConstituents = R->hasUserInt("nConstituents") ? R->userInt("nConstituents") : -1;

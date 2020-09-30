@@ -124,6 +124,9 @@ nRecHitsEE(-1), timeRecHitsEE(-100.), timeRMSRecHitsEE(-1.), energyRecHitsEE(-1.
 nRecHitsHB(-1), timeRecHitsHB(-100.), timeRMSRecHitsHB(-1.), energyRecHitsHB(-1.), energyErrorRecHitsHB(-1.), xRecHitsHB(-1000.), yRecHitsHB(-1000.), zRecHitsHB(-1000.), radiusRecHitsHB(-1000.),
 nRecHitsHE(-1), timeRecHitsHE(-100.), timeRMSRecHitsHE(-1.), energyRecHitsHE(-1.), energyErrorRecHitsHE(-1.), xRecHitsHE(-1000.), yRecHitsHE(-1000.), zRecHitsHE(-1000.), radiusRecHitsHE(-1000.),
 eFracRecHitsEB(-1.), eFracRecHitsEE(-1.), eFracRecHitsHB(-1.), eFracRecHitsHE(-1.),
+sig1EB(-1.), sig2EB(-1.), sigAvEB(-1.),tan2thetaEB(-99999999.),
+sig1EE(-1.), sig2EE(-1.), sigAvEE(-1.),tan2thetaEE(-99999999.),
+sig1HB(-1.), sig2HB(-1.), sigAvHB(-1.),tan2thetaHB(-99999999.),
 //LLP calo tagger
 sigprob(-1.),
 //Imperial College tagger
@@ -394,7 +397,20 @@ pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP10
     float eFracRecHitsEE;
     float eFracRecHitsHB;
     float eFracRecHitsHE;
-    
+
+    float sig1EB;
+    float sig2EB;
+    float sigAvEB;
+    float tan2thetaEB;
+    float sig1EE;
+    float sig2EE;
+    float sigAvEE;
+    float tan2thetaEE;
+    float sig1HB;
+    float sig2HB;
+    float sigAvHB;
+    float tan2thetaHB;
+
     float sigprob;
     float pfXWP0p01; 
     float pfXWP0p1;
@@ -449,6 +465,9 @@ nRecHitsEE(-1), timeRecHitsEE(-100.), timeRMSRecHitsEE(-1.), energyRecHitsEE(-1.
 nRecHitsHB(-1), timeRecHitsHB(-100.), timeRMSRecHitsHB(-1.), energyRecHitsHB(-1.), energyErrorRecHitsHB(-1.), xRecHitsHB(-1000.), yRecHitsHB(-1000.), zRecHitsHB(-1000.), radiusRecHitsHB(-1000.),
 nRecHitsHE(-1), timeRecHitsHE(-100.), timeRMSRecHitsHE(-1.), energyRecHitsHE(-1.), energyErrorRecHitsHE(-1.), xRecHitsHE(-1000.), yRecHitsHE(-1000.), zRecHitsHE(-1000.), radiusRecHitsHE(-1000.),
 eFracRecHitsEB(-1.), eFracRecHitsEE(-1.), eFracRecHitsHB(-1.), eFracRecHitsHE(-1.),
+sig1EB(-1.), sig2EB(-1.), sigAvEB(-1.),tan2thetaEB(-99999999.),
+sig1EE(-1.), sig2EE(-1.), sigAvEE(-1.),tan2thetaEE(-99999999.),
+sig1HB(-1.), sig2HB(-1.), sigAvHB(-1.),tan2thetaHB(-99999999.),
 //track variables, new implementation
 nConstituents (-1), nTrackConstituents (-1), nSelectedTracks(-1),
 ptAllTracks(-1.), ptAllPVTracks(-1.), ptPVTracksMax(-1.), nTracksAll(-1), nTracksPVMax(-1), medianIP2D(-10000.), medianTheta2D(-100.), alphaMax(-100.), betaMax(-100.), gammaMax(-100.), gammaMaxEM(-100.), gammaMaxHadronic(-100.), gammaMaxET(-100.), minDeltaRAllTracks(999.), minDeltaRPVTracks(999.), nPixelHitsMedian(-1.0), nHitsMedian(-1.0), dzMedian(-9999.), dxyMedian(-9999.),
@@ -672,6 +691,19 @@ nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1) {}
     float eFracRecHitsEE;
     float eFracRecHitsHB;
     float eFracRecHitsHE;
+
+    float sig1EB;
+    float sig2EB;
+    float sigAvEB;
+    float tan2thetaEB;
+    float sig1EE;
+    float sig2EE;
+    float sigAvEE;
+    float tan2thetaEE;
+    float sig1HB;
+    float sig2HB;
+    float sigAvHB;
+    float tan2thetaHB;
     
     int   nConstituents;
     int   nTrackConstituents; 
