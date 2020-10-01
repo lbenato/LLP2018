@@ -174,7 +174,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -186,7 +186,11 @@ if len(options.inputFiles) == 0:
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
             #SUSY high stat, Si
-            #'/store/group/phys_exotica/privateProduction/DR/step2_AODSIM/RunIIFall18/TChiHH_mass400_pl1000/batch1/v1/TChiHH_mass400_pl1000/crab_PrivateProduction_Fall18_DR_step2_TChiHH_mass400_pl1000_batch1_v1/200911_133803/0004/AODSIM_4998.root',
+            '/store/group/phys_exotica/privateProduction/DR/step2_AODSIM/RunIIFall18/TChiHH_mass400_pl1000/batch1/v1/TChiHH_mass400_pl1000/crab_PrivateProduction_Fall18_DR_step2_TChiHH_mass400_pl1000_batch1_v1/200911_133803/0004/AODSIM_4998.root',
+            #'file:pickevents_0.root',
+            #'file:pickevents_1.root',
+            #'file:pickevents_2.root',
+            #'file:pickevents_3.root',
             #GENSIMRECO twin higgs
             #'/store/mc/RunIIFall17DRPremix/VBFH_HToSSTo4b_MH-125_TuneCP5_13TeV-powheg-pythia8/GEN-SIM-RECO/PU2017_rp_94X_mc2017_realistic_v11-v2/260001/189F132B-9F60-EA11-ADD2-A0369F7F9B10.root',
             #'/store/mc/RunIIFall17DRPremix/VBFH_HToSSTo4b_MH-125_TuneCP5_13TeV-powheg-pythia8/GEN-SIM-RECO/PU2017_rp_94X_mc2017_realistic_v11-v2/00000/CE1EEF79-D85D-EA11-B8FC-B42E99AB0138.root',#DOES NOT EXIST????
@@ -195,7 +199,7 @@ if len(options.inputFiles) == 0:
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/40000/002DE866-7407-E811-ABBB-0CC47AA989C0.root',
             #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/40000/002DE866-7407-E811-ABBB-0CC47AA989C0.root',
             #'/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/70000/1CA26DE4-8E1C-E811-9283-20CF305616FF.root',
-            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
+            #'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
             #Data
             #UL requires newer release
             ##'/store/data/Run2017E/MET/AOD/09Aug2019_UL2017-v1/310002/FF956FC3-F457-6848-BC34-9972B048DD47.root'
@@ -259,8 +263,11 @@ if len(options.inputFiles) == 0:
             #'/store/mc/RunIISummer16DR80Premix/ZJetsToNuNu_HT-800To1200_13TeV-madgraph/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/FE57DDB4-DDBA-E611-A344-0025905A6064.root'
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIISummer16DR80Premix/ZJetsToNuNu_HT-400To600_13TeV-madgraph/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/DA01B558-8FD5-E611-AE17-02163E01412C.root'
         ),
-        #skipEvents=cms.untracked.uint32(220),
-        #eventsToProcess = cms.untracked.VEventRange('1:18405'),
+        ##skipEvents=cms.untracked.uint32(220),
+        #lumisToProcess = cms.untracked.VLuminosityBlockRange('1:11871'),
+        #eventsToProcess = cms.untracked.VEventRange('1:1187029'),
+        #lumisToProcess = cms.untracked.VLuminosityBlockRange('1:12025'),
+        #eventsToProcess = cms.untracked.VEventRange('1:1202419'),
     )
 
 if RunLocal:
@@ -284,7 +291,7 @@ if RunLocal:
     isReMiniAod       = ('03Feb2017' in process.source.fileNames[0])
     is2016            = False#('RunIISummer16' in process.source.fileNames[0])
     is2017            = ('RunIIFall17' in process.source.fileNames[0]) or ('Run2017' in process.source.fileNames[0])
-    is2018            = ('RunIIAutumn18' in process.source.fileNames[0]) or ('n3n2-n1-hbb-hbb' in process.source.fileNames[0]) or ('TChiHH' in process.source.fileNames[0]) or ('Run2018' in process.source.fileNames[0])
+    is2018            = ('RunIIAutumn18' in process.source.fileNames[0]) or ('n3n2-n1-hbb-hbb' in process.source.fileNames[0]) or ('TChiHH' in process.source.fileNames[0]) or ('Run2018' in process.source.fileNames[0]) or ('pickevents' in process.source.fileNames[0])
     isPromptReco      = ('PromptReco' in process.source.fileNames[0])
     noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8' or 'WW_TuneCP5_13TeV-pythia8' or 'WZ_TuneCP5_13TeV-pythia8' or 'ZZ_TuneCP5_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
@@ -293,8 +300,8 @@ if RunLocal:
     isVBF             = False
     isggH             = False
     isTwinHiggs       = False
-    isHeavyHiggs      = True
-    isSUSY            = False
+    isHeavyHiggs      = False
+    isSUSY            = True
 
 else:
     isData            = options.PisData
