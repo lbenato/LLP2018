@@ -450,6 +450,7 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     //I.VBF_DisplacedJet40_VVTightID_Hadronic_match = R->hasUserInt("VBF_DisplacedJet40_VVTightID_Hadronic_match") ? R->userInt("VBF_DisplacedJet40_VVTightID_Hadronic_match") : 0;
     I.ptJESUp = R->hasUserFloat("ptJESUp") ? R->userFloat("ptJESUp") : -1.;
     I.ptJESDown = R->hasUserFloat("ptJESDown") ? R->userFloat("ptJESDown") : -1.;
+    I.ptJER = R->hasUserFloat("ptJER") ? R->userFloat("ptJER") : -1.;
     I.ptJERUp = R->hasUserFloat("ptJERUp") ? R->userFloat("ptJERUp") : -1.;
     I.ptJERDown = R->hasUserFloat("ptJERDown") ? R->userFloat("ptJERDown") : -1.;
     I.tau1 = R->hasUserFloat("tau1") ? R->userFloat("tau1") : -1.;
@@ -546,6 +547,11 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     I.sig2HB  = R->hasUserFloat("sig2HB") ? R->userFloat("sig2HB")  : -1.;
     I.sigAvHB = R->hasUserFloat("sigAvHB") ? R->userFloat("sigAvHB")  : -1.;
     I.tan2thetaHB  = R->hasUserFloat("tan2thetaHB") ? R->userFloat("tan2thetaHB")  : -99999999.;
+
+    I.sig1PF  = R->hasUserFloat("sig1PF") ? R->userFloat("sig1PF")  : -1.;
+    I.sig2PF  = R->hasUserFloat("sig2PF") ? R->userFloat("sig2PF")  : -1.;
+    I.sigAvPF = R->hasUserFloat("sigAvPF") ? R->userFloat("sigAvPF")  : -1.;
+    I.tan2thetaPF  = R->hasUserFloat("tan2thetaPF") ? R->userFloat("tan2thetaPF")  : -99999999.;
 
     I.sigprob     = R->hasUserFloat("sigprob") ? R->userFloat("sigprob") : -1.;
     I.pfXWP0p01   = R->hasUserFloat("pfXWP0p01") ? R->userFloat("pfXWP0p01") : -1.; 
@@ -986,6 +992,11 @@ void ObjectsFormat::FillFatJetType(FatJetType& I, const pat::Jet* R, std::string
     I.isTight     = R->hasUserInt("isTight") ? R->userInt("isTight") : false;
     I.isTightLepVeto     = R->hasUserInt("isTightLepVeto") ? R->userInt("isTightLepVeto") : false;
     I.isMatched   = (I.mother==25);
+    I.ptJESUp = R->hasUserFloat("ptJESUp") ? R->userFloat("ptJESUp") : -1.;
+    I.ptJESDown = R->hasUserFloat("ptJESDown") ? R->userFloat("ptJESDown") : -1.;
+    I.ptJER = R->hasUserFloat("ptJER") ? R->userFloat("ptJER") : -1.;
+    I.ptJERUp = R->hasUserFloat("ptJERUp") ? R->userFloat("ptJERUp") : -1.;
+    I.ptJERDown = R->hasUserFloat("ptJERDown") ? R->userFloat("ptJERDown") : -1.;
     //L//I.JESUnc      = R->hasUserFloat("JESUncertainty") ? R->userFloat("JESUncertainty") : -1.;
     //L//I.ptJERUp     = R->hasUserFloat("ptJERUp") ? R->userFloat("ptJERUp") : -1.;
     //L//I.etaJERUp    = R->hasUserFloat("etaJERUp") ? R->userFloat("etaJERUp") : -1.;

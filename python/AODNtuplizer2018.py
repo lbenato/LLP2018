@@ -421,7 +421,7 @@ if isCalo:
 if(isTwinHiggs and isCalo):
     pt_AK4 = 5
 else:
-    pt_AK4 = 30
+    pt_AK4 = 20
 #-----------------------#
 #     GLOBAL TAG        #
 #-----------------------#
@@ -1408,6 +1408,7 @@ elif pt_AK8>=170:
       'pfDeepDoubleXTagInfos',
       'pfImpactParameterTagInfos',
       'pfSecondaryVertexTagInfos',
+      'pfDeepFlavourTagInfos',
       ]
 
    updateJetCollection(
@@ -1434,7 +1435,7 @@ elif pt_AK8>=170:
 
 
 #patJetsAK8Reclustered
-chosen_AK8 =  "packedPatJetsAK8Reclustered" if pt_AK8<170 else "updatedPatJetsTransientCorrectedFinalAK8"#"slimmedJetsAK8"# including SoftDrop info
+chosen_AK8 =  "packedPatJetsAK8Reclustered" if pt_AK8<170 else "updatedPatJetsFinalAK8"#"slimmedJetsAK8"# including SoftDrop info
 #chosen_AK8 = "patJetsAK8CHSReclustered"#'slimmedJetsAK8'
 
 
@@ -1820,7 +1821,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         jetid = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet1pt = cms.double(pt_AK4),
         jet2pt = cms.double(pt_AK4),
-        jeteta = cms.double(2.4),
+        jeteta = cms.double(2.5),
         isAOD = cms.bool(True),    
         addQGdiscriminator = cms.bool(False),
         ebRecHits = cms.InputTag("reducedEcalRecHitsEB", "","RECO"),
@@ -1830,7 +1831,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         recalibrateMass = cms.bool(False),
         recalibratePuppiMass = cms.bool(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
-        smearJets = cms.bool(False),
+        smearJets = cms.bool(True),
         vertices = cms.InputTag('offlinePrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
         jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK4PFchs.txt' % (JECstring, JECstring)),#updating
@@ -1932,7 +1933,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         jetid = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet1pt = cms.double(pt_AK8),
         jet2pt = cms.double(pt_AK8),
-        jeteta = cms.double(2.4),
+        jeteta = cms.double(2.5),
         isAOD = cms.bool(True),    
         addQGdiscriminator = cms.bool(False),
         ebRecHits = cms.InputTag("reducedEcalRecHitsEB", "","RECO"),
@@ -1942,7 +1943,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         recalibrateMass = cms.bool(False),#now the JEC are wrong
         recalibratePuppiMass = cms.bool(False),#(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
-        smearJets = cms.bool(False),
+        smearJets = cms.bool(True),
         vertices = cms.InputTag('offlinePrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
         jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK8PFchs.txt' % (JECstring, JECstring)),#updating
@@ -1985,7 +1986,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         jets = cms.InputTag('ak4CaloJets'),
         jet1pt = cms.double(10.),
         jet2pt = cms.double(10.),
-        jeteta = cms.double(2.4),
+        jeteta = cms.double(2.5),
         recalibrateJets = cms.bool(True),
         recalibrateMass = cms.bool(False),
         smearJets = cms.bool(False),

@@ -2743,20 +2743,10 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 
-
-
-
-
-
-
-
-
-
-
-//AAAAAAA
-
     // AK4 jets
     /* OLD LOOP, with PFCandidates */
+    // we can calculate minor-major jet axes according to JME-13-002
+
     for (unsigned int j = 0; j < CHSJetsVect.size(); j++){
     
       int jj = j;
@@ -2772,6 +2762,11 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       std::vector<float> dzVectOld;
       std::vector<float> dxyVectOld;
 
+      //jet shape
+      std::vector<double> PF_eta;
+      std::vector<double> PF_pt;
+      std::vector<double> PF_phi;
+      std::pair< std::pair<float,float> ,float> sigPF;
 
       float alphaMaxOld = -100.;
       float betaMaxOld = -100.;
@@ -2869,6 +2864,12 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       for (unsigned int i = 0; i < PFCandidateVect.size(); i++){
 
 	if (jj == PFCandidateAK4JetIndex[i]){
+
+	  //jet shapes variables
+	  PF_eta.push_back(PFCandidateVect[i].eta());
+	  PF_phi.push_back(PFCandidateVect[i].phi());
+	  PF_pt.push_back(PFCandidateVect[i].pt());
+
           //std::cout << " debugggggggg 1! " << std::endl;
 	  //if (PFCandidateVect[i].charge()){
 	  if (PFCandidateVect[i].charge() && PFCandidateVect[i].hasTrackDetails()){//NEW, more comparable to generalTracks
@@ -2979,6 +2980,13 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	if (dzVectOld.size() % 2 ==0) dzMedianOld = ((dzVectOld[dzVectOld.size()/2 -1] + dzVectOld[dzVectOld.size()/2]) /2);
 	else dzMedianOld = dzVectOld[dzVectOld.size()/2];
       }
+
+      //jet shape
+      sigPF = theCHSJetAnalyzer->JetSecondMoments(PF_pt, PF_eta, PF_phi);
+      CHSJetsVect[j].addUserFloat("sig1PF", sigPF.first.first>0 ? sigPF.first.first : -1.);
+      CHSJetsVect[j].addUserFloat("sig2PF", sigPF.first.second>0 ? sigPF.first.second : -1.);
+      CHSJetsVect[j].addUserFloat("sigAvPF", (sigPF.first.first>0 and sigPF.first.second>0) ? sqrt( pow(sigPF.first.first,2) + pow(sigPF.first.second,2) )  : -1.);
+      CHSJetsVect[j].addUserFloat("tan2thetaPF", sigPF.second);
 
       CHSJetsVect[j].addUserFloat("alphaMaxOld", alphaMaxOld);
       CHSJetsVect[j].addUserFloat("sumPtJetOld", sumPtJetOld>0 ? sumPtJetOld : -1.);

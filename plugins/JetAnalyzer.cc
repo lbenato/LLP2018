@@ -452,16 +452,21 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             //std::cout << "smearFactor     " << smearFactor << "\n";
             //std::cout << "smearFactorUp   " << smearFactorUp << "\n";
             //std::cout << "smearFactorDown " << smearFactorDown << "\n";
-	    pat::Jet jetJERUp = jet;
+	    pat::Jet jetJER     = jet;
+	    pat::Jet jetJERUp   = jet;
 	    pat::Jet jetJERDown = jet;
             //equivalent??//jet.setP4(jet.p4() * smearFactor);
             //equivalent??//jetJERUp.setP4(jet.p4() * smearFactorUp);
             //equivalent??//jetJERDown.setP4(jet.p4() * smearFactorDown);
 
-            jet.setP4(smearedJet * smearFactor);
+            jetJER.setP4(smearedJet * smearFactor);
             jetJERUp.setP4(smearedJet * smearFactorUp);
             jetJERDown.setP4(smearedJet * smearFactorDown);
 
+            jet.addUserFloat("ptJER", jetJER.pt());
+            jet.addUserFloat("etaJER", jetJER.eta());
+            jet.addUserFloat("phiJER", jetJER.phi());
+            jet.addUserFloat("energyJER", jetJER.energy());
             jet.addUserFloat("ptJERUp", jetJERUp.pt());
             jet.addUserFloat("etaJERUp", jetJERUp.eta());
             jet.addUserFloat("phiJERUp", jetJERUp.phi());
