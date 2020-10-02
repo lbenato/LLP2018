@@ -186,8 +186,8 @@ if len(options.inputFiles) == 0:
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
             #SUSY high stat, Si
-            '/store/group/phys_exotica/privateProduction/DR/step2_AODSIM/RunIIFall18/TChiHH_mass400_pl1000/batch1/v1/TChiHH_mass400_pl1000/crab_PrivateProduction_Fall18_DR_step2_TChiHH_mass400_pl1000_batch1_v1/200911_133803/0004/AODSIM_4998.root',
-            #'file:pickevents_0.root',
+            #'/store/group/phys_exotica/privateProduction/DR/step2_AODSIM/RunIIFall18/TChiHH_mass400_pl1000/batch1/v1/TChiHH_mass400_pl1000/crab_PrivateProduction_Fall18_DR_step2_TChiHH_mass400_pl1000_batch1_v1/200911_133803/0004/AODSIM_4998.root',
+            'file:pickevents_0.root',
             #'file:pickevents_1.root',
             #'file:pickevents_2.root',
             #'file:pickevents_3.root',
@@ -1406,6 +1406,8 @@ elif pt_AK8>=170:
       'pfInclusiveSecondaryVertexFinderAK8TagInfos',
       'pfBoostedDoubleSVAK8TagInfos',
       'pfDeepDoubleXTagInfos',
+      'pfImpactParameterTagInfos',
+      'pfSecondaryVertexTagInfos',
       ]
 
    updateJetCollection(
@@ -1427,10 +1429,12 @@ elif pt_AK8>=170:
    for m in ['updatedPatJets'+postfix, 'updatedPatJetsTransientCorrected'+postfix]:
       setattr( getattr(process,m), 'addTagInfos', cms.bool(True) )
 
+   task.add(process.updatedPatJetsFinalAK8)
+   task.add(process.updatedPatJetsTransientCorrectedFinalAK8)
 
 
 #patJetsAK8Reclustered
-chosen_AK8 =  "packedPatJetsAK8Reclustered" if pt_AK8<170 else "updatedPatJetsFinalAK8"#"slimmedJetsAK8"# including SoftDrop info
+chosen_AK8 =  "packedPatJetsAK8Reclustered" if pt_AK8<170 else "updatedPatJetsTransientCorrectedFinalAK8"#"slimmedJetsAK8"# including SoftDrop info
 #chosen_AK8 = "patJetsAK8CHSReclustered"#'slimmedJetsAK8'
 
 
