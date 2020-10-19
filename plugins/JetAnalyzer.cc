@@ -596,12 +596,15 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 	//vectors used to calculate hit showers spread
 	std::vector<double> EB_eta;
 	std::vector<double> EB_et;
+	std::vector<double> EB_et_squared;
 	std::vector<double> EB_phi;
 	std::vector<double> EE_eta;
 	std::vector<double> EE_et;
+	std::vector<double> EE_et_squared;
 	std::vector<double> EE_phi;
 	std::vector<double> HB_eta;
 	std::vector<double> HB_et;
+	std::vector<double> HB_et_squared;
 	std::vector<double> HB_phi;
 
 	std::pair< std::pair<float,float> ,float> sigEB;
@@ -635,6 +638,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
  		    EB_eta.push_back(recHitPos.eta());
 		    EB_phi.push_back(recHitPos.phi());
 		    EB_et.push_back(recHit->energy()/cosh(recHitPos.eta()));
+		    EB_et_squared.push_back( pow(recHit->energy()/cosh(recHitPos.eta()),2) );
 
                     jetRechitE_Error_EB += recHit->energyError() * recHit->energyError();
                     jetRechitE_EB += recHit->energy();
@@ -673,6 +677,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
  		    EE_eta.push_back(recHitPos.eta());
 		    EE_phi.push_back(recHitPos.phi());
 		    EE_et.push_back(recHit->energy()/cosh(recHitPos.eta()));
+		    EE_et_squared.push_back( pow(recHit->energy()/cosh(recHitPos.eta()),2) );
 
                     jetRechitE_Error_EE += recHit->energyError() * recHit->energyError();
                     jetRechitE_EE += recHit->energy();
@@ -726,6 +731,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
  		    HB_eta.push_back(recHitPos.eta());
 		    HB_phi.push_back(recHitPos.phi());
 		    HB_et.push_back(recHit->energy()/cosh(recHitPos.eta()));
+		    HB_et_squared.push_back( pow(recHit->energy()/cosh(recHitPos.eta()),2) );
 
 		    jetRechitE_HB += recHit->energy();
 		    jetRechitT_HB += recHit->time()*recHit->energy();
@@ -807,6 +813,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         jet.addUserFloat("sig2EB", sigEB.first.second>0 ? sigEB.first.second : -1.);
         jet.addUserFloat("sigAvEB", (sigEB.first.first>0 and sigEB.first.second>0) ? sqrt( pow(sigEB.first.first,2) + pow(sigEB.first.second,2) ) : -1.);
         jet.addUserFloat("tan2thetaEB", sigEB.second);
+	jet.addUserFloat("ptDEB", accumulate(EB_et.begin(),EB_et.end(),0) > 0 ? sqrt(accumulate(EB_et_squared.begin(),EB_et_squared.end(),0)) / accumulate(EB_et.begin(),EB_et.end(),0) : -1.);
 
         jet.addUserInt("nRecHitsEE", n_matched_rechits_EE);
         jet.addUserFloat("timeRecHitsEE", jetRechitE_EE>0 ? jetRechitT_EE/jetRechitE_EE : -100.);
@@ -822,6 +829,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         jet.addUserFloat("sig2EE", sigEE.first.second>0 ? sigEE.first.second : -1.);
         jet.addUserFloat("sigAvEE", (sigEE.first.first>0 and sigEE.first.second>0) ? sqrt( pow(sigEE.first.first,2) + pow(sigEE.first.second,2) ) : -1.);
         jet.addUserFloat("tan2thetaEE", sigEE.second);
+	jet.addUserFloat("ptDEE", accumulate(EE_et.begin(),EE_et.end(),0) > 0 ? sqrt(accumulate(EE_et_squared.begin(),EE_et_squared.end(),0)) / accumulate(EE_et.begin(),EE_et.end(),0) : -1.);
         
         jet.addUserInt("nRecHitsHB", n_matched_rechits_HB);
         jet.addUserFloat("timeRecHitsHB", jetRechitE_HB>0 ? jetRechitT_HB/jetRechitE_HB : -100.);
@@ -837,6 +845,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         jet.addUserFloat("sig2HB", sigHB.first.second>0 ? sigHB.first.second : -1.);
         jet.addUserFloat("sigAvHB", (sigHB.first.first>0 and sigHB.first.second>0) ? sqrt( pow(sigHB.first.first,2) + pow(sigHB.first.second,2) ) : -1.);
         jet.addUserFloat("tan2thetaHB", sigHB.second);
+	jet.addUserFloat("ptDHB", accumulate(HB_et.begin(),HB_et.end(),0) > 0 ? sqrt(accumulate(HB_et_squared.begin(),HB_et_squared.end(),0)) / accumulate(HB_et.begin(),HB_et.end(),0) : -1.);
 
         /*
         jet.addUserInt("nRecHitsHE", n_matched_rechits_HE);
