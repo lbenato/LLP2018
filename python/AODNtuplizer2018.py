@@ -185,9 +185,16 @@ if len(options.inputFiles) == 0:
 
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
+            #causing 8012 error
+            '/store/mc/RunIIAutumn18DRPremix/QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/60001/AA432DEC-7BC9-9C4E-B464-D9A4257FA5A4.root'
+            #2018 ZJets
+            #'/store/mc/RunIIAutumn18DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/026915A1-D6C8-E740-974D-96E7C0BD4BA9.root',
+            #2018 MET
+            #'/store/data/Run2018A/MET/AOD/17Sep2018-v1/100000/0091F52C-BD8E-294E-A40D-3761CE3869CE.root',
+
             #SUSY high stat, Si
             #'/store/group/phys_exotica/privateProduction/DR/step2_AODSIM/RunIIFall18/TChiHH_mass400_pl1000/batch1/v1/TChiHH_mass400_pl1000/crab_PrivateProduction_Fall18_DR_step2_TChiHH_mass400_pl1000_batch1_v1/200911_133803/0004/AODSIM_4998.root',
-            'file:pickevents_0.root',
+            #'file:pickevents_0.root',
             #'file:pickevents_1.root',
             #'file:pickevents_2.root',
             #'file:pickevents_3.root',
@@ -300,8 +307,8 @@ if RunLocal:
     isVBF             = False
     isggH             = False
     isTwinHiggs       = False
-    isHeavyHiggs      = False
-    isSUSY            = True
+    isHeavyHiggs      = True#False
+    isSUSY            = False
 
 else:
     isData            = options.PisData
@@ -421,7 +428,7 @@ if isCalo:
 if(isTwinHiggs and isCalo):
     pt_AK4 = 5
 else:
-    pt_AK4 = 30
+    pt_AK4 = 20
 #-----------------------#
 #     GLOBAL TAG        #
 #-----------------------#
@@ -1408,6 +1415,7 @@ elif pt_AK8>=170:
       'pfDeepDoubleXTagInfos',
       'pfImpactParameterTagInfos',
       'pfSecondaryVertexTagInfos',
+      'pfDeepFlavourTagInfos',
       ]
 
    updateJetCollection(
@@ -1434,7 +1442,7 @@ elif pt_AK8>=170:
 
 
 #patJetsAK8Reclustered
-chosen_AK8 =  "packedPatJetsAK8Reclustered" if pt_AK8<170 else "updatedPatJetsTransientCorrectedFinalAK8"#"slimmedJetsAK8"# including SoftDrop info
+chosen_AK8 =  "packedPatJetsAK8Reclustered" if pt_AK8<170 else "updatedPatJetsFinalAK8"#"slimmedJetsAK8"# including SoftDrop info
 #chosen_AK8 = "patJetsAK8CHSReclustered"#'slimmedJetsAK8'
 
 
@@ -1820,7 +1828,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         jetid = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet1pt = cms.double(pt_AK4),
         jet2pt = cms.double(pt_AK4),
-        jeteta = cms.double(2.4),
+        jeteta = cms.double(2.5),
         isAOD = cms.bool(True),    
         addQGdiscriminator = cms.bool(False),
         ebRecHits = cms.InputTag("reducedEcalRecHitsEB", "","RECO"),
@@ -1830,7 +1838,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         recalibrateMass = cms.bool(False),
         recalibratePuppiMass = cms.bool(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
-        smearJets = cms.bool(False),
+        smearJets = cms.bool(True),
         vertices = cms.InputTag('offlinePrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
         jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK4PFchs.txt' % (JECstring, JECstring)),#updating
@@ -1932,7 +1940,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         jetid = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet1pt = cms.double(pt_AK8),
         jet2pt = cms.double(pt_AK8),
-        jeteta = cms.double(2.4),
+        jeteta = cms.double(2.5),
         isAOD = cms.bool(True),    
         addQGdiscriminator = cms.bool(False),
         ebRecHits = cms.InputTag("reducedEcalRecHitsEB", "","RECO"),
@@ -1942,7 +1950,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         recalibrateMass = cms.bool(False),#now the JEC are wrong
         recalibratePuppiMass = cms.bool(False),#(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
-        smearJets = cms.bool(False),
+        smearJets = cms.bool(True),
         vertices = cms.InputTag('offlinePrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
         jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK8PFchs.txt' % (JECstring, JECstring)),#updating
@@ -1985,7 +1993,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         jets = cms.InputTag('ak4CaloJets'),
         jet1pt = cms.double(10.),
         jet2pt = cms.double(10.),
-        jeteta = cms.double(2.4),
+        jeteta = cms.double(2.5),
         recalibrateJets = cms.bool(True),
         recalibrateMass = cms.bool(False),
         smearJets = cms.bool(False),
@@ -2142,7 +2150,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
     writeFatJets = cms.bool(False),#not needed now
     ## PFCandidates:
     writeAK4JetPFCandidates = cms.bool(True), #Matched to AK4 only!
-    writeAK8JetPFCandidates = cms.bool(False), #Matched to AK8 only!
+    writeAK8JetPFCandidates = cms.bool(True), #Matched to AK8 only!
     writeAllJetPFCandidates = cms.bool(False), #Matched to either AK4 or AK8
     writeAllPFCandidates = cms.bool(False), #All PFCandidates. Large collection: Please write only if needed!
     writeLostTracks = cms.bool(False),
@@ -2156,6 +2164,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
     verboseTrigger  = cms.bool(False),
     signal = cms.bool(isSignal),
     iscalo = cms.bool(isCalo),
+    #pfCands = cms.InputTag("particleFlow","","RECO"),
 )
 
 
@@ -2163,9 +2172,10 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
 
 process.seq = cms.Sequence(
     process.counter *
-    #process.dumpES *
-    #process.ParticleListDrawer #*
-    #process.test
+    ##process.dumpES *
+    ##process.ParticleListDrawer #*
+    ##process.test
+    #taperecall:
     process.metFilters *
     process.ntuple
 )

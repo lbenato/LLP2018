@@ -5,6 +5,7 @@
 #include <fstream>
 
 #include <cmath>
+#include <numeric>
 #include <map>
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"

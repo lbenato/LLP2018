@@ -477,6 +477,50 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = False#True#False#only for heavy higgs
         isSUSY = True#False#!!!
+    elif options.lists == "v4_calo_AOD_2018":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+        from Analyzer.LLP2018.samplesAOD2018 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        folder = "v4_calo_AOD_2018_18October2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['data']
+        config.JobType.maxMemoryMB = 5000#15900 #more memory
+        config.JobType.numCores = 8
+        config.Data.splitting = 'Automatic'
+        is2016 = False
+        is2017 = False#!!!
+        is2018 = True#!!!
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
+    elif options.lists == "v4_taperecall":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+        from Analyzer.LLP2018.samplesAOD2018 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        folder = "v4_taperecall_05Oct2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['data']
+        config.JobType.maxMemoryMB = 4000#5000#15900 #more memory
+        config.JobType.numCores = 8
+        config.Data.splitting = 'Automatic'
+        is2016 = False
+        is2017 = False#!!!
+        is2018 = True#!!!
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isVBF = False
+        isggH = False
+        isTwinHiggs = True#False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = False#True#!!!
     elif options.lists == "v0_2016miniAOD_centrallyProduced":
         from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced import *
         from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *

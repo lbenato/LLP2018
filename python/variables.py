@@ -2688,7 +2688,7 @@ var_template = {
       "title" : "E_{T}^{miss} (GeV)",
       "nbins" : 50,
       "min" : 100,
-      "max" : 600,
+      "max" : 1000,
       "log" : True,
     },
     "MEt.sign": {
@@ -3052,6 +3052,14 @@ var_template = {
     },
 
 
+    "Jet_[N]_nRecHitsEB": {
+        "title" : "nRecHitsEB jet [[N]]",
+        "nbins" : 101,
+        "min" : 0-0.5,
+        "max" : 101-0.5,
+        "log" : True,
+    },
+
     "Jet_[N]_nRecHitsHB": {
         "title" : "nRecHitsHB jet [[N]]",
         "nbins" : 51,
@@ -3059,11 +3067,42 @@ var_template = {
         "max" : 51-0.5,
         "log" : True,
     },
+
+    #energy rec hits
+    "Jet_[N]_energyRecHitsEB": {
+        "title" : "energyRecHitsEB jet [[N]]",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 50,
+        "log" : True,
+    },
     "Jet_[N]_energyRecHitsHB": {
         "title" : "energyRecHitsHB jet [[N]]",
         "nbins" : 50,
         "min" : 0,
         "max" : 50,
+        "log" : True,
+    },
+
+    "Jet_[N]_energyRecHitsEB/Jet_[N]_energy": {
+        "title" : "energyRecHitsEB/energy jet [[N]]",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 0.3,
+        "log" : True,
+    },
+    "Jet_[N]_energyRecHitsHB/Jet_[N]_energy": {
+        "title" : "energyRecHitsHB/energy jet [[N]]",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 0.3,
+        "log" : True,
+    },
+    "Jet_[N]_energy": {
+        "title" : "energy jet [[N]]",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 1000,
         "log" : True,
     },
 
@@ -3156,308 +3195,3 @@ for n, v in var_template.iteritems():
 #variable['CHSJet2.pt']['max'] = 400
 #variable['CHSJet3.pt']['max'] = 200
 #variable['CHSJet4.pt']['max'] = 200
-
-
-
-#Unused:
-#######################
-# Trigger
-#######################
-#    "TripleJet50TriggerObjects.TripleJet50TriggerObjects[[N]].pt": {
-#      "title" : "trigger object firing hltTripleJet50 [[N]] p_{T} (GeV)",
-#      "nbins" : 40,#40
-#      "min" : 0,
-#      "max" : 400,
-#      "log" : True,
-#    },
-#    "nAllJets": {
-#      "title" : "number of CHS jets up to |#eta|=5.2",
-#      "nbins" : 17,
-#      "min" : -0.5,
-#      "max" : 16.5,
-#      "log" : True,
-#    },
-
-########################
-    #"Jets.Jets[[N]].nEmE": {
-    #  "title" : "jet [[N]] neutral ECAL energy",
-    #  "nbins" : 50,
-    #  "min" : 0,
-    #  "max" : 200,
-    #  "log" : True,
-    #},
-    #"Jets.Jets[[N]].nEmEFrac": {
-    #  "title" : "jet [[N]] neutral ECAL energy fraction",
-    #  "nbins" : 50,
-    #  "min" : 0,
-    #  "max" : 1,
-    #  "log" : True,
-    #},
-    #"Jets.Jets[[N]].cEmE": {
-    #  "title" : "jet [[N]] charged ECAL energy",
-    #  "nbins" : 50,
-    #  "min" : 0,
-    #  "max" : 20,
-    #  "log" : True,
-    #},
-    #"Jets.Jets[[N]].cEmEFrac": {
-    #  "title" : "jet [[N]] charged ECAL energy fraction",
-    #  "nbins" : 50,
-    #  "min" : 0,
-    #  "max" : 0.1,
-    #  "log" : True,
-    #},
-    #"Jets.Jets[[N]].cmuE": {
-    #  "title" : "jet [[N]] charged #mu energy",
-    #  "nbins" : 20,
-    #  "min" : 0,
-    #  "max" : 20,
-    #  "log" : True,
-    #},
-    #"Jets.Jets[[N]].cmuEFrac": {
-    #  "title" : "jet [[N]] charged #mu energy fraction",
-    #  "nbins" : 50,
-    #  "min" : 0,
-    #  "max" : 0.1,
-    #  "log" : True,
-    #},
-#    "Jets.Jets[[N]].isMatchedToMatchedCHSJet": {
-#      "title" : "jet [[N]] matched to signal jet n...",
-#      "nbins" : 6,
-#      "min" : -1.5,
-#      "max" : 4.5,
-#      "log" : False,
-#    },
-#    "nCaloJets": {
-#      "title" : "number of calo jets",
-#      "nbins" : 17,
-#      "min" : -0.5,
-#      "max" : 16.5,
-#      "log" : True,
-#    },
-#    "nJets": {
-#      "title" : "number of jets",
-#      "nbins" : 17,
-#      "min" : -0.5,
-#      "max" : 16.5,
-#      "log" : True,
-#    },
-#    "nCaloTagJets": {
-#      "title" : "number of calo tagged jets",#from v3
-#      "nbins" : 5,
-#      "min" : -0.5,
-#      "max" : 4.5,
-#      "log" : True,
-#    },
-'''
-    # Jets vector
-    #all jets together
-    "Jets.pt": {
-      "title" : "all jets p_{T} (GeV)",
-      "nbins" : 40,
-      "min" : 0,
-      "max" : 800,
-      "log" : True,
-    },
-    "Jets.CSV": {
-      "title" : "all jets CSV",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    "Jets.alphaMax": {
-      "title" : "all jets #alpha_{max}",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 1,
-      "log" : True,
-    },
-    
-    "Jets.sigIP2DMedian": {
-      "title" : "all jets sigIP2DMedian",
-      "nbins" : 100,
-      "min" : -50,
-      "max" : 50,
-      "log" : True,
-    },
-
-    "Jets.eta": {
-      "title" : "all jets #eta",
-      "nbins" : 30,
-      "min" : -3,
-      "max" : 3,
-      "log" : True,
-    },
-    "Jets.phi": {
-      "title" : "all jets #varphi",
-      "nbins" : 60,
-      "min" : -3.15,
-      "max" : 3.15,
-      "log" : True,
-    },
-    "Jets.mass": {
-      "title" : "all jets mass (GeV)",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 150,
-      "log" : True,
-    },
-    "Jets.nSV": {
-        "title" : "Number of SV per jet",
-        "nbins" : 10,
-        "min" : 0,
-        "max" : 9,
-        "log" :True,
-        },
-    "Jets.nSVCand": {
-        "title" : "Number of SV candidates per jet",
-        "nbins" : 10,
-        "min" : 0,
-        "max" : 9,
-        "log" : False,
-        },
-    "Jets.nVertexTracks": {
-        "title" : "Number of tracks per vertex",
-        "nbins" : 21,
-        "min" : 0,
-        "max" : 20,
-        "log" : False,
-        },
-    "Jets.nSelectedTracks": {
-        "title" : "Number of selected tracks per jet",
-        "nbins" : 51,"min" : 0,
-        "max" : 50,
-        "log" : True,
-        },
-    "Jets.dRSVJet": {
-        "title" : "dR between SV and jet",
-        "nbins" : 51,
-        "min" : 0,
-        "max" : 1,
-        "log" : True,
-        },
-    "Jets.flightDist2d": {
-        "title" : "Flight distance vertex [0] 2D",
-        "nbins" : 51,
-        "min" : 0,
-        "max" : 50,
-        "log" : True,
-        },
-    "Jets.flightDist2dsig": {
-        "title" : "Significance of flight distance vertex [0] 2D",
-        "nbins" : 31,
-        "min" : 0,
-        "max" : 30,
-        "log" : False,
-        },
-    "Jets.flightDist3d": {
-        "title" : "Flight distance vertex [0] 3D",
-        "nbins" : 61,
-        "min" : 0,
-        "max" : 60,
-        "log" : False,
-        },
-    "Jets.flightDist3dsig": {
-        "title" : "Significance of flight distance vertex [0] 2D",
-        "nbins" : 81,
-        "min" : 0,
-        "max" : 80,
-        "log" : False,
-        },
-    "Jets.SV_x": {
-        "title" : "vertex [0] x",
-        "nbins" : 81,
-        "min" : -40,
-        "max" : 40,
-        "log" : False,
-        },
-    "Jets.SV_y": {
-        "title" : "vertex [0] y",
-        "nbins" : 81,
-        "min" : -40,"max" : 40,
-        "log" : False,
-        },
-    "Jets.SV_z": {
-        "title" : "vertex [0] z",
-        "nbins" : 81,
-        "min" : -40,
-        "max" : 40,
-        "log" : False,
-        },
-    "Jets.nTracksSV": {
-        "title" : "Number of selected tracks per vertex [0]",
-        "nbins" : 21,
-        "min" : 0,
-        "max" : 20,
-        "log" : False,
-        },
-    "Jets.SV_mass": {
-        "title" : "Mass of vertex [0] (GeV)",
-        "nbins" : 31,
-        "min" : 0,
-        "max" : 30,
-        "log" : False,
-        },
-
-    "Jets.Jets[[N]].isCaloTag": {
-      "title" : "jet [[N]] calo tag",
-      "nbins" : 2,
-      "min" : -0.5,
-      "max" : 1.5,
-      "log" : False,
-    },
-
-    "Jets.nTrackConstituents": {
-      "title" : "number of jet constituents with tracks",
-      "nbins" : 50,
-      "min" : -0.5,
-      "max" : 49.5,
-      "log" : True,
-    },
-    "Jets.nConstituents": {
-      "title" : "number of jet constituents",
-      "nbins" : 50,
-      "min" : -0.5,
-      "max" : 49.5,
-      "log" : True,
-    },
-    "Jets.FracCal": {
-      "title" : "jets ECAL energy/HCAL energy",
-      "nbins" : 50,
-      "min" : 0,
-      "max" : 10,
-      "log" : True,
-    },
-    "Jets.nTracks3PixelHits": {
-      "title" : "jets number of tracks with 3 pixel hits",
-      #"title" : "Leading jet: n. of tracks with 3 pixel hits",
-      "nbins" : 40,#+30,
-      "min" : -0.5,
-      "max" : 39.5,#+30,
-      "log" : True,
-    },
-
-    "Jets.nTracksLarger2LostInnerHits": {
-      "title" : "number of tracks in all jets with more than 2 lost inner hits",
-      "nbins" : 40,
-      "min" : -0.5,
-      "max" : 39.5,
-      "log" : True,
-    },
-
-'''
-#    "CaloJets.emEnergyFraction": {
-#      "title" : "calo jet ECAL energy fraction",
-#      "nbins" : 100,
-#      "min" : 0.,
-#      "max" : 1.,
-#      "log" : True,
-#    },
-#    "CaloJets.energyFractionHadronic": {
-#      "title" : "calo jet HCAL energy fraction",
-#      "nbins" : 100,
-#      "min" : 0.,
-#      "max" : 1.,
-#      "log" : True,
-#    },

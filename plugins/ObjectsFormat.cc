@@ -450,6 +450,7 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     //I.VBF_DisplacedJet40_VVTightID_Hadronic_match = R->hasUserInt("VBF_DisplacedJet40_VVTightID_Hadronic_match") ? R->userInt("VBF_DisplacedJet40_VVTightID_Hadronic_match") : 0;
     I.ptJESUp = R->hasUserFloat("ptJESUp") ? R->userFloat("ptJESUp") : -1.;
     I.ptJESDown = R->hasUserFloat("ptJESDown") ? R->userFloat("ptJESDown") : -1.;
+    I.ptJER = R->hasUserFloat("ptJER") ? R->userFloat("ptJER") : -1.;
     I.ptJERUp = R->hasUserFloat("ptJERUp") ? R->userFloat("ptJERUp") : -1.;
     I.ptJERDown = R->hasUserFloat("ptJERDown") ? R->userFloat("ptJERDown") : -1.;
     I.tau1 = R->hasUserFloat("tau1") ? R->userFloat("tau1") : -1.;
@@ -538,14 +539,23 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     I.sig2EB  = R->hasUserFloat("sig2EB") ? R->userFloat("sig2EB")  : -1.;
     I.sigAvEB = R->hasUserFloat("sigAvEB") ? R->userFloat("sigAvEB")  : -1.;
     I.tan2thetaEB  = R->hasUserFloat("tan2thetaEB") ? R->userFloat("tan2thetaEB")  : -99999999.;
+    I.ptDEB  = R->hasUserFloat("ptDEB") ? R->userFloat("ptDEB")  : -1.;
     I.sig1EE  = R->hasUserFloat("sig1EE") ? R->userFloat("sig1EE")  : -1.;
     I.sig2EE  = R->hasUserFloat("sig2EE") ? R->userFloat("sig2EE")  : -1.;
     I.sigAvEE = R->hasUserFloat("sigAvEE") ? R->userFloat("sigAvEE")  : -1.;
     I.tan2thetaEE  = R->hasUserFloat("tan2thetaEE") ? R->userFloat("tan2thetaEE")  : -99999999.;
+    I.ptDEE  = R->hasUserFloat("ptDEE") ? R->userFloat("ptDEE")  : -1.;
     I.sig1HB  = R->hasUserFloat("sig1HB") ? R->userFloat("sig1HB")  : -1.;
     I.sig2HB  = R->hasUserFloat("sig2HB") ? R->userFloat("sig2HB")  : -1.;
     I.sigAvHB = R->hasUserFloat("sigAvHB") ? R->userFloat("sigAvHB")  : -1.;
     I.tan2thetaHB  = R->hasUserFloat("tan2thetaHB") ? R->userFloat("tan2thetaHB")  : -99999999.;
+    I.ptDHB  = R->hasUserFloat("ptDHB") ? R->userFloat("ptDHB")  : -1.;
+
+    I.sig1PF  = R->hasUserFloat("sig1PF") ? R->userFloat("sig1PF")  : -1.;
+    I.sig2PF  = R->hasUserFloat("sig2PF") ? R->userFloat("sig2PF")  : -1.;
+    I.sigAvPF = R->hasUserFloat("sigAvPF") ? R->userFloat("sigAvPF")  : -1.;
+    I.tan2thetaPF  = R->hasUserFloat("tan2thetaPF") ? R->userFloat("tan2thetaPF")  : -99999999.;
+    I.ptDPF  = R->hasUserFloat("ptDPF") ? R->userFloat("ptDPF")  : -1.;
 
     I.sigprob     = R->hasUserFloat("sigprob") ? R->userFloat("sigprob") : -1.;
     I.pfXWP0p01   = R->hasUserFloat("pfXWP0p01") ? R->userFloat("pfXWP0p01") : -1.; 
@@ -986,6 +996,11 @@ void ObjectsFormat::FillFatJetType(FatJetType& I, const pat::Jet* R, std::string
     I.isTight     = R->hasUserInt("isTight") ? R->userInt("isTight") : false;
     I.isTightLepVeto     = R->hasUserInt("isTightLepVeto") ? R->userInt("isTightLepVeto") : false;
     I.isMatched   = (I.mother==25);
+    I.ptJESUp = R->hasUserFloat("ptJESUp") ? R->userFloat("ptJESUp") : -1.;
+    I.ptJESDown = R->hasUserFloat("ptJESDown") ? R->userFloat("ptJESDown") : -1.;
+    I.ptJER = R->hasUserFloat("ptJER") ? R->userFloat("ptJER") : -1.;
+    I.ptJERUp = R->hasUserFloat("ptJERUp") ? R->userFloat("ptJERUp") : -1.;
+    I.ptJERDown = R->hasUserFloat("ptJERDown") ? R->userFloat("ptJERDown") : -1.;
     //L//I.JESUnc      = R->hasUserFloat("JESUncertainty") ? R->userFloat("JESUncertainty") : -1.;
     //L//I.ptJERUp     = R->hasUserFloat("ptJERUp") ? R->userFloat("ptJERUp") : -1.;
     //L//I.etaJERUp    = R->hasUserFloat("etaJERUp") ? R->userFloat("etaJERUp") : -1.;
@@ -1102,14 +1117,23 @@ void ObjectsFormat::FillFatJetType(FatJetType& I, const pat::Jet* R, std::string
     I.sig2EB  = R->hasUserFloat("sig2EB") ? R->userFloat("sig2EB")  : -1.;
     I.sigAvEB = R->hasUserFloat("sigAvEB") ? R->userFloat("sigAvEB")  : -1.;
     I.tan2thetaEB  = R->hasUserFloat("tan2thetaEB") ? R->userFloat("tan2thetaEB")  : -99999999.;
+    I.ptDEB  = R->hasUserFloat("ptDEB") ? R->userFloat("ptDEB")  : -1.;
     I.sig1EE  = R->hasUserFloat("sig1EE") ? R->userFloat("sig1EE")  : -1.;
     I.sig2EE  = R->hasUserFloat("sig2EE") ? R->userFloat("sig2EE")  : -1.;
     I.sigAvEE = R->hasUserFloat("sigAvEE") ? R->userFloat("sigAvEE")  : -1.;
     I.tan2thetaEE  = R->hasUserFloat("tan2thetaEE") ? R->userFloat("tan2thetaEE")  : -99999999.;
+    I.ptDEE  = R->hasUserFloat("ptDEE") ? R->userFloat("ptDEE")  : -1.;
     I.sig1HB  = R->hasUserFloat("sig1HB") ? R->userFloat("sig1HB")  : -1.;
     I.sig2HB  = R->hasUserFloat("sig2HB") ? R->userFloat("sig2HB")  : -1.;
     I.sigAvHB = R->hasUserFloat("sigAvHB") ? R->userFloat("sigAvHB")  : -1.;
     I.tan2thetaHB  = R->hasUserFloat("tan2thetaHB") ? R->userFloat("tan2thetaHB")  : -99999999.;
+    I.ptDHB  = R->hasUserFloat("ptDHB") ? R->userFloat("ptDHB")  : -1.;
+
+    I.sig1PF  = R->hasUserFloat("sig1PF") ? R->userFloat("sig1PF")  : -1.;
+    I.sig2PF  = R->hasUserFloat("sig2PF") ? R->userFloat("sig2PF")  : -1.;
+    I.sigAvPF = R->hasUserFloat("sigAvPF") ? R->userFloat("sigAvPF")  : -1.;
+    I.tan2thetaPF  = R->hasUserFloat("tan2thetaPF") ? R->userFloat("tan2thetaPF")  : -99999999.;
+    I.ptDPF  = R->hasUserFloat("ptDPF") ? R->userFloat("ptDPF")  : -1.;
 
     //track, new implementation
     I.nConstituents = R->hasUserInt("nConstituents") ? R->userInt("nConstituents") : -1;
@@ -1835,6 +1859,13 @@ void ObjectsFormat::FillCaloGenPType(GenPType& I, const reco::GenParticle* R, bo
     I.vx          = R->vx();
     I.vy          = R->vy();
     I.vz          = R->vz();
+    I.px          = R->px();
+    I.py          = R->py();
+    I.pz          = R->pz();
+    I.cos2D       = ( R->vx()*R->px() + R->vy()*R->py() )/( R->pt() * sqrt( pow(R->vx(),2) + pow(R->vy(),2) )  );
+    I.cos3D       = ( R->vx()*R->px() + R->vy()*R->py() + R->vz()*R->pz() )/( R->p() * sqrt( pow(R->vx(),2) + pow(R->vy(),2) + pow(R->vz(),2) )  );
+    I.cos2Dmother = ( R->mother()->px()*R->px() + R->mother()->py()*R->py() )/( R->pt() * R->mother()->pt() );
+    I.cos3Dmother = ( R->mother()->px()*R->px() + R->mother()->py()*R->py() + R->mother()->pz()*R->pz() )/( R->p() * R->mother()->p() );
     I.travelTime  = R->numberOfDaughters()>1 ? sqrt( pow(R->daughter(0)->vx()-R->vx(),2)+ pow(R->daughter(0)->vy()-R->vy(),2) + pow(R->daughter(0)->vz()-R->vz(),2) )/30*sqrt(pow(R->px(),2) + pow(R->py(),2) + pow(R->pz(),2))/R->energy(): -1.;
     I.travelRadius = R->numberOfDaughters()>1 ? sqrt( pow(R->daughter(0)->vx(),2)+ pow(R->daughter(0)->vy(),2) ) : -1000.;
     I.travelX = R->numberOfDaughters()>1 ? R->daughter(0)->vx() : -10000.;
@@ -2018,9 +2049,9 @@ void ObjectsFormat::FillPFCandidateType(PFCandidateType& I, const pat::PackedCan
   I.px              = C->px();
   I.py              = C->py();
   I.pz              = C->pz();
-  I.dxy             = C->dxy();
+  I.dxy             = C->hasTrackDetails() ? C->dxy() : -9999.;//C->dxy();
   I.dxyError        = C->hasTrackDetails() ? C->dxyError() : -99.;
-  I.dz              = C->dzAssociatedPV();
+  I.dz              = C->hasTrackDetails() ? C->dz() : -9999.;//C->dzAssociatedPV();
   I.dzError         = C->hasTrackDetails() ? C->dzError() : -99.;
   I.nHits           = C->hasTrackDetails() ? C->numberOfHits() : -1;
   I.nPixelHits      = C->hasTrackDetails() ? C->numberOfPixelHits() : -1;
