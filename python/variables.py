@@ -2688,7 +2688,7 @@ var_template = {
       "title" : "E_{T}^{miss} (GeV)",
       "nbins" : 50,
       "min" : 100,
-      "max" : 600,
+      "max" : 1000,
       "log" : True,
     },
     "MEt.sign": {

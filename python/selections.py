@@ -39,6 +39,7 @@ selection["METPreSel120"] = selection["PFMETNoMuTrigger"] + " && " + selection["
 selection["METPreSelSUSYAOD"] = selection["PFMETNoMuTriggerAOD"] + " && " + selection["VetoLeptons"] + " && HT>200 && MEt.pt>200"
 
 
+selection["PreselSkimJulia"] = "isMC"# && EventNumber%2!=0"
 selection["PreselSkimAK4"] = "MEt.pt>200 && nCHSJets>=1"# && EventNumber%2!=0"
 selection["PreselSkimAK4Match"] = "MEt.pt>200 && nCHSJets>=1 && Jets[0].isGenMatchedCaloCorrLLPAccept"# && EventNumber%2!=0"
 selection["PreselSkimAK8"] = "MEt.pt>200 && nCHSFatJets>=1"# && EventNumber%2!=0"
