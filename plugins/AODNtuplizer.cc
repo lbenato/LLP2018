@@ -19,6 +19,7 @@
 
 // system include files
 #include <memory>
+#include <numeric>
 #include <iostream>//compute time
 #include <chrono>//compute time
 #include <ctime>//compute time
@@ -45,6 +46,7 @@
 //Reco Jet classes
 #include "DataFormats/JetReco/interface/PFJet.h"
 #include "DataFormats/JetReco/interface/PFJetCollection.h"
+#include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
 
 //Track classes
 #include "TrackingTools/IPTools/interface/IPTools.h"
@@ -239,7 +241,9 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //std::vector<TrackType> StandAloneMuons;
     //std::vector<TrackType> DisplacedStandAloneMuons;
 
-    std::vector<PFCandidateType> PFCandidates;
+    std::vector<PFCandidateType> PFCandidates;//old, just for debugging
+    std::vector<PFCandidateType> PFCandidatesAK4;
+    std::vector<PFCandidateType> PFCandidatesAK8;
 
     MEtType MEt;
     //RecoMEtType RecoMEt;
@@ -252,7 +256,8 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 
     bool isVerbose, isVerboseTrigger, isSignal, isCalo;
     
-    
+    //pfCands
+    //edm::EDGetTokenT<reco::PFCandidateCollection> PFCandsToken_;
     //new met filters, Matthew
     edm::EDGetTokenT<bool> globalSuperTightHalo2016FilterToken_;
     edm::EDGetTokenT<bool> globalTightHalo2016FilterToken_;
@@ -410,6 +415,7 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     isVerboseTrigger(iConfig.getParameter<bool> ("verboseTrigger")),
     isSignal(iConfig.getParameter<bool> ("signal")),
     isCalo(iConfig.getParameter<bool> ("iscalo")),
+    //PFCandsToken_(consumes<reco::PFCandidateCollection>(iConfig.getParameter<edm::InputTag>("pfCands"))),
     globalSuperTightHalo2016FilterToken_(consumes<bool>(edm::InputTag("globalSuperTightHalo2016Filter"))),
     globalTightHalo2016FilterToken_(consumes<bool>(edm::InputTag("globalTightHalo2016Filter"))),
     BadChargedCandidateFilterToken_(consumes<bool>(edm::InputTag("BadChargedCandidateFilter"))),
@@ -424,12 +430,13 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
 {
 
     // Check writePFCandidate flags
-    int PFCandidateFlags = 0;
-    if (WriteAK4JetPFCandidates) PFCandidateFlags++;
-    if (WriteAK8JetPFCandidates) PFCandidateFlags++;
-    if (WriteAllJetPFCandidates) PFCandidateFlags++;
-    if (WriteAllPFCandidates)    PFCandidateFlags++;
-    if (PFCandidateFlags > 1)   throw cms::Exception("Configuration") << "More than one writePFCandidates flag selected. Please choose one option only!";
+    // No more needed. Want to save both AK4 and AK8 PF candidates
+    //int PFCandidateFlags = 0;
+    //if (WriteAK4JetPFCandidates) PFCandidateFlags++;
+    //if (WriteAK8JetPFCandidates) PFCandidateFlags++;
+    //if (WriteAllJetPFCandidates) PFCandidateFlags++;
+    //if (WriteAllPFCandidates)    PFCandidateFlags++;
+    //if (PFCandidateFlags > 1)   throw cms::Exception("Configuration") << "More than one writePFCandidates flag selected. Please choose one option only!";
 
 
     theCHSJetAnalyzer       = new JetAnalyzer(CHSJetPSet, consumesCollector());
@@ -535,7 +542,7 @@ void
 AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
-  if(isVerbose) std::cout << " Starting analyze..... " << std::endl;
+  //if(isVerbose) std::cout << " Starting analyze..... " << std::endl;
     auto start = std::chrono::system_clock::now();//time!
     using namespace edm;
     using namespace reco;
@@ -626,12 +633,16 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
 
     // Trigger and MET filters
-    if(isVerbose) std::cout << "Trigger and met filters" << std::endl;
+    //if(isVerbose) std::cout << "Trigger and met filters" << std::endl;
     //debug!
     theTriggerAnalyzer->FillTriggerMap(iEvent, TriggerMap, PrescalesTriggerMap, isVerboseTrigger);
     theTriggerAnalyzer->FillMetFiltersMap(iEvent, MetFiltersMap);
     BadPFMuonFlag = theTriggerAnalyzer->GetBadPFMuonFlag(iEvent);
     BadChCandFlag = theTriggerAnalyzer->GetBadChCandFlag(iEvent);
+
+    //pfCands
+    //edm::Handle<reco::PFCandidateCollection> pfCands;
+    //iEvent.getByToken(PFCandsToken_, pfCands);
 
     //new met filters, matthew
     //new handle here
@@ -707,7 +718,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     // Electrons
-    if(isVerbose) std::cout << "Electrons" << std::endl;
+    //if(isVerbose) std::cout << "Electrons" << std::endl;
     std::vector<pat::Electron> ElecVect = theElectronAnalyzer->FillElectronVector(iEvent);
     std::vector<pat::Electron> TightElecVect;
 
@@ -755,7 +766,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // Photons
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-    if(isVerbose) std::cout << "Photons" << std::endl;
+    //if(isVerbose) std::cout << "Photons" << std::endl;
     std::vector<pat::Photon> PhotonVect = thePhotonAnalyzer->FillPhotonVector(iEvent);
     nPhotons = PhotonVect.size();
 
@@ -786,7 +797,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     //if(EventNumber!=44169) return;
-    if(HT<100) return;//Avoid events with low HT//WAIT!!
+    //if(HT<100) return;//Avoid events with low HT//WAIT!!
     if(isCalo && MET.pt()<120) return;//Avoid events with very low MET for calo analysis
     if(isCalo && nMuons>0) return;//Veto leptons and photons!
     if(isCalo && nTaus>0) return;//Veto leptons and photons!
@@ -801,7 +812,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
 
 
-    if(isVerbose) std::cout << "Gen Particles" << std::endl;
+    //if(isVerbose) std::cout << "Gen Particles" << std::endl;
 
     GenVBFquarks.clear();
     GenHiggs.clear();
@@ -1070,7 +1081,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // Pu weight and number of vertices
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-    if(isVerbose) std::cout << "Pile-up" << std::endl;
+    //if(isVerbose) std::cout << "Pile-up" << std::endl;
     PUWeight     = thePileupAnalyzer->GetPUWeight(iEvent);//calculates pileup weights
     PUWeightUp   = thePileupAnalyzer->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
     PUWeightDown = thePileupAnalyzer->GetPUWeightDown(iEvent);//syst uncertainties due to pileup
@@ -1083,7 +1094,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // VBF Jets
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-    if(isVerbose) std::cout << "VBF jets" << std::endl;
+    //if(isVerbose) std::cout << "VBF jets" << std::endl;
+
+    
 
     std::vector<pat::Jet> VBFJetsVect = theVBFJetAnalyzer->FillJetVector(iEvent,iSetup);
     //if(isVerbose) std::cout << "VBF jets vect left empty on purpose" << std::endl;
@@ -1130,7 +1143,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     ////
-    if(isVerbose) std::cout << "VBF jet gen matching" << std::endl;
+    //if(isVerbose) std::cout << "VBF jet gen matching" << std::endl;
     std::vector<pat::Jet> VBFGenMatchedVBFJetsVect;//That is for gluon fusion, mainly
     int VBF_matching_index_VBFJets;
     float VBF_delta_R_VBFJets;
@@ -1187,7 +1200,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // AK4 CHS jets
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-    if(isVerbose) std::cout << "AK4 CHS jets" << std::endl;
+    //if(isVerbose) std::cout << "AK4 CHS jets" << std::endl;
     std::vector<pat::Jet> CHSJetsVect = theCHSJetAnalyzer->FillJetVector(iEvent,iSetup);
 
     //Ecal and Hcal rec hits
@@ -1593,7 +1606,18 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         }
       }
       CHSJetsVect.at(j).addUserInt("nTrackConstituents",nTrackConstituents);
+
+      //Cross-check with PFCandidates
+      //This gives exceptions:  "PFJet constituent is not of PFCandidate type"
+      //std::cout<< "AK4 jet n. " << j << " has these const: " <<  CHSJetsVect.at(j).getPFConstituents().size() << std::endl;
+      //for (uint l=0; l < CHSJetsVect.at(j).getPFConstituents().size(); l++)
+      //{
+      //  std::cout<< "const. n. " << l << " pt: " << CHSJetsVect.at(j).getPFConstituents()[l]->pt() << std::endl; 
+      //}
+
     }
+
+
 
 
     //------------------------------------------------------------------------------------------
@@ -1825,7 +1849,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // AK8 CHS jets
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-    if(isVerbose) std::cout << "AK8 CHS jets" << std::endl;
+    //if(isVerbose) std::cout << "AK8 CHS jets" << std::endl;
     std::string SoftdropPuppiMassString(CHSFatJetPSet.getParameter<std::string>("softdropPuppiMassString"));
     //std::cout << "Here filling AK8, calling FillJetVector method " << std::endl;
     //std::cout << "softdrop mass string: " << SoftdropPuppiMassString << std::endl;
@@ -1839,23 +1863,173 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       {
 	//std::cout << "Check tag info of fat jet n. " << a << std::endl;
 	//std::cout << "R param: " << CHSFatJetsVect.at(a).userFloat("Rparameter") << std::endl;
-	if(CHSFatJetsVect.at(a).tagInfoLabels().size() > 0 and CHSFatJetsVect.at(a).hasTagInfo("pfSecondaryVertex")) std::cout << " nselected tracks " << CHSFatJetsVect.at(a).tagInfoCandSecondaryVertex("pfSecondaryVertex")->nSelectedTracks() << std::endl;
+	//if(CHSFatJetsVect.at(a).tagInfoLabels().size() > 0 and CHSFatJetsVect.at(a).hasTagInfo("pfSecondaryVertex")) std::cout << " nselected tracks " << CHSFatJetsVect.at(a).tagInfoCandSecondaryVertex("pfSecondaryVertex")->nSelectedTracks() << std::endl;
 	CHSFatJetsVect.at(a).addUserFloat( "dPhi_met",reco::deltaPhi(CHSFatJetsVect.at(a).phi(),MET.phi()) );
       }
 
     //number of constituents
     for(unsigned int j = 0; j < CHSFatJetsVect.size(); j++){
+      //std::cout << "AK8 Jet n. " << j <<std::endl;//debug
       int nTrackConstituentsAK8 = 0;
       //per jet tag: number of jet constituents and number of tracks
-      std::vector<edm::Ptr<reco::Candidate>> JetConstituentAK8Vect = CHSFatJetsVect[j].getJetConstituents();
+      std::vector<edm::Ptr<reco::PFCandidate>> JetConstituentAK8Vect = CHSFatJetsVect[j].getPFConstituents();
+      //std::vector<edm::Ptr<reco::Candidate>> JetConstituentAK8Vect = CHSFatJetsVect[j].getJetConstituents();
       CHSFatJetsVect.at(j).addUserInt("nConstituents",JetConstituentAK8Vect.size());
+
+      std::vector<double> PF_eta_AK8;
+      std::vector<double> PF_pt_AK8;
+      std::vector<double> PF_pt_squared_AK8;
+      std::vector<double> PF_phi_AK8;
+      std::pair< std::pair<float,float> ,float> sigPF_AK8;
+
       for(unsigned int k = 0; k < JetConstituentAK8Vect.size(); k++){
+	//std::cout << "const [" << k << "] pt: " << JetConstituentAK8Vect[k]->pt() << " , eta: " << JetConstituentAK8Vect[k]->eta()  << " , phi: " << JetConstituentAK8Vect[k]->phi() <<std::endl;//debug
+
 
         if(JetConstituentAK8Vect[k]->charge()!=0){
           nTrackConstituentsAK8++;
         }
-      }
+
+	if(JetConstituentAK8Vect[k]->pt()>1)
+	  {
+	    //std::cout << " cand " << k << std::endl;
+	    //std::cout << "charge " << JetConstituentAK8Vect[k]->charge() << std::endl;
+	    //std::cout << "vx pf cand " << JetConstituentAK8Vect[k]->vx() << std::endl;
+	    //if(JetConstituentAK8Vect[k]->charge()) std::cout << "vx track " << JetConstituentAK8Vect[k]->trackRef()->vx() << std::endl;
+	    ////std::cout << "dxy pf cand " << JetConstituentAK8Vect[k]->dxy()  << std::endl;
+	    //if(JetConstituentAK8Vect[k]->charge())std::cout << "dxy track "  << JetConstituentAK8Vect[k]->trackRef()->dxy()  << std::endl;
+	    //std::cout << "dxy error pf cand " << JetConstituentAK8Vect[k]->dxyError()  << std::endl;
+	    //if(JetConstituentAK8Vect[k]->charge())std::cout << "dxy error track "  << JetConstituentAK8Vect[k]->trackRef()->dxyError()  << std::endl;
+	    
+	    PFCandidateType CandStruct;
+	    CandStruct.pt              = JetConstituentAK8Vect[k]->pt();
+	    CandStruct.eta             = JetConstituentAK8Vect[k]->eta();
+	    CandStruct.phi             = JetConstituentAK8Vect[k]->phi();
+	    CandStruct.energy          = JetConstituentAK8Vect[k]->energy();
+	    CandStruct.mass            = JetConstituentAK8Vect[k]->mass();
+	    CandStruct.isTrack         = JetConstituentAK8Vect[k]->charge() ? true : false;
+	    //nope//CandStruct.jetIndex        = -1;
+	    CandStruct.fatJetIndex     = j;
+	    //nope//CandStruct.pvIndex         = vtxIdx;
+	    //nope//CandStruct.hasTrackDetails = JetConstituentAK8Vect[k]->hasTrackDetails();
+	    CandStruct.trackHighPurity = JetConstituentAK8Vect[k]->trackRef().isNonnull() && JetConstituentAK8Vect[k]->trackRef()->highPurity==2 ? true : false;
+	    CandStruct.px              = JetConstituentAK8Vect[k]->px();
+	    CandStruct.py              = JetConstituentAK8Vect[k]->py();
+	    CandStruct.pz              = JetConstituentAK8Vect[k]->pz();
+	    CandStruct.dxy             = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->dxy() : -9999.;//making it consistent with method for AK4
+	    CandStruct.dxyError        = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->dxyError() : -99.;
+	    CandStruct.dz             = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->dz() : -9999.;//making it consistent with method for AK4
+	    CandStruct.dzError        = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->dzError() : -99.;
+	    CandStruct.nHits           = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->hitPattern().numberOfValidTrackerHits() : -1;
+	    CandStruct.nPixelHits      = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->hitPattern().numberOfValidPixelHits() : -1;
+	    CandStruct.lostInnerHits   = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->numberOfLostHits() : -1;
+	    CandStruct.charge          = JetConstituentAK8Vect[k]->charge();
+	    CandStruct.POCA_x          = JetConstituentAK8Vect[k]->vx();
+	    CandStruct.POCA_y          = JetConstituentAK8Vect[k]->vy();
+	    CandStruct.POCA_z          = JetConstituentAK8Vect[k]->vz();
+	    //CandStruct.POCA_phi        = JetConstituentAK8Vect[k]->phiAtVtx();
+	    CandStruct.pdgId           = JetConstituentAK8Vect[k]->pdgId();
+	    CandStruct.ptError         = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->ptError() : -1.;
+	    CandStruct.etaError        = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->etaError() : -1.;
+	    CandStruct.phiError        = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->phiError() : -1.;
+	    CandStruct.theta           = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->theta() : -9.;
+	    CandStruct.thetaError      = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->thetaError() : -1.;
+	    CandStruct.chi2            = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->chi2() : -1.;
+	    CandStruct.ndof            = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->ndof() : -1;
+	    CandStruct.normalizedChi2  = JetConstituentAK8Vect[k]->trackRef().isNonnull() ? JetConstituentAK8Vect[k]->trackRef()->normalizedChi2() : -1.;
+	    CandStruct.time = JetConstituentAK8Vect[k]->time();
+	    CandStruct.timeError = JetConstituentAK8Vect[k]->timeError();
+	    CandStruct.isTimeValid = JetConstituentAK8Vect[k]->isTimeValid();
+	    CandStruct.ecalEnergy = JetConstituentAK8Vect[k]->ecalEnergy();
+	    CandStruct.hcalEnergy = JetConstituentAK8Vect[k]->hcalEnergy();
+	    CandStruct.hcalDepth1EnergyFraction = JetConstituentAK8Vect[k]->hcalDepthEnergyFraction(1);
+	    CandStruct.hcalDepth2EnergyFraction = JetConstituentAK8Vect[k]->hcalDepthEnergyFraction(2);
+	    CandStruct.hcalDepth3EnergyFraction = JetConstituentAK8Vect[k]->hcalDepthEnergyFraction(3);
+	    CandStruct.hcalDepth4EnergyFraction = JetConstituentAK8Vect[k]->hcalDepthEnergyFraction(4);
+	    CandStruct.hcalDepth5EnergyFraction = JetConstituentAK8Vect[k]->hcalDepthEnergyFraction(5);
+	    CandStruct.hcalDepth6EnergyFraction = JetConstituentAK8Vect[k]->hcalDepthEnergyFraction(6);
+	    CandStruct.hcalDepth7EnergyFraction = JetConstituentAK8Vect[k]->hcalDepthEnergyFraction(7);
+	    CandStruct.rawEcalEnergy = JetConstituentAK8Vect[k]->rawEcalEnergy();
+	    CandStruct.rawHcalEnergy = JetConstituentAK8Vect[k]->rawHcalEnergy();
+	    CandStruct.vertexChi2 = JetConstituentAK8Vect[k]->vertexChi2();
+	    CandStruct.vertexNdof = JetConstituentAK8Vect[k]->vertexNdof();
+	    CandStruct.vertexNormalizedChi2 = JetConstituentAK8Vect[k]->vertexNormalizedChi2();
+
+
+	    PFCandidatesAK8.push_back(CandStruct);
+	    PF_eta_AK8.push_back(JetConstituentAK8Vect[k]->eta());
+	    PF_phi_AK8.push_back(JetConstituentAK8Vect[k]->phi());
+	    PF_pt_AK8.push_back(JetConstituentAK8Vect[k]->pt());
+	    PF_pt_squared_AK8.push_back(pow(JetConstituentAK8Vect[k]->pt(),2));
+	  }
+
+      }//loop on AK8 constituents
       CHSFatJetsVect.at(j).addUserInt("nTrackConstituents",nTrackConstituentsAK8);
+
+      //jet shape
+      sigPF_AK8 = theCHSFatJetAnalyzer->JetSecondMoments(PF_pt_AK8, PF_eta_AK8, PF_phi_AK8);
+      //std::cout << "check ak8 sig pf " << sigPF_AK8.first.first << sigPF_AK8.first.second << sigPF_AK8.second << std::endl;
+      //std::cout << "size of PF_pt_squared_AK8 " << PF_pt_squared_AK8.size() << std::endl;
+      //std::cout << "size of PF_eta_AK8 " << PF_eta_AK8.size() << std::endl;
+      //std::cout << "size of PF_phi_AK8 " << PF_phi_AK8.size() << std::endl;
+      //std::cout << "Fat Jet n. " << j << " constituents saved: "  << std::endl;//debug
+      //for(unsigned int a=0; a<PF_pt_AK8.size(); a++) 
+      //{
+      //std::cout << "[" << a << "] pt: " << PF_pt_AK8.at(a) << " , eta: " << PF_eta_AK8.at(a) << " , phi: " << PF_phi_AK8.at(a) << std::endl;
+      //}
+
+      CHSFatJetsVect[j].addUserFloat("sig1PF", sigPF_AK8.first.first>0 ? sigPF_AK8.first.first : -1.);
+      CHSFatJetsVect[j].addUserFloat("sig2PF", sigPF_AK8.first.second>0 ? sigPF_AK8.first.second : -1.);
+      CHSFatJetsVect[j].addUserFloat("sigAvPF", (sigPF_AK8.first.first>0 and sigPF_AK8.first.second>0) ? sqrt( pow(sigPF_AK8.first.first,2) + pow(sigPF_AK8.first.second,2) )  : -1.);
+      CHSFatJetsVect[j].addUserFloat("tan2thetaPF", sigPF_AK8.second);
+      CHSFatJetsVect[j].addUserFloat("ptDPF", accumulate(PF_pt_AK8.begin(),PF_pt_AK8.end(),0) > 0 ? sqrt(accumulate(PF_pt_squared_AK8.begin(),PF_pt_squared_AK8.end(),0)) / accumulate(PF_pt_AK8.begin(),PF_pt_AK8.end(),0) : -1.);
+
+
+      /* To be added: jet shapes!
+      //Loop over PFCandidates for AK8 jet shape
+      
+      for (unsigned int i = 0; i < PFCandidateVectAK8.size(); i++){
+	int jj = j;
+	if (jj == PFAK8JetIndex[i])
+	  {
+	  //jet shapes variables
+	  }
+      }
+
+
+
+      */
+
+
+
+
+
+      //Si's way
+      //Loop on reco::particleFlow to check matching
+      /*
+      for (uint q=0; q< pfCands->size(); q++) 
+	{
+	  //const reco::PFCandidate *p = &(*pfCands)[q];
+	  reco::PFCandidatePtr p_ptr(pfCands,q);
+
+	  for (uint l=0; l < CHSFatJetsVect.at(j).getPFConstituents().size(); l++)
+	    {
+	      //std::cout << "True getPFConstituents pt:  " << CHSFatJetsVect.at(j).getPFConstituents()[l]->pt() << std::endl;
+	      //if (p_ptr == CHSFatJetsVect.at(j).getPFConstituents()[l])
+		//{
+		  //std::cout << "Matched pfCand: " << CHSFatJetsVect.at(j).getPFConstituents()[l]->pt() << std::endl;
+		//}
+	      if (CHSFatJetsVect.at(j).getPFConstituents()[l]->pt()==p_ptr->pt())
+		{
+
+		  std::cout << "same pt: " << p_ptr->pt() << std::endl; 
+		  std::cout<< CHSFatJetsVect.at(j).getPFConstituents()[l]->trackRef()->pt() << std::endl;
+		  std::cout<< CHSFatJetsVect.at(j).getPFConstituents()[l]->trackRef()->hitPattern().numberOfValidTrackerHits() << std::endl;
+		}
+	    }
+
+	}//loop on pfCands
+      */
     }
     
     //Debug ak8 features
@@ -2146,13 +2320,21 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
 
     //if(isVerbose) std::cout << "PF candidates" << std::endl;
-    PFCandidates.clear();
+    //old, just for debugging
+    //PFCandidates.clear();
 
     // PFCandidate variables
     std::vector<pat::PackedCandidate> PFCandidateVect;
     std::vector<int> PFCandidateAK4JetIndex;
-    std::vector<int> PFCandidateAK8JetIndex;
+    //std::vector<int> PFCandidateAK8JetIndex;
     std::vector<int> PFCandidateVtxIndex;
+
+    //simpler
+    std::vector<pat::PackedCandidate> PFCandidateVectAK4;
+    //std::vector<pat::PackedCandidate> PFCandidateVectAK8;
+    std::vector<int> PFAK4JetIndex;
+    //std::vector<int> PFAK8JetIndex;//not very good
+
 
     std::vector<reco::CandSecondaryVertexTagInfo *> bTagInfoVect;
     std::vector<reco::CandIPTagInfo *> bTagIPInfoVect;
@@ -2165,7 +2347,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // Initialize PFCandidate variables: Set indices to -1 (not matched)
     for(unsigned int i = 0; i < PFCandidateVect.size(); i++){
       PFCandidateAK4JetIndex.push_back(-1);
-      PFCandidateAK8JetIndex.push_back(-1);
+      //PFCandidateAK8JetIndex.push_back(-1);
       PFCandidateVtxIndex.push_back(-1);
 
       nPFCandidates++;
@@ -2194,7 +2376,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	std::vector<edm::Ptr<reco::Candidate>> JetConstituentVect = CHSJetsVect[j].getJetConstituents();
 	for(unsigned int k = 0; k < JetConstituentVect.size(); k++){
 	  if (PFCandidateVect[i].p4() == JetConstituentVect[k]->p4()){
-            //std::cout<<"debug zero!!! nothing matches bw jet constituents and pf cand!!!" <<std::endl;
+	    //simpler:
+	    PFCandidateVectAK4.push_back(PFCandidateVect[i]);
+	    PFAK4JetIndex.push_back(j);
 	    PFCandidateAK4JetIndex[i]=j;
 	    nMatchedAK4Jets++;
 	    nPFCandidatesMatchedToAK4Jet++;
@@ -2204,8 +2388,12 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	}
 
       }
+      //std::cout << "size of pf candidates: " << PFCandidateVect.size() << std::endl;
+      //std::cout << "size of AK4 pf candidates: " << PFCandidateVectAK4.size() << std::endl;
+      //std::cout << "nPFCandidatesMatchedToAK4Jet: " << nPFCandidatesMatchedToAK4Jet<< std::endl;
 
-      if (nMatchedAK4Jets > 1) edm::LogWarning("PFCandidate-Jet Matching") << "More than 1 AK4 jet contituent has been matched to PFCandidate";
+      if (nMatchedAK4Jets > 1) edm::LogWarning("PFCandidate-Jet Matching") << "More than 1 AK4 jet constituent has been matched to PFCandidate";
+
 
 
      // PVs
@@ -2223,10 +2411,18 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
 
-    if(WriteAK4JetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAK4Jet; i++) PFCandidates.push_back( PFCandidateType() );
-    //if(WriteAK8JetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAK8Jet; i++) PFCandidates.push_back( PFCandidateType() );
+
+    //Remove duplicates from PFCandidateVectAK8
+    //Dangerous, might mismatch jet indices association, must do it in a loop
+    //auto comp_pf = [] ( const pat::PackedCandidate& lhs, const pat::PackedCandidate& rhs ) {return lhs.pt() ==rhs.pt();};
+    //auto last_pf = std::unique(PFCandidateVectAK8.begin(), PFCandidateVectAK8.end(),comp_pf);
+    //PFCandidateVectAK8.erase(last_pf, PFCandidateVectAK8.end());
+
+    //if(WriteAK4JetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAK4Jet; i++) PFCandidates.push_back( PFCandidateType() );
+    if(WriteAK4JetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAK4Jet; i++) PFCandidatesAK4.push_back( PFCandidateType() );
+    //different//if(WriteAK8JetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAK8Jet; i++) PFCandidatesAK8.push_back( PFCandidateType() );
     //if(WriteAllJetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAnyJet; i++) PFCandidates.push_back( PFCandidateType() );
-    if(WriteAllPFCandidates)    for(unsigned int i = 0; i < PFCandidateVect.size();       i++) PFCandidates.push_back( PFCandidateType() );
+    //if(WriteAllPFCandidates)    for(unsigned int i = 0; i < PFCandidateVect.size();       i++) PFCandidates.push_back( PFCandidateType() );
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -2708,6 +2904,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	if (dzVectAK8.size() % 2 ==0) dzMedianAK8 = ((dzVectAK8[dzVectAK8.size()/2 -1] + dzVectAK8[dzVectAK8.size()/2]) /2);
 	else dzMedianAK8 = dzVectAK8[dzVectAK8.size()/2];
       }
+
+
+
       
       //std::cout << "Out of vertex loop, recalculate alphaMax " << std::endl;
       alphaMaxAK8         = ptAllTracksAK8>0 ? ptPVTracksMaxAK8/ptAllTracksAK8 : -100.;
@@ -2765,6 +2964,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //jet shape
       std::vector<double> PF_eta;
       std::vector<double> PF_pt;
+      std::vector<double> PF_pt_squared;
       std::vector<double> PF_phi;
       std::pair< std::pair<float,float> ,float> sigPF;
 
@@ -2869,6 +3069,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	  PF_eta.push_back(PFCandidateVect[i].eta());
 	  PF_phi.push_back(PFCandidateVect[i].phi());
 	  PF_pt.push_back(PFCandidateVect[i].pt());
+	  PF_pt_squared.push_back(pow(PFCandidateVect[i].pt(),2));
 
           //std::cout << " debugggggggg 1! " << std::endl;
 	  //if (PFCandidateVect[i].charge()){
@@ -2983,10 +3184,13 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       //jet shape
       sigPF = theCHSJetAnalyzer->JetSecondMoments(PF_pt, PF_eta, PF_phi);
+
       CHSJetsVect[j].addUserFloat("sig1PF", sigPF.first.first>0 ? sigPF.first.first : -1.);
       CHSJetsVect[j].addUserFloat("sig2PF", sigPF.first.second>0 ? sigPF.first.second : -1.);
       CHSJetsVect[j].addUserFloat("sigAvPF", (sigPF.first.first>0 and sigPF.first.second>0) ? sqrt( pow(sigPF.first.first,2) + pow(sigPF.first.second,2) )  : -1.);
       CHSJetsVect[j].addUserFloat("tan2thetaPF", sigPF.second);
+      CHSJetsVect[j].addUserFloat("ptDPF", accumulate(PF_pt.begin(),PF_pt.end(),0) > 0 ? sqrt(accumulate(PF_pt_squared.begin(),PF_pt_squared.end(),0)) / accumulate(PF_pt.begin(),PF_pt.end(),0) : -1.);
+
 
       CHSJetsVect[j].addUserFloat("alphaMaxOld", alphaMaxOld);
       CHSJetsVect[j].addUserFloat("sumPtJetOld", sumPtJetOld>0 ? sumPtJetOld : -1.);
@@ -3309,6 +3513,8 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
     //PFCandidates
+    //Unneccessaricily complicated. One loop for AK4 and one for AK8.
+    /*
     if(WriteAK4JetPFCandidates || WriteAK8JetPFCandidates || WriteAllJetPFCandidates || WriteAllPFCandidates) {
       int iAK4JetPFCand = 0;
       int iAK8JetPFCand = 0;
@@ -3331,6 +3537,19 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         }
 	    }
     }
+    */
+
+    if(WriteAK4JetPFCandidates)
+      {
+	for(unsigned int i = 0; i < PFCandidateVectAK4.size(); i++) ObjectsFormat::FillPFCandidateType(PFCandidatesAK4[i], &PFCandidateVectAK4[i], PFAK4JetIndex[i], -1, -1);
+      }
+
+    /* FIXME!
+    if(WriteAK8JetPFCandidates)
+      {
+	for(unsigned int i = 0; i < PFCandidateVectAK8.size(); i++) ObjectsFormat::FillPFCandidateType(PFCandidatesAK8[i], &PFCandidateVectAK8[i], -1, PFAK8JetIndex[i], -1);
+      }
+    */
 
     ////StandAloneMuons
     //for(unsigned int i =0; i< StandAloneMuonsVect.size();i++) ObjectsFormat::FillTrackType(StandAloneMuons[i], &StandAloneMuonsVect[i], GenStandAloneMuonsFlag[i]);
@@ -3343,44 +3562,81 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //Write a summary, in verbose mode
       std::cout << " --- Event n. " << iEvent.id().event() << ", lumi " << iEvent.luminosityBlock() << ", run " << iEvent.id().run() << std::endl;
 
+      //std::cout << "Gen Higgs size:  " << GenHiggsVect.size() << std::endl;
+      //for(unsigned int i = 0; i < GenHiggsVect.size(); i++)
+      //{
+      //std::cout <<  "[" << i  << "]"<< std::endl;
+      //std::cout << "vertex coordinates: (" << GenHiggsVect.at(i).vx() << " , " << GenHiggsVect.at(i).vy() << " , " << GenHiggsVect.at(i).vz() << ")" << std::endl;
+      //std::cout << "momentum: (" << GenHiggsVect.at(i).px() << " , " << GenHiggsVect.at(i).py() << " , " << GenHiggsVect.at(i).pz() << ")" << std::endl;
+      //}
+
+      //std::cout << "Gen Long Lived size:  " << GenLongLivedVect.size() << std::endl;
+      //for(unsigned int i = 0; i < GenLongLivedVect.size(); i++)
+      //{
+      //std::cout <<  "[" << i  << "]"<< std::endl;
+      //std::cout << "vertex coordinates: (" << GenLongLivedVect.at(i).vx() << " , " << GenLongLivedVect.at(i).vy() << " , " << GenLongLivedVect.at(i).vz() << ")" << std::endl;
+      //std::cout << "momentum: (" << GenLongLivedVect.at(i).px() << " , " << GenLongLivedVect.at(i).py() << " , " << GenLongLivedVect.at(i).pz() << ")" << std::endl;
+      //}
+
+      //std::cout << "Gen b quarks size:  " << GenBquarksVect.size() << std::endl;
+      //for(unsigned int i = 0; i < GenBquarksVect.size(); i++)
+      //{
+      //std::cout <<  "[" << i  << "]"<< std::endl;
+      //std::cout << "vertex coordinates: (" << GenBquarksVect.at(i).vx() << " , " << GenBquarksVect.at(i).vy() << " , " << GenBquarksVect.at(i).vz() << ")" << std::endl;
+      //std::cout << "momentum: (" << GenBquarksVect.at(i).px() << " , " << GenBquarksVect.at(i).py() << " , " << GenBquarksVect.at(i).pz() << ")" << std::endl;
+      //std::cout << "2D cos(vertex-momentum):" << (GenBquarksVect.at(i).px()*GenBquarksVect.at(i).vx() + GenBquarksVect.at(i).py()*GenBquarksVect.at(i).vy())/(GenBquarksVect.at(i).pt()* sqrt(GenBquarksVect.at(i).vx()*GenBquarksVect.at(i).vx() + GenBquarksVect.at(i).vy()*GenBquarksVect.at(i).vy()) ) << std::endl;
+      //std::cout << "3D cos(vertex-momentum):" << (GenBquarksVect.at(i).px()*GenBquarksVect.at(i).vx() + GenBquarksVect.at(i).py()*GenBquarksVect.at(i).vy() + GenBquarksVect.at(i).pz()*GenBquarksVect.at(i).vz()  )/(GenBquarksVect.at(i).p()* sqrt(GenBquarksVect.at(i).vx()*GenBquarksVect.at(i).vx() + GenBquarksVect.at(i).vy()*GenBquarksVect.at(i).vy() + GenBquarksVect.at(i).vz()*GenBquarksVect.at(i).vz()) ) << std::endl;
+      //std::cout << "~~~" << std::endl;
+      //std::cout << "2D cos(angle w.r.t. Higgs [0]): " << (GenBquarksVect.at(i).px()*GenHiggsVect.at(0).px() + GenBquarksVect.at(i).py()*GenHiggsVect.at(0).py())/(GenBquarksVect.at(i).pt()*GenHiggsVect.at(0).pt())  << std::endl;
+      //std::cout << "2D cos(angle w.r.t. Higgs [1]): " << (GenBquarksVect.at(i).px()*GenHiggsVect.at(1).px() + GenBquarksVect.at(i).py()*GenHiggsVect.at(1).py())/(GenBquarksVect.at(i).pt()*GenHiggsVect.at(1).pt())  << std::endl;
+      //std::cout << "DR w.r.t. Higgs [0]): " << reco::deltaR(GenBquarksVect.at(i).eta(),GenBquarksVect.at(i).phi(),GenHiggsVect.at(0).eta(),GenHiggsVect.at(0).phi())  << std::endl;
+      //std::cout << "DR w.r.t. Higgs [1]): " << reco::deltaR(GenBquarksVect.at(i).eta(),GenBquarksVect.at(i).phi(),GenHiggsVect.at(1).eta(),GenHiggsVect.at(1).phi())  << std::endl;
+      ////std::cout << "~~~" << std::endl;
+      ////std::cout << "2D cos(angle w.r.t. LongLived [0]): " << (GenBquarksVect.at(i).px()*GenLongLivedVect.at(0).px() + GenBquarksVect.at(i).py()*GenLongLivedVect.at(0).py())/(GenBquarksVect.at(i).pt()*GenLongLivedVect.at(0).pt())  << std::endl;
+      ////std::cout << "2D cos(angle w.r.t. LongLived [1]): " << (GenBquarksVect.at(i).px()*GenLongLivedVect.at(1).px() + GenBquarksVect.at(i).py()*GenLongLivedVect.at(1).py())/(GenBquarksVect.at(i).pt()*GenLongLivedVect.at(1).pt())  << std::endl;
+      ////std::cout << "DR w.r.t. LongLived [0]): " << reco::deltaR(GenBquarksVect.at(i).eta(),GenBquarksVect.at(i).phi(),GenLongLivedVect.at(0).eta(),GenLongLivedVect.at(0).phi())  << std::endl;
+      ////std::cout << "DR w.r.t. LongLived [1]): " << reco::deltaR(GenBquarksVect.at(i).eta(),GenBquarksVect.at(i).phi(),GenLongLivedVect.at(1).eta(),GenLongLivedVect.at(1).phi())  << std::endl;
+
+      //}
+
       std::cout << "number of CHS AK4 jets:  " << CHSJetsVect.size() << std::endl;
-      for(unsigned int i = 0; i < CHSJetsVect.size(); i++) std::cout << "  CHS AK4 jet  [" << i << "]\tpt: " << CHSJetsVect[i].pt() << "\teta: " << CHSJetsVect[i].eta() << "\tphi: " << CHSJetsVect[i].phi() << "\tmass: " << CHSJetsVect[i].mass() << "\tnTrackConstituents: " << CHSJetsVect[i].chargedMultiplicity() << std::endl;
+      for(unsigned int i = 0; i < CHSJetsVect.size(); i++) std::cout << "  CHS AK4 jet  [" << i << "]\tpt: " << CHSJetsVect[i].pt() << "\teta: " << CHSJetsVect[i].eta() << "\tphi: " << CHSJetsVect[i].phi() << "\tmass: " << CHSJetsVect[i].mass() << "\tcHadEFrac: " << CHSJetsVect[i].userFloat("cHadEFrac") << std::endl;
 
-      //std::cout << "VBF jets pair:  " << VBFPairJetsVect.size() << std::endl;
-      //if(isVBF) std::cout << "VBF conditions satisfied" << std::endl;
-      //for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) std::cout << "  VBF jet  [" << i << "]\tpt: " << VBFPairJetsVect[i].pt() << "\teta: " << VBFPairJetsVect[i].eta() << "\tphi: " << VBFPairJetsVect[i].phi() << "\tmass: " << VBFPairJetsVect[i].mass() << std::endl;
+      ////std::cout << "VBF jets pair:  " << VBFPairJetsVect.size() << std::endl;
+      ////if(isVBF) std::cout << "VBF conditions satisfied" << std::endl;
+      ////for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) std::cout << "  VBF jet  [" << i << "]\tpt: " << VBFPairJetsVect[i].pt() << "\teta: " << VBFPairJetsVect[i].eta() << "\tphi: " << VBFPairJetsVect[i].phi() << "\tmass: " << VBFPairJetsVect[i].mass() << std::endl;
 
-      std::cout << "number of Gen B quarks:  " << GenBquarksVect.size() << std::endl;
-      for(unsigned int i = 0; i < GenBquarksVect.size(); i++) {std::cout << "  Gen B quark  [" << i << "]\tpt: " << GenBquarksVect[i].pt() << "\teta: " << GenBquarksVect[i].eta() << "\tphi: " << GenBquarksVect[i].phi() << "\tradius (in cm): " << ( GenBquarksVect[i].mother() ? sqrt(pow(GenBquarksVect[i].vx() - GenBquarksVect[i].mother()->vx(),2) + pow(GenBquarksVect[i].vy() - GenBquarksVect[i].mother()->vy(),2) + pow(GenBquarksVect[i].vz() - GenBquarksVect[i].mother()->vz(),2)) : -1000. ) << "\tradius 2D (in cm): " << ( GenBquarksVect[i].mother() ? sqrt(pow(GenBquarksVect[i].vx() - GenBquarksVect[i].mother()->vx(),2) + pow(GenBquarksVect[i].vy() - GenBquarksVect[i].mother()->vy(),2)) : -1000. ) << std::endl;}
+      //std::cout << "number of Gen B quarks:  " << GenBquarksVect.size() << std::endl;
+      //for(unsigned int i = 0; i < GenBquarksVect.size(); i++) {std::cout << "  Gen B quark  [" << i << "]\tpt: " << GenBquarksVect[i].pt() << "\teta: " << GenBquarksVect[i].eta() << "\tphi: " << GenBquarksVect[i].phi() << "\tradius (in cm): " << ( GenBquarksVect[i].mother() ? sqrt(pow(GenBquarksVect[i].vx() - GenBquarksVect[i].mother()->vx(),2) + pow(GenBquarksVect[i].vy() - GenBquarksVect[i].mother()->vy(),2) + pow(GenBquarksVect[i].vz() - GenBquarksVect[i].mother()->vz(),2)) : -1000. ) << "\tradius 2D (in cm): " << ( GenBquarksVect[i].mother() ? sqrt(pow(GenBquarksVect[i].vx() - GenBquarksVect[i].mother()->vx(),2) + pow(GenBquarksVect[i].vy() - GenBquarksVect[i].mother()->vy(),2)) : -1000. ) << std::endl;}
 
       std::cout << "Missing ET:  " << std::endl;
       std::cout << "  pt: " << MET.pt() << "\tphi: " << MET.phi() << std::endl;
 
-      std::cout << "number of CHS AK4 jets matched to b quarks:  " << MatchedCHSJetsVect.size() << std::endl;
-      for(unsigned int i = 0; i < MatchedCHSJetsVect.size(); i++) std::cout << "  Matched CHS AK4 jet  [" << i << "]\tpt: " << MatchedCHSJetsVect[i].pt() << "\teta: " << MatchedCHSJetsVect[i].eta() << "\tphi: " << MatchedCHSJetsVect[i].phi() << "\tmass: " << MatchedCHSJetsVect[i].mass() << "\tnTrackConstituents: " << MatchedCHSJetsVect[i].chargedMultiplicity() << std::endl;
+      //std::cout << "number of CHS AK4 jets matched to b quarks:  " << MatchedCHSJetsVect.size() << std::endl;
+      //for(unsigned int i = 0; i < MatchedCHSJetsVect.size(); i++) std::cout << "  Matched CHS AK4 jet  [" << i << "]\tpt: " << MatchedCHSJetsVect[i].pt() << "\teta: " << MatchedCHSJetsVect[i].eta() << "\tphi: " << MatchedCHSJetsVect[i].phi() << "\tmass: " << MatchedCHSJetsVect[i].mass() << "\tnTrackConstituents: " << MatchedCHSJetsVect[i].chargedMultiplicity() << std::endl;
 
-      std::cout << "number of Calo AK4 jets:  " << CaloJetsVect.size() << std::endl;
-      for(unsigned int i = 0; i < CaloJetsVect.size(); i++) std::cout << "  Calo AK4 jet  [" << i << "]\tpt: " << CaloJetsVect[i].pt() << "\teta: " << CaloJetsVect[i].eta() << "\tphi: " << CaloJetsVect[i].phi() << "\tmass: " << CaloJetsVect[i].mass() << "\temEnergyFraction " << CaloJetsVect[i].emEnergyFraction() << std::endl;
+      //std::cout << "number of Calo AK4 jets:  " << CaloJetsVect.size() << std::endl;
+      //for(unsigned int i = 0; i < CaloJetsVect.size(); i++) std::cout << "  Calo AK4 jet  [" << i << "]\tpt: " << CaloJetsVect[i].pt() << "\teta: " << CaloJetsVect[i].eta() << "\tphi: " << CaloJetsVect[i].phi() << "\tmass: " << CaloJetsVect[i].mass() << "\temEnergyFraction " << CaloJetsVect[i].emEnergyFraction() << std::endl;
 
-      std::cout << "number of Matched Calo AK4 jets:  " << MatchedCaloJetsVect.size() << std::endl;
-      for(unsigned int i = 0; i < MatchedCaloJetsVect.size(); i++) std::cout << "  Calo AK4 jet  [" << i << "]\tpt: " << MatchedCaloJetsVect[i].pt() << "\teta: " << MatchedCaloJetsVect[i].eta() << "\tphi: " << MatchedCaloJetsVect[i].phi() << "\tmass: " << MatchedCaloJetsVect[i].mass() << "\temEnergyFraction " << MatchedCaloJetsVect[i].emEnergyFraction() << std::endl;
+      //std::cout << "number of Matched Calo AK4 jets:  " << MatchedCaloJetsVect.size() << std::endl;
+      //for(unsigned int i = 0; i < MatchedCaloJetsVect.size(); i++) std::cout << "  Calo AK4 jet  [" << i << "]\tpt: " << MatchedCaloJetsVect[i].pt() << "\teta: " << MatchedCaloJetsVect[i].eta() << "\tphi: " << MatchedCaloJetsVect[i].phi() << "\tmass: " << MatchedCaloJetsVect[i].mass() << "\temEnergyFraction " << MatchedCaloJetsVect[i].emEnergyFraction() << std::endl;
 
-      //std::cout << "number of StandAloneMuons: " << StandAloneMuonsVect.size() << std::endl;
-      //for(unsigned int i = 0; i < StandAloneMuonsVect.size(); i++) std::cout << "  StandAloneMuons  [" << i << "]\tpt: " << StandAloneMuonsVect[i].pt() << "\teta: " << StandAloneMuonsVect[i].eta() << "\tphi: " << StandAloneMuonsVect[i].phi() << std::endl;
+      ////std::cout << "number of StandAloneMuons: " << StandAloneMuonsVect.size() << std::endl;
+      ////for(unsigned int i = 0; i < StandAloneMuonsVect.size(); i++) std::cout << "  StandAloneMuons  [" << i << "]\tpt: " << StandAloneMuonsVect[i].pt() << "\teta: " << StandAloneMuonsVect[i].eta() << "\tphi: " << StandAloneMuonsVect[i].phi() << std::endl;
 
-      //std::cout << "number of DisplacedStandAloneMuons: " << DisplacedStandAloneMuonsVect.size() << std::endl;
-      //for(unsigned int i = 0; i < DisplacedStandAloneMuonsVect.size(); i++) std::cout << "  DisplacedStandAloneMuons  [" << i << "]\tpt: " << DisplacedStandAloneMuonsVect[i].pt() << "\teta: " << DisplacedStandAloneMuonsVect[i].eta() << "\tphi: " << DisplacedStandAloneMuonsVect[i].phi() << std::endl;
+      ////std::cout << "number of DisplacedStandAloneMuons: " << DisplacedStandAloneMuonsVect.size() << std::endl;
+      ////for(unsigned int i = 0; i < DisplacedStandAloneMuonsVect.size(); i++) std::cout << "  DisplacedStandAloneMuons  [" << i << "]\tpt: " << DisplacedStandAloneMuonsVect[i].pt() << "\teta: " << DisplacedStandAloneMuonsVect[i].eta() << "\tphi: " << DisplacedStandAloneMuonsVect[i].phi() << std::endl;
 
-      //std::cout << "number of DT segments:  " << DTSegmentVect.size() << std::endl;
-      //std::cout << "number of DT global position:  " << DTSegment_Global_points.size() << std::endl;
-      //for(unsigned int i = 0; i < DTSegment_Global_points.size(); i++) std::cout << "  Global position of DT segment [" << i << "]\teta: " << DTSegment_Global_points[i].eta() << "\tphi: " << DTSegment_Global_points[i].phi() << "\tsize of rech hits: "<< DTSegmentVect.at(i).recHits().size() << std::endl;
+      ////std::cout << "number of DT segments:  " << DTSegmentVect.size() << std::endl;
+      ////std::cout << "number of DT global position:  " << DTSegment_Global_points.size() << std::endl;
+      ////for(unsigned int i = 0; i < DTSegment_Global_points.size(); i++) std::cout << "  Global position of DT segment [" << i << "]\teta: " << DTSegment_Global_points[i].eta() << "\tphi: " << DTSegment_Global_points[i].phi() << "\tsize of rech hits: "<< DTSegmentVect.at(i).recHits().size() << std::endl;
 
 
-      //std::cout << "number of CSC segments:  " << CSCSegmentVect.size() << std::endl;
-      //std::cout << "number of CSC global position:  " << CSCSegment_Global_points.size() << std::endl;
-      //for(unsigned int i = 0; i < CSCSegment_Global_points.size(); i++) std::cout << "  Global position of CSC segment [" << i << "]\teta: " << CSCSegment_Global_points[i].eta() << "\tphi: " << CSCSegment_Global_points[i].phi() << std::endl;
-      //std::cout << "number of CHS AK8 jets:  " << CHSFatJetsVect.size() << std::endl;
-      //for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) std::cout << "  AK8 jet  [" << i << "]\tpt: " << CHSFatJetsVect[i].pt() << "\teta: " << CHSFatJetsVect[i].eta() << "\tphi: " << CHSFatJetsVect[i].phi() << "\tmass: " << CHSFatJetsVect[i].mass() << std::endl;
+      ////std::cout << "number of CSC segments:  " << CSCSegmentVect.size() << std::endl;
+      ////std::cout << "number of CSC global position:  " << CSCSegment_Global_points.size() << std::endl;
+      ////for(unsigned int i = 0; i < CSCSegment_Global_points.size(); i++) std::cout << "  Global position of CSC segment [" << i << "]\teta: " << CSCSegment_Global_points[i].eta() << "\tphi: " << CSCSegment_Global_points[i].phi() << std::endl;
+      ////std::cout << "number of CHS AK8 jets:  " << CHSFatJetsVect.size() << std::endl;
+      ////for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) std::cout << "  AK8 jet  [" << i << "]\tpt: " << CHSFatJetsVect[i].pt() << "\teta: " << CHSFatJetsVect[i].eta() << "\tphi: " << CHSFatJetsVect[i].phi() << "\tmass: " << CHSFatJetsVect[i].mass() << std::endl;
     }
 
 
@@ -3399,6 +3655,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     VBFPairJets.clear();
     CHSFatJets.clear();
     ggHJet.clear();
+    PFCandidatesAK4.clear();
+    PFCandidatesAK8.clear();
+
 
     //DTRecSegments4D.clear();
     //CSCSegments.clear();
@@ -3541,7 +3800,9 @@ AODNtuplizer::beginJob()
    //tree -> Branch("ggHJet", &ggHJet);//slim ntuples
    //tree -> Branch("CaloJets", &CaloJets);//slim ntuples
    //tree -> Branch("VBFPair", &VBF.pt, ObjectsFormat::ListCandidateType().c_str());//wai!//slim ntuples
-   if (WriteAK4JetPFCandidates || WriteAK8JetPFCandidates || WriteAllJetPFCandidates || WriteAllPFCandidates) tree -> Branch("PFCandidates", &PFCandidates);
+   //if (WriteAK4JetPFCandidates || WriteAK8JetPFCandidates || WriteAllJetPFCandidates || WriteAllPFCandidates) tree -> Branch("PFCandidates", &PFCandidates);
+   if (WriteAK4JetPFCandidates) tree -> Branch("PFCandidatesAK4", &PFCandidatesAK4);
+   if (WriteAK8JetPFCandidates) tree -> Branch("PFCandidatesAK8", &PFCandidatesAK8);
 
 
 }
