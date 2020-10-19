@@ -124,10 +124,10 @@ nRecHitsEE(-1), timeRecHitsEE(-100.), timeRMSRecHitsEE(-1.), energyRecHitsEE(-1.
 nRecHitsHB(-1), timeRecHitsHB(-100.), timeRMSRecHitsHB(-1.), energyRecHitsHB(-1.), energyErrorRecHitsHB(-1.), xRecHitsHB(-1000.), yRecHitsHB(-1000.), zRecHitsHB(-1000.), radiusRecHitsHB(-1000.),
 nRecHitsHE(-1), timeRecHitsHE(-100.), timeRMSRecHitsHE(-1.), energyRecHitsHE(-1.), energyErrorRecHitsHE(-1.), xRecHitsHE(-1000.), yRecHitsHE(-1000.), zRecHitsHE(-1000.), radiusRecHitsHE(-1000.),
 eFracRecHitsEB(-1.), eFracRecHitsEE(-1.), eFracRecHitsHB(-1.), eFracRecHitsHE(-1.),
-sig1EB(-1.), sig2EB(-1.), sigAvEB(-1.),tan2thetaEB(-99999999.),
-sig1EE(-1.), sig2EE(-1.), sigAvEE(-1.),tan2thetaEE(-99999999.),
-sig1HB(-1.), sig2HB(-1.), sigAvHB(-1.),tan2thetaHB(-99999999.),
-sig1PF(-1.), sig2PF(-1.), sigAvPF(-1.),tan2thetaPF(-99999999.),
+sig1EB(-1.), sig2EB(-1.), sigAvEB(-1.),tan2thetaEB(-99999999.),ptDEB(-1.),
+sig1EE(-1.), sig2EE(-1.), sigAvEE(-1.),tan2thetaEE(-99999999.),ptDEE(-1.),
+sig1HB(-1.), sig2HB(-1.), sigAvHB(-1.),tan2thetaHB(-99999999.),ptDHB(-1.),
+sig1PF(-1.), sig2PF(-1.), sigAvPF(-1.),tan2thetaPF(-99999999.),ptDPF(-1.),
 //LLP calo tagger
 sigprob(-1.),
 //Imperial College tagger
@@ -404,18 +404,22 @@ pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP10
     float sig2EB;
     float sigAvEB;
     float tan2thetaEB;
+    float ptDEB;
     float sig1EE;
     float sig2EE;
     float sigAvEE;
     float tan2thetaEE;
+    float ptDEE;
     float sig1HB;
     float sig2HB;
     float sigAvHB;
     float tan2thetaHB;
+    float ptDHB;
     float sig1PF;
     float sig2PF;
     float sigAvPF;
     float tan2thetaPF;
+    float ptDPF;
 
     float sigprob;
     float pfXWP0p01; 
@@ -472,9 +476,10 @@ nRecHitsEE(-1), timeRecHitsEE(-100.), timeRMSRecHitsEE(-1.), energyRecHitsEE(-1.
 nRecHitsHB(-1), timeRecHitsHB(-100.), timeRMSRecHitsHB(-1.), energyRecHitsHB(-1.), energyErrorRecHitsHB(-1.), xRecHitsHB(-1000.), yRecHitsHB(-1000.), zRecHitsHB(-1000.), radiusRecHitsHB(-1000.),
 nRecHitsHE(-1), timeRecHitsHE(-100.), timeRMSRecHitsHE(-1.), energyRecHitsHE(-1.), energyErrorRecHitsHE(-1.), xRecHitsHE(-1000.), yRecHitsHE(-1000.), zRecHitsHE(-1000.), radiusRecHitsHE(-1000.),
 eFracRecHitsEB(-1.), eFracRecHitsEE(-1.), eFracRecHitsHB(-1.), eFracRecHitsHE(-1.),
-sig1EB(-1.), sig2EB(-1.), sigAvEB(-1.),tan2thetaEB(-99999999.),
-sig1EE(-1.), sig2EE(-1.), sigAvEE(-1.),tan2thetaEE(-99999999.),
-sig1HB(-1.), sig2HB(-1.), sigAvHB(-1.),tan2thetaHB(-99999999.),
+sig1EB(-1.), sig2EB(-1.), sigAvEB(-1.),tan2thetaEB(-99999999.),ptDEB(-1.),
+sig1EE(-1.), sig2EE(-1.), sigAvEE(-1.),tan2thetaEE(-99999999.),ptDEE(-1.),
+sig1HB(-1.), sig2HB(-1.), sigAvHB(-1.),tan2thetaHB(-99999999.),ptDHB(-1.),
+sig1PF(-1.), sig2PF(-1.), sigAvPF(-1.),tan2thetaPF(-99999999.),ptDPF(-1.),
 //track variables, new implementation
 nConstituents (-1), nTrackConstituents (-1), nSelectedTracks(-1),
 ptAllTracks(-1.), ptAllPVTracks(-1.), ptPVTracksMax(-1.), nTracksAll(-1), nTracksPVMax(-1), medianIP2D(-10000.), medianTheta2D(-100.), alphaMax(-100.), betaMax(-100.), gammaMax(-100.), gammaMaxEM(-100.), gammaMaxHadronic(-100.), gammaMaxET(-100.), minDeltaRAllTracks(999.), minDeltaRPVTracks(999.), nPixelHitsMedian(-1.0), nHitsMedian(-1.0), dzMedian(-9999.), dxyMedian(-9999.),
@@ -708,14 +713,22 @@ nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1) {}
     float sig2EB;
     float sigAvEB;
     float tan2thetaEB;
+    float ptDEB;
     float sig1EE;
     float sig2EE;
     float sigAvEE;
     float tan2thetaEE;
+    float ptDEE;
     float sig1HB;
     float sig2HB;
     float sigAvHB;
     float tan2thetaHB;
+    float ptDHB;
+    float sig1PF;
+    float sig2PF;
+    float sigAvPF;
+    float tan2thetaPF;
+    float ptDPF;
     
     int   nConstituents;
     int   nTrackConstituents; 
@@ -864,7 +877,7 @@ struct EventType {
 };
 
 struct GenPType {
-GenPType(): pt(-1.), eta(-9.), rapidity(-99999.), phi(-9.), mass(-1.), energy(-1.), charge(0), pdgId(0), status(0), radius(-1), radius2D(-1), motherid(0), travelTime(-1.), travelRadius(-1000.), travelX(-10000.), travelY(-10000.), travelZ(-10000.), beta(-1.), corrCaloEta(-9.), corrCaloPhi(-9.), isLLPInCaloAcceptance(false), travelRadiusLLP(-1000.), travelXLLP(-10000.), travelYLLP(-10000.), travelZLLP(-10000.), dRdaughters(-1.) {}
+GenPType(): pt(-1.), eta(-9.), rapidity(-99999.), phi(-9.), mass(-1.), energy(-1.), charge(0), pdgId(0), status(0), radius(-1), radius2D(-1), motherid(0), vx(-10000.), vy(-10000.), vz(-10000.), px(-10000.), py(-10000.), pz(-10000.), cos2D(-2.), cos3D(-2.), cos2Dmother(-2.), cos3Dmother(-2.), travelTime(-1.), travelRadius(-1000.), travelX(-10000.), travelY(-10000.), travelZ(-10000.), beta(-1.), corrCaloEta(-9.), corrCaloPhi(-9.), isLLPInCaloAcceptance(false), travelRadiusLLP(-1000.), travelXLLP(-10000.), travelYLLP(-10000.), travelZLLP(-10000.), dRdaughters(-1.) {}
     float pt;
     float eta;
     float rapidity;
@@ -880,6 +893,13 @@ GenPType(): pt(-1.), eta(-9.), rapidity(-99999.), phi(-9.), mass(-1.), energy(-1
     float vx;
     float vy;
     float vz;
+    float px;
+    float py;
+    float pz;
+    float cos2D;
+    float cos3D;
+    float cos2Dmother;
+    float cos3Dmother;
     float travelTime;
     float travelRadius;
     float travelX;
@@ -1079,7 +1099,9 @@ PFCandidateType():
     pdgId(0), isTrack(false), jetIndex (-1), fatJetIndex(-1), pvIndex(-1), hasTrackDetails(false), trackHighPurity(false),
     dxy(-9999.), dz(-9999.), POCA_x(-9999.), POCA_y(-9999.), POCA_z(-9999.), POCA_phi(-9.),
     ptError(-1.), etaError(-1.), phiError(-1.), dxyError(-99.), dzError(-99.), theta(-9.), thetaError(-1.),
-    chi2(-1.), ndof(-1), normalizedChi2(-1.), nHits(-1), nPixelHits(-1), lostInnerHits(-1) {}
+      chi2(-1.), ndof(-1), normalizedChi2(-1.), nHits(-1), nPixelHits(-1), lostInnerHits(-1) ,
+      time(-100.), timeError(-1.), isTimeValid(false), ecalEnergy(-1.), hcalEnergy(-1.), hcalDepth1EnergyFraction(-1.), hcalDepth2EnergyFraction(-1.), hcalDepth3EnergyFraction(-1.), hcalDepth4EnergyFraction(-1.), hcalDepth5EnergyFraction(-1.), hcalDepth6EnergyFraction(-1.), hcalDepth7EnergyFraction(-1.), rawEcalEnergy(-1.), rawHcalEnergy(-1.), vertexChi2(-1.), vertexNdof(-1), vertexNormalizedChi2(-1.)
+{}
     //hcalFraction(-1.), longLived(-1)
     //innerDetId(-1), innerPosition_x(-9999.), innerPosition_y(-9999.), innerPosition_z(-9999.),
     //innerMomentum_x(-9999.), innerMomentum_y(-9999.), innerMomentum_z(-9999.),
@@ -1128,6 +1150,25 @@ PFCandidateType():
     int   nHits;
     int   nPixelHits;
     int   lostInnerHits;
+
+    //New, in recoLLPFCandidate
+    float time;
+    float timeError;
+    bool isTimeValid;
+    float ecalEnergy;
+    float hcalEnergy;
+    float hcalDepth1EnergyFraction;
+    float hcalDepth2EnergyFraction;
+    float hcalDepth3EnergyFraction;
+    float hcalDepth4EnergyFraction;
+    float hcalDepth5EnergyFraction;
+    float hcalDepth6EnergyFraction;
+    float hcalDepth7EnergyFraction;
+    float rawEcalEnergy;
+    float rawHcalEnergy;
+    float vertexChi2;
+    int vertexNdof;
+    float vertexNormalizedChi2;
 
     // Not used:
     //float hcalFraction;
