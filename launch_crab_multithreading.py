@@ -839,8 +839,11 @@ if __name__ == '__main__':
 
         if isData:
             filterString = "RECO"
+            triggerString = "DQM"
         else:
-            if isMINIAOD: filterString = "PAT"
+            if isMINIAOD: 
+                filterString = "PAT"
+                triggerString = "PAT"
             if isAOD: filterString = "RECO"
 
         #Prepare inputstrings for pyCfg
@@ -862,6 +865,7 @@ if __name__ == '__main__':
         string_JERstring = 'PJERstring='+str(JERstring)
         string_jsonName = 'PjsonName='+str(jsonName)
         string_triggerTag = 'PtriggerTag='+str(triggerTag)
+        string_triggerString = 'PtriggerString='+str(triggerString)
         string_filterString = 'PfilterString='+str(filterString)
         string_calo = 'Pcalo=True' if isCalo else 'Pcalo=False'
         string_short = 'Pshort=True' if isShort else 'Pshort=False'
@@ -918,7 +922,7 @@ if __name__ == '__main__':
             if isAOD:
                 config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo,  string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             else:
-                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_short, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_triggerString, string_filterString, string_calo, string_short, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
             # Submit config file
             if options.crabaction=="submit":

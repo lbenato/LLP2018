@@ -120,6 +120,12 @@ options.register(
     "triggerTag parser flag"
 )
 options.register(
+    "PtriggerString", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "triggerString parser flag"
+)
+options.register(
     "PfilterString", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
@@ -524,11 +530,14 @@ if RunLocal:
     # MET filters string
     if isData:
         filterString = "RECO"
+        triggerString = "DQM"
     else:
         filterString = "PAT"
+        triggerString = "PAT"
 else:
     triggerTag = options.PtriggerTag
     filterString = options.PfilterString
+    triggerString = options.PtriggerString
 
 
 # MET filters
@@ -1391,10 +1400,10 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         ),
         metfilters = cms.InputTag('TriggerResults', '', filterString),
         metpaths = cms.vstring('Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter','Flag_badMuons','Flag_duplicateMuons','Flag_noBadMuons') if isReMiniAod else cms.vstring('Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter'),
-        prescales = cms.InputTag('patTrigger','','PAT'),
-        l1Minprescales = cms.InputTag('patTrigger','l1min','PAT'),
-        l1Maxprescales = cms.InputTag('patTrigger','l1max','PAT'),
-        objects = cms.InputTag('selectedPatTrigger' if is2016 else 'slimmedPatTrigger','','PAT'),
+        prescales = cms.InputTag('patTrigger','',triggerString),
+        l1Minprescales = cms.InputTag('patTrigger','l1min',triggerString),
+        l1Maxprescales = cms.InputTag('patTrigger','l1max',triggerString),
+        objects = cms.InputTag('selectedPatTrigger' if is2016 else 'slimmedPatTrigger','',triggerString),
         badPFMuonFilter = cms.InputTag("BadPFMuonFilter"),
         badChCandFilter = cms.InputTag("BadChargedCandidateFilter"),
         l1Gt = cms.InputTag("gtStage2Digis"),
