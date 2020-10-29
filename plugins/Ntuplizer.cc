@@ -1881,6 +1881,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::vector<int> PFCandidateAK8JetIndex;
     std::vector<int> PFCandidateVtxIndex;
 
+    BTagVertices.clear();
+
     std::vector<reco::CandSecondaryVertexTagInfo *> bTagInfoVect;
     std::vector<reco::CandIPTagInfo *> bTagIPInfoVect;
     std::vector<int> indexSVJet;
