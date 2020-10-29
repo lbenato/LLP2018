@@ -219,7 +219,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 
     //edm::EDGetTokenT<reco::JetTagCollection> BTagToken;
 
-    bool isVerbose, isVerboseTrigger, isSignal, isCalo, isShort, isCentralProd;
+    bool isVerbose, isVerboseTrigger, isSignal, isCalo, isShort, isControl, isCentralProd;
     bool isVBF, isggH;
     bool isMC;
     long int EventNumber, LumiNumber, RunNumber, nPV, nSV;

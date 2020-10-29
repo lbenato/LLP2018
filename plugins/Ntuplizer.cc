@@ -88,6 +88,7 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     isSignal(iConfig.getParameter<bool> ("signal")),
     isCalo(iConfig.getParameter<bool> ("iscalo")),
     isShort(iConfig.getParameter<bool> ("isshort")),
+    isControl(iConfig.getParameter<bool> ("iscontrol")),
     isCentralProd(iConfig.getParameter<bool> ("iscentralprod"))
 
 
@@ -515,10 +516,18 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isCalo && nElectrons>0) return;//Veto leptons and photons!
     if(isCalo && nPhotons>0) return;//Veto leptons and photons!
 
-    if(isShort && nMuons>0) return;//Veto leptons and photons!
-    if(isShort && nTaus>0) return;//Veto leptons and photons!
-    if(isShort && nElectrons>0) return;//Veto leptons and photons!
-    if(isShort && nPhotons>0) return;//Veto leptons and photons!
+    if(isShort && not isControl){
+      if (nMuons>0) return;//Veto leptons and photons!
+      if( nTaus>0) return;//Veto leptons and photons!
+      if(nElectrons>0) return;//Veto leptons and photons!
+      if(nPhotons>0) return;//Veto leptons and photons!
+    }
+    if(isShort && isControl){
+      if(nMuons!=1 || nElectrons!=1) return; //Control region for short lifetimes
+      if(nTaus>0) return;//Veto taus!
+      if(nPhotons>0) return;//Veto photons!
+    }
+
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------

@@ -191,7 +191,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(3000) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -211,8 +211,8 @@ if len(options.inputFiles) == 0:
             #'/store/mc/RunIIAutumn18DRPremix/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/3017154C-F483-964E-855B-E06F2590FD6B.root'#2018 MC with muons!  #
             #2016 background
             #'/store/mc/RunIISummer16MiniAODv2/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/E65DC503-55C9-E611-9A11-02163E019C7F.root',
-            '/store/mc/RunIISummer16MiniAODv3/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/270000/FE8AFB84-5DEA-E811-83C4-68CC6EA5BD1A.root',
-            #'/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
+            #'/store/mc/RunIISummer16MiniAODv3/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/270000/FE8AFB84-5DEA-E811-83C4-68CC6EA5BD1A.root',
+            '/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
             #2018 background
             #'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/270000/FFB1D063-1653-9441-BCE5-088A8DB0086D.root'
             #2017 background?
@@ -258,6 +258,7 @@ if RunLocal:
     isCentralProd     = True if ('HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
     isCalo            = False #HERE for calo analyses!!!
     isShort           = True #HERE for short lifetime analyses!!!
+    isControl         = True #HERE for short lifetime control region!!!
     isVBF             = True
     isggH             = False
     isTwinHiggs       = True
@@ -279,6 +280,7 @@ else:
     isCentralProd     = options.PisCentralProd
     isCalo            = options.Pcalo
     isShort           = options.Pshort
+    isControl         = options.Pcontrol
     isVBF             = options.PVBF
     isggH             = options.PggH
     isTwinHiggs       = options.PTwinHiggs
@@ -391,6 +393,19 @@ if isShort:
     print "***************************************"
     print "***************************************"
     print "\n"
+
+if isControl:
+   print "\n"
+   print "***************************************"
+   print "***************************************"
+   print "***************************************"
+   print "\n"
+   print "Running controll region for short lifetimes!"
+   print "\n"
+   print "***************************************"
+   print "***************************************"
+   print "***************************************"
+   print "\n"
 
 if(isTwinHiggs and isCalo):
     pt_AK4 = 5
@@ -1794,6 +1809,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     signal = cms.bool(isSignal),
     iscalo = cms.bool(isCalo),
     isshort = cms.bool(isShort),
+    iscontrol = cms.bool(isControl),
     iscentralprod = cms.bool(isCentralProd),
 
 )
