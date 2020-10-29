@@ -87,6 +87,7 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     isVerboseTrigger(iConfig.getParameter<bool> ("verboseTrigger")),
     isSignal(iConfig.getParameter<bool> ("signal")),
     isCalo(iConfig.getParameter<bool> ("iscalo")),
+    isShort(iConfig.getParameter<bool> ("isshort")),
     isCentralProd(iConfig.getParameter<bool> ("iscentralprod"))
 
 
@@ -514,6 +515,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isCalo && nElectrons>0) return;//Veto leptons and photons!
     if(isCalo && nPhotons>0) return;//Veto leptons and photons!
 
+    if(isShort && nMuons>0) return;//Veto leptons and photons!
+    if(isShort && nTaus>0) return;//Veto leptons and photons!
+    if(isShort && nElectrons>0) return;//Veto leptons and photons!
+    if(isShort && nPhotons>0) return;//Veto leptons and photons!
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
