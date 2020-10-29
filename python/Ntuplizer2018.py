@@ -254,7 +254,7 @@ if RunLocal:
     isShort           = True #HERE for short lifetime analyses!!!
     isVBF             = True
     isggH             = False
-    isTwinHiggs       = False
+    isTwinHiggs       = True
     isHeavyHiggs      = False
     isSUSY            = False
 
