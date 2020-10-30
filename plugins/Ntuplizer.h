@@ -257,7 +257,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //bool isVBF;
     bool isTriggerVBF;
     //Z-W-T CR
-    //bool isZtoMM, isZtoEE, isWtoMN, isWtoEN, isTtoEM;
+    bool isZtoMM, isZtoEE, isWtoMN, isWtoEN, isTtoEM;
     AddFourMomenta addP4;
     //Displaced calo tagging
     long int nLooseCaloTagJets;
