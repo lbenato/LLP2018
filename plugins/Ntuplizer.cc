@@ -516,14 +516,15 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isCalo && nElectrons>0) return;//Veto leptons and photons!
     if(isCalo && nPhotons>0) return;//Veto leptons and photons!
 
-    if(isShort && not isControl){
+    if(isShort && !isControl){
       if (nMuons>0) return;//Veto leptons and photons!
       if( nTaus>0) return;//Veto leptons and photons!
       if(nElectrons>0) return;//Veto leptons and photons!
       if(nPhotons>0) return;//Veto leptons and photons!
     }
     if(isShort && isControl){
-      if(nTightMuons!=1 || nTightElectrons!=1) return; //Control region for short lifetimes
+      //if(nTightMuons!=1 || nTightElectrons!=1) return; //Control region for short lifetimes
+      if(nTightMuons<1 || nTightElectrons<1) return; //Control region for short lifetimes
       //      if(nTaus>0) return;//Veto taus!
       //      if(nPhotons>0) return;//Veto photons!
     }
@@ -686,6 +687,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
      theW.addDaughter(MET);
      addP4.set(theW);
 
+     if (theW.mass()<100.){
+       return;
+     }
          // SF
     if(isMC) {
     	//float LeptonWeightUnc = 0.;
@@ -711,7 +715,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     theW.addDaughter(TightElecVect.at(0));
     theW.addDaughter(MET);
     addP4.set(theW);
-
+    if (theW.mass()<100.){
+      return;
+	 }
     if(isMC) {
     	LeptonWeight    *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(0));
     	LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
@@ -2560,11 +2566,11 @@ Ntuplizer::beginJob()
     tree -> Branch("isVBF" , &isVBF, "isVBF/O");
     tree -> Branch("isggH" , &isggH, "isggH/O");
     tree -> Branch("isTriggerVBF" , &isTriggerVBF, "isTriggerVBF/O");
-    //tree -> Branch("isZtoEE" , &isZtoEE, "isZtoEE/O");
-    //tree -> Branch("isZtoMM" , &isZtoMM, "isZtoMM/O");
-    //tree -> Branch("isWtoEN" , &isWtoEN, "isWtoEN/O");
-    //tree -> Branch("isWtoMN" , &isWtoMN, "isWtoMN/O");
-    //tree -> Branch("isTtoEM" , &isTtoEM, "isTtoEM/O");
+    tree -> Branch("isZtoEE" , &isZtoEE, "isZtoEE/O");
+    tree -> Branch("isZtoMM" , &isZtoMM, "isZtoMM/O");
+    tree -> Branch("isWtoEN" , &isWtoEN, "isWtoEN/O");
+    tree -> Branch("isWtoMN" , &isWtoMN, "isWtoMN/O");
+    tree -> Branch("isTtoEM" , &isTtoEM, "isTtoEM/O");
     tree -> Branch("HT" , &HT , "HT/F");
     tree -> Branch("MinJetMetDPhi", &MinJetMetDPhi, "MinJetMetDPhi/F");
     tree -> Branch("ggHJetMetDPhi", &ggHJetMetDPhi , "ggHJetMetDPhi/F");
@@ -2627,7 +2633,7 @@ Ntuplizer::beginJob()
 
     tree -> Branch("VBFPair", &VBF.pt, ObjectsFormat::ListCandidateType().c_str());
     //tree -> Branch("Z", &Z.pt, ObjectsFormat::ListCandidateType().c_str());
-    //tree -> Branch("W", &W.pt, ObjectsFormat::ListCandidateType().c_str());
+    tree -> Branch("W", &W.pt, ObjectsFormat::ListCandidateType().c_str());
 
     tree -> Branch("Jets", &CHSJets);
     //tree -> Branch("CaloJets", &CaloJets);

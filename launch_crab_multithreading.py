@@ -851,12 +851,28 @@ if __name__ == '__main__':
 
         #FIXME JERstring should not be needed anymore. Test miniAOD ntuplizer without this parameter!
         JERstring = ''
+        MuonSFTriggerstring = ''
+        MuonSFISOstring = ''
+        MuonSFIDstring = ''
         if is2016:
             JERstring = 'Summer16_25nsV1b_MC'
+            MuonSFTriggerstring = 'MuonTrigger_average_RunBtoH_SF_Run2_2016'
+            MuonSFISOstring = 'MuonISO_average_RunBtoH_SF_Run2_2016'
+            MuonSFIDstring = 'MuonID_average_RunBtoH_SF_Run2_2016'
         elif is2017:
             JERstring = 'Fall17_V3b_MC'
+            MuonSFTriggerstring = ''# todo include those here
+            MuonSFISOstring = ''
+            MuonSFIDstring = ''
+            print "WARNING! Muon SF files not defined!"
+      exit()
         elif is2018:
             JERstring = 'Autumn18_V7b_MC'
+            MuonSFTriggerstring = ''# todo include those here
+            MuonSFISOstring = ''
+            MuonSFIDstring = ''
+            print "WARNING! Muon SF files not defined!"
+            exit()
         print "JER ->", JERstring
 
         # JSON filter
@@ -900,6 +916,9 @@ if __name__ == '__main__':
         string_GT = 'PGT='+str(GT)
         string_JECstring = 'PJECstring='+str(JECstring)
         string_JERstring = 'PJERstring='+str(JERstring)
+        string_MuonSFIDstring = 'PMuonSFIDstring='+str(MuonSFIDstring)
+        string_MuonSFISOstring = 'PMuonSFISOstring='+str(MuonSFISOstring)
+        string_MuonSFTriggerstring = 'PMuonSFTriggerstring='+str(MuonSFTriggerstring)
         string_jsonName = 'PjsonName='+str(jsonName)
         string_triggerTag = 'PtriggerTag='+str(triggerTag)
         string_triggerString = 'PtriggerString='+str(triggerString)
@@ -960,7 +979,7 @@ if __name__ == '__main__':
             if isAOD:
                 config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo,  string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             else:
-                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_triggerString, string_filterString, string_calo, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_triggerTag, string_triggerString, string_filterString, string_calo, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
             # Submit config file
             if options.crabaction=="submit":

@@ -20,8 +20,8 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
 {
     isMuonTriggerFile = isDoubleMuonTriggerFile = isMuonIdFile = isMuonTrkFile = isMuonTrkHighptFile = false;
     
-    // Double Muon trigger: obsolete!
-    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonReferenceEffs
+    // Double Muon trigger: obsolete! --> todo: what about this??? Super old stuff!
+    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonReferenceEffs --> last updated in 2014!
     DoubleMuonTriggerFile=new TFile(DoubleMuonTriggerFileName.c_str(), "READ");
     if(!DoubleMuonTriggerFile->IsZombie()) {
         MuonTriggerLt20=(TH2F*)DoubleMuonTriggerFile->Get("DATA_over_MC_Mu17Mu8_Tight_Mu1_10To20_&_Mu2_20ToInfty_with_SYST_uncrt");
@@ -56,7 +56,7 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
     }
     
     //Muon tracker eff
-    // FIXME -> STILL ICHEP-2016 -> TO BE UPDATED ?
+    // FIXME -> STILL ICHEP-2016 -> TO BE UPDATED ? --> todo: super old stuff! Is there something to exchange?
     MuonTrkFile=new TFile(MuonTrkFileName.c_str(), "READ");
     if(!MuonTrkFile->IsZombie()) {
         MuonTrkGraph=(TGraphAsymmErrors*)MuonTrkFile->Get("ratio_eff_eta3_dr030e030_corr");
@@ -72,10 +72,10 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
     //NOTE -> SF APPLIED AS PER-EVENT WEIGHTS
     MuonIdFile=new TFile(MuonIdFileName.c_str(), "READ");
     if(!MuonIdFile->IsZombie()) {
-        MuonIdLoose =(TH2F*)MuonIdFile->Get("MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/pt_abseta_ratio");
-        MuonIdMedium=(TH2F*)MuonIdFile->Get("MC_NUM_MediumID_DEN_genTracks_PAR_pt_eta/pt_abseta_ratio");
-        MuonIdTight =(TH2F*)MuonIdFile->Get("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/pt_abseta_ratio");
-        MuonIdHighpt=(TH2F*)MuonIdFile->Get("MC_NUM_HighPtIDP_DEN_genTracks_PAR_newpt_eta/pair_ne_ratio"); // done wrt tune-p pt
+        MuonIdLoose =(TH2F*)MuonIdFile->Get("NUM_LooseID_DEN_genTracks_eta_pt");
+        MuonIdMedium=(TH2F*)MuonIdFile->Get("NUM_MediumID_DEN_genTracks_eta_pt");
+        MuonIdTight =(TH2F*)MuonIdFile->Get("NUM_TightID_DEN_genTracks_eta_pt");
+        MuonIdHighpt=(TH2F*)MuonIdFile->Get("NUM_HighPtID_DEN_genTracks_eta_pair_newTuneP_probe_pt"); // done wrt tune-p pt
         isMuonIdFile=true;
     }
     else {
@@ -87,9 +87,9 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
     //NOTE -> SF APPLIED AS PER-EVENT WEIGHTS
     MuonIsoFile=new TFile(MuonIsoFileName.c_str(), "READ");
     if(!MuonIsoFile->IsZombie()) {
-        MuonIsoHighpt=(TH2F*)MuonIsoFile->Get("tkLooseISO_highptID_newpt_eta/pair_ne_ratio");
-        MuonIsoLoose=(TH2F*)MuonIsoFile->Get("LooseISO_LooseID_pt_eta/pt_abseta_ratio");
-        MuonIsoTight=(TH2F*)MuonIsoFile->Get("TightISO_TightID_pt_eta/pt_abseta_ratio");
+        MuonIsoHighpt=(TH2F*)MuonIsoFile->Get("NUM_LooseRelTkIso_DEN_HighPtIDandIPCut_eta_pair_newTuneP_probe_pt");
+        MuonIsoLoose=(TH2F*)MuonIsoFile->Get("NUM_LooseRelIso_DEN_LooseID_eta_pt");
+        MuonIsoTight=(TH2F*)MuonIsoFile->Get("NUM_TightRelIso_DEN_TightID_eta_pt");
         isMuonIsoFile=true;
     }
     else {

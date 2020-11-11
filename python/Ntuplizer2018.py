@@ -108,6 +108,24 @@ options.register(
     "JERstring parser flag"
 )
 options.register(
+    "PMuonSFIDstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "MuonSFIDstring parser flag"
+)
+options.register(
+    "PMuonSFISOstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "MuonSFISOstring parser flag"
+)
+options.register(
+    "PMuonSFTriggerstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "MuonSFTriggerstring parser flag"
+)
+options.register(
     "PjsonName", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
@@ -191,7 +209,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -212,7 +230,9 @@ if len(options.inputFiles) == 0:
             #2016 background
             #'/store/mc/RunIISummer16MiniAODv2/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/E65DC503-55C9-E611-9A11-02163E019C7F.root',
             #'/store/mc/RunIISummer16MiniAODv3/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/270000/FE8AFB84-5DEA-E811-83C4-68CC6EA5BD1A.root',
-            '/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
+            #'/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
+          '/store/mc/RunIISummer16MiniAODv3/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/100000/16099EC8-13EA-E811-9559-0CC47A4C7340.root',
+          #'/store/mc/RunIISummer16MiniAODv3/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/100000/00A80353-4FEA-E811-9282-6CC2173CAAE0.root'
             #2018 background
             #'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/270000/FFB1D063-1653-9441-BCE5-088A8DB0086D.root'
             #2017 background?
@@ -510,16 +530,34 @@ print "JEC ->",JECstring
 
 
 JERstring = ''
-
+MuonSFTriggerstring = ''
+MuonSFISOstring = ''
+MuonSFIDstring = ''
 if RunLocal:
    if is2016:
       JERstring = 'Summer16_25nsV1b_MC'
+      MuonSFTriggerstring = 'MuonTrigger_average_RunBtoH_SF_Run2_2016'
+      MuonSFISOstring = 'MuonISO_average_RunBtoH_SF_Run2_2016'
+      MuonSFIDstring = 'MuonID_average_RunBtoH_SF_Run2_2016'
    elif is2017:
       JERstring = 'Fall17_V3b_MC'
+      MuonSFTriggerstring = ''# todo include those here
+      MuonSFISOstring = ''
+      MuonSFIDstring = ''
+      print "WARNING! Muon SF files not defined!"
+      exit()
    elif is2018:
       JERstring = 'Autumn18_V7b_MC'
+      MuonSFTriggerstring = ''# todo include those here
+      MuonSFISOstring = ''
+      MuonSFIDstring = ''
+      print "WARNING! Muon SF files not defined!"
+      exit()
 else:
    JERstring = options.PJERstring
+   MuonSFIDstring = options.PMuonSFIDstring
+   MuonSFISOstring = options.PMuonSFISOstring
+   MuonSFTriggerstring = options.PMuonSFTriggerstring
 print "JER ->", JERstring
 
 #-----------------------#
@@ -1711,12 +1749,12 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     muonSet = cms.PSet(
         muons = cms.InputTag('cleanedMuons'),#('slimmedMuons'),#
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
-        muonTrkFileName = cms.string('data/MuonTrkEfficienciesAndSF_MORIOND17.root'),
-        muonIdFileName = cms.string('data/MuonIdEfficienciesAndSF_MORIOND17.root'),
-        muonIsoFileName = cms.string('data/MuonIsoEfficienciesAndSF_MORIOND17.root'),
-        muonTrkHighptFileName = cms.string('data/tkhighpt_2016full_absetapt.root'),
-        muonTriggerFileName = cms.string('data/MuonTrigEfficienciesAndSF_MORIOND17.root'),
-        doubleMuonTriggerFileName = cms.string('data/MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2.root'),#FIXME -> obsolete
+        muonTrkFileName = cms.string('data/MuonTrkEfficienciesAndSF_MORIOND17.root'),# todo: is this used? 
+        muonIdFileName = cms.string('data/%s.root' %(MuonSFIDstring)),#('data/MuonIdEfficienciesAndSF_MORIOND17.root'),
+        muonIsoFileName = cms.string('data/%s.root' %(MuonSFISOstring)),#('data/MuonIsoEfficienciesAndSF_MORIOND17.root'),
+        muonTrkHighptFileName = cms.string('data/tkhighpt_2016full_absetapt.root'),# todo: is this used?
+        muonTriggerFileName = cms.string('data/%s.root' %(MuonSFTriggerstring)),#('data/MuonTrigEfficienciesAndSF_MORIOND17.root'),
+        doubleMuonTriggerFileName = cms.string('data/MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2.root'),#FIXME -> obsolete# todo: what about this???
         muon1id = cms.int32(1), # 0: tracker high pt muon id, 1: loose, 2: medium, 3: tight, 4: high pt
         muon2id = cms.int32(1),
         muon1iso = cms.int32(1), # 0: trk iso (<0.1), 1: loose (<0.25), 2: tight (<0.15) (pfIso in cone 0.4)
