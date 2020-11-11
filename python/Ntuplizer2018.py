@@ -1749,12 +1749,12 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     muonSet = cms.PSet(
         muons = cms.InputTag('cleanedMuons'),#('slimmedMuons'),#
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
-        muonTrkFileName = cms.string('data/MuonTrkEfficienciesAndSF_MORIOND17.root'),# todo: is this used? 
+        #        muonTrkFileName = cms.string('data/MuonTrkEfficienciesAndSF_MORIOND17.root'),# todo: is this used? 
         muonIdFileName = cms.string('data/%s.root' %(MuonSFIDstring)),#('data/MuonIdEfficienciesAndSF_MORIOND17.root'),
         muonIsoFileName = cms.string('data/%s.root' %(MuonSFISOstring)),#('data/MuonIsoEfficienciesAndSF_MORIOND17.root'),
-        muonTrkHighptFileName = cms.string('data/tkhighpt_2016full_absetapt.root'),# todo: is this used?
+        #        muonTrkHighptFileName = cms.string('data/tkhighpt_2016full_absetapt.root'),# todo: is this used?
         muonTriggerFileName = cms.string('data/%s.root' %(MuonSFTriggerstring)),#('data/MuonTrigEfficienciesAndSF_MORIOND17.root'),
-        doubleMuonTriggerFileName = cms.string('data/MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2.root'),#FIXME -> obsolete# todo: what about this???
+        #        doubleMuonTriggerFileName = cms.string('data/MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2.root'),#FIXME -> obsolete# todo: what about this???
         muon1id = cms.int32(1), # 0: tracker high pt muon id, 1: loose, 2: medium, 3: tight, 4: high pt
         muon2id = cms.int32(1),
         muon1iso = cms.int32(1), # 0: trk iso (<0.1), 1: loose (<0.25), 2: tight (<0.15) (pfIso in cone 0.4)
@@ -1850,7 +1850,9 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     isshort = cms.bool(isShort),
     iscontrol = cms.bool(isControl),
     iscentralprod = cms.bool(isCentralProd),
-
+    isera2016 = cms.bool(is2016),
+    isera2017 = cms.bool(is2017),
+    isera2018 = cms.bool(is2018),
 )
 
 

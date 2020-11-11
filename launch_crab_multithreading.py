@@ -857,6 +857,7 @@ if __name__ == '__main__':
         if is2016:
             JERstring = 'Summer16_25nsV1b_MC'
             #WARNING! Muon SF should not be here applied for 2016! It needed to be a lumi weighted SF and hence only calculated after full run and brilcalc procedure! Needed to be done after ntuplizer process!
+            #==> hardcoded in Ntuplizer that SF for Muons are not applied!
             MuonSFTriggerstring = 'MuonTrigger_average_RunBtoH_SF_Run2_2016'
             MuonSFISOstring = 'MuonISO_average_RunBtoH_SF_Run2_2016'
             MuonSFIDstring = 'MuonID_average_RunBtoH_SF_Run2_2016'

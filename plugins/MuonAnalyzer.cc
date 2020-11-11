@@ -3,12 +3,12 @@
 MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl):
     MuonToken(CColl.consumes<std::vector<pat::Muon> >(PSet.getParameter<edm::InputTag>("muons"))),
     VertexToken(CColl.consumes<reco::VertexCollection>(PSet.getParameter<edm::InputTag>("vertices"))),
-    MuonTrkFileName(PSet.getParameter<std::string>("muonTrkFileName")),
+    //    MuonTrkFileName(PSet.getParameter<std::string>("muonTrkFileName")),// removed obsolete things for now
     MuonIdFileName(PSet.getParameter<std::string>("muonIdFileName")),
     MuonIsoFileName(PSet.getParameter<std::string>("muonIsoFileName")),
-    MuonTrkHighptFileName(PSet.getParameter<std::string>("muonTrkHighptFileName")),
+    //    MuonTrkHighptFileName(PSet.getParameter<std::string>("muonTrkHighptFileName")), // removed obsolete things for now
     MuonTriggerFileName(PSet.getParameter<std::string>("muonTriggerFileName")),
-    DoubleMuonTriggerFileName(PSet.getParameter<std::string>("doubleMuonTriggerFileName")), //obsolete
+    //    DoubleMuonTriggerFileName(PSet.getParameter<std::string>("doubleMuonTriggerFileName")), //obsolete
     Muon1Id(PSet.getParameter<int>("muon1id")),
     Muon2Id(PSet.getParameter<int>("muon2id")),
     Muon1Iso(PSet.getParameter<int>("muon1iso")),
@@ -18,29 +18,31 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
     UseTuneP(PSet.getParameter<bool>("useTuneP")),
     DoRochester(PSet.getParameter<bool>("doRochester"))
 {
-    isMuonTriggerFile = isDoubleMuonTriggerFile = isMuonIdFile = isMuonTrkFile = isMuonTrkHighptFile = false;
-    
-    // Double Muon trigger: obsolete! --> todo: what about this??? Super old stuff!
-    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonReferenceEffs --> last updated in 2014!
-    DoubleMuonTriggerFile=new TFile(DoubleMuonTriggerFileName.c_str(), "READ");
-    if(!DoubleMuonTriggerFile->IsZombie()) {
-        MuonTriggerLt20=(TH2F*)DoubleMuonTriggerFile->Get("DATA_over_MC_Mu17Mu8_Tight_Mu1_10To20_&_Mu2_20ToInfty_with_SYST_uncrt");
-        MuonTriggerGt20=(TH2F*)DoubleMuonTriggerFile->Get("DATA_over_MC_Mu17Mu8_Tight_Mu1_20ToInfty_&_Mu2_20ToInfty_with_SYST_uncrt");
-        for(int i=1; i<=MuonTriggerGt20->GetNbinsX(); i++) {
-            for(int j=1; j<=MuonTriggerGt20->GetNbinsY(); j++) {
-                if(j>i) {
-                    if(MuonTriggerGt20->GetBinContent(i, j)>0.) std::cout << " - MuonAnalyzer Warning: Trying to symmetrize diagonal matrix in bin " << i << ", " << j << std::endl;
-                    MuonTriggerGt20->SetBinContent(i, j, MuonTriggerGt20->GetBinContent(j, i));
-                    MuonTriggerGt20->SetBinError(i, j, MuonTriggerGt20->GetBinError(j, i));
-                }
-            }
-        }
-        isDoubleMuonTriggerFile=true;
-    }
-    else {
-        throw cms::Exception("MuonAnalyzer", "No Double Muon Trigger Weight File");
-        return;
-    }
+    isMuonTriggerFile = isMuonIdFile = false;
+
+// //removed obsolete things for now
+//     // isDoubleMuonTriggerFile = isMuonTrkFile = isMuonTrkHighptFile =false;
+//     // Double Muon trigger: obsolete! --> todo: what about this??? Super old stuff!
+//     // https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonReferenceEffs --> last updated in 2014!
+//     DoubleMuonTriggerFile=new TFile(DoubleMuonTriggerFileName.c_str(), "READ");
+//     if(!DoubleMuonTriggerFile->IsZombie()) {
+//         MuonTriggerLt20=(TH2F*)DoubleMuonTriggerFile->Get("DATA_over_MC_Mu17Mu8_Tight_Mu1_10To20_&_Mu2_20ToInfty_with_SYST_uncrt");
+//         MuonTriggerGt20=(TH2F*)DoubleMuonTriggerFile->Get("DATA_over_MC_Mu17Mu8_Tight_Mu1_20ToInfty_&_Mu2_20ToInfty_with_SYST_uncrt");
+//         for(int i=1; i<=MuonTriggerGt20->GetNbinsX(); i++) {
+//             for(int j=1; j<=MuonTriggerGt20->GetNbinsY(); j++) {
+//                 if(j>i) {
+//                     if(MuonTriggerGt20->GetBinContent(i, j)>0.) std::cout << " - MuonAnalyzer Warning: Trying to symmetrize diagonal matrix in bin " << i << ", " << j << std::endl;
+//                     MuonTriggerGt20->SetBinContent(i, j, MuonTriggerGt20->GetBinContent(j, i));
+//                     MuonTriggerGt20->SetBinError(i, j, MuonTriggerGt20->GetBinError(j, i));
+//                 }
+//             }
+//         }
+//         isDoubleMuonTriggerFile=true;
+//     }
+//     else {
+//         throw cms::Exception("MuonAnalyzer", "No Double Muon Trigger Weight File");
+//         return;
+//     }
 
     //Single Muon Trigger, 2016
     //NOTE -> SF APPLIED AS PER-EVENT WEIGHTS
@@ -55,18 +57,20 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
         return;
     }
     
-    //Muon tracker eff
-    // FIXME -> STILL ICHEP-2016 -> TO BE UPDATED ? --> todo: super old stuff! Is there something to exchange?
-    MuonTrkFile=new TFile(MuonTrkFileName.c_str(), "READ");
-    if(!MuonTrkFile->IsZombie()) {
-        MuonTrkGraph=(TGraphAsymmErrors*)MuonTrkFile->Get("ratio_eff_eta3_dr030e030_corr");
-        MuonTrk=(TH1F*)ConvertTGraph(MuonTrkGraph);
-        isMuonTrkFile=true;
-    }
-    else {
-        throw cms::Exception("MuonAnalyzer", "No MuonTrk Weight File");
-        return;
-    }
+    // //removed obsolete things for now
+    // //Muon tracker eff
+    // // FIXME -> STILL ICHEP-2016 -> TO BE UPDATED ? --> todo: super old stuff! Is there something to exchange?
+    // MuonTrkFile=new TFile(MuonTrkFileName.c_str(), "READ");
+    // if(!MuonTrkFile->IsZombie()) {
+    //     MuonTrkGraph=(TGraphAsymmErrors*)MuonTrkFile->Get("ratio_eff_eta3_dr030e030_corr");
+    //     MuonTrk=(TH1F*)ConvertTGraph(MuonTrkGraph);
+    //     isMuonTrkFile=true;
+    // }
+    // else {
+    //     throw cms::Exception("MuonAnalyzer", "No MuonTrk Weight File");
+    //     return;
+    // }
+
 
     //Muon id, 2016
     //NOTE -> SF APPLIED AS PER-EVENT WEIGHTS
@@ -97,17 +101,17 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
         return;
     }
 
-    //Muon custom TrackerHighPt id, 2016
-    // FIXME -> STILL ICHEP-2016 -> TO BE UPDATED ?
-    MuonTrkHighptFile=new TFile(MuonTrkHighptFileName.c_str(), "READ");
-    if(!MuonTrkHighptFile->IsZombie()) {
-        MuonIdTrkHighpt=(TH2F*)MuonTrkHighptFile->Get("scalefactor");
-        isMuonTrkHighptFile=true;
-    }
-    else {
-        throw cms::Exception("MuonAnalyzer", "No MuonTrkHighpt Weight File");
-        return;
-    }
+    // //Muon custom TrackerHighPt id, 2016
+    // // FIXME -> STILL ICHEP-2016 -> TO BE UPDATED ?
+    // MuonTrkHighptFile=new TFile(MuonTrkHighptFileName.c_str(), "READ");
+    // if(!MuonTrkHighptFile->IsZombie()) {
+    //     MuonIdTrkHighpt=(TH2F*)MuonTrkHighptFile->Get("scalefactor");
+    //     isMuonTrkHighptFile=true;
+    // }
+    // else {
+    //     throw cms::Exception("MuonAnalyzer", "No MuonTrkHighpt Weight File");
+    //     return;
+    // }
 
     rmcor = new rochcor2016();
 
@@ -121,12 +125,13 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
 }
 
 MuonAnalyzer::~MuonAnalyzer() {
-    DoubleMuonTriggerFile->Close();
     MuonTriggerFile->Close();
-    MuonTrkFile->Close();
     MuonIdFile->Close();
     MuonIsoFile->Close();
-    MuonTrkHighptFile->Close();
+    //removed obsolete things for now
+    //    DoubleMuonTriggerFile->Close();
+    //    MuonTrkFile->Close();
+    //    MuonTrkHighptFile->Close();
 }
 
 
@@ -269,9 +274,12 @@ std::string MuonAnalyzer::GetMuon1Id(pat::Muon& mu){
 //ID
 float MuonAnalyzer::GetMuonIdSF(pat::Muon& mu, int id) {
     if(id==0 && isMuonTrkHighptFile){
-        double pt = std::min( std::max( MuonIdTrkHighpt->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdTrkHighpt->GetYaxis()->GetXmax() - 0.000001 );
-        double abseta = std::min( MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
-        return MuonIdTrkHighpt->GetBinContent( MuonIdTrkHighpt->FindBin(abseta,pt) );
+// //removed obsolete things for now
+//         double pt = std::min( std::max( MuonIdTrkHighpt->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdTrkHighpt->GetYaxis()->GetXmax() - 0.000001 );
+//         double abseta = std::min( MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
+//         return MuonIdTrkHighpt->GetBinContent( MuonIdTrkHighpt->FindBin(abseta,pt) );
+
+  throw cms::Exception("MuonAnalyzer", "Muon ID 0 currently not supported!");
     }
     if(id==1 && isMuonIdFile){
         double pt = std::min( std::max( MuonIdLoose->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 );
@@ -298,9 +306,12 @@ float MuonAnalyzer::GetMuonIdSF(pat::Muon& mu, int id) {
 
 float MuonAnalyzer::GetMuonIdSFError(pat::Muon& mu, int id) {
     if(id==0 && isMuonTrkHighptFile){
-        double pt = std::min( std::max( MuonIdTrkHighpt->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdTrkHighpt->GetYaxis()->GetXmax() - 0.000001 );
-        double abseta = std::min( MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
-        return MuonIdTrkHighpt->GetBinError( MuonIdTrkHighpt->FindBin(abseta,pt) );
+// //removed obsolete things for now
+//         double pt = std::min( std::max( MuonIdTrkHighpt->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdTrkHighpt->GetYaxis()->GetXmax() - 0.000001 );
+//         double abseta = std::min( MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
+//         return MuonIdTrkHighpt->GetBinError( MuonIdTrkHighpt->FindBin(abseta,pt) );
+
+  throw cms::Exception("MuonAnalyzer", "Muon ID 0 currently not supported!");
     }
     if(id==1 && isMuonIdFile){
         double pt = std::min( std::max( MuonIdLoose->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 );
