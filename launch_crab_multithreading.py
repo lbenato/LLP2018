@@ -856,23 +856,22 @@ if __name__ == '__main__':
         MuonSFIDstring = ''
         if is2016:
             JERstring = 'Summer16_25nsV1b_MC'
+            #WARNING! Muon SF should not be here applied for 2016! It needed to be a lumi weighted SF and hence only calculated after full run and brilcalc procedure! Needed to be done after ntuplizer process!
             MuonSFTriggerstring = 'MuonTrigger_average_RunBtoH_SF_Run2_2016'
             MuonSFISOstring = 'MuonISO_average_RunBtoH_SF_Run2_2016'
             MuonSFIDstring = 'MuonID_average_RunBtoH_SF_Run2_2016'
         elif is2017:
             JERstring = 'Fall17_V3b_MC'
-            MuonSFTriggerstring = ''# todo include those here
-            MuonSFISOstring = ''
-            MuonSFIDstring = ''
-            print "WARNING! Muon SF files not defined!"
-      exit()
+            MuonSFTriggerstring = 'MuonTrigger_EfficienciesAndSF_RunBtoF_Nov17Nov2017'
+            MuonSFISOstring = 'MuonISO_2017_RunBCDEF_SF_ISO_Nov17'
+            MuonSFIDstring = 'MuonID_2017_RunBCDEF_SF_ID_Nov17'
         elif is2018:
             JERstring = 'Autumn18_V7b_MC'
-            MuonSFTriggerstring = ''# todo include those here
-            MuonSFISOstring = ''
-            MuonSFIDstring = ''
-            print "WARNING! Muon SF files not defined!"
+            MuonSFTriggerstring = 'MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate'
+            print "WARNING! There is another SF root file for single muon triggers for Run A: run < 316361 it is called: MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_BeforeMuonHLTUpdate. TO BE IMPLEMENTED SOMEHOW!"
             exit()
+            MuonSFISOstring = 'MuonISO_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ISO'
+            MuonSFIDstring = 'MuonID_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID'
         print "JER ->", JERstring
 
         # JSON filter
