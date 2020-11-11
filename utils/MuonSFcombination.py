@@ -92,7 +92,7 @@ muSFISO_GtoH = TFile(rootDir+"Muon_RunGH_SF_ISO_Run2_"+str(options.runera)+".roo
 
 outfile_Name = "MuonISO_average_RunBtoH_SF_Run2_"+str(options.runera)
 outFile_ISO = TFile(rootDir+outfile_Name+".root", "RECREATE")
-isolation={"TightRelIso_","LooseRelIso_"}
+isolation={"TightRelIso_","LooseRelIso_", "LooseRelTkIso_"}
 ID={"LooseID","MediumID","TightID", "highptID"}
 var={"_eta_pt"}
 hist = ''
@@ -116,24 +116,24 @@ for f,k in enumerate(isolation):
             hist+="DEN_"
             hist+=i
             hist+=j
-    print "hist name: ", hist
+        print "hist name: ", hist
 
-    # Run BCDEF & GH
-    h_BCDEF_eta_ratio = muSFISO_AtoF.Get(hist)
-    h_GH_eta_ratio = muSFISO_GtoH.Get(hist)
+        # Run BCDEF & GH
+        h_BCDEF_eta_ratio = muSFISO_AtoF.Get(hist)
+        h_GH_eta_ratio = muSFISO_GtoH.Get(hist)
 
-    # Scale with lumi
-    h_BCDEF_eta_ratio.Scale(lumi_BCDEF)
-    h_GH_eta_ratio.Scale(lumi_GH)
+        # Scale with lumi
+        h_BCDEF_eta_ratio.Scale(lumi_BCDEF)
+        h_GH_eta_ratio.Scale(lumi_GH)
 
-    # add histograms BCDEF + GH
-    h_BCDEF_eta_ratio.Add(h_GH_eta_ratio)
-    # save as new histogram
-    new_eta_ratio = h_BCDEF_eta_ratio
-    # weight histogram
-    new_eta_ratio.Scale(1./lumi_tot)
+        # add histograms BCDEF + GH
+        h_BCDEF_eta_ratio.Add(h_GH_eta_ratio)
+        # save as new histogram
+        new_eta_ratio = h_BCDEF_eta_ratio
+        # weight histogram
+        new_eta_ratio.Scale(1./lumi_tot)
 
-    new_eta_ratio.Write()
+        new_eta_ratio.Write()
 outFile_ISO.Close()
 print "Muon ISO file written:", rootDir+outfile_Name+".root"
 muSFISO_AtoF.Close()
