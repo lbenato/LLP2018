@@ -524,7 +524,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
     if(isShort && isControl){
       //if(nTightMuons!=1 || nTightElectrons!=1) return; //Control region for short lifetimes
-      if(nTightMuons<1 || nTightElectrons<1) return; //Control region for short lifetimes
+      if(nTightMuons<1 && nTightElectrons<1) return; //Control region for short lifetimes
       //      if(nTaus>0) return;//Veto taus!
       //      if(nPhotons>0) return;//Veto photons!
     }
@@ -687,7 +687,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
      theW.addDaughter(MET);
      addP4.set(theW);
 
-     if (theW.mass()<100.){
+     if (theW.mass()<100. && isControl){
        return;
      }
          // SF
@@ -715,7 +715,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     theW.addDaughter(TightElecVect.at(0));
     theW.addDaughter(MET);
     addP4.set(theW);
-    if (theW.mass()<100.){
+    if (theW.mass()<100. && isControl){
       return;
 	 }
     if(isMC) {
