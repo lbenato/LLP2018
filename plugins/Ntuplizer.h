@@ -224,6 +224,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     bool isMC;
     long int EventNumber, LumiNumber, RunNumber, nPV, nSV;
     bool AtLeastOneTrigger, AtLeastOneL1Filter;
+    bool isIsoMu24_OR_IsoTkMu24, isMu50_OR_TkMu50;
     long int nLooseCHSJets, nTightCHSJets, nCHSJets, nAllBarrelJets, nAllJets, nVBFGenMatchedJets;
     long int nLooseCHSFatJets, nTightCHSFatJets, nCHSFatJets, nGenBquarks, nGenLL;
     long int nMatchedCHSJets, nMatchedFatJets;

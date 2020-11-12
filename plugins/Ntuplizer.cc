@@ -224,6 +224,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     EventNumber = LumiNumber = RunNumber = nPV = 0;
     model_="NotSignal";
     AtLeastOneTrigger = AtLeastOneL1Filter = false;
+    isIsoMu24_OR_IsoTkMu24 = isMu50_OR_TkMu50 = false;
     number_of_PV = number_of_SV = 0;//27 Sep: remember to properly initialize everything
     nCHSJets = nLooseCHSJets = nTightCHSJets = 0;
     nVBFGenMatchedJets = 0;
@@ -291,6 +292,14 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	    AtLeastOneTrigger = true;
 	  }
 	//if(AtLeastOneTrigger) break;// no need to go through everything; once one trigger is fired, event can be saved
+	if (it->first == "HLT_IsoMu24_v" || it->first == "HLT_IsoTkMu24_v"){
+	  isIsoMu24_OR_IsoTkMu24 = true;
+	}
+	if (it->first == "HLT_Mu50_v" || it->first == "HLT_TkMu50_v"){
+	  isMu50_OR_TkMu50 = true;
+	}
+	std::cout << "first " << it->first << std::endl;
+	std::cout << "second " << it->second << std::endl;
       }
 
     ////if(!AtLeastOneTrigger && WriteOnlyTriggerEvents) std::cout << "This event can be rejected" << std::endl;
@@ -595,16 +604,28 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     	  float LeptonWeightUnc = 0.;
     	  // float LeptonWeightUp = 0.;
     	  // float LeptonWeightDown = 0.;
-    	  /// FIXME -> APPLYING THE SF FOR IsoMu24 HADRCODED <- FIXME ///
-    	  if (TightMuonVect.at(m1).pt() > TightMuonVect.at(m2).pt() ) {
-    	    LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(m1));
-    	    //LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorIsoMu24(MuonVect.at(m1)),2);
-    
-    	  }
-    	  else {
-    	    LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(m2));
-    	    //LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorIsoMu24(MuonVect.at(m2)),2);
-    	  }
+    	  /// FIXED -> APPLYING THE SF FOR IsoMu24 NOT ANYLONGER HADRCODED <- FIXED ///
+	  if (isIsoMu24_OR_IsoTkMu24) {
+	    if (TightMuonVect.at(m1).pt() > TightMuonVect.at(m2).pt() ) {
+	      LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(m1));
+	      //LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorIsoMu24(MuonVect.at(m1)),2);
+	    }
+	    else {
+	      LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(m2));
+	      //LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorIsoMu24(MuonVect.at(m2)),2);
+	    }
+	  }// IsoMu24 trigger
+	  if (isMu50_OR_TkMu50) {
+	    if (TightMuonVect.at(m1).pt() > TightMuonVect.at(m2).pt() ) {
+	      LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFMu50(TightMuonVect.at(m1));
+	      //LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(MuonVect.at(m1)),2);
+	    }
+	    else {
+	      LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFMu50(TightMuonVect.at(m2));
+	      //LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(MuonVect.at(m2)),2);
+	    }
+	  }// IsoMu50 trigger
+
 	  // //removed obsolete things for now
 	  // LeptonWeight *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(m1));
 	  // LeptonWeight *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(m2));
