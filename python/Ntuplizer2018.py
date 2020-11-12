@@ -209,7 +209,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -534,6 +534,12 @@ JERstring = ''
 MuonSFTriggerstring = ''
 MuonSFISOstring = ''
 MuonSFIDstring = ''
+eleVetoIDstring = ''
+eleLooseIdstring = ''
+eleMediumIdstring = ''
+eleTightIdstring = ''
+eleMVA90noISOstring = ''
+eleMVA80noISOstring = ''
 if RunLocal:
    if is2016:
       JERstring = 'Summer16_25nsV1b_MC'
@@ -541,11 +547,23 @@ if RunLocal:
       MuonSFTriggerstring = 'MuonTrigger_average_RunBtoH_SF_Run2_2016'
       MuonSFISOstring = 'MuonISO_average_RunBtoH_SF_Run2_2016'
       MuonSFIDstring = 'MuonID_average_RunBtoH_SF_Run2_2016'
+      eleVetoIDstring = '2016_ElectronWPVeto_Fall17V2'
+      eleLooseIdstring = '2016LegacyReReco_ElectronLoose_Fall17V2'
+      eleMediumIdstring = '2016LegacyReReco_ElectronMedium_Fall17V2'
+      eleTightIdstring = '2016LegacyReReco_ElectronTight_Fall17V2'
+      eleMVA90noISOstring = '2016LegacyReReco_ElectronMVA90noiso_Fall17V2'
+      eleMVA80noISOstring = '2016LegacyReReco_ElectronMVA80noiso_Fall17V2'
    elif is2017:
       JERstring = 'Fall17_V3b_MC'
       MuonSFTriggerstring = 'MuonTrigger_EfficienciesAndSF_RunBtoF_Nov17Nov2017'
       MuonSFISOstring = 'MuonISO_2017_RunBCDEF_SF_ISO_Nov17'
       MuonSFIDstring = 'MuonID_2017_RunBCDEF_SF_ID_Nov17'
+      eleVetoIDstring = '2017_ElectronWPVeto_Fall17V2'
+      eleLooseIdstring = '2017_ElectronLoose_Fall17V2'
+      eleMediumIdstring = '2017_ElectronMedium_Fall17V2'
+      eleTightIdstring = '2017_ElectronTight_Fall17V2'
+      eleMVA90noISOstring = '2017_ElectronMVA90noiso_Fall17V2'
+      eleMVA80noISOstring = '2017_ElectronMVA80noiso_Fall17V2'
    elif is2018:
       JERstring = 'Autumn18_V7b_MC'
       MuonSFTriggerstring = 'MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate'
@@ -553,11 +571,18 @@ if RunLocal:
       exit()
       MuonSFISOstring = 'MuonISO_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ISO'
       MuonSFIDstring = 'MuonID_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID'
+      eleVetoIDstring = '2018_ElectronWPVeto_Fall17V2'
+      eleLooseIdstring = '2018_ElectronLoose_Fall17V2'
+      eleMediumIdstring = '2018_ElectronMedium_Fall17V2'
+      eleTightIdstring = '2018_ElectronTight_Fall17V2'
+      eleMVA90noISOstring = '2018_ElectronMVA90noiso_Fall17V2'
+      eleMVA80noISOstring = '2018_ElectronMVA80noiso_Fall17V2'
 else:
    JERstring = options.PJERstring
    MuonSFIDstring = options.PMuonSFIDstring
    MuonSFISOstring = options.PMuonSFISOstring
    MuonSFTriggerstring = options.PMuonSFTriggerstring
+   
 print "JER ->", JERstring
 
 #-----------------------#
@@ -1726,20 +1751,22 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         eleMediumId = cms.string('cutBasedElectronID-Fall17-94X-V2-medium'),
         eleTightId = cms.string('cutBasedElectronID-Fall17-94X-V2-tight'),
         eleHEEPId = cms.string('heepElectronID-HEEPV70'),
+        ## Looks like the following 4 Ids are still valid: https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentificationRun2
         eleMVANonTrigMediumId = cms.string('mvaEleID-Spring16-GeneralPurpose-V1-wp90'),#see https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaMiniAODV2#Accessing_ID_result
         eleMVANonTrigTightId = cms.string('mvaEleID-Spring16-GeneralPurpose-V1-wp80'),
         eleMVATrigMediumId = cms.string('mvaEleID-Spring16-GeneralPurpose-V1-wp90'), ### NOTE -> SAME AS NON-TRIG IN 2017
         eleMVATrigTightId = cms.string('mvaEleID-Spring16-GeneralPurpose-V1-wp80'), ### NOTE -> SAME AS NON-TRIG IN 2017
+        ###
         eleEcalRecHitCollection = cms.InputTag("reducedEgamma:reducedEBRecHits"),
-        eleSingleTriggerIsoFileName = cms.string('data/SingleEleTriggerEff.root'),
-        eleSingleTriggerFileName = cms.string('data/eleTriggerEff_MORIOND17.root'),
-        eleVetoIdFileName = cms.string('data/eleVetoIDSF_MORIOND17.root'),
-        eleLooseIdFileName = cms.string('data/eleLooseIDSF_MORIOND17.root'),
-        eleMediumIdFileName = cms.string('data/eleMediumIDSF_MORIOND17.root'),
-        eleTightIdFileName = cms.string('data/eleTightIDSF_MORIOND17.root'),
-        eleMVATrigMediumIdFileName = cms.string('data/eleMVA90IDSF_MORIOND17.root'),
-        eleMVATrigTightIdFileName = cms.string('data/eleMVA80IDSF_MORIOND17.root'),
-        eleRecoEffFileName = cms.string('data/eleRecoSF_MORIOND17.root'),
+        eleSingleTriggerIsoFileName = cms.string('data/SingleEleTriggerEff.root'), # FIXME where to find most recent file?
+        eleSingleTriggerFileName = cms.string('data/eleTriggerEff_MORIOND17.root'), # FIXME where to find most recent file?
+        eleVetoIdFileName = cms.string('data/%s.root' % (eleVetoIDstring)),
+        eleLooseIdFileName = cms.string('data/%s.root' % (eleLooseIdstring)),
+        eleMediumIdFileName = cms.string('data/%s.root' % (eleMediumIdstring)),
+        eleTightIdFileName = cms.string('data/%s.root' % (eleTightIdstring)),
+        eleMVATrigMediumIdFileName = cms.string('data/%s.root' % (eleMVA90noISOstring)), #FIXME: Double check: added here noiso files
+        eleMVATrigTightIdFileName = cms.string('data/%s.root' % (eleMVA80noISOstring)), #FIXME: Double check: added here noiso files
+        eleRecoEffFileName = cms.string('data/eleRecoSF_MORIOND17.root'), # FIXME where to find most recent file?
         eleScaleSmearCorrectionName = cms.string('EgammaAnalysis/ElectronTools/data/ScalesSmearings/Moriond17_23Jan_ele'),
         electron1id = cms.int32(0), # 0: veto, 1: loose, 2: medium, 3: tight, 4: HEEP, 5: MVA medium nonTrig, 6: MVA tight nonTrig, 7: MVA medium Trig, 8: MVA tight Trig
         electron2id = cms.int32(0),

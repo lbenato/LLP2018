@@ -854,6 +854,12 @@ if __name__ == '__main__':
         MuonSFTriggerstring = ''
         MuonSFISOstring = ''
         MuonSFIDstring = ''
+        eleVetoIDstring = ''
+        eleLooseIdstring = ''
+        eleMediumIdstring = ''
+        eleTightIdstring = ''
+        eleMVA90noISOstring = ''
+        eleMVA80noISOstring = ''
         if is2016:
             JERstring = 'Summer16_25nsV1b_MC'
             #WARNING! Muon SF should not be here applied for 2016! It needed to be a lumi weighted SF and hence only calculated after full run and brilcalc procedure! Needed to be done after ntuplizer process!
@@ -861,11 +867,23 @@ if __name__ == '__main__':
             MuonSFTriggerstring = 'MuonTrigger_average_RunBtoH_SF_Run2_2016'
             MuonSFISOstring = 'MuonISO_average_RunBtoH_SF_Run2_2016'
             MuonSFIDstring = 'MuonID_average_RunBtoH_SF_Run2_2016'
+            eleVetoIDstring = '2016_ElectronWPVeto_Fall17V2'
+            eleLooseIdstring = '2016LegacyReReco_ElectronLoose_Fall17V2'
+            eleMediumIdstring = '2016LegacyReReco_ElectronMedium_Fall17V2'
+            eleTightIdstring = '2016LegacyReReco_ElectronTight_Fall17V2'
+            eleMVA90noISOstring = '2016LegacyReReco_ElectronMVA90noiso_Fall17V2'
+            eleMVA80noISOstring = '2016LegacyReReco_ElectronMVA80noiso_Fall17V2'
         elif is2017:
             JERstring = 'Fall17_V3b_MC'
             MuonSFTriggerstring = 'MuonTrigger_EfficienciesAndSF_RunBtoF_Nov17Nov2017'
             MuonSFISOstring = 'MuonISO_2017_RunBCDEF_SF_ISO_Nov17'
             MuonSFIDstring = 'MuonID_2017_RunBCDEF_SF_ID_Nov17'
+            eleVetoIDstring = '2017_ElectronWPVeto_Fall17V2'
+            eleLooseIdstring = '2017_ElectronLoose_Fall17V2'
+            eleMediumIdstring = '2017_ElectronMedium_Fall17V2'
+            eleTightIdstring = '2017_ElectronTight_Fall17V2'
+            eleMVA90noISOstring = '2017_ElectronMVA90noiso_Fall17V2'
+            eleMVA80noISOstring = '2017_ElectronMVA80noiso_Fall17V2'
         elif is2018:
             JERstring = 'Autumn18_V7b_MC'
             MuonSFTriggerstring = 'MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate'
@@ -873,6 +891,12 @@ if __name__ == '__main__':
             exit()
             MuonSFISOstring = 'MuonISO_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ISO'
             MuonSFIDstring = 'MuonID_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID'
+            eleVetoIDstring = '2018_ElectronWPVeto_Fall17V2'
+            eleLooseIdstring = '2018_ElectronLoose_Fall17V2'
+            eleMediumIdstring = '2018_ElectronMedium_Fall17V2'
+            eleTightIdstring = '2018_ElectronTight_Fall17V2'
+            eleMVA90noISOstring = '2018_ElectronMVA90noiso_Fall17V2'
+            eleMVA80noISOstring = '2018_ElectronMVA80noiso_Fall17V2'
         print "JER ->", JERstring
 
         # JSON filter
@@ -919,6 +943,12 @@ if __name__ == '__main__':
         string_MuonSFIDstring = 'PMuonSFIDstring='+str(MuonSFIDstring)
         string_MuonSFISOstring = 'PMuonSFISOstring='+str(MuonSFISOstring)
         string_MuonSFTriggerstring = 'PMuonSFTriggerstring='+str(MuonSFTriggerstring)
+        string_eleVetoIDstring = 'PeleVetoIDstring='+str(eleVetoIDstring)
+        string_eleLooseIdstring = 'PeleLooseIdstring='+str(eleLooseIdstring)
+        string_eleMediumIdstring = 'PeleMediumIdstring='+str(eleMediumIdstring)
+        string_eleTightIdstring = 'PeleTightIdstring='+str(eleTightIdstring)
+        string_eleMVA90noISOstring = 'PeleMVA90noISOstring='+str(eleMVA90noISOstring)
+        string_eleMVA80noISOstring = 'PeleMVA80noISOstring='+str(eleMVA80noISOstring)
         string_jsonName = 'PjsonName='+str(jsonName)
         string_triggerTag = 'PtriggerTag='+str(triggerTag)
         string_triggerString = 'PtriggerString='+str(triggerString)
@@ -979,7 +1009,7 @@ if __name__ == '__main__':
             if isAOD:
                 config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo,  string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             else:
-                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_triggerTag, string_triggerString, string_filterString, string_calo, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_jsonName, string_triggerTag, string_triggerString, string_filterString, string_calo, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
             # Submit config file
             if options.crabaction=="submit":
