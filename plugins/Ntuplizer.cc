@@ -298,8 +298,6 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	if (it->first == "HLT_Mu50_v" || it->first == "HLT_TkMu50_v"){
 	  isMu50_OR_TkMu50 = true;
 	}
-	std::cout << "first " << it->first << std::endl;
-	std::cout << "second " << it->second << std::endl;
       }
 
     ////if(!AtLeastOneTrigger && WriteOnlyTriggerEvents) std::cout << "This event can be rejected" << std::endl;
