@@ -545,15 +545,15 @@ if __name__ == '__main__':
         is2018 = False
         config.JobType.inputFiles = ['data']
     elif options.lists == "v1_2016miniAOD_centrallyProduced_controlRegion":
-        from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced import *
+        from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced_short import *
         from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
-        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2016 import sample, samples
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2016_modified import sample, samples
         pset = "Ntuplizer2018.py"
-        folder = "v0_production_centrallyProduced_LumiMask_full2016/"#CHANGE here your crab folder name
+        folder = "v1_production_centrallyProduced_full2016_controlRegion/"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/meich/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/eichm/" + folder #CHANGE here according to your username!
-        config.Data.totalUnits = 200
-        isCalo=False  
+#        config.Data.totalUnits = 200
+        isCalo=False
         isShort = True
         isControl = True
         isVBF = False
@@ -563,10 +563,10 @@ if __name__ == '__main__':
         isSUSY = False
         isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples) else False
         isMINIAOD = True
-        isAOD  = False
         is2016 = True
         is2017 = False
         is2018 = False
+        isAOD  = False
         config.JobType.inputFiles = ['data']
     elif options.lists == "v0_2017miniAOD_centrallyProduced":
         from Analyzer.LLP2018.crab_requests_lists_2017MINIAOD_centrallyProduced import *

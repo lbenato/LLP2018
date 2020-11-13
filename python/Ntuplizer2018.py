@@ -269,7 +269,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -1956,8 +1956,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     writeAllPFCandidates = cms.bool(False), #All PFCandidates. Large collection: Please write only if needed!
     ##
     writeLostTracks = cms.bool(False),
-    writeVertices = cms.bool(True),
-    writeBtagInfos = cms.bool(True),
+    writeVertices = cms.bool(False),
+    writeBtagInfos = cms.bool(False),
     calculateNsubjettiness = cms.bool(False),
     performPreFiringStudies = cms.bool(True if ('unprefirable' in process.source.fileNames[0]) else False),
     performVBF = cms.bool(isVBF),

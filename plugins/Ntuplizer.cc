@@ -535,8 +535,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isShort && isControl){
       //if(nTightMuons!=1 || nTightElectrons!=1) return; //Control region for short lifetimes
       if(nTightMuons<1 && nTightElectrons<1) return; //Control region for short lifetimes
-      //      if(nTaus>0) return;//Veto taus!
-      //      if(nPhotons>0) return;//Veto photons!
+      //      if(nTaus<1) return;//Veto taus!
+      //      if(nPhotons<1) return;//Veto photons!
     }
 
 
@@ -676,7 +676,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     
 
     	// SF
-    	if(isMC) {
+    	if(isMC && !is2016) {
     	  float LeptonWeightUnc = 0.;
 	  // float LeptonWeightUp = 0.;
           // float LeptonWeightDown = 0.;
@@ -748,7 +748,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (theW.mass()<100. && isControl){
       return;
 	 }
-    if(isMC) {
+    if(isMC && !is2016) {
       //    	LeptonWeight    *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(0));
     	LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
     	LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
@@ -1439,6 +1439,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // }
 
     //TODO: Move this calculation to the PFCandidate section
+    if (!isShort){
     for(unsigned int j = 0; j < CHSJetsVect.size(); j++){
       int nTrackConstituents = 0;
       //per jet tag: number of jet constituents and number of tracks
@@ -1452,7 +1453,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
       CHSJetsVect.at(j).addUserInt("nTrackConstituents",nTrackConstituents);
     }
-
+    }
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -1827,6 +1828,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     nCHSFatJets = CHSFatJetsVect.size();
 
     // TODO: Move this calculation to the PFCandidate section
+    if (!isShort){
     for(unsigned int j = 0; j < CHSFatJetsVect.size(); j++){
       int nTrackConstituents = 0;
       //per jet tag: number of jet constituents and number of tracks
@@ -1839,6 +1841,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         }
       }
       CHSFatJetsVect.at(j).addUserInt("nTrackConstituents",nTrackConstituents);
+    }
     }
 
     if(isVerbose) {
@@ -1915,7 +1918,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // PFCandidates
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-
+  
     if(isVerbose) std::cout << "PF candidates" << std::endl;
     PFCandidates.clear();
 
@@ -1933,6 +1936,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     PFCandidateVect = thePFCandidateAnalyzer->FillPFCandidateVector(iEvent);
 
+    if (!isShort ||  WriteBtagInfos){
     // Initialize PFCandidate variables: Set indices to -1 (not matched)
     for(unsigned int i = 0; i < PFCandidateVect.size(); i++){
       PFCandidateAK4JetIndex.push_back(-1);
@@ -2013,7 +2017,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(WriteAK8JetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAK4Jet; i++) PFCandidates.push_back( PFCandidateType() );
     if(WriteAllJetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAnyJet; i++) PFCandidates.push_back( PFCandidateType() );
     if(WriteAllPFCandidates)    for(unsigned int i = 0; i < PFCandidateVect.size();       i++) PFCandidates.push_back( PFCandidateType() );
-
+    
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -2312,11 +2316,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     }//end of EXO-16-003 variables for AK8 jets
 
-
     //Store vertex information for b-taging variables
     if(WriteBtagInfos){
       for (unsigned int i = 0; i < bTagInfoVect.size(); i++) BTagVertices.push_back(VertexType());
     }
+    }//end of PFCandidates procedure, not needed for short lifetimes
+
 
 
     //------------------------------------------------------------------------------------------
@@ -2585,12 +2590,14 @@ Ntuplizer::beginJob()
     tree -> Branch("nPhotons", &nPhotons, "nPhotons/I");
     tree -> Branch("nTightElectrons", &nTightElectrons, "nTightElectrons/I");
     tree -> Branch("nTightMuons", &nTightMuons, "nTightMuons/I");
-    tree -> Branch("nPFCandidates" , &nPFCandidates, "nPFCandidates/I");
-    tree -> Branch("nPFCandidatesTrack", &nPFCandidatesTrack, "nPFCandidatesTrack/I");
-    tree -> Branch("nPFCandidatesHighPurityTrack", &nPFCandidatesHighPurityTrack, "nPFCandidatesHighPurityTrack/I");
-    tree -> Branch("nPFCandidatesFullTrackInfo", &nPFCandidatesFullTrackInfo, "nPFCandidatesFullTrackInfo/I");
-    tree -> Branch("nPFCandidatesFullTrackInfo_pt", &nPFCandidatesFullTrackInfo_pt, "nPFCandidatesFullTrackInfo_pt/I");
-    tree -> Branch("nPFCandidatesFullTrackInfo_hasTrackDetails", &nPFCandidatesFullTrackInfo_hasTrackDetails, "nPFCandidatesFullTrackInfo_hasTrackDetails/I");
+    if (!isShort){
+      tree -> Branch("nPFCandidates" , &nPFCandidates, "nPFCandidates/I");
+      tree -> Branch("nPFCandidatesTrack", &nPFCandidatesTrack, "nPFCandidatesTrack/I");
+      tree -> Branch("nPFCandidatesHighPurityTrack", &nPFCandidatesHighPurityTrack, "nPFCandidatesHighPurityTrack/I");
+      tree -> Branch("nPFCandidatesFullTrackInfo", &nPFCandidatesFullTrackInfo, "nPFCandidatesFullTrackInfo/I");
+      tree -> Branch("nPFCandidatesFullTrackInfo_pt", &nPFCandidatesFullTrackInfo_pt, "nPFCandidatesFullTrackInfo_pt/I");
+      tree -> Branch("nPFCandidatesFullTrackInfo_hasTrackDetails", &nPFCandidatesFullTrackInfo_hasTrackDetails, "nPFCandidatesFullTrackInfo_hasTrackDetails/I");
+    }
     tree -> Branch("Flag_BadPFMuon", &BadPFMuonFlag, "Flag_BadPFMuon/O");
     tree -> Branch("Flag_BadChCand", &BadChCandFlag, "Flag_BadChCand/O");
     tree -> Branch("isVBF" , &isVBF, "isVBF/O");
