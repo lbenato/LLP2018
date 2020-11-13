@@ -168,6 +168,30 @@ options.register(
     "PeleMVA80noISOstring parser flag"
 )
 options.register(
+    "PphoLooseIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoLooseIdFilestring parser flag"
+)
+options.register(
+    "PphoMediumIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoMediumIdFilestring parser flag"
+)
+options.register(
+    "PphoTightIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoTightIdFilestring parser flag"
+)
+options.register(
+    "PphoMVANonTrigMediumIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoMVANonTrigMediumIdFilestring parser flag"
+)
+options.register(
     "PtriggerTag", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
@@ -583,6 +607,10 @@ eleMediumIdstring = ''
 eleTightIdstring = ''
 eleMVA90noISOstring = ''
 eleMVA80noISOstring = ''
+phoLooseIdFilestring = ''
+phoMediumIdFilestring = ''
+phoTightIdFilestring = ''
+phoMVANonTrigMediumIdFilestring = ''
 if RunLocal:
    if is2016:
       JERstring = 'Summer16_25nsV1b_MC'
@@ -596,6 +624,10 @@ if RunLocal:
       eleTightIdstring = '2016LegacyReReco_ElectronTight_Fall17V2'
       eleMVA90noISOstring = '2016LegacyReReco_ElectronMVA90noiso_Fall17V2'
       eleMVA80noISOstring = '2016LegacyReReco_ElectronMVA80noiso_Fall17V2'
+      phoLooseIdFilestring = 'Fall17V2_2016_Loose_photons'
+      phoMediumIdFilestring = 'egammaPlots_MWP_PhoSFs_2016_LegacyReReco_New'
+      phoTightIdFilestring = 'Fall17V2_2016_Tight_photons'
+      phoMVANonTrigMediumIdFilestring = 'Fall17V2_2016_MVAwp90_photons'
    elif is2017:
       JERstring = 'Fall17_V3b_MC'
       MuonSFTriggerstring = 'MuonTrigger_EfficienciesAndSF_RunBtoF_Nov17Nov2017'
@@ -607,6 +639,10 @@ if RunLocal:
       eleTightIdstring = '2017_ElectronTight_Fall17V2'
       eleMVA90noISOstring = '2017_ElectronMVA90noiso_Fall17V2'
       eleMVA80noISOstring = '2017_ElectronMVA80noiso_Fall17V2'
+      phoLooseIdFilestring = '2017_PhotonsLoose'
+      phoMediumIdFilestring = '2017_PhotonsMedium'
+      phoTightIdFilestring = '2017_PhotonsTight'
+      phoMVANonTrigMediumIdFilestring = '2017_PhotonsMVAwp90'
    elif is2018:
       JERstring = 'Autumn18_V7b_MC'
       MuonSFTriggerstring = 'MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate'
@@ -620,6 +656,10 @@ if RunLocal:
       eleTightIdstring = '2018_ElectronTight_Fall17V2'
       eleMVA90noISOstring = '2018_ElectronMVA90noiso_Fall17V2'
       eleMVA80noISOstring = '2018_ElectronMVA80noiso_Fall17V2'
+      phoLooseIdFilestring = '2018_PhotonsLoose'
+      phoMediumIdFilestring = '2018_PhotonsMedium'
+      phoTightIdFilestring = '2018_PhotonsTight'
+      phoMVANonTrigMediumIdFilestring = '2018_PhotonsMVAwp90'
 else:
    JERstring = options.PJERstring
    MuonSFIDstring = options.PMuonSFIDstring
@@ -631,6 +671,10 @@ else:
    eleTightIdstring = options.PeleTightIdstring
    eleMVA90noISOstring = options.PeleMVA90noISOstring
    eleMVA80noISOstring = options.PeleMVA80noISOstring
+   phoLooseIdFilestring = options.PphoLooseIdFilestring
+   phoMediumIdFilestring = options.PphoMediumIdFilestring
+   phoTightIdFilestring = options.PphoTightIdFilestring
+   phoMVANonTrigMediumIdFilestring = options.PphoMVANonTrigMediumIdFilestring
 print "JER ->", JERstring
 
 #-----------------------#
@@ -1858,10 +1902,10 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         phoTightId = cms.string('cutBasedPhotonID-Fall17-94X-V2-tight'),
         phoMVANonTrigMediumId = cms.string('mvaPhoID-Spring16-nonTrig-V1-wp90'),
         phoEcalRecHitCollection = cms.InputTag("reducedEgamma:reducedEBRecHits"),
-        phoLooseIdFileName = cms.string('data/phoLooseIDSF_MORIOND17.root'),
-        phoMediumIdFileName = cms.string('data/phoMediumIDSF_MORIOND17.root'),
-        phoTightIdFileName = cms.string('data/phoTightIDSF_MORIOND17.root'),
-        phoMVANonTrigMediumIdFileName = cms.string('data/phoMVA90IDSF_MORIOND17.root'),
+        phoLooseIdFileName = cms.string('data/%s.root' % (phoLooseIdFilestring)),
+        phoMediumIdFileName = cms.string('data/%s.root' % (phoMediumIdFilestring)),
+        phoTightIdFileName = cms.string('data/%s.root' % (phoTightIdFilestring)),
+        phoMVANonTrigMediumIdFileName = cms.string('data/%s.root' % (phoMVANonTrigMediumIdFilestring)),
         photonid = cms.int32(1), # 1: loose, 2: medium, 3: tight, 4:MVA NonTrig medium
         photonpt = cms.double(15.),
     ),
