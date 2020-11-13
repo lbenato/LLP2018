@@ -522,7 +522,14 @@ task.add(process.primaryVertexFilter)
 #-----------------------#
 
 from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
-setupEgammaPostRecoSeq(process,runEnergyCorrections=False,era='2016-Legacy')#era='2018-Prompt'
+era_string = ''
+if is2016:
+   era_string = '2016-Legacy'
+elif is2017:
+   era_string = '2017-Nov17ReReco'
+elif is2018:
+   era_string = '2018-Prompt'
+setupEgammaPostRecoSeq(process,runEnergyCorrections=False,era=era_string)#era='2018-Prompt'
 
 #muons upstream modules
 process.cleanedMuons = cms.EDProducer('PATMuonCleanerBySegments',
