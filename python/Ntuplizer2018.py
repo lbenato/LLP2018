@@ -16,7 +16,6 @@ options.register(
     VarParsing.varType.bool,
     "Decide if CRAB should overwrite variables"
 )
-
 options.register(
     "PisData", False,
     VarParsing.multiplicity.singleton,
@@ -214,6 +213,18 @@ options.register(
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
     "calo parser flag"
+)
+options.register(
+    "Pshort", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "short parser flag"
+)
+options.register(
+    "Pcontrol", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "control parser flag"
 )
 options.register(
     "PVBF", False,

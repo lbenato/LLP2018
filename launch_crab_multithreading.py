@@ -22,10 +22,10 @@ config.General.requestName = 'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MIN
 
 config.Data.inputDataset =  '/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_standard_mixing-Moriond17_80X_mcRun2_2016_MINIAOD-28028af67189b3de7224b79195bd0e1d/USER'
 config.Data.inputDBS = 'global'
-config.Data.splitting = 'EventAwareLumiBased'
+#config.Data.splitting = 'EventAwareLumiBased'
 #config.Data.unitsPerJob = 100#15000
 #config.Data.totalUnits = 100#15000
-#config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
+config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
 
 config.Data.outLFNDirBase = '/store/user/lbenato/choose_a_folder_name'
 config.Data.publication = False
@@ -1029,7 +1029,7 @@ if __name__ == '__main__':
             if isAOD:
                 config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo,  string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             else:
-                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_jsonName, string_triggerTag, string_triggerString, string_filterString, string_calo, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod,string_isPromptReco, string_is2016, string_is2017, string_is2018, string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_triggerTag, string_triggerString, string_filterString, string_calo, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
             # Submit config file
             if options.crabaction=="submit":
