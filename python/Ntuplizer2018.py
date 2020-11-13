@@ -132,6 +132,42 @@ options.register(
     " jsonName parser flag"
 )
 options.register(
+    "PeleVetoIDstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleVetoIDstring parser flag"
+)
+options.register(
+    "PeleLooseIdstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleLooseIdstring parser flag"
+)
+options.register(
+    "PeleMediumIdstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleMediumIdstring parser flag"
+)
+options.register(
+    "PeleTightIdstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleTightIdstring parser flag"
+)
+options.register(
+    "PeleMVA90noISOstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleMVA90noISOstring parser flag"
+)
+options.register(
+    "PeleMVA80noISOstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleMVA80noISOstring parser flag"
+)
+options.register(
     "PtriggerTag", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
@@ -582,7 +618,12 @@ else:
    MuonSFIDstring = options.PMuonSFIDstring
    MuonSFISOstring = options.PMuonSFISOstring
    MuonSFTriggerstring = options.PMuonSFTriggerstring
-   
+   eleVetoIDstring = options.PeleVetoIDstring
+   eleLooseIdstring = options.PeleLooseIdstring
+   eleMediumIdstring = options.PeleMediumIdstring
+   eleTightIdstring = options.PeleTightIdstring
+   eleMVA90noISOstring = options.PeleMVA90noISOstring
+   eleMVA80noISOstring = options.PeleMVA80noISOstring
 print "JER ->", JERstring
 
 #-----------------------#
