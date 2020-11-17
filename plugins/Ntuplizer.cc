@@ -255,6 +255,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     LumiNumber = iEvent.luminosityBlock();
     RunNumber = iEvent.id().run();
 
+    // Lepton SF workaround!
+    bool doSF = false;//TODO: Remove as soon as exception is fixed!!!
 
     //GenEventWeight
     GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
@@ -598,7 +600,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     	//SF
 
-    	if(isMC && !is2016) {
+    	if(doSF && isMC && !is2016) {
     	  float LeptonWeightUnc = 0.;
     	  // float LeptonWeightUp = 0.;
     	  // float LeptonWeightDown = 0.;
@@ -676,7 +678,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
     	// SF
-    	if(isMC && !is2016) {
+    	if(doSF && isMC && !is2016) {
     	  float LeptonWeightUnc = 0.;
 	  // float LeptonWeightUp = 0.;
           // float LeptonWeightDown = 0.;
@@ -719,7 +721,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
        return;
      }
          // SF
-    if(isMC && !is2016) {
+    if(doSF && isMC && !is2016) {
       float LeptonWeightUnc = 0.;
       //      float LeptonWeightUp = 0.;
       //      float LeptonWeightDown = 0.;
@@ -748,7 +750,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (theW.mass()<100. && isControl){
       return;
 	 }
-    if(isMC && !is2016) {
+    if(doSF && isMC && !is2016) {
       //    	LeptonWeight    *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(0));
     	LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
     	LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
