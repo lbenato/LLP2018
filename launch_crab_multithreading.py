@@ -23,9 +23,11 @@ config.General.requestName = 'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MIN
 config.Data.inputDataset =  '/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_standard_mixing-Moriond17_80X_mcRun2_2016_MINIAOD-28028af67189b3de7224b79195bd0e1d/USER'
 config.Data.inputDBS = 'global'
 #config.Data.splitting = 'EventAwareLumiBased'
-#config.Data.unitsPerJob = 100#15000
+#config.Data.unitsPerJob = 15000
 #config.Data.totalUnits = 100#15000
 config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
+#config.Data.unitsPerJob = 5
+#config.Data.splitting = 'FileBased'
 
 config.Data.outLFNDirBase = '/store/user/lbenato/choose_a_folder_name'
 config.Data.publication = False
@@ -39,7 +41,7 @@ config.Site.storageSite = 'T2_DE_DESY'
             
 #enable multi-threading
 #remove from being default!
-#config.JobType.maxMemoryMB = 5000#15900 #more memory
+config.JobType.maxMemoryMB = 15900#9000#15900 #more memory
 config.JobType.numCores = 8
 
 if __name__ == '__main__':
@@ -60,7 +62,7 @@ if __name__ == '__main__':
     # Selection of samples via python lists
     import os
 
-    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB"]#,"data_obs"
+    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB","Others","data_BTagCSV", "WH_MH-125_2016"]#,"data_obs"
     print "Possible subgroups of samples:"
     for a in list_of_samples:
         print a
@@ -681,6 +683,10 @@ if __name__ == '__main__':
                 else:
                     print "no mask available"
                     exit()
+        elif "WH_MH-125_2016" in options.groupofsamples:
+            if "WminusH_HToSSTobbbb_" in k or "WplusH_HToSSTobbbb_" in k:
+                print k
+                selected_requests[k] = requests[k]
         elif options.groupofsamples=="all":
             print "All samples considered"
             selected_requests[k] = requests[k]
@@ -789,7 +795,7 @@ if __name__ == '__main__':
 
         noLHEinfo = True if ('WW_TuneCUETP8M1_13TeV-pythia8' in j or 'WZ_TuneCUETP8M1_13TeV-pythia8' in j or 'ZZ_TuneCUETP8M1_13TeV-pythia8' in j or 'WW_TuneCP5_13TeV-pythia8' in j or 'WZ_TuneCP5_13TeV-pythia8' in j or 'ZZ_TuneCP5_13TeV-pythia8' in j) else False #check for PythiaLO samples
         isbbH = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in j) else False #bbH has a different label in LHEEventProduct
-        isSignal = True if ('HToSSTobbbb_MH-125' in j  or 'HToSSTo4b_MH-125' in j) else False #FIXME: Update with other signal modes & models?
+        isSignal = True if ('HToSSTobbbb_MH-125' in j  or 'HToSSTo4b_MH-125' in j or 'HToSSTobbbb_WToLNu') else False #FIXME: Update with other signal modes & models?
         GT = ''
 
         if isMINIAOD:
