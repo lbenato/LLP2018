@@ -214,8 +214,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     ////for(int i = 0; i < WriteNLeptons; i++) ObjectsFormat::ResetLeptonType(Electrons[i]);
     ////ObjectsFormat::ResetGenPType(GenHiggs);
     ObjectsFormat::ResetCandidateType(VBF);
-    ObjectsFormat::ResetCandidateType(Z);
-    ObjectsFormat::ResetCandidateType(W);
+    if (isControl){
+      ObjectsFormat::ResetCandidateType(Z);
+      ObjectsFormat::ResetCandidateType(W);
+    }
 
     isMC = false;
     isVBF = isTriggerVBF = false;
@@ -464,6 +466,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "Electrons" << std::endl;
     std::vector<pat::Electron> ElecVect = theElectronAnalyzer->FillElectronVector(iEvent);
     std::vector<pat::Electron> TightElecVect;
+    if (isControl) Electrons.clear();
 
     for(unsigned int a = 0; a<ElecVect.size(); a++)
       {
@@ -483,6 +486,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "Muons" << std::endl;
     std::vector<pat::Muon> MuonVect = theMuonAnalyzer->FillMuonVector(iEvent);
     std::vector<pat::Muon> TightMuonVect;
+    if (isControl) Muons.clear();
     for(unsigned int a = 0; a<MuonVect.size(); a++)
       {
 	if(MuonVect.at(a).hasUserInt("isTight") && MuonVect.at(a).userInt("isTight")>0 && MuonVect.at(a).hasUserFloat("pfIso04") && MuonVect.at(a).userFloat("pfIso04")<0.15)//tight iso for muons
@@ -1888,8 +1892,11 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );
     if (WriteFatJets) for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) CHSFatJets.push_back( FatJetType() );
     for(unsigned int i = 0; i < ggHJetVect.size(); i++) ggHJet.push_back( JetType() );
-
-
+    if (isControl) {
+      for(unsigned int i = 0; i < MuonVect.size(); i++) Muons.push_back( LeptonType() );
+      for(unsigned int i = 0; i < ElecVect.size(); i++) Electrons.push_back( LeptonType() );
+    }
+    
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     // Vertices
@@ -2411,13 +2418,19 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillGenPType(GenHiggs[i], &GenHiggsVect[i]);
     if (WriteGenLLPs) for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillGenPType(GenLLPs[i], &GenLongLivedVect[i]);
     if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillGenPType(GenBquarks[i], &GenBquarksVect[i]);
-    //if(isZtoMM || isWtoMN) for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
-    //else if(isZtoEE || isWtoEN) for(unsigned int i = 0; i < Electrons.size() && i < TightElecVect.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
-    //else if(isTtoEM)
-    //{
-    //	for(unsigned int i = 0; i < Electrons.size() && i < TightElecVect.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
-    //	for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
-    //  }
+    if (isControl){
+      for(unsigned int i = 0; i < Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &MuonVect[i], isMC);
+      for(unsigned int i = 0; i < Electrons.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &ElecVect[i], isMC);
+    }
+    else{
+      if(isZtoMM || isWtoMN) for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
+      else if(isZtoEE || isWtoEN) for(unsigned int i = 0; i < Electrons.size() && i < TightElecVect.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
+      else if(isTtoEM)
+	{
+	  for(unsigned int i = 0; i < Electrons.size() && i < TightElecVect.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
+	  for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
+	}
+    }
     ObjectsFormat::FillCandidateType(VBF, &theVBF, isMC);
     //ObjectsFormat::FillCandidateType(Z, &theZ, isMC);
     ObjectsFormat::FillCandidateType(W, &theW, isMC);
@@ -2649,9 +2662,12 @@ Ntuplizer::beginJob()
     ////for(int i = 0; i < WriteNGenBquarks; i++) GenBquarks.push_back( GenPType() );
     ////for(int i = 0; i < WriteNGenLongLiveds; i++) GenLongLiveds.push_back( GenPType() );
     ////for(int i = 0; i < WriteNLeptons; i++) Leptons.push_back( LeptonType() );
-    ////for(int i = 0; i < WriteNLeptons; i++) Muons.push_back( LeptonType() );
-    ////for(int i = 0; i < WriteNLeptons; i++) Electrons.push_back( LeptonType() );
-
+    //      for(int i = 0; i < WriteNLeptons; i++) Muons.push_back( LeptonType() );
+    //      for(int i = 0; i < WriteNLeptons; i++) Electrons.push_back( LeptonType() );
+    if (isControl){
+      tree -> Branch("Muons", &Muons);
+      tree -> Branch("Electrons", &Electrons);
+    }
     //Set branches for objects
     //!! We save only MatchedJets for cross-checks with vectors
     ////for(int i = 0; i < WriteNJets; i++) tree->Branch(("CHSJet"+std::to_string(i+1)).c_str(), &(CHSJets[i].pt), ObjectsFormat::ListJetType().c_str());
@@ -2669,8 +2685,10 @@ Ntuplizer::beginJob()
     //for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Electron"+std::to_string(i+1)).c_str(), &(Electrons[i].pt), ObjectsFormat::ListLeptonType().c_str());
 
     tree -> Branch("VBFPair", &VBF.pt, ObjectsFormat::ListCandidateType().c_str());
-    //tree -> Branch("Z", &Z.pt, ObjectsFormat::ListCandidateType().c_str());
-    tree -> Branch("W", &W.pt, ObjectsFormat::ListCandidateType().c_str());
+    if (isControl){
+      tree -> Branch("Z", &Z.pt, ObjectsFormat::ListCandidateType().c_str());
+      tree -> Branch("W", &W.pt, ObjectsFormat::ListCandidateType().c_str());
+    }
 
     tree -> Branch("Jets", &CHSJets);
     //tree -> Branch("CaloJets", &CaloJets);

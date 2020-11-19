@@ -492,7 +492,7 @@ if isControl:
    print "***************************************"
    print "***************************************"
    print "\n"
-   print "Running controll region for short lifetimes!"
+   print "Running control region for short lifetimes!"
    print "\n"
    print "***************************************"
    print "***************************************"
