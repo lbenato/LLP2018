@@ -66,7 +66,27 @@ requests = {
 
 
 # 2017 campaign
-'ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+# Missing first signal point:
+## 'ggH_HToSSTobbbb_MH-125_MS-15_ctauS-1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-15_ctauS-10_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-15_ctauS-100_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-15_ctauS-1000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-15_ctauS-10000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-15_ctauS-100000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+
+'ggH_HToSSTobbbb_MH-125_MS-40_ctauS-1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-40_ctauS-10_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-40_ctauS-100_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-40_ctauS-1000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-40_ctauS-10000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-40_ctauS-100000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+
+'ggH_HToSSTobbbb_MH-125_MS-55_ctauS-1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-55_ctauS-10_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-55_ctauS-100_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-55_ctauS-1000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-55_ctauS-10000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-55_ctauS-100000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/MINIAODSIM',
 
 
 ########################################################################################

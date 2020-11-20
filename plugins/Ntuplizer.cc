@@ -257,7 +257,6 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     LumiNumber = iEvent.luminosityBlock();
     RunNumber = iEvent.id().run();
 
-
     //GenEventWeight
     GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
     EventWeight *= GenEventWeight;
@@ -602,7 +601,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     	//SF
 
-    	if(isMC && !is2016) {
+    	if(isControl && isMC && !is2016) {
     	  float LeptonWeightUnc = 0.;
     	  // float LeptonWeightUp = 0.;
     	  // float LeptonWeightDown = 0.;
@@ -643,7 +642,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(MuonVect.at(m2), 0)    ,2);
     	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(MuonVect.at(m1), 0)   ,2);
     	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(MuonVect.at(m2), 0)   ,2);
-    
+
     	  // LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
     	  // LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
     	}
@@ -677,10 +676,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     	theZ.addDaughter(TightElecVect.at(e1).charge() ? TightElecVect.at(e2) : TightElecVect.at(e1));
     	addP4.set(theZ);
     	isZtoEE = true;
-    
+
 
     	// SF
-    	if(isMC && !is2016) {
+    	if(isControl && isMC && !is2016) {
     	  float LeptonWeightUnc = 0.;
 	  // float LeptonWeightUp = 0.;
           // float LeptonWeightDown = 0.;
@@ -697,12 +696,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     	  LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(1));
     	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
     	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(1), 0);
-    
+
     	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(ElecVect.at(0))   ,2);
     	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(ElecVect.at(1))   ,2);
     	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(ElecVect.at(0), 0)     ,2);
     	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(ElecVect.at(1), 0)     ,2);
-    
+
     	  // LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
     	  // LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
     	}
@@ -723,7 +722,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
        return;
      }
          // SF
-    if(isMC && !is2016) {
+    if(isControl && isMC && !is2016) {
       float LeptonWeightUnc = 0.;
       //      float LeptonWeightUp = 0.;
       //      float LeptonWeightDown = 0.;
@@ -731,12 +730,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //LeptonWeight    *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(0));
       LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 0);
       LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 0);
-      
+
       //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(TightMuonVect.at(0)),2);
       //	LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(TightMuonVect.at(0))        ,2);
       LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(0), 0)      ,2);
       LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(0), 0)     ,2);
-    
+
       // LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
       // LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
     }
@@ -752,7 +751,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (theW.mass()<100. && isControl){
       return;
 	 }
-    if(isMC && !is2016) {
+    if(isControl && isMC && !is2016) {
       //    	LeptonWeight    *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(0));
     	LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
     	LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
@@ -774,8 +773,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // 	    LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
     // 	    LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 0);
     // 	    LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 0);
-    
-    
+
+
     // 	}
     // }
 
@@ -789,7 +788,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
 
     //Used to understand VBF jets features;
-    
+
     std::vector<pat::Jet> AllJetsVect = AllJetAnalyzer->FillJetVector(iEvent,iSetup);//
     nAllJets = AllJetsVect.size();
 
@@ -1242,7 +1241,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
       {
-        if(CHSJetsVect.at(r).pt()>=30 and CHSJetsVect.at(r).userInt("isTight")>0 and ggH_matching_index_CHSJets<0)//as soon as it finds a gluon-like jet, exit    
+        if(CHSJetsVect.at(r).pt()>=30 and CHSJetsVect.at(r).userInt("isTight")>0 and ggH_matching_index_CHSJets<0)//as soon as it finds a gluon-like jet, exit
           {
             ggH_matching_index_CHSJets = r;
           }
@@ -1288,7 +1287,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                   {
                     CHSJetsVect.erase(CHSJetsVect.begin()+r);
                   }
-              }//ggH jet removed    
+              }//ggH jet removed
           }
       }
 
@@ -1925,7 +1924,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // PFCandidates
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-  
+
     if(isVerbose) std::cout << "PF candidates" << std::endl;
     PFCandidates.clear();
 
@@ -2024,7 +2023,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(WriteAK8JetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAK4Jet; i++) PFCandidates.push_back( PFCandidateType() );
     if(WriteAllJetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAnyJet; i++) PFCandidates.push_back( PFCandidateType() );
     if(WriteAllPFCandidates)    for(unsigned int i = 0; i < PFCandidateVect.size();       i++) PFCandidates.push_back( PFCandidateType() );
-    
+
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -2046,7 +2045,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       std::vector<float> nHits;
 
       float alphaMax = -100.;
-      float sigIP2DMedian = -100.;
+      float sigIP2DMedian = -10000.;
       float theta2DMedian = -100.;
       float POCA_theta2DMedian = -100.;
       float nPixelHitsMedian = -1.;
@@ -2156,12 +2155,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	indexSVJet.push_back(j);
       }
 
-      CHSJetsVect[j].addUserFloat("alphaMax", alphaMax);
-      CHSJetsVect[j].addUserFloat("sigIP2DMedian", sigIP2DMedian);
-      CHSJetsVect[j].addUserFloat("theta2DMedian", theta2DMedian);
-      CHSJetsVect[j].addUserFloat("POCA_theta2DMedian", POCA_theta2DMedian);
-      CHSJetsVect[j].addUserFloat("nPixelHitsMedian", nPixelHitsMedian);
-      CHSJetsVect[j].addUserFloat("nHitsMedian", nHitsMedian);
+      CHSJetsVect[j].addUserFloat("alphaMaxOld", alphaMax);
+      CHSJetsVect[j].addUserFloat("sigIP2DMedianOld", sigIP2DMedian);
+      CHSJetsVect[j].addUserFloat("theta2DMedianOld", theta2DMedian);
+      CHSJetsVect[j].addUserFloat("POCA_theta2DMedianOld", POCA_theta2DMedian);
+      CHSJetsVect[j].addUserFloat("nPixelHitsMedianOld", nPixelHitsMedian);
+      CHSJetsVect[j].addUserFloat("nHitsMedianOld", nHitsMedian);
 
       CHSJetsVect[j].addUserInt("nTracks0PixelHits", nTracks0PixelHits);
       CHSJetsVect[j].addUserInt("nTracks1PixelHit", nTracks1PixelHit);
@@ -2191,7 +2190,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       std::vector<float> nHits;
 
       float alphaMax = -100.;
-      float sigIP2DMedian = -100.;
+      float sigIP2DMedian = -10000.;
       float theta2DMedian = -100.;
       float POCA_theta2DMedian = -100.;
       float nPixelHitsMedian = -1.;
@@ -2302,12 +2301,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //indexSVJet.push_back(j);
 
 
-      CHSFatJetsVect[j].addUserFloat("alphaMax", alphaMax);
-      CHSFatJetsVect[j].addUserFloat("sigIP2DMedian", sigIP2DMedian);
-      CHSFatJetsVect[j].addUserFloat("theta2DMedian", theta2DMedian);
-      CHSFatJetsVect[j].addUserFloat("POCA_theta2DMedian", POCA_theta2DMedian);
-      CHSFatJetsVect[j].addUserFloat("nPixelHitsMedian", nPixelHitsMedian);
-      CHSFatJetsVect[j].addUserFloat("nHitsMedian", nHitsMedian);
+      CHSFatJetsVect[j].addUserFloat("alphaMaxOld", alphaMax);
+      CHSFatJetsVect[j].addUserFloat("sigIP2DMedianOld", sigIP2DMedian);
+      CHSFatJetsVect[j].addUserFloat("theta2DMedianOld", theta2DMedian);
+      CHSFatJetsVect[j].addUserFloat("POCA_theta2DMedianOld", POCA_theta2DMedian);
+      CHSFatJetsVect[j].addUserFloat("nPixelHitsMedianOld", nPixelHitsMedian);
+      CHSFatJetsVect[j].addUserFloat("nHitsMedianOld", nHitsMedian);
 
       CHSFatJetsVect[j].addUserInt("nTracks0PixelHits", nTracks0PixelHits);
       CHSFatJetsVect[j].addUserInt("nTracks1PixelHit", nTracks1PixelHit);

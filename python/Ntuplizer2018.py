@@ -215,6 +215,12 @@ options.register(
     "calo parser flag"
 )
 options.register(
+    "Ptracking", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "tracking parser flag"
+)
+options.register(
     "Pshort", False,
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
@@ -291,6 +297,8 @@ if len(options.inputFiles) == 0:
 
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
+            #Test central production:
+            'root://cms-xrd-global.cern.ch//store/mc/RunIIFall17MiniAODv2/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/00000/0093CC5C-E152-EA11-AA49-0CC47A706FFE.root',
             #JiaJing's
             #'/store/group/phys_exotica/jmao/aodsim/RunIISummer16/MINIAODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh300_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi300_pl1000_ev100000_MINIAODSIM_CaltechT2/200222_061026/0000/SUS-RunIIFall17DRPremix-00183_MINIAOD_9.root'
             #'/store/user/kjpena/miniAODv3_08Feb2020/VBFH_HToSSTobbbb_MH-125_MS-50_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3_MINIAODSIM/200209_083121/0000/output_1.root'
@@ -299,15 +307,18 @@ if len(options.inputFiles) == 0:
             #'/store/mc/RunIIFall17MiniAODv2/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/40000/D0CB832F-0742-E811-87A1-0CC47A4D76AC.root'
             #'/store/mc/RunIIAutumn18DRPremix/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/3017154C-F483-964E-855B-E06F2590FD6B.root'#2018 MC with muons!  #
             #2016 background
+            #'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16MiniAODv3/QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/10000/00214FA3-001F-E911-AC83-0CC47A4F1CF6.root',
             #'/store/mc/RunIISummer16MiniAODv2/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/E65DC503-55C9-E611-9A11-02163E019C7F.root',
             #'/store/mc/RunIISummer16MiniAODv3/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/270000/FE8AFB84-5DEA-E811-83C4-68CC6EA5BD1A.root',
-            '/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
+            #'/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
           #'/store/mc/RunIISummer16MiniAODv3/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/100000/16099EC8-13EA-E811-9559-0CC47A4C7340.root',
           #'/store/mc/RunIISummer16MiniAODv3/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/20000/08E2D468-67EF-E811-850B-7CD30ABD295A.root',
           #'/store/mc/RunIISummer16MiniAODv3/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/100000/00A80353-4FEA-E811-9282-6CC2173CAAE0.root'
             #2018 background
+            #'root://cms-xrd-global.cern.ch//store/mc/RunIIAutumn18MiniAOD/QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/10000/037A79A2-18C7-314B-AD6B-A8DA89B1447B.root',
             #'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/270000/FFB1D063-1653-9441-BCE5-088A8DB0086D.root'
             #2017 background?
+            #'root://cms-xrd-global.cern.ch//store/mc/RunIIFall17MiniAODv2/QCD_HT100to200_TuneCP5_13TeV-madgraph-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/00000/007D59B8-82B3-E811-A052-EC0D9A0B30E0.root',
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
            #'/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
             #'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/WW_TuneCP5_13TeV-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v2/80000/7639FB10-DF53-8242-89D8-7A5E5817A3E4.root'
@@ -349,8 +360,9 @@ if RunLocal:
     isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0] or 'HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
     isCentralProd     = True if ('HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
     isCalo            = False #HERE for calo analyses!!!
-    isShort           = True #HERE for short lifetime analyses!!!
-    isControl         = True #HERE for short lifetime control region!!!
+    isTracking        = True
+    isShort           = False #HERE for short lifetime analyses!!!
+    isControl         = False #HERE for short lifetime control region!!!
     isVBF             = False
     isggH             = False
     isTwinHiggs       = True
@@ -371,6 +383,7 @@ else:
     isSignal          = options.PisSignal
     isCentralProd     = options.PisCentralProd
     isCalo            = options.Pcalo
+    isTracking        = options.Ptracking
     isShort           = options.Pshort
     isControl         = options.Pcontrol
     isVBF             = options.PVBF
@@ -403,6 +416,10 @@ print 'isCentralProd', isCentralProd
 
 if(int(isTwinHiggs) + int(isHeavyHiggs) + int(isSUSY)>1):
    print "More than one theoretical model selected! Aborting...."
+   exit()
+
+if(int(isCalo) + int(isTracking) + int(isShort)>1):
+   print "More than one phase space selected! Aborting...."
    exit()
 
 if isTwinHiggs:
@@ -467,6 +484,19 @@ if isCalo:
     print "***************************************"
     print "\n"
     print "Performing analysis for CALO LIFETIMES!"
+    print "\n"
+    print "***************************************"
+    print "***************************************"
+    print "***************************************"
+    print "\n"
+
+if isTracking:
+    print "\n"
+    print "***************************************"
+    print "***************************************"
+    print "***************************************"
+    print "\n"
+    print "Performing TRACKING LIFETIMES analysis!"
     print "\n"
     print "***************************************"
     print "***************************************"
@@ -601,7 +631,7 @@ if RunLocal:
         JECstring = "Summer16_23Sep2016V3_MC"
     else:#dummy!
        print "WARNING! Dummy JEC for other run eras!!!!!!!!!!!"
-       JECstring = "Summer16_23Sep2016HV3_DATA" 
+       JECstring = "Summer16_23Sep2016HV3_DATA"
 
 else:
     JECstring = options.PJECstring
@@ -658,7 +688,7 @@ if RunLocal:
       JERstring = 'Autumn18_V7b_MC'
       MuonSFTriggerstring = 'MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate'
       print "WARNING! There is another SF root file for single muon triggers for Run A: run < 316361 it is called: MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_BeforeMuonHLTUpdate. TO BE IMPLEMENTED SOMEHOW!"
-      exit()
+      if isControl: exit()
       MuonSFISOstring = 'MuonISO_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ISO'
       MuonSFIDstring = 'MuonID_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID'
       eleVetoIDstring = '2018_ElectronWPVeto_Fall17V2'
@@ -869,7 +899,7 @@ if isCalo and pt_AK4<10:
    process.ak4PFJetsCHSCustom = ak4PFJets.clone(src = "pfCHS", doAreaFastjet = True, jetPtMin = pt_AK4)
    task.add(process.ak4PFJetsCHSCustom)
 
-   
+
    from PhysicsTools.PatAlgos.tools.jetTools import *
    addJetCollection(
       process,
@@ -1493,10 +1523,6 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
 #'HLT_VBF_DisplacedJet40_VTightID_Hadronic_v', 'HLT_VBF_DisplacedJet40_VVTightID_Hadronic_v'#,'HLT_AK4PFJet30_v7'
 
 #2018 menu
-#'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',
-#'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',
-#'HLT_HT500_DisplacedDijet40_DisplacedTrack_v',
-#'HLT_HT650_DisplacedDijet60_Inclusive_v',
 #'HLT_AK8PFHT800_TrimMass50_v',
 #'HLT_AK8PFHT850_TrimMass50_v',
 #'HLT_AK8PFHT900_TrimMass50_v',
@@ -1879,7 +1905,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     muonSet = cms.PSet(
         muons = cms.InputTag('cleanedMuons'),#('slimmedMuons'),#
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
-        #        muonTrkFileName = cms.string('data/MuonTrkEfficienciesAndSF_MORIOND17.root'),# todo: is this used? 
+        #        muonTrkFileName = cms.string('data/MuonTrkEfficienciesAndSF_MORIOND17.root'),# todo: is this used?
         muonIdFileName = cms.string('data/%s.root' %(MuonSFIDstring)),#('data/MuonIdEfficienciesAndSF_MORIOND17.root'),
         muonIsoFileName = cms.string('data/%s.root' %(MuonSFISOstring)),#('data/MuonIsoEfficienciesAndSF_MORIOND17.root'),
         #        muonTrkHighptFileName = cms.string('data/tkhighpt_2016full_absetapt.root'),# todo: is this used?
@@ -1985,7 +2011,123 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     isera2018 = cms.bool(is2018),
 )
 
+if (isTracking and is2016):
+    process.ntuple.triggerSet.paths = cms.vstring(
+    *[
+    ## -------------------------------------------------------------------------------------
+    ## DisplacedDijet triggers
+    ## -------------------------------------------------------------------------------------
+    'HLT_HT350_DisplacedDijet40_DisplacedTrack_v',
+    'HLT_HT350_DisplacedDijet80_DisplacedTrack_v',
+    'HLT_HT350_DisplacedDijet80_Tight_DisplacedTrack_v',
+    'HLT_HT650_DisplacedDijet80_Inclusive_v',
+    'HLT_HT750_DisplacedDijet80_Inclusive_v',
+    ])
 
+if (isTracking and is2017):
+    process.ntuple.triggerSet.paths = cms.vstring(
+    *[#2017 menu
+    ## -------------------------------------------------------------------------------------
+    ## ParkingHT triggers:
+    ## -------------------------------------------------------------------------------------
+    # 'DST_CaloJet40_BTagScouting_v',#                  control prescaled       ParkingHT
+    # 'DST_CaloJet40_CaloBTagScouting_v',#              control prescaled       ParkingHT
+    # 'DST_CaloJet40_CaloScouting_PFScouting_v',#       control prescaled       ParkingHT
+    'DST_HT250_CaloBTagScouting_v',#                    signal  unprescaled     ParkingHT
+    'DST_HT250_CaloScouting_v',#                        signal  unprescaled     ParkingHT
+    'DST_HT410_BTagScouting_v',#                        signal  unprescaled     ParkingHT
+    'DST_HT410_PFScouting_v',#                          signal  unprescaled     ParkingHT
+    # 'DST_L1HTT_BTagScouting_v',#                      control prescaled       ParkingHT
+    # 'DST_L1HTT_CaloBTagScouting_v',#                  control prescaled       ParkingHT
+    # 'DST_L1HTT_CaloScouting_PFScouting_v',#           control prescaled       ParkingHT
+    # 'DST_ZeroBias_BTagScouting_v',#                   control prescaled       ParkingHT
+    # 'DST_ZeroBias_CaloScouting_PFScouting_v',#        control prescaled       ParkingHT
+    ## -------------------------------------------------------------------------------------
+    ## ParkingMuon triggers:
+    ## -------------------------------------------------------------------------------------
+    'DST_DoubleMu3_noVtx_CaloScouting_v',#              signal  unprescaled     ParkingMuon
+    # 'DST_L1DoubleMu_BTagScouting_v',#                 control prescaled       ParkingMuon
+    # 'DST_L1DoubleMu_CaloScouting_PFScouting_v',#      control prescaled       ParkingMuon
+    ## -------------------------------------------------------------------------------------
+    ## DisplacedDijet triggers:
+    ## -------------------------------------------------------------------------------------
+    # 'HLT_HT400_DisplacedDijet40_DisplacedTrack_v',#   control prescaled       DisplacedJet
+    # 'HLT_HT425_v',#                                   control prescaled       DisplacedJet
+    'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',#     signal	unprescaled     DisplacedJet
+    'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',#     backup	unprescaled     DisplacedJet
+    'HLT_HT430_DisplacedDijet80_DisplacedTrack_v',#     backup	unprescaled     DisplacedJet
+    # 'HLT_HT550_DisplacedDijet60_Inclusive_v',#        control prescaled       DisplacedJet
+    # 'HLT_HT550_DisplacedDijet80_Inclusive_v',#        control prescaled       DisplacedJet
+    'HLT_HT650_DisplacedDijet60_Inclusive_v',#          backup	unprescaled     DisplacedJet
+    'HLT_HT650_DisplacedDijet80_Inclusive_v',#          backup	unprescaled     DisplacedJet
+    'HLT_HT750_DisplacedDijet80_Inclusive_v',#          backup	unprescaled     DisplacedJet
+    ])
+
+if (isTracking and is2018):
+    process.ntuple.triggerSet.paths = cms.vstring(
+    *[
+    ## -------------------------------------------------------------------------------------
+    ## B-Parking triggers:
+    ## -------------------------------------------------------------------------------------
+    'HLT_Mu12_IP6_part0_v',#                            signal  prescaled       ParkingBPH1
+    'HLT_Mu7_IP4_part0_v',#                             signal  prescaled       ParkingBPH1
+    'HLT_Mu8_IP3_part0_v',#                             signal  prescaled       ParkingBPH1
+    'HLT_Mu8_IP5_part0_v',#                             signal  prescaled       ParkingBPH1
+    'HLT_Mu8_IP6_part0_v',#                             signal  prescaled       ParkingBPH1
+    'HLT_Mu9_IP0_part0_v',#                             signal  prescaled       ParkingBPH1
+    'HLT_Mu9_IP3_part0_v',#                             signal  prescaled       ParkingBPH1
+    # 'HLT_Mu9_IP4_part0_v',#                           signal  disabled        ParkingBPH1
+    'HLT_Mu9_IP5_part0_v',#                             signal  prescaled       ParkingBPH1
+    'HLT_Mu9_IP6_part0_v',#                             signal  prescaled       ParkingBPH1
+    # 'HLT_Mu12_IP6_ToCSCS_v',#                         signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu7_IP4_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu8_IP3_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu8_IP5_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu8_IP6_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu9_IP4_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu9_IP5_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu9_IP6_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    'HLT_Mu12_IP6_part1_v',#                            signal  prescaled       ParkingBPH2
+    'HLT_Mu7_IP4_part1_v',#                             signal  prescaled       ParkingBPH2
+    'HLT_Mu8_IP3_part1_v',#                             signal  prescaled       ParkingBPH2
+    'HLT_Mu8_IP5_part1_v',#                             signal  prescaled       ParkingBPH2
+    'HLT_Mu8_IP6_part1_v',#                             signal  prescaled       ParkingBPH2
+    # 'HLT_Mu9_IP4_part1_v',#                           signal  disabled        ParkingBPH2
+    'HLT_Mu9_IP5_part1_v',#                             signal  prescaled       ParkingBPH2
+    'HLT_Mu9_IP6_part1_v',#                             signal  prescaled       ParkingBPH2
+    'HLT_Mu12_IP6_part2_v',#                            signal  prescaled       ParkingBPH3
+    'HLT_Mu7_IP4_part2_v',#                             signal  prescaled       ParkingBPH3
+    'HLT_Mu8_IP3_part2_v',#                             signal  prescaled       ParkingBPH3
+    'HLT_Mu8_IP5_part2_v',#                             signal  prescaled       ParkingBPH3
+    'HLT_Mu8_IP6_part2_v',#                             signal  prescaled       ParkingBPH3
+    # 'HLT_Mu9_IP4_part2_v',#                           signal  disabled        ParkingBPH3
+    'HLT_Mu9_IP5_part2_v',#                             signal  prescaled       ParkingBPH3
+    'HLT_Mu9_IP6_part2_v',#                             signal  prescaled       ParkingBPH3
+    'HLT_Mu12_IP6_part3_v',#                            signal  prescaled       ParkingBPH4
+    'HLT_Mu7_IP4_part3_v',#                             signal  prescaled       ParkingBPH4
+    'HLT_Mu8_IP3_part3_v',#                             signal  prescaled       ParkingBPH4
+    'HLT_Mu8_IP5_part3_v',#                             signal  prescaled       ParkingBPH4
+    'HLT_Mu8_IP6_part3_v',#                             signal  prescaled       ParkingBPH4
+    # 'HLT_Mu9_IP4_part3_v',#                           signal  disabled        ParkingBPH4
+    'HLT_Mu9_IP5_part3_v',#                             signal  prescaled       ParkingBPH4
+    'HLT_Mu9_IP6_part3_v',#                             signal  prescaled       ParkingBPH4
+    'HLT_Mu12_IP6_part4_v',#                            signal  prescaled       ParkingBPH5
+    'HLT_Mu7_IP4_part4_v',#                             signal  prescaled       ParkingBPH5
+    'HLT_Mu8_IP3_part4_v',#                             signal  prescaled       ParkingBPH5
+    'HLT_Mu8_IP5_part4_v',#                             signal  prescaled       ParkingBPH5
+    'HLT_Mu8_IP6_part4_v',#                             signal  prescaled       ParkingBPH5
+    # 'HLT_Mu9_IP4_part4_v',#                           signal  disabled        ParkingBPH5
+    'HLT_Mu9_IP5_part4_v',#                             signal  prescaled       ParkingBPH5
+    'HLT_Mu9_IP6_part4_v',#                             signal  prescaled       ParkingBPH5
+    ### DisplacedDijet triggers:
+    # 'HLT_HT400_DisplacedDijet40_DisplacedTrack_v',#   control prescaled       DisplacedJet
+    # 'HLT_HT425_v',#                                   control prescaled       DisplacedJet
+    'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',#     signal  unprescaled     DisplacedJet
+    'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',#     backup  unprescaled     DisplacedJet
+    'HLT_HT500_DisplacedDijet40_DisplacedTrack_v',#     backup  unprescaled     DisplacedJet
+    # 'HLT_HT550_DisplacedDijet60_Inclusive_v',#        control prescaled       DisplacedJet
+    'HLT_HT650_DisplacedDijet60_Inclusive_v',#          backup  unprescaled     DisplacedJet
+    ])
 #-----------------------#
 #       TEST            #
 #-----------------------#
@@ -2039,4 +2181,3 @@ process.p.associate(task)
 outFile = open("tmpConfig_Ntuplizer2018.py","w")
 outFile.write(process.dumpPython())
 outFile.close()
-

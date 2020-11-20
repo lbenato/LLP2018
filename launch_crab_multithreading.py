@@ -3,7 +3,7 @@
 import CRABClient
 from CRABClient.UserUtilities import config#, getUsernameFromSiteDB
 import sys
-from multiprocessing import Process 
+from multiprocessing import Process
 config = config()
 
 config.User.voGroup='dcms'
@@ -23,8 +23,9 @@ config.General.requestName = 'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MIN
 config.Data.inputDataset =  '/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_standard_mixing-Moriond17_80X_mcRun2_2016_MINIAOD-28028af67189b3de7224b79195bd0e1d/USER'
 config.Data.inputDBS = 'global'
 #config.Data.splitting = 'EventAwareLumiBased'
-#config.Data.unitsPerJob = 15000
-#config.Data.totalUnits = 100#15000
+#config.Data.unitsPerJob = 2500#15000
+#config.Data.totalUnits = 1000000#15000
+
 config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
 #config.Data.unitsPerJob = 5
 #config.Data.splitting = 'FileBased'
@@ -33,15 +34,18 @@ config.Data.outLFNDirBase = '/store/user/lbenato/choose_a_folder_name'
 config.Data.publication = False
 
 config.Site.storageSite = 'T2_DE_DESY'
-#config.Site.whitelist   = ['T2_DE_DESY']
+
+#config.Site.ignoreGlobalBlacklist   = True #Set to true if e.g. your dataset is in a blacklisted site. Make sure you add
+#config.Site.whitelist   = ['T1_US_FNAL'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
+
 #config.Site.blacklist   = ['T2_FR_IPHC']
 
 ## Use this for central production 2016 signal as long as in status 'production'
 #config.Data.allowNonValidInputDataset = True
-            
+
 #enable multi-threading
 #remove from being default!
-config.JobType.maxMemoryMB = 15900#9000#15900 #more memory
+#config.JobType.maxMemoryMB = 3000#15900 #more memory
 config.JobType.numCores = 8
 
 if __name__ == '__main__':
@@ -62,7 +66,7 @@ if __name__ == '__main__':
     # Selection of samples via python lists
     import os
 
-    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB","Others","data_BTagCSV", "WH_MH-125_2016"]#,"data_obs"
+    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB", "Others","data_BTagCSV", "WH_MH-125_2016"]#,"data_obs"
     print "Possible subgroups of samples:"
     for a in list_of_samples:
         print a
@@ -233,7 +237,7 @@ if __name__ == '__main__':
         isggH = False
         isTwinHiggs = False
         isHeavyHiggs = False
-        isSUSY = True       
+        isSUSY = True
     elif options.lists == "v0_SUSY_calo_AOD_2018":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
         from Analyzer.LLP2018.samplesAOD2018 import samples, sample
@@ -637,13 +641,102 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = True#False#only for heavy higgs
         isSUSY = False#!!!
-
+    elif options.lists == "v1_central_miniAOD_2016_17Nov2020":
+        from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2016 import sample, samples
+        if ("H_MH-125_2017" in options.groupofsamples or "H_MH-125_2018" in options.groupofsamples):
+            print("Error: Using wrong group of samples for 2016 list")
+            exit()
+        if ("2017" in options.runera or "2018" in options.runera):
+            print("Error: Using wrong run era for 2016 list")
+            exit()
+        pset = "Ntuplizer2018.py"
+        folder = "v0_central_miniAOD_2016_17Nov2020/"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/kjpena/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/penaka/crabProjects/" + folder #CHANGE here according to your username!
+        isCalo = False
+        isTracking = True
+        isShort = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False
+        isSUSY = False
+        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples or "ggH_MH-125_201" in options.groupofsamples) else False
+        isMINIAOD = True
+        isAOD  = False
+        is2016 = True
+        is2017 = False
+        is2018 = False
+        config.JobType.inputFiles = ['data']
+    elif options.lists == "v1_central_miniAOD_2017_17Nov2020":
+        from Analyzer.LLP2018.crab_requests_lists_2017MINIAOD_centrallyProduced import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2017 import sample, samples
+        if ("H_MH-125_2016" in options.groupofsamples or "H_MH-125_2018" in options.groupofsamples):
+            print("Error: Using wrong group of samples for 2017 list")
+            exit()
+        if ("2016" in options.runera or "2018" in options.runera):
+            print("Error: Using wrong run era for 2017 list")
+            exit()
+        pset = "Ntuplizer2018.py"
+        folder = "v0_central_miniAOD_2017_17Nov2020/"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/kjpena/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/penaka/crabProjects/" + folder #CHANGE here according to your username!
+        isCalo = False
+        isTracking = True
+        isShort = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False
+        isSUSY = False
+        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples or "ggH_MH-125_201" in options.groupofsamples) else False
+        isMINIAOD = True
+        isAOD  = False
+        is2016 = False
+        is2017 = True
+        is2018 = False
+        config.JobType.inputFiles = ['data']
+    elif options.lists == "v1_central_miniAOD_2018_17Nov2020":
+        from Analyzer.LLP2018.crab_requests_lists_2018MINIAOD_centrallyProduced import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2018 import sample, samples
+        if ("H_MH-125_2016" in options.groupofsamples or "H_MH-125_2017" in options.groupofsamples):
+            print("Error: Using wrong group of samples for 2018 list")
+            exit()
+        if ("2016" in options.runera or "2018" in options.runera):
+            print("Error: Using wrong run era for 2018 list")
+            exit()
+        pset = "Ntuplizer2018.py"
+        folder = "v0_central_miniAOD_2018_17Nov2020/"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/kjpena/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/penaka/crabProjects/" + folder #CHANGE here according to your username!
+        isCalo = False
+        isTracking = True
+        isShort = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False
+        isSUSY = False
+        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples or "ggH_MH-125_201" in options.groupofsamples) else False
+        isMINIAOD = True
+        isAOD  = False
+        is2016 = False
+        is2017 = False
+        is2018 = True
+        config.JobType.inputFiles = ['data']
     else:
         print "No list indicated, aborting!"
         exit()
 
     selected_requests = {}
-    selected_lumiMasks = {} 
+    selected_lumiMasks = {}
     if options.groupofsamples not in list_of_samples:
         print "Invalid subgroup of samples, aborting!"
         exit()
@@ -687,6 +780,16 @@ if __name__ == '__main__':
             if "WminusH_HToSSTobbbb_" in k or "WplusH_HToSSTobbbb_" in k:
                 print k
                 selected_requests[k] = requests[k]
+        elif "ggH_MH-125_201" in options.groupofsamples:
+            if "ggH_HToSSTobbbb" in k and "MS-" in k:
+                print k
+                selected_requests[k] = requests[k]
+                if k in masks.keys():
+                    selected_lumiMasks[k] = masks[k]
+                    print "lumi mask:", masks[k]
+                else:
+                    print "no mask available"
+                    exit()
         elif options.groupofsamples=="all":
             print "All samples considered"
             selected_requests[k] = requests[k]
@@ -702,6 +805,19 @@ if __name__ == '__main__':
         print "***************************************"
         print "\n"
         print "Performing analysis for CALO LIFETIMES!"
+        print "\n"
+        print "***************************************"
+        print "***************************************"
+        print "***************************************"
+        print "\n"
+
+    if isTracking:
+        print "\n"
+        print "***************************************"
+        print "***************************************"
+        print "***************************************"
+        print "\n"
+        print "Performing TRACKING LIFETIMES analysis!"
         print "\n"
         print "***************************************"
         print "***************************************"
@@ -773,7 +889,7 @@ if __name__ == '__main__':
         print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         print "\n"
 
-    
+
     for a, j in enumerate(selected_requests):
         print "#"*65
 	print "Dataset: ", j
@@ -785,7 +901,7 @@ if __name__ == '__main__':
         isReMiniAod       = True if ('03Feb2017' in j) else False
         #is2017            = True if ('RunIIFall17MiniAODv2' in j) else False
         isPromptReco      = True if ('PromptReco' in j) else False
-        theRunBCD2016 = ['Run2016B','Run2016C','Run2016D']    
+        theRunBCD2016 = ['Run2016B','Run2016C','Run2016D']
         theRunEF2016  = ['Run2016E','Run2016F']
         theRunG2016   = ['Run2016G']
         theRunH2016   = ['Run2016H']
@@ -906,7 +1022,8 @@ if __name__ == '__main__':
             JERstring = 'Autumn18_V7b_MC'
             MuonSFTriggerstring = 'MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate'
             print "WARNING! There is another SF root file for single muon triggers for Run A: run < 316361 it is called: MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_BeforeMuonHLTUpdate. TO BE IMPLEMENTED SOMEHOW!"
-            exit()
+            print "To ignore this warning, add the option 'isControl = False' to your list"
+            if isControl: exit()
             MuonSFISOstring = 'MuonISO_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ISO'
             MuonSFIDstring = 'MuonID_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID'
             eleVetoIDstring = '2018_ElectronWPVeto_Fall17V2'
@@ -929,7 +1046,7 @@ if __name__ == '__main__':
             jsonName = "Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON"
         elif is2018:
             jsonName = "Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON"
-            
+
         if isCentralProd and (is2016 or is2017 or is2018):
             jsonName = selected_lumiMasks[j]
 
@@ -940,7 +1057,7 @@ if __name__ == '__main__':
             filterString = "RECO"
             triggerString = "DQM"
         else:
-            if isMINIAOD: 
+            if isMINIAOD:
                 filterString = "PAT"
                 triggerString = "PAT"
             if isAOD: filterString = "RECO"
@@ -980,6 +1097,7 @@ if __name__ == '__main__':
         string_triggerString = 'PtriggerString='+str(triggerString)
         string_filterString = 'PfilterString='+str(filterString)
         string_calo = 'Pcalo=True' if isCalo else 'Pcalo=False'
+        string_tracking = 'Ptracking=True' if isTracking else 'Ptracking=False'
         string_short = 'Pshort=True' if isShort else 'Pshort=False'
         string_control = 'Pcontrol=True' if isControl else 'Pcontrol=False'
         string_VBF = 'PVBF=True' if isVBF else 'PVBF=False'
@@ -1035,7 +1153,7 @@ if __name__ == '__main__':
             if isAOD:
                 config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo,  string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             else:
-                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod,string_isPromptReco, string_is2016, string_is2017, string_is2018, string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_triggerTag, string_triggerString, string_filterString, string_calo, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod,string_isPromptReco, string_is2016, string_is2017, string_is2018, string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_triggerTag, string_triggerString, string_filterString, string_calo, string_tracking, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
             # Submit config file
             if options.crabaction=="submit":
@@ -1055,10 +1173,13 @@ if __name__ == '__main__':
         elif options.crabaction=="status":
             os.system('echo status -d ' + workarea + '/crab_'+j+'\n')
             os.system('crab status -d ' + workarea + '/crab_'+j+'\n')
-            os.system('echo ----------------------------------------------------\n') 
+            os.system('echo ----------------------------------------------------\n')
         elif options.crabaction=="resubmit":
             os.system('echo resubmit -d ' + workarea + '/crab_'+j+'\n')
             os.system('crab resubmit -d ' + workarea + '/crab_'+j+'\n')
+            # To request more memory for failed jobs:
+            #os.system('echo resubmit --maxmemory 5000 -d ' + workarea + '/crab_'+j+'\n')
+            #os.system('crab resubmit --maxmemory 5000 -d ' + workarea + '/crab_'+j+'\n')
         elif options.crabaction=="getoutput":
             os.system('echo getoutput -d ' + workarea + '/crab_'+j+'\n')
             os.system('crab getoutput -d ' + workarea + '/crab_'+j+'\n')
@@ -1109,9 +1230,4 @@ if __name__ == '__main__':
         else:
             print "Invalid crab action. Please type: -a submit/status/resubmit/dryrun/getoutput/kill"
             exit()
-    os.system('echo -%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-\n') 
-
-
-
-
-
+    os.system('echo -%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-\n')

@@ -68,8 +68,27 @@ requests = {
 
 ##### Gluon fusion Higgs production
 # 2018 campaign
-'ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+# Missing first signal point:
+##'ggH_HToSSTobbbb_MH-125_MS-15_ctauS-1_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-15_ctauS-10_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-15_ctauS-100_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-15_ctauS-1000_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-15_ctauS-10000_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-15_ctauS-100000_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
 
+'ggH_HToSSTobbbb_MH-125_MS-40_ctauS-1_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-40_ctauS-10_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-40_ctauS-100_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-40_ctauS-1000_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-40_ctauS-10000_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-40_ctauS-100000_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+
+'ggH_HToSSTobbbb_MH-125_MS-55_ctauS-1_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-55_ctauS-10_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-55_ctauS-100_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-55_ctauS-1000_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-55_ctauS-10000_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+'ggH_HToSSTobbbb_MH-125_MS-55_ctauS-100000_TuneCP5_13TeV-powheg-pythia8_RunIIAutumn18MiniAOD' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-rp_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
 
 #####################
 #   GEN-SIM-RECO ####
