@@ -561,6 +561,7 @@ if __name__ == '__main__':
 #        config.Data.totalUnits = 200
         isCalo=False
         isShort = True
+        isTracking = True
         isControl = True
         isVBF = False
         isggH = False
