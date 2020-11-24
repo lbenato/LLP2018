@@ -112,7 +112,7 @@ JetAnalyzer::JetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl
     
     // BTag calibrator
     if(UseReshape) {
-        calib           = new BTagCalibration("CSVv2", BTagDB);
+        calib           = new BTagCalibration("deepJet", BTagDB);
 	
 	// Set up readers for systematics. This code is largely thanks to Martino & Pablo in
 	// https://github.com/cms-hh-pd/alp_analysis/blob/master/interface/BTagFilterOperator.h
@@ -133,7 +133,7 @@ JetAnalyzer::JetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl
                                             "up_lfstats1", "down_lfstats1",
 					    "up_lfstats2", "down_lfstats2"}}};
 	
-	sf_mode = "iterativefit";
+	sf_mode = "comb";
 	
 	// Load the reader with each systematic type.
 	cr_map.emplace("central",
