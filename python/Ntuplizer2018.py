@@ -305,6 +305,7 @@ if len(options.inputFiles) == 0:
             #'file:/nfs/dust/cms/user/lbenato/HTo2LongLivedTo4b_MH-1000_MFF-450_CTau-10000mm_privateMC_102X_RECO_v1_generation_forMS_output_100_MINIAOD.root'
             #test 2017 MC:
             #'/store/mc/RunIIFall17MiniAODv2/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/40000/D0CB832F-0742-E811-87A1-0CC47A4D76AC.root'
+#          '/store/mc/RunIIFall17MiniAODv2/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/966FD47C-6FB8-E811-8B1A-0242AC1C0500.root'
             #'/store/mc/RunIIAutumn18DRPremix/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/3017154C-F483-964E-855B-E06F2590FD6B.root'#2018 MC with muons!  #
             #2016 background
             #'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16MiniAODv3/QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/10000/00214FA3-001F-E911-AC83-0CC47A4F1CF6.root',
@@ -2128,6 +2129,32 @@ if (isTracking and is2018):
     # 'HLT_HT550_DisplacedDijet60_Inclusive_v',#        control prescaled       DisplacedJet
     'HLT_HT650_DisplacedDijet60_Inclusive_v',#          backup  unprescaled     DisplacedJet
     ])
+
+if (isShort and is2016):
+   process.ntuple.triggerSet.paths = cms.vstring(
+      *[
+         ## -------------------------------------------------------------------------------------
+         ## Triggers for b-like lifetimes
+         ## -------------------------------------------------------------------------------------
+          'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v', 
+          'HLT_QuadJet45_TripleBTagCSV_p087_v', 
+          'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 
+          'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v',
+          ])
+
+if (isShort and is2017):
+#   print("Update trigger menu!")
+#   exit()
+   process.ntuple.triggerSet.paths = cms.vstring(
+      *[
+         ])
+if (isShort and is2018):
+   print("Update trigger menu!")
+   exit()
+   process.ntuple.triggerSet.paths = cms.vstring(
+      *[
+         ])
+
 #-----------------------#
 #       TEST            #
 #-----------------------#
