@@ -987,6 +987,7 @@ if __name__ == '__main__':
         phoMediumIdFilestring = ''
         phoTightIdFilestring = ''
         phoMVANonTrigMediumIdFilestring = ''
+        btagSFstring = ''
         if is2016:
             JERstring = 'Summer16_25nsV1b_MC'
             #WARNING! Muon SF should not be here applied for 2016! It needed to be a lumi weighted SF and hence only calculated after full run and brilcalc procedure! Needed to be done after ntuplizer process!
@@ -1004,6 +1005,7 @@ if __name__ == '__main__':
             phoMediumIdFilestring = 'egammaPlots_MWP_PhoSFs_2016_LegacyReReco_New'
             phoTightIdFilestring = 'Fall17V2_2016_Tight_photons'
             phoMVANonTrigMediumIdFilestring = 'Fall17V2_2016_MVAwp90_photons'
+            btagSFstring = 'DeepJet_2016LegacySF_V1'
         elif is2017:
             JERstring = 'Fall17_V3b_MC'
             MuonSFTriggerstring = 'MuonTrigger_EfficienciesAndSF_RunBtoF_Nov17Nov2017'
@@ -1019,6 +1021,7 @@ if __name__ == '__main__':
             phoMediumIdFilestring = '2017_PhotonsMedium'
             phoTightIdFilestring = '2017_PhotonsTight'
             phoMVANonTrigMediumIdFilestring = '2017_PhotonsMVAwp90'
+            btagSFstring = 'DeepFlavour_94XSF_V4_B_F_Run2017'
         elif is2018:
             JERstring = 'Autumn18_V7b_MC'
             MuonSFTriggerstring = 'MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate'
@@ -1037,6 +1040,7 @@ if __name__ == '__main__':
             phoMediumIdFilestring = '2018_PhotonsMedium'
             phoTightIdFilestring = '2018_PhotonsTight'
             phoMVANonTrigMediumIdFilestring = '2018_PhotonsMVAwp90'
+            btagSFstring = 'DeepJet_102XSF_V2_Run2018'
         print "JER ->", JERstring
 
         # JSON filter
@@ -1093,6 +1097,7 @@ if __name__ == '__main__':
         string_phoMediumIdFilestring = 'PphoMediumIdFilestring='+str(phoMediumIdFilestring)
         string_phoTightIdFilestring = 'PphoTightIdFilestring='+str(phoTightIdFilestring)
         string_phoMVANonTrigMediumIdFilestring = 'PphoMVANonTrigMediumIdFilestring='+str(phoMVANonTrigMediumIdFilestring)
+        string_btagSFstring = 'PbtagSFstring='+str(btagSFstring)
         string_jsonName = 'PjsonName='+str(jsonName)
         string_triggerTag = 'PtriggerTag='+str(triggerTag)
         string_triggerString = 'PtriggerString='+str(triggerString)
@@ -1154,7 +1159,7 @@ if __name__ == '__main__':
             if isAOD:
                 config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo,  string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             else:
-                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod,string_isPromptReco, string_is2016, string_is2017, string_is2018, string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_triggerTag, string_triggerString, string_filterString, string_calo, string_tracking, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod,string_isPromptReco, string_is2016, string_is2017, string_is2018, string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_btagSFstring, string_triggerTag, string_triggerString, string_filterString, string_calo, string_tracking, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
             # Submit config file
             if options.crabaction=="submit":

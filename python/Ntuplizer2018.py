@@ -191,6 +191,12 @@ options.register(
     "PphoMVANonTrigMediumIdFilestring parser flag"
 )
 options.register(
+    "PbtagSFstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "btagSFstring parser flag"
+)
+options.register(
     "PtriggerTag", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
@@ -653,6 +659,7 @@ phoLooseIdFilestring = ''
 phoMediumIdFilestring = ''
 phoTightIdFilestring = ''
 phoMVANonTrigMediumIdFilestring = ''
+btagSFstring = ''
 if RunLocal:
    if is2016:
       JERstring = 'Summer16_25nsV1b_MC'
@@ -670,6 +677,7 @@ if RunLocal:
       phoMediumIdFilestring = 'egammaPlots_MWP_PhoSFs_2016_LegacyReReco_New'
       phoTightIdFilestring = 'Fall17V2_2016_Tight_photons'
       phoMVANonTrigMediumIdFilestring = 'Fall17V2_2016_MVAwp90_photons'
+      btagSFstring = 'DeepJet_2016LegacySF_V1'
    elif is2017:
       JERstring = 'Fall17_V3b_MC'
       MuonSFTriggerstring = 'MuonTrigger_EfficienciesAndSF_RunBtoF_Nov17Nov2017'
@@ -685,6 +693,7 @@ if RunLocal:
       phoMediumIdFilestring = '2017_PhotonsMedium'
       phoTightIdFilestring = '2017_PhotonsTight'
       phoMVANonTrigMediumIdFilestring = '2017_PhotonsMVAwp90'
+      btagSFstring = 'DeepFlavour_94XSF_V4_B_F_Run2017'
    elif is2018:
       JERstring = 'Autumn18_V7b_MC'
       MuonSFTriggerstring = 'MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate'
@@ -702,6 +711,7 @@ if RunLocal:
       phoMediumIdFilestring = '2018_PhotonsMedium'
       phoTightIdFilestring = '2018_PhotonsTight'
       phoMVANonTrigMediumIdFilestring = '2018_PhotonsMVAwp90'
+      btagSFstring = 'DeepJet_102XSF_V2_Run2018'
 else:
    JERstring = options.PJERstring
    MuonSFIDstring = options.PMuonSFIDstring
@@ -717,6 +727,7 @@ else:
    phoMediumIdFilestring = options.PphoMediumIdFilestring
    phoTightIdFilestring = options.PphoTightIdFilestring
    phoMVANonTrigMediumIdFilestring = options.PphoMVANonTrigMediumIdFilestring
+   btagSFstring = options.PbtagSFstring
 print "JER ->", JERstring
 
 #-----------------------#
@@ -1660,8 +1671,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         ),
         massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
         reshapeBTag = cms.bool(True),
-        btag = cms.string('pfCombinedInclusiveSecondaryVertexV2BJetTags'),
-        btagDB = cms.string('data/CSVv2_Moriond17_B_H.csv'),
+        btag = cms.string('pfDeepFlavourJetTags:probb+pfDeepFlavourJetTags:probbb+pfDeepFlavourJetTags:problepb'),
+        btagDB = cms.string('data/%s.csv' % (btagSFstring)),
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet2btag = cms.int32(0),
         met = cms.InputTag('slimmedMETsMuEGClean', '', '') if isReMiniAod else cms.InputTag('slimmedMETs', '', ''),# 'LLP'
@@ -1714,8 +1725,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         ),
         massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
         reshapeBTag = cms.bool(True),
-        btag = cms.string('pfCombinedInclusiveSecondaryVertexV2BJetTags'),
-        btagDB = cms.string('data/CSVv2_Moriond17_B_H.csv'),
+        btag = cms.string('pfDeepFlavourJetTags:probb+pfDeepFlavourJetTags:probbb+pfDeepFlavourJetTags:problepb'),
+        btagDB = cms.string('data/%s.csv' % (btagSFstring)),
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet2btag = cms.int32(0),
         met = cms.InputTag('slimmedMETsMuEGClean', '', '') if isReMiniAod else cms.InputTag('slimmedMETs', '', ''),# 'LLP'
@@ -1772,8 +1783,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         ),
         massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
         reshapeBTag = cms.bool(True),
-        btag = cms.string('pfCombinedInclusiveSecondaryVertexV2BJetTags'),
-        btagDB = cms.string('data/CSVv2_Moriond17_B_H.csv'),
+        btag = cms.string('pfDeepFlavourJetTags:probb+pfDeepFlavourJetTags:probbb+pfDeepFlavourJetTags:problepb'),
+        btagDB = cms.string('data/%s.csv' % (btagSFstring)),
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet2btag = cms.int32(0),
         met = cms.InputTag('slimmedMETsMuEGClean', '', '') if isReMiniAod else cms.InputTag('slimmedMETs', '', 'LLP'),
@@ -1826,8 +1837,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         ),
         massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
         reshapeBTag = cms.bool(True),
-        btag = cms.string('pfCombinedInclusiveSecondaryVertexV2BJetTags'),
-        btagDB = cms.string('data/CSVv2_Moriond17_B_H.csv'),
+        btag = cms.string('pfDeepFlavourJetTags:probb+pfDeepFlavourJetTags:probbb+pfDeepFlavourJetTags:problepb'),
+        btagDB = cms.string('data/%s.csv' % (btagSFstring)),
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet2btag = cms.int32(0),
         met = cms.InputTag('slimmedMETsMuEGClean', '', '') if isReMiniAod else cms.InputTag('slimmedMETs', '', ''),# 'LLP'
