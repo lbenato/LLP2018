@@ -195,4 +195,28 @@ requests = {
 
 #'ggH_HToSSTobbbb_MH-125_TuneCUETP8M1_13TeV-powheg-pythia8_RunIISummer16DR80Premix' : '/ggH_HToSSTobbbb_MH-125_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16DR80Premix-PUMoriond17_rp_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/GEN-SIM-RECO',
 
+#####################
+#      DATA      ####
+#####################
+## MiniAOD 17Jul2018, recommended by PPD: https://docs.google.com/presentation/d/1YTANRT_ZeL5VubnFq7lNGHKsiD7D3sDiOPNgXUYVI0I/edit#slide=id.g89898d65f8_0_0
+
+'BTagCSV_Run2016B-17Jul2018_ver1-v1' : '/BTagCSV/Run2016B-17Jul2018_ver1-v1/MINIAOD',
+'BTagCSV_Run2016B-17Jul2018_ver2-v1' : '/BTagCSV/Run2016B-17Jul2018_ver2-v1/MINIAOD',
+'BTagCSV_Run2016C-17Jul2018-v1' : '/BTagCSV/Run2016C-17Jul2018-v1/MINIAOD',
+'BTagCSV_Run2016D-17Jul2018-v1' : '/BTagCSV/Run2016D-17Jul2018-v1/MINIAOD',
+'BTagCSV_Run2016E-17Jul2018-v1' : '/BTagCSV/Run2016E-17Jul2018-v1/MINIAOD',
+'BTagCSV_Run2016F-17Jul2018-v1' : '/BTagCSV/Run2016F-17Jul2018-v1/MINIAOD',
+'BTagCSV_Run2016G-17Jul2018-v1' : '/BTagCSV/Run2016G-17Jul2018-v1/MINIAOD',
+'BTagCSV_Run2016H-17Jul2018-v1' : '/BTagCSV/Run2016H-17Jul2018-v1/MINIAOD',
+
+
+'SingleMuon_Run2016B-17Jul2018_ver1-v1' : '/SingleMuon/Run2016B-17Jul2018_ver1-v1/MINIAOD',
+'SingleMuon_Run2016B-17Jul2018_ver2-v1' : '/SingleMuon/Run2016B-17Jul2018_ver2-v1/MINIAOD',
+'SingleMuon_Run2016C-17Jul2018-v1' : '/SingleMuon/Run2016C-17Jul2018-v1/MINIAOD',
+'SingleMuon_Run2016D-17Jul2018-v1' : '/SingleMuon/Run2016D-17Jul2018-v1/MINIAOD',
+'SingleMuon_Run2016E-17Jul2018-v1' : '/SingleMuon/Run2016E-17Jul2018-v1/MINIAOD',
+'SingleMuon_Run2016F-17Jul2018-v1' : '/SingleMuon/Run2016F-17Jul2018-v1/MINIAOD',
+'SingleMuon_Run2016G-17Jul2018-v1' : '/SingleMuon/Run2016G-17Jul2018-v1/MINIAOD',
+'SingleMuon_Run2016H-17Jul2018-v1' : '/SingleMuon/Run2016H-17Jul2018-v1/MINIAOD',
+
 }
