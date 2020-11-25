@@ -369,7 +369,7 @@ if RunLocal:
     isCalo            = False #HERE for calo analyses!!!
     isTracking        = False
     isShort           = True #HERE for short lifetime analyses!!!
-    isControl         = True #HERE for short lifetime control region!!!
+    isControl         = False #HERE for short lifetime control region!!!
     isVBF             = False
     isggH             = False
     isTwinHiggs       = True
@@ -1671,7 +1671,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         ),
         massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
         reshapeBTag = cms.bool(isShort),
-        btag = cms.string('pfDeepFlavourJetTags:probb+pfDeepFlavourJetTags:probbb+pfDeepFlavourJetTags:problepb'),
+        btag = cms.string('deepJet'),
         btagDB = cms.string('data/%s.csv' % (btagSFstring)),
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet2btag = cms.int32(0),

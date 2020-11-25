@@ -242,7 +242,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     number_of_VBFGen_matched_to_AllJets = 0;
     //number_of_b_matched_to_CaloJets = number_of_b_matched_to_CaloJetsWithGenJets = 0;
     GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = LeptonWeight = ZewkWeight = WewkWeight = 1.;
+    LeptonWeightUp = LeptonWeightDown = 0.;
     EventWeight_leptonSF = EventWeight_leptonSFUp = EventWeight_leptonSFDown = 1.;
+    bTagWeight_central = bTagWeight_jesup = bTagWeight_jesdown = bTagWeight_lfup = bTagWeight_lfdown = bTagWeight_hfup = bTagWeight_hfdown = bTagWeight_hfstats1up = bTagWeight_hfstats1down = bTagWeight_hfstats2up = bTagWeight_hfstats2down = bTagWeight_lfstats1up = bTagWeight_lfstats1down = bTagWeight_lfstats2up = bTagWeight_lfstats2down = bTagWeight_cferr1up = bTagWeight_cferr1down = bTagWeight_cferr2up = bTagWeight_cferr2down = 1.0;
     HT = 0.;
     MinJetMetDPhi = MinJetMetDPhiAllJets = ggHJetMetDPhi = 10.;
     m_pi = 0.;
@@ -1584,6 +1586,36 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //If you have a Jet, rather than a JetTag, and wish to know if it is b-tagged, there are several ways of doing so. One which always works is to perform angular matching between the Jet and the JetTag::jet(). (The match should be perfect if your JetCollection was used to produce the JetTagCollection).
 
 
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // B-tagging discriminant shape calibration for AK4 CHS jets
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    if (isShort){
+      std::map<std::string, float> btagWeights = theCHSJetAnalyzer->CalculateBtagReshapeSF(CHSJetsVect);
+      bTagWeight_central = btagWeights["weight_central"];
+      bTagWeight_jesup = btagWeights["weight_jesup"];
+      bTagWeight_jesdown = btagWeights["weight_jesdown"];
+      bTagWeight_lfup = btagWeights["weight_lfup"];
+      bTagWeight_lfdown = btagWeights["weight_lfdown"];
+      bTagWeight_hfup = btagWeights["weight_hfup"];
+      bTagWeight_hfdown = btagWeights["weight_hfdown"];
+      bTagWeight_hfstats1up = btagWeights["weight_hfstats1up"];
+      bTagWeight_hfstats1down = btagWeights["weight_hfstats1down"];
+      bTagWeight_hfstats2up = btagWeights["weight_hfstats2up"];
+      bTagWeight_hfstats2down = btagWeights["weight_hfstats2down"];
+      bTagWeight_lfstats1up = btagWeights["weight_lfstats1up"];
+      bTagWeight_lfstats1down = btagWeights["weight_lfstats1down"];
+      bTagWeight_lfstats2up = btagWeights["weight_lfstats2up"];
+      bTagWeight_lfstats2down = btagWeights["weight_lfstats2down"];
+      bTagWeight_cferr1up = btagWeights["weight_cferr1up"];
+      bTagWeight_cferr1down = btagWeights["weight_cferr1down"];
+      bTagWeight_cferr2up = btagWeights["weight_cferr2up"];
+      bTagWeight_cferr2down = btagWeights["weight_cferr2down"];
+
+    }
+
+
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -2578,6 +2610,30 @@ Ntuplizer::beginJob()
       tree -> Branch("EventWeight_leptonSF", &EventWeight_leptonSF, "EventWeight_leptonSF/F");
       tree -> Branch("EventWeight_leptonSFUp", &EventWeight_leptonSFUp, "EventWeight_leptonSFUp/F");
       tree -> Branch("EventWeight_leptonSFDown", &EventWeight_leptonSFDown, "EventWeight_leptonSFDown/F");
+      tree -> Branch("LeptonWeight", &LeptonWeight, "LeptonWeight/F");
+      tree -> Branch("LeptonWeightUp", &LeptonWeightUp, "LeptonWeightUp/F");
+      tree -> Branch("LeptonWeightDown", &LeptonWeightDown, "LeptonWeightDown/F");
+    }
+    if (isShort){
+      tree -> Branch("bTagWeight_central", &bTagWeight_central, "bTagWeight_central/F");
+      tree -> Branch("bTagWeight_jesup", &bTagWeight_jesup, "bTagWeight_jesup/F");
+      tree -> Branch("bTagWeight_jesdown", &bTagWeight_jesdown, "bTagWeight_jesdown/F");
+      tree -> Branch("bTagWeight_lfup", &bTagWeight_lfup, "bTagWeight_lfup/F");
+      tree -> Branch("bTagWeight_lfdown", &bTagWeight_lfdown, "bTagWeight_lfdown/F");
+      tree -> Branch("bTagWeight_hfup", &bTagWeight_hfup, "bTagWeight_hfup/F");
+      tree -> Branch("bTagWeight_hfdown", &bTagWeight_hfdown, "bTagWeight_hfdown/F");
+      tree -> Branch("bTagWeight_hfstats1up", &bTagWeight_hfstats1up, "bTagWeight_hfstats1up/F");
+      tree -> Branch("bTagWeight_hfstats1down", &bTagWeight_hfstats1down, "bTagWeight_hfstats1down/F");
+      tree -> Branch("bTagWeight_hfstats2up", &bTagWeight_hfstats2up, "bTagWeight_hfstats2up/F");
+      tree -> Branch("bTagWeight_hfstats2down", &bTagWeight_hfstats2down, "bTagWeight_hfstats2down/F");
+      tree -> Branch("bTagWeight_lfstats1up", &bTagWeight_lfstats1up, "bTagWeight_lfstats1up/F");
+      tree -> Branch("bTagWeight_lfstats1down", &bTagWeight_lfstats1down, "bTagWeight_lfstats1down/F");
+      tree -> Branch("bTagWeight_lfstats2up", &bTagWeight_lfstats2up, "bTagWeight_lfstats2up/F");
+      tree -> Branch("bTagWeight_lfstats2down", &bTagWeight_lfstats2down, "bTagWeight_lfstats2down/F");
+      tree -> Branch("bTagWeight_cferr1up", &bTagWeight_cferr1up, "bTagWeight_cferr1up/F");
+      tree -> Branch("bTagWeight_cferr1down", &bTagWeight_cferr1down, "bTagWeight_cferr1down/F");
+      tree -> Branch("bTagWeight_cferr2up", &bTagWeight_cferr2up, "bTagWeight_cferr2up/F");
+      tree -> Branch("bTagWeight_cferr2down", &bTagWeight_cferr2down, "bTagWeight_cferr2down/F");
     }
     tree -> Branch("GenEventWeight", &GenEventWeight, "GenEventWeight/F");
     tree -> Branch("model",       &model_);
@@ -2589,7 +2645,6 @@ Ntuplizer::beginJob()
     tree -> Branch("PUWeight", &PUWeight, "PUWeight/F");
     tree -> Branch("PUWeightUp", &PUWeightUp, "PUWeightUp/F");
     tree -> Branch("PUWeightDown", &PUWeightDown, "PUWeightDown/F");
-    tree -> Branch("LeptonWeight", &LeptonWeight, "LeptonWeight/F");
     tree -> Branch("ZewkWeight", &ZewkWeight, "ZewkWeight/F");
     tree -> Branch("WewkWeight", &WewkWeight, "WewkWeight/F");
     tree -> Branch("nGenBquarks" , &nGenBquarks , "nGenBquarks/L");

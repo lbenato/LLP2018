@@ -246,7 +246,8 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     float PUWeight, PUWeightUp, PUWeightDown;
     float FacWeightUp, FacWeightDown, RenWeightUp, RenWeightDown, CorrWeightUp, CorrWeightDown;
     float PdfWeight;
-    float LeptonWeight;
+    float LeptonWeight, LeptonWeightUp, LeptonWeightDown;
+    float bTagWeight_central, bTagWeight_jesup, bTagWeight_jesdown, bTagWeight_lfup, bTagWeight_lfdown, bTagWeight_hfup, bTagWeight_hfdown, bTagWeight_hfstats1up, bTagWeight_hfstats1down, bTagWeight_hfstats2up, bTagWeight_hfstats2down, bTagWeight_lfstats1up, bTagWeight_lfstats1down, bTagWeight_lfstats2up, bTagWeight_lfstats2down, bTagWeight_cferr1up, bTagWeight_cferr1down, bTagWeight_cferr2up, bTagWeight_cferr2down;
     float ZewkWeight, WewkWeight;
     float HT;
     float MinJetMetDPhi;
