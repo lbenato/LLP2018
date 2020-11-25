@@ -724,7 +724,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
      theW.addDaughter(MET);
      addP4.set(theW);
 
-     if (theW.mass()<100. && isControl){
+     if (theW.tmass()<100. && isControl){
        return;
      }
          // SF
@@ -754,7 +754,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	 theW.addDaughter(TightElecVect.at(0));
 	 theW.addDaughter(MET);
 	 addP4.set(theW);
-	 if (theW.mass()<100. && isControl){
+	 if (theW.tmass()<100. && isControl){
 	   return;
 	 }
 	 if(isControl && isMC && !is2016) {
