@@ -35,6 +35,9 @@ config.Data.publication = False
 
 config.Site.storageSite = 'T2_DE_DESY'
 
+#Workaround when crab complains that this release+arch isn't supported; running on SL7 machines
+#config.JobType.allowUndistributedCMSSW = True
+
 #config.Site.ignoreGlobalBlacklist   = True #Set to true if e.g. your dataset is in a blacklisted site. Make sure you add
 #config.Site.whitelist   = ['T1_US_FNAL'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
 
