@@ -15,24 +15,24 @@ config.General.transferLogs = True
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = 'python/Ntuplizer2018.py'
 config.JobType.inputFiles = ['data']
-
+config.JobType.allowUndistributedCMSSW = True # To use CMSSW_10_2_18 with SL7 (might not be available at some sites)
 #config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_isPromptReco,string_noLHEinfo, string_isbbH, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString]
 
 config.General.requestName = 'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MINIAOD'
 
 config.Data.inputDataset =  '/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_standard_mixing-Moriond17_80X_mcRun2_2016_MINIAOD-28028af67189b3de7224b79195bd0e1d/USER'
 config.Data.inputDBS = 'global'
-#config.Data.splitting = 'EventAwareLumiBased'
-#config.Data.unitsPerJob = 2500#15000
-#config.Data.totalUnits = 1000000#15000
-config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
+config.Data.splitting = 'EventAwareLumiBased'
+config.Data.unitsPerJob = 2500#15000
+config.Data.totalUnits = 1000000#15000
+#config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
 
 config.Data.outLFNDirBase = '/store/user/lbenato/choose_a_folder_name'
 config.Data.publication = False
 
 config.Site.storageSite = 'T2_DE_DESY'
 
-#config.Site.ignoreGlobalBlacklist   = True #Set to true if e.g. your dataset is in a blacklisted site. Make sure you add
+#config.Site.ignoreGlobalBlacklist   = True #Set to true if e.g. your dataset is on a blacklisted site
 #config.Site.whitelist   = ['T1_US_FNAL'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
 
 #config.Site.blacklist   = ['T2_FR_IPHC']
@@ -1168,11 +1168,11 @@ if __name__ == '__main__':
             os.system('crab status -d ' + workarea + '/crab_'+j+'\n')
             os.system('echo ----------------------------------------------------\n')
         elif options.crabaction=="resubmit":
-            os.system('echo resubmit -d ' + workarea + '/crab_'+j+'\n')
-            os.system('crab resubmit -d ' + workarea + '/crab_'+j+'\n')
+            #os.system('echo resubmit -d ' + workarea + '/crab_'+j+'\n')
+            #os.system('crab resubmit -d ' + workarea + '/crab_'+j+'\n')
             # To request more memory for failed jobs:
-            #os.system('echo resubmit --maxmemory 5000 -d ' + workarea + '/crab_'+j+'\n')
-            #os.system('crab resubmit --maxmemory 5000 -d ' + workarea + '/crab_'+j+'\n')
+            os.system('echo resubmit --maxmemory 5000 -d ' + workarea + '/crab_'+j+'\n')
+            os.system('crab resubmit --maxmemory 5000 -d ' + workarea + '/crab_'+j+'\n')
         elif options.crabaction=="getoutput":
             os.system('echo getoutput -d ' + workarea + '/crab_'+j+'\n')
             os.system('crab getoutput -d ' + workarea + '/crab_'+j+'\n')

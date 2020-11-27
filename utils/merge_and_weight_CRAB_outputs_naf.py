@@ -40,10 +40,10 @@ whitelist = []
 #if not os.path.exists(os.path.expandvars(args.folder)):
 #    print '--- ERROR ---'
 #    print '  \''+args.folder+'\' path not found'
-#    print '  please point to the correct path to the folder containing the CRAB output' 
+#    print '  please point to the correct path to the folder containing the CRAB output'
 #    print '  example on NAF: '
 #    print TIP
-#    print 
+#    print
 #    exit()
 
 ###optparse
@@ -132,11 +132,18 @@ elif options.lists == "v4_calo_AOD_2018":
     #LUMI = 11.816443876*1000.
     #LUMI = 13.906390984*1000.# METRun2018A-17Sep2018-v1 all done, 28 Jul 2020
     LUMI = 59690#2018 lumi with normtag, from pdvm2018 twiki
+elif options.lists == "v1_central_miniAOD_2018_17Nov2020":
+    from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2017 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_2017MINIAOD_centrallyProduced import *
+    #LUMI = 6.815605990*1000.# METRun2018A-17Sep2018-v1 partial # 59690 #2018 from ppd
+    #LUMI = 11.816443876*1000.
+    #LUMI = 13.906390984*1000.# METRun2018A-17Sep2018-v1 all done, 28 Jul 2020
+    LUMI = 41557#2017 lumi with normtag, from pdvm2017 twiki
 else:
     print "No sample list indicated, aborting!"
     exit()
 
-list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","SUSY","TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT"]
+list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","signal_VBF","signal_ggH", "centralSignal_VBF", "centralSignal_ggH", "all","data_obs","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","SUSY","TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT"]
 print "Possible subgroups of samples:"
 for a in list_of_samples:
     print a
@@ -155,6 +162,14 @@ for b, k in enumerate(requests.keys()):
         if "VBFH_HToSSTobb" in k:
             print k
             selected_requests[k] = requests[k]
+    elif options.groupofsamples=="centralSignal_VBF":
+            if "VBFH_HToSSTo4b" in k:
+                print k
+                selected_requests[k] = requests[k]
+    elif options.groupofsamples=="centralSignal_ggH":
+            if "ggH_HToSSTobbbb" in k:
+                print k
+                selected_requests[k] = requests[k]
     elif options.groupofsamples=="signal_ggH":
         if "GluGluH_HToSSTobb" in k:
             print k
@@ -191,13 +206,13 @@ else:
 if not os.path.exists(os.path.expandvars(options.input_folder)):
     print '--- ERROR: INPUT FOLDER ---'
     print '  \''+options.input_folder+'\' path not found'
-    print '  please point to the correct path to the folder containing the CRAB output' 
+    print '  please point to the correct path to the folder containing the CRAB output'
     exit()
 
 if not os.path.exists(os.path.expandvars(DEST)):
     print '--- ERROR: OUTPUT FOLDER ---'
     print '  \''+DEST+'\' path not found'
-    print '  please point to the correct output path' 
+    print '  please point to the correct output path'
     exit()
 
 
@@ -215,7 +230,8 @@ def hadd_outputs(fold,name):
 ######################This blocks naf machines
     #print name
     #os.system('hadd -k -f '+DEST+name+'.root '+fold+'/*/*/*/output_2*.root')# + ' ' +name+'/*/*/*/*_1.root')
-    os.system('hadd -fk207 '+DEST+name+'.root ' + fold + "/*/*/*/*.root")#timestamp for calo_signal!
+    #print('hadd -fk207 '+DEST+name+'.root ' + fold + "/*/*/*/*.root")
+    os.system('hadd -fk207 '+DEST+name+'.root ' + fold + "/crab_" + name+"/*/*/*.root")#timestamp for calo_signal!
 pass
 
 def weight(name):
@@ -229,10 +245,10 @@ def weight(name):
     else:
         nevents = filename.Get("counter/c_nEvents").GetBinContent(1)
 #        nevents = filename.Get("counter/c_nEvents").GetEntries()#try?!
-        if ('VBFH_HToSSTobbbb') in name:
+        if ('VBFH_HToSSTobbbb') in name or ('VBFH_HToSSTo4b') in name in name:
             #We take into account VBF Higgs production x-sec
             xs = 3.782
-        elif('GluGluH_HToSSTobbbb') in name:
+        elif('GluGluH_HToSSTobbbb') in name or ('ggH_HToSSTobbbb') in name:
             #We take into account ggH Higgs production x-sec
             xs = 48.58
         elif('ZH_HToSSTobbbb') in name:
@@ -282,15 +298,16 @@ for l in subdirs:
     fold = ""
     name = ""
     for a in crab_subdirs:
+        #print l, a
         #if l in a:
-        if (l in a or a in l) and a in selected_requests.keys():
+        if os.path.exists(os.path.join(l, "crab_"+a)) and a in selected_requests.keys():
             fold = l
             name = a
             #print fold
             print "Being added...."
-            print name
+            print fold, name
             #print "Not being added...."
-            hadd_outputs(fold,name)
+            # hadd_outputs(fold,name)
             print "##################################"
         #if a=="WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v2" and l=="WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8":
         #    print "NAMING MISTAKE!!!"
@@ -311,7 +328,7 @@ for l in subdirs:
 #    jobs.append(p)
 #    p.start()
 ######################
-            
+
     #hadd_outputs(fold,name)
 
 print "Ntuples ready in ", DEST
@@ -337,5 +354,5 @@ for b in onlyfiles:
         weight(b[:-5])
         ##q = multiprocessing.Process(target=weight, args=(b[:-5],))
         ##jobs.append(q)
-        ##q.start()                                                                                                                                                                         
+        ##q.start()
 print "Ntuples weighted in ", DEST
