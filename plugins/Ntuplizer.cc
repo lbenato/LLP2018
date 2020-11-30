@@ -639,15 +639,15 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     	  // //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(MuonVect.at(m1))      ,2);
     	  // //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(MuonVect.at(m2))      ,2);
 
-    	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m1), 1);
-    	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m2), 1);
-    	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m1), 1);
-    	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m2), 1);
+    	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m1), 3);
+     	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m2), 3);
+     	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m1), 3);
+     	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m2), 3);
 
-    	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(MuonVect.at(m1), 1)    ,2);
-    	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(MuonVect.at(m2), 1)    ,2);
-    	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(MuonVect.at(m1), 1)   ,2);
-    	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(MuonVect.at(m2), 1)   ,2);
+    	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m1), 3)    ,2);
+     	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m2), 3)    ,2);
+     	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m1), 3)   ,2);
+     	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m2), 3)   ,2);
 
     	  LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
 	  LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
@@ -698,15 +698,15 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     	  //   LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e2));
     	  //   //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e2)),2);
     	  // }
-    	  LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
-    	  LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(1));
-    	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
-    	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(1), 0);
-
-    	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(ElecVect.at(0))   ,2);
-    	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(ElecVect.at(1))   ,2);
-    	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(ElecVect.at(0), 0)     ,2);
-    	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(ElecVect.at(1), 0)     ,2);
+    	  LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(e1));
+     	  LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(e2));
+     	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(e1), 3);
+     	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(e2), 3);
+     	  
+    	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(TightElecVect.at(e1))   ,2);
+     	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(TightElecVect.at(e2))   ,2);
+     	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(e1), 3)     ,2);
+     	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(e2), 3)     ,2);
 
     	  LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
 	  LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
@@ -734,13 +734,13 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       LeptonWeightDown = 0.;
       //      LeptonWeight    *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(0));
       //LeptonWeight    *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(0));
-      LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 1);
-      LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 1);
+      LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 3);
+      LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 3);
 
       //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(TightMuonVect.at(0)),2);
       //	LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(TightMuonVect.at(0))        ,2);
-      LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(0), 1)      ,2);
-      LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(0), 1)     ,2);
+      LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(0), 3)      ,2);
+      LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(0), 3)     ,2);
 
       LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
       LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
