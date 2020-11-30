@@ -583,8 +583,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "Do the Z->mu mu" << std::endl;
     int m1(-1), m2(-1);
     for(unsigned int i = 0; i < TightMuonVect.size(); i++) {
-    	for(unsigned int j = 1; j < TightMuonVect.size(); j++) {
-    	  if(i==j || TightMuonVect[i].charge() == TightMuonVect[j].charge())
+    	for(unsigned int j = i+1; j < TightMuonVect.size(); j++) {
+    	  if(TightMuonVect[i].charge() == TightMuonVect[j].charge())
     	    {
     	      isZtoMM = false;
     	      continue;
@@ -661,8 +661,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       if(isVerbose) std::cout << "Do the Z->e e" << std::endl;
      int e1(-1), e2(-1);
          for(unsigned int i = 0; i < TightElecVect.size(); i++) {
-    	for(unsigned int j = 1; j < TightElecVect.size(); j++) {
-    	  if(i==j || TightElecVect[i].charge() == TightElecVect[j].charge())
+    	for(unsigned int j = i+1; j < TightElecVect.size(); j++) {
+     	  if(TightElecVect[i].charge() == TightElecVect[j].charge())
     	    {
     	      isZtoEE = false;
     	      continue;
