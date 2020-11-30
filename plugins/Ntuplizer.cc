@@ -702,7 +702,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
      	  LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(e2));
      	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(e1), 3);
      	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(e2), 3);
-     	  
+
     	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(TightElecVect.at(e1))   ,2);
      	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(TightElecVect.at(e2))   ,2);
      	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(e1), 3)     ,2);
@@ -765,7 +765,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	   LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
 	   LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
 	   LeptonWeightUnc += theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(0), 0);
-	   
+
 	   LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
 	   LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
 	 }
@@ -1937,10 +1937,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (WriteFatJets) for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) CHSFatJets.push_back( FatJetType() );
     for(unsigned int i = 0; i < ggHJetVect.size(); i++) ggHJet.push_back( JetType() );
     if (isControl) {
-      for(unsigned int i = 0; i < MuonVect.size(); i++) Muons.push_back( LeptonType() );
-      for(unsigned int i = 0; i < ElecVect.size(); i++) Electrons.push_back( LeptonType() );
+      for(unsigned int i = 0; i < TightMuonVect.size(); i++) Muons.push_back( LeptonType() );
+      for(unsigned int i = 0; i < TightElecVect.size(); i++) Electrons.push_back( LeptonType() );
     }
-    
+
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     // Vertices
@@ -2463,8 +2463,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (WriteGenLLPs) for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillGenPType(GenLLPs[i], &GenLongLivedVect[i]);
     if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillGenPType(GenBquarks[i], &GenBquarksVect[i]);
     if (isControl){
-      for(unsigned int i = 0; i < Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &MuonVect[i], isMC);
-      for(unsigned int i = 0; i < Electrons.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &ElecVect[i], isMC);
+      for(unsigned int i = 0; i < Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
+      for(unsigned int i = 0; i < Electrons.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
     }
     else{
       if(isZtoMM || isWtoMN) for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
@@ -2737,8 +2737,8 @@ Ntuplizer::beginJob()
     //      for(int i = 0; i < WriteNLeptons; i++) Muons.push_back( LeptonType() );
     //      for(int i = 0; i < WriteNLeptons; i++) Electrons.push_back( LeptonType() );
     if (isControl){
-      tree -> Branch("Muons", &Muons);
-      tree -> Branch("Electrons", &Electrons);
+      tree -> Branch("TightMuons", &Muons);
+      tree -> Branch("TightElectrons", &Electrons);
     }
     //Set branches for objects
     //!! We save only MatchedJets for cross-checks with vectors
