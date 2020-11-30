@@ -112,15 +112,35 @@ JetAnalyzer::JetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl
     
     // BTag calibrator
     if(UseReshape) {
-        calib           = new BTagCalibration("CSVv2", BTagDB);
+        calib           = new BTagCalibration("tagger", BTagDB);
 	
-	// Set up readers for systematics. This code is largely thanks to Martino & Pablo in
-	// https://github.com/cms-hh-pd/alp_analysis/blob/master/interface/BTagFilterOperator.h
-	
+	// Modified with code from https://twiki.cern.ch/twiki/bin/view/CMS/BTagCalibration#Code_example_in_C and https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagShapeCalibration
+
+        sf_mode = "iterativefit";
 	// Map of flavor type
 	flavour_map = {{5, BTagEntry::FLAV_B},
 		       {4, BTagEntry::FLAV_C},
 		       {0, BTagEntry::FLAV_UDSG}};
+
+	reader = new BTagCalibrationReader(BTagEntry::OP_RESHAPING, "central", {"up_jes","down_jes",
+	      "up_lf","down_lf",
+	      "up_hf","down_hf",
+	      "up_hfstats1","down_hfstats1",
+	      "up_hfstats2","down_hfstats2",
+	      "up_lfstats1","down_lfstats1",
+	      "up_lfstats2","down_lfstats2",
+	      "up_cferr1","down_cferr1",
+	      "up_cferr2","down_cferr2"});
+	for (const auto & kv : flavour_map)
+	  reader->load(*calib, kv.second, sf_mode);
+
+
+
+	//old code
+	/*
+	// Set up readers for systematics. This code is largely thanks to Martino & Pablo in
+	// https://github.com/cms-hh-pd/alp_analysis/blob/master/interface/BTagFilterOperator.h
+
 	// Systematics to use for each flavor type
 	syst_map = {{BTagEntry::FLAV_B, {"up_jes","down_jes",
 					 "up_lf","down_lf",
@@ -156,9 +176,10 @@ JetAnalyzer::JetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl
 		}
 		// load calibration for this flavour and reader
 		it->second.load(*calib, kv.first, sf_mode);
-	    }
-	}
-    }
+	    }//syst_vector loop
+	}//syst_map loop
+*/
+    }//use reshape end
     
     //    BTagInfos_ =edm::vector_transform(BTagNames, [this](edm::InputTag const & tag){return CColl.mayConsume<edm::View<reco::BaseTagInfo> >(tag);});
     //    BTagInfos(edm::vector_transform(BTagNames, [this](std::string const & tag){return CColl.mayConsume<edm::View<reco::BaseTagInfo> >(tag);}))
@@ -200,6 +221,7 @@ JetAnalyzer::~JetAnalyzer() {
 
     if(UseReshape) {
 	delete calib;
+	delete reader;
     }
     delete jecUncMC;
     delete jecUncDATA;
@@ -522,6 +544,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         // Pt and eta cut
         if(jet.pt()<PtTh || fabs(jet.eta())>EtaTh) continue;
 	/*
+	  // THE LINES BELOW WON'T WORK! Check new implementation.
 	std::vector<float> reshapedDiscriminator = ReshapeBtagDiscriminator(jet);
         jet.addUserFloat("ReshapedDiscriminator", reshapedDiscriminator[0]);
         jet.addUserFloat("ReshapedDiscriminatorUp", reshapedDiscriminator[1]);
@@ -1492,6 +1515,100 @@ bool JetAnalyzer::isTightLepVetoJet(pat::Jet& jet) {
     return true;
 }
 
+
+std::map<std::string, float> JetAnalyzer::CalculateBtagReshapeSF(std::vector<pat::Jet>& jets){
+  //follow the instructions here: https://twiki.cern.ch/twiki/bin/view/CMS/BTagShapeCalibration and here: https://twiki.cern.ch/twiki/bin/view/CMS/BTagCalibration
+  std::map<std::string, float> btagWeights;
+
+  //setup here all weights
+  float weight_central = 1.0;
+  float weight_jesup = 1.0;
+  float weight_jesdown = 1.0;
+  float weight_lfup = 1.0;
+  float weight_lfdown = 1.0;
+  float weight_hfup = 1.0;
+  float weight_hfdown = 1.0;
+  float weight_hfstats1up = 1.0;
+  float weight_hfstats1down = 1.0;
+  float weight_hfstats2up = 1.0;
+  float weight_hfstats2down = 1.0;
+  float weight_lfstats1up = 1.0;
+  float weight_lfstats1down = 1.0;
+  float weight_lfstats2up = 1.0;
+  float weight_lfstats2down = 1.0;
+  float weight_cferr1up = 1.0;
+  float weight_cferr1down = 1.0;
+  float weight_cferr2up = 1.0;
+  float weight_cferr2down = 1.0;
+
+  //loop over jets and update weights depending on the flavour of the jet
+  for(unsigned int a = 0; a<jets.size(); a++){
+    float jet_pt(jets.at(a).pt()), jet_eta(jets.at(a).eta()), jet_btagdisc(0.);
+    if (BTag.find("deepJet")){
+      jet_btagdisc = (jets.at(a).bDiscriminator("pfDeepFlavourJetTags:probb")+ jets.at(a).bDiscriminator("pfDeepFlavourJetTags:probbb") + jets.at(a).bDiscriminator("pfDeepFlavourJetTags:problepb"));
+    }
+    else throw cms::Exception("JetAnalyzer", "BTagger not supportet. Change BTag variable in config file.");
+    int hadron_flavour = std::abs(jets.at(a).hadronFlavour());
+    BTagEntry::JetFlavor jet_flavour = BTagEntry::FLAV_UDSG;
+    if (hadron_flavour == 5) jet_flavour = BTagEntry::FLAV_B;
+    if (hadron_flavour == 4) jet_flavour = BTagEntry::FLAV_C;
+    if (jet_pt > 20. && fabs(jet_eta) < 2.4){
+      weight_central *= reader->eval_auto_bounds("central",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+      if (jet_flavour == BTagEntry::FLAV_B){
+	weight_jesup *= reader->eval_auto_bounds("up_jes",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_jesdown *= reader->eval_auto_bounds("down_jes",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_lfup *= reader->eval_auto_bounds("up_lf",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_lfdown *= reader->eval_auto_bounds("down_lf",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_hfstats1up *= reader->eval_auto_bounds("up_hfstats1",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_hfstats1down *= reader->eval_auto_bounds("down_hfstats1",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_hfstats2up *= reader->eval_auto_bounds("up_hfstats2",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_hfstats2down *= reader->eval_auto_bounds("down_hfstats2",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+      }
+      else if (jet_flavour == BTagEntry::FLAV_C){
+	weight_cferr1up *= reader->eval_auto_bounds("up_cferr1",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_cferr1down *= reader->eval_auto_bounds("down_cferr1",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_cferr2up *= reader->eval_auto_bounds("up_cferr2",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_cferr2down *= reader->eval_auto_bounds("down_cferr2",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+      }
+      else if (jet_flavour == BTagEntry::FLAV_UDSG){
+	weight_jesup *= reader->eval_auto_bounds("up_jes",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_jesdown *= reader->eval_auto_bounds("down_jes",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_hfup *= reader->eval_auto_bounds("up_hf",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_hfdown *= reader->eval_auto_bounds("down_hf",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_lfstats1up *= reader->eval_auto_bounds("up_lfstats1",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_lfstats1down *= reader->eval_auto_bounds("down_lfstats1",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_lfstats2up *= reader->eval_auto_bounds("up_lfstats2",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+	weight_lfstats2down *= reader->eval_auto_bounds("down_lfstats2",jet_flavour, jet_eta, jet_pt, jet_btagdisc);
+      }
+    }
+  }//end loop over jets
+
+  btagWeights["weight_central"] = weight_central;
+  btagWeights["weight_jesup"] = weight_jesup;
+  btagWeights["weight_jesdown"] = weight_jesdown;
+  btagWeights["weight_hfup"] = weight_hfup;
+  btagWeights["weight_hfdown"] = weight_hfdown;
+  btagWeights["weight_hfstats1up"] = weight_hfstats1up;
+  btagWeights["weight_hfstats1down"] = weight_hfstats1down;
+  btagWeights["weight_hfstats2up"] = weight_hfstats2up;
+  btagWeights["weight_hfstats2down"] = weight_hfstats2down;
+  btagWeights["weight_cferr1up"] = weight_cferr1up;
+  btagWeights["weight_cferr1down"] = weight_cferr1down;
+  btagWeights["weight_cferr2up"] = weight_cferr2up;
+  btagWeights["weight_cferr2down"] = weight_cferr2down;
+  btagWeights["weight_lfup"] = weight_lfup;
+  btagWeights["weight_lfdown"] = weight_lfdown;
+  btagWeights["weight_lfstats1up"] = weight_lfstats1up;
+  btagWeights["weight_lfstats1down"] = weight_lfstats1down;
+  btagWeights["weight_lfstats2up"] = weight_lfstats2up;
+  btagWeights["weight_lfstats2down"] = weight_lfstats2down;
+
+  return btagWeights;
+}
+
+
+//old code for b-tag reshaping SF method!
+/*
 std::vector<float> JetAnalyzer::ReshapeBtagDiscriminator(pat::Jet& jet) {
     float pt(jet.pt()), eta(fabs(jet.eta())), discr(jet.bDiscriminator(BTag));
     int hadronFlavour_ = std::abs(jet.hadronFlavour());
@@ -1536,7 +1653,7 @@ std::vector<float> JetAnalyzer::ReshapeBtagDiscriminator(pat::Jet& jet) {
     }
     return reshapedDiscr;
 }
-
+*/
 
 /*
 bool JetAnalyzer::isMediumJet(pat::Jet& jet) {

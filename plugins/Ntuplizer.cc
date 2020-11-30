@@ -87,7 +87,12 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     isVerboseTrigger(iConfig.getParameter<bool> ("verboseTrigger")),
     isSignal(iConfig.getParameter<bool> ("signal")),
     isCalo(iConfig.getParameter<bool> ("iscalo")),
-    isCentralProd(iConfig.getParameter<bool> ("iscentralprod"))
+    isShort(iConfig.getParameter<bool> ("isshort")),
+    isControl(iConfig.getParameter<bool> ("iscontrol")),
+    isCentralProd(iConfig.getParameter<bool> ("iscentralprod")),
+    is2016(iConfig.getParameter<bool> ("isera2016")),
+    is2017(iConfig.getParameter<bool> ("isera2017")),
+    is2018(iConfig.getParameter<bool> ("isera2018"))
 
 
 {
@@ -209,16 +214,19 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     ////for(int i = 0; i < WriteNLeptons; i++) ObjectsFormat::ResetLeptonType(Electrons[i]);
     ////ObjectsFormat::ResetGenPType(GenHiggs);
     ObjectsFormat::ResetCandidateType(VBF);
-    ObjectsFormat::ResetCandidateType(Z);
-    ObjectsFormat::ResetCandidateType(W);
+    if (isControl){
+      ObjectsFormat::ResetCandidateType(Z);
+      ObjectsFormat::ResetCandidateType(W);
+    }
 
     isMC = false;
     isVBF = isTriggerVBF = false;
     isggH = false;
-    //isZtoMM = isZtoEE = isWtoMN = isWtoEN = isTtoEM = false;
+    isZtoMM = isZtoEE = isWtoMN = isWtoEN = isTtoEM = false;
     EventNumber = LumiNumber = RunNumber = nPV = 0;
     model_="NotSignal";
     AtLeastOneTrigger = AtLeastOneL1Filter = false;
+    isIsoMu24_OR_IsoTkMu24 = isMu50_OR_TkMu50 = false;
     number_of_PV = number_of_SV = 0;//27 Sep: remember to properly initialize everything
     nCHSJets = nLooseCHSJets = nTightCHSJets = 0;
     nVBFGenMatchedJets = 0;
@@ -234,6 +242,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     number_of_VBFGen_matched_to_AllJets = 0;
     //number_of_b_matched_to_CaloJets = number_of_b_matched_to_CaloJetsWithGenJets = 0;
     GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = LeptonWeight = ZewkWeight = WewkWeight = 1.;
+    LeptonWeightUp = LeptonWeightDown = 0.;
+    EventWeight_leptonSF = EventWeight_leptonSFUp = EventWeight_leptonSFDown = 1.;
+    bTagWeight_central = bTagWeight_jesup = bTagWeight_jesdown = bTagWeight_lfup = bTagWeight_lfdown = bTagWeight_hfup = bTagWeight_hfdown = bTagWeight_hfstats1up = bTagWeight_hfstats1down = bTagWeight_hfstats2up = bTagWeight_hfstats2down = bTagWeight_lfstats1up = bTagWeight_lfstats1down = bTagWeight_lfstats2up = bTagWeight_lfstats2down = bTagWeight_cferr1up = bTagWeight_cferr1down = bTagWeight_cferr2up = bTagWeight_cferr2down = 1.0;
     HT = 0.;
     MinJetMetDPhi = MinJetMetDPhiAllJets = ggHJetMetDPhi = 10.;
     m_pi = 0.;
@@ -248,7 +259,6 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     EventNumber = iEvent.id().event();
     LumiNumber = iEvent.luminosityBlock();
     RunNumber = iEvent.id().run();
-
 
     //GenEventWeight
     GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
@@ -286,6 +296,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	    AtLeastOneTrigger = true;
 	  }
 	//if(AtLeastOneTrigger) break;// no need to go through everything; once one trigger is fired, event can be saved
+	if (it->first == "HLT_IsoMu24_v" || it->first == "HLT_IsoTkMu24_v"){
+	  isIsoMu24_OR_IsoTkMu24 = true;
+	}
+	if (it->first == "HLT_Mu50_v" || it->first == "HLT_TkMu50_v"){
+	  isMu50_OR_TkMu50 = true;
+	}
       }
 
     ////if(!AtLeastOneTrigger && WriteOnlyTriggerEvents) std::cout << "This event can be rejected" << std::endl;
@@ -452,6 +468,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "Electrons" << std::endl;
     std::vector<pat::Electron> ElecVect = theElectronAnalyzer->FillElectronVector(iEvent);
     std::vector<pat::Electron> TightElecVect;
+    if (isControl) Electrons.clear();
 
     for(unsigned int a = 0; a<ElecVect.size(); a++)
       {
@@ -471,6 +488,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "Muons" << std::endl;
     std::vector<pat::Muon> MuonVect = theMuonAnalyzer->FillMuonVector(iEvent);
     std::vector<pat::Muon> TightMuonVect;
+    if (isControl) Muons.clear();
     for(unsigned int a = 0; a<MuonVect.size(); a++)
       {
 	if(MuonVect.at(a).hasUserInt("isTight") && MuonVect.at(a).userInt("isTight")>0 && MuonVect.at(a).hasUserFloat("pfIso04") && MuonVect.at(a).userFloat("pfIso04")<0.15)//tight iso for muons
@@ -514,6 +532,19 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isCalo && nElectrons>0) return;//Veto leptons and photons!
     if(isCalo && nPhotons>0) return;//Veto leptons and photons!
 
+    if(isShort && !isControl){
+      if (nMuons>0) return;//Veto leptons and photons!
+      if( nTaus>0) return;//Veto leptons and photons!
+      if(nElectrons>0) return;//Veto leptons and photons!
+      if(nPhotons>0) return;//Veto leptons and photons!
+    }
+    if(isShort && isControl){
+      //if(nTightMuons!=1 || nTightElectrons!=1) return; //Control region for short lifetimes
+      if(nTightMuons<1 && nTightElectrons<1) return; //Control region for short lifetimes
+      //      if(nTaus<1) return;//Veto taus!
+      //      if(nPhotons<1) return;//Veto photons!
+    }
+
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -522,212 +553,248 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
 
-    //// ---------- Z TO LEPTONS ----------
-    //if(isVerbose) std::cout << "Count leptons for Z and W" << std::endl;
-    //pat::CompositeCandidate theZ;
-    //pat::CompositeCandidate theW;
+    if(isVerbose) std::cout << "Count leptons for Z and W" << std::endl;
+    pat::CompositeCandidate theZ;
+    pat::CompositeCandidate theW;
+    float LeptonWeightUnc;
+    float LeptonWeightUp = 1.;
+    float LeptonWeightDown = 1.;
 
-    //if(TightMuonVect.size()>=2 || TightElecVect.size()>=2) {
-    //if(TightMuonVect.size()>=2 && TightElecVect.size()>=2) {
-    //	if(TightMuonVect.at(0).pt() > TightElecVect.at(0).pt()) isZtoMM=true;
-    //	else isZtoEE=true;
-    //}
-    //else if(TightElecVect.size()>=2) isZtoEE=true;
-    //else if(TightMuonVect.size()>=2) isZtoMM=true;
-    //}
+    if (isShort && isControl) {
 
-
-    //// ---------- W TO LEPTON and NEUTRINO ----------
-    //else if(TightMuonVect.size()==1 || TightElecVect.size()==1) {
-    //if(TightMuonVect.size()==1 && TightElecVect.size()==1 && (TightElecVect.at(0).charge() != TightMuonVect.at(0).charge()) ) isTtoEM = true;
-    //else if(TightElecVect.size()==1) isWtoEN=true;
-    //else if(TightMuonVect.size()==1) isWtoMN=true;
-    //}
+      //// ---------- Z TO LEPTONS ----------
+      if(TightMuonVect.size()>=2 || TightElecVect.size()>=2) {
+        if(TightMuonVect.size()>=2 && TightElecVect.size()>=2) {
+        	if(TightMuonVect.at(0).pt() > TightElecVect.at(0).pt()) isZtoMM=true;
+        	else isZtoEE=true;
+        }
+        else if(TightElecVect.size()>=2) isZtoEE=true;
+        else if(TightMuonVect.size()>=2) isZtoMM=true;
+      }
 
 
-    //if(isZtoMM) {
-    //if(isVerbose) std::cout << "Do the Z->mu mu" << std::endl;
-    //int m1(-1), m2(-1);
-    //for(unsigned int i = 0; i < TightMuonVect.size(); i++) {
-    //	for(unsigned int j = 1; j < TightMuonVect.size(); j++) {
-    //	  if(i==j || TightMuonVect[i].charge() == TightMuonVect[j].charge())
-    //	    {
-    //	      isZtoMM = false;
-    //	      continue;
-    //	    }
-    //	  float Zmass = (TightMuonVect[i].p4() + TightMuonVect[j].p4()).mass();
-    //	  if(Zmass > 50. && Zmass < 130.)
-    //	    {
-    //	      m1 = i;
-    //	      m2 = j;
-    //	      isZtoMM = true;
-    //	    }
-    //	}
-    //}
-    //// Build candidate
-    //if(m1 >= 0 && m2 >= 0) {
-    //	theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m1) : TightMuonVect.at(m2));
-    //	theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m2) : TightMuonVect.at(m1));
-    //	addP4.set(theZ);
-    //	isZtoMM = true;
-
-    //	//SF
-
-    //	if(isMC) {
-    //	  //float LeptonWeightUnc = 0.;
-    //	  /// FIXME -> APPLYING THE SF FOR IsoMu24 HADRCODED <- FIXME ///
-    //	  if (TightMuonVect.at(m1).pt() > TightMuonVect.at(m2).pt() ) {
-    //	    LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(m1));
-    //	    //LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorIsoMu24(MuonVect.at(m1)),2);
-    //
-    //	  }
-    //	  else {
-    //	    LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(m2));
-    //	    //LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorIsoMu24(MuonVect.at(m2)),2);
-    //	  }
-    //	  LeptonWeight *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(m1));
-    //	  LeptonWeight *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(m2));
-    //	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m1), 0);
-    //	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m2), 0);
-    //	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m1), 0);
-    //	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m2), 0);
-
-    //	  //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(MuonVect.at(m1))      ,2);
-    //	  //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(MuonVect.at(m2))      ,2);
-    //	  //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(MuonVect.at(m1), 0)    ,2);
-    //	  //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(MuonVect.at(m2), 0)    ,2);
-    //	  //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(MuonVect.at(m1), 0)   ,2);
-    //	  //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(MuonVect.at(m2), 0)   ,2);
-    //
-    //	  //LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
-    //	  //LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
-    //	}
+      ////    ---------- W TO LEPTON and NEUTRINO ----------
+      else if(TightMuonVect.size()==1 || TightElecVect.size()==1) {
+        if(TightMuonVect.size()==1 && TightElecVect.size()==1 && (TightElecVect.at(0).charge() != TightMuonVect.at(0).charge()) ) isTtoEM = true;
+        else if(TightElecVect.size()==1) isWtoEN=true;
+        else if(TightMuonVect.size()==1) isWtoMN=true;
+      }
 
 
-    //}
-    //}
+      if(isZtoMM) {
+        if(isVerbose) std::cout << "Do the Z->mu mu" << std::endl;
+        int m1(-1), m2(-1);
+        for(unsigned int i = 0; i < TightMuonVect.size(); i++) {
+        	for(unsigned int j = i+1; j < TightMuonVect.size(); j++) {
+        	  if(TightMuonVect[i].charge() == TightMuonVect[j].charge())
+        	    {
+        	      isZtoMM = false;
+        	      continue;
+        	    }
+        	  float Zmass = (TightMuonVect[i].p4() + TightMuonVect[j].p4()).mass();
+        	  if(Zmass > 50. && Zmass < 130.)
+        	    {
+        	      m1 = i;
+        	      m2 = j;
+        	      isZtoMM = true;
+        	    }
+        	}
+        }
+        //    Build candidate
+        if(m1 >= 0 && m2 >= 0) {
+        	theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m1) : TightMuonVect.at(m2));
+        	theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m2) : TightMuonVect.at(m1));
+        	addP4.set(theZ);
+        	isZtoMM = true;
 
-    //else if(isZtoEE) {
-    //   if(isVerbose) std::cout << "Do the Z->e e" << std::endl;
-    //  int e1(-1), e2(-1);
-    //      for(unsigned int i = 0; i < TightElecVect.size(); i++) {
-    //	for(unsigned int j = 1; j < TightElecVect.size(); j++) {
-    //	  if(i==j || TightElecVect[i].charge() == TightElecVect[j].charge())
-    //	    {
-    //	      isZtoEE = false;
-    //	      continue;
-    //	    }
-    //	  float Zmass = (TightElecVect[i].p4() + TightElecVect[j].p4()).mass();
-    //	  if(Zmass > 50. && Zmass < 130.)
-    //	    {
-    //	      e1 = i;
-    //	      e2 = j;
-    //	      isZtoEE =true;
-    //	    }
-    //	}
-    //}
-    //// Build candidate
-    //if(e1 >= 0 && e2 >= 0) {
-    //	theZ.addDaughter(TightElecVect.at(e1).charge() ? TightElecVect.at(e1) : TightElecVect.at(e2));
-    //	theZ.addDaughter(TightElecVect.at(e1).charge() ? TightElecVect.at(e2) : TightElecVect.at(e1));
-    //	addP4.set(theZ);
-    //	isZtoEE = true;
-    //
+        	//SF
 
-    //	// SF
-    //	if(isMC) {
-    //	  //float LeptonWeightUnc = 0.;
-    //	  /// FIXME -> APPLYING THE SF FOR Ele27Tight HADRCODED <- FIXME ///
-    //	  if (TightElecVect.at(e1).pt() > TightElecVect.at(e2).pt() ){
-    //	    LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e1));
-    //	    //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e1)),2);
-    //	  }
-    //	  else{
-    //	    LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e2));
-    //	    //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e2)),2);
-    //	  }
-    //	  LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
-    //	  LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(1));
-    //	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
-    //	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(1), 0);
-    //
-    //	  //LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(ElecVect.at(0))   ,2);
-    //	  //LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(ElecVect.at(1))   ,2);
-    //	  //LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(ElecVect.at(0), 0)     ,2);
-    //	  //LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(ElecVect.at(1), 0)     ,2);
-    //
-    //	  //LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
-    //	  //LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
-    //	}
+        	if(isControl && isMC && !is2016) {
+        	  float LeptonWeightUnc = 0.;
+            LeptonWeightUp = 0.;
+            LeptonWeightDown = 0.;
+        	  /// FIXED -> APPLYING THE SF FOR IsoMu24 NOT ANYLONGER HADRCODED <- FIXED ///
+            if (isIsoMu24_OR_IsoTkMu24) {
+              if (TightMuonVect.at(m1).pt() > TightMuonVect.at(m2).pt() ) {
+                LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(m1));
+                LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorIsoMu24(MuonVect.at(m1)),2);
+              }
+              else {
+                LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(m2));
+                LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorIsoMu24(MuonVect.at(m2)),2);
+              }
+            }// IsoMu24 trigger
+            if (isMu50_OR_TkMu50) {
+              if (TightMuonVect.at(m1).pt() > TightMuonVect.at(m2).pt() ) {
+                LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFMu50(TightMuonVect.at(m1));
+                LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(MuonVect.at(m1)),2);
+              }
+              else {
+                LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFMu50(TightMuonVect.at(m2));
+                LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(MuonVect.at(m2)),2);
+              }
+            }// IsoMu50 trigger
 
+            // //removed obsolete things for now
+            // LeptonWeight *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(m1));
+            // LeptonWeight *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(m2));
+        	  // //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(MuonVect.at(m1))      ,2);
+        	  // //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(MuonVect.at(m2))      ,2);
 
-    // }
-    //}
+        	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m1), 3);
+         	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m2), 3);
+         	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m1), 3);
+         	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m2), 3);
 
-    //else if(isWtoMN) {
+        	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m1), 3)    ,2);
+         	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m2), 3)    ,2);
+         	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m1), 3)   ,2);
+         	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m2), 3)   ,2);
 
-    //// W kinematic reconstruction
-    //  float pz = Utilities::RecoverNeutrinoPz(&TightMuonVect.at(0).p4(), &MET.p4());
-    //  Neutrino.setP4(reco::Particle::LorentzVector(MET.px(), MET.py(), pz, sqrt(MET.pt()*MET.pt() + pz*pz) ));
-    //  theW.addDaughter(TightMuonVect.at(0));
-    //  theW.addDaughter(Neutrino);
-    //  addP4.set(theW);
+        	  LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
+    	      LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
+        	}
+        }
+      }
 
-    //      // SF
-    //if(isMC) {
-    //	//float LeptonWeightUnc = 0.;
-    //	LeptonWeight    *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(0));
-    //	//LeptonWeight    *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(0));
-    //	LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 0);
-    //	LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 0);
-    //
-    ////             LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(TightMuonVect.at(0)),2);
-    ////             //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(TightMuonVect.at(0))        ,2);
-    ////             LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(0), 0)      ,2);
-    ////             LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(0), 0)     ,2);
-    ////
-    ////             LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
-    ////             LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
-    //}
-    //}
-    //    else if(isWtoEN) {
+      else if(isZtoEE) {
+        if(isVerbose) std::cout << "Do the Z->e e" << std::endl;
+        int e1(-1), e2(-1);
+        for(unsigned int i = 0; i < TightElecVect.size(); i++) {
+          for(unsigned int j = i+1; j < TightElecVect.size(); j++) {
+            if(TightElecVect[i].charge() == TightElecVect[j].charge()) {
+              isZtoEE = false;
+      	      continue;
+      	    }
+            float Zmass = (TightElecVect[i].p4() + TightElecVect[j].p4()).mass();
+            if(Zmass > 50. && Zmass < 130.) {
+              e1 = i;
+              e2 = j;
+              isZtoEE =true; // Note: This had already been set to true. Set to false if not within mass window?
+            }
+          }
+        }
 
-    //      // W kinematic reconstruction
-    //float pz = Utilities::RecoverNeutrinoPz(&TightElecVect.at(0).p4(), &MET.p4());
-    //Neutrino.setP4(reco::Particle::LorentzVector(MET.px(), MET.py(), pz, sqrt(MET.pt()*MET.pt() + pz*pz) ));
-    //theW.addDaughter(TightElecVect.at(0));
-    //theW.addDaughter(Neutrino);
-    // addP4.set(theW);
+        // Build candidate
+        if(e1 >= 0 && e2 >= 0) {
+        	theZ.addDaughter(TightElecVect.at(e1).charge() < 0 ? TightElecVect.at(e1) : TightElecVect.at(e2));
+        	theZ.addDaughter(TightElecVect.at(e1).charge() < 0 ? TightElecVect.at(e2) : TightElecVect.at(e1));
+        	addP4.set(theZ);
+        	isZtoEE = true;
 
-    //if(isMC) {
-    //	LeptonWeight    *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(0));
-    //	LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
-    //	LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
-    //}
-    //}
-    //else if(isTtoEM) {
-    //      //std::cout << "isTtoEM, muon 1 pt: " << TightMuonVect.at(0).pt() << std::endl;
-    //	  if(isMC) {
-    //	    //Trigger is non trivial; we need non-isolated triggers!
-    //	    //if (TightElecVect.at(e).pt() > TightMuonVect.at(m).pt() ){
-    //	    //LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e1));
-    //	    //  //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e1)),2);
-    ///	    //}
-    //	    //else{
-    //	    //  LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e2));
-    //	    //  //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e2)),2);
-    //	    //  }
-    //	    LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
-    //	    LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
-    //	    LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 0);
-    //	    LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 0);
-    //
-    //
-    //	}
-    //}
+        	// SF
+        	if(isControl && isMC && !is2016) {
+            float LeptonWeightUnc = 0.;
+            LeptonWeightUp = 0.;
+            LeptonWeightDown = 0.;
+        	  /// FIXME -> APPLYING THE SF FOR Ele27Tight HADRCODED <- FIXME ///
+        	  // if (TightElecVect.at(e1).pt() > TightElecVect.at(e2).pt() ){
+        	  //   LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e1));
+        	  //   //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e1)),2);
+        	  // }
+        	  // else{
+        	  //   LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e2));
+        	  //   //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e2)),2);
+        	  // }
+        	  LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(e1));
+         	  LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(e2));
+         	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(e1), 3);
+         	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(e2), 3);
 
-    //EventWeight *= LeptonWeight;
+        	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(TightElecVect.at(e1))   ,2);
+         	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(TightElecVect.at(e2))   ,2);
+         	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(e1), 3)     ,2);
+         	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(e2), 3)     ,2);
 
+        	  LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
+            LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
+        	}
+        }
+      }
+
+      else if(isWtoMN) {
+        //// W kinematic reconstruction
+        //     float pz = Utilities::RecoverNeutrinoPz(&TightMuonVect.at(0).p4(), &MET.p4());
+        //     Neutrino.setP4(reco::Particle::LorentzVector(MET.px(), MET.py(), pz, sqrt(MET.pt()*MET.pt() + pz*pz) ));
+        theW.addDaughter(TightMuonVect.at(0));
+        theW.addDaughter(MET);
+        addP4.set(theW);
+
+        if (theW.mt()<100. && isControl){
+          return;
+        }
+
+        // SF
+        if(isControl && isMC && !is2016) {
+          float LeptonWeightUnc = 0.;
+          LeptonWeightUp = 0.;
+          LeptonWeightDown = 0.;
+          // LeptonWeight    *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(0));
+          // LeptonWeight    *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(0));
+          LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 3);
+          LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 3);
+
+          // LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(TightMuonVect.at(0)),2);
+          // LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(TightMuonVect.at(0))        ,2);
+          LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(0), 3)      ,2);
+          LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(0), 3)     ,2);
+
+          LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
+          LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
+        }
+      }
+
+      else if(isWtoEN) {
+
+        // W kinematic reconstruction
+        // float pz = Utilities::RecoverNeutrinoPz(&TightElecVect.at(0).p4(), &MET.p4());
+        // Neutrino.setP4(reco::Particle::LorentzVector(MET.px(), MET.py(), pz, sqrt(MET.pt()*MET.pt() + pz*pz) ));
+        theW.addDaughter(TightElecVect.at(0));
+        theW.addDaughter(MET);
+        addP4.set(theW);
+
+        if (theW.mt()<100. && isControl){
+          return;
+        }
+
+        if(isControl && isMC && !is2016) {
+          float LeptonWeightUnc = 0.;
+          LeptonWeightUp = 0.;
+          LeptonWeightDown = 0.;
+          // LeptonWeight    *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(0));
+          LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
+          LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
+          LeptonWeightUnc += theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(0), 0);
+
+          LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
+          LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
+        }
+      }
+
+      // else if(isTtoEM) {
+      //      //std::cout << "isTtoEM, muon 1 pt: " << TightMuonVect.at(0).pt() << std::endl;
+      // 	  if(isMC) {
+      // 	    //Trigger is non trivial; we need non-isolated triggers!
+      // 	    //if (TightElecVect.at(e).pt() > TightMuonVect.at(m).pt() ){
+      // 	    //LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e1));
+      // 	    //  //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e1)),2);
+      // 	    //}
+      // 	    //else{
+      // 	    //  LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e2));
+      // 	    //  //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e2)),2);
+      // 	    //  }
+      // 	    LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
+      // 	    LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
+      // 	    LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 0);
+      // 	    LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 0);
+      // 	}
+      // }
+
+      EventWeight_leptonSF = EventWeight * LeptonWeight;
+      EventWeight_leptonSFUp = EventWeight_leptonSF * LeptonWeightUp;
+      EventWeight_leptonSFDown = EventWeight_leptonSF * LeptonWeightDown;
+
+    }
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -736,7 +803,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
 
     //Used to understand VBF jets features;
-    
+
     std::vector<pat::Jet> AllJetsVect = AllJetAnalyzer->FillJetVector(iEvent,iSetup);//
     nAllJets = AllJetsVect.size();
 
@@ -1189,7 +1256,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
       {
-        if(CHSJetsVect.at(r).pt()>=30 and CHSJetsVect.at(r).userInt("isTight")>0 and ggH_matching_index_CHSJets<0)//as soon as it finds a gluon-like jet, exit    
+        if(CHSJetsVect.at(r).pt()>=30 and CHSJetsVect.at(r).userInt("isTight")>0 and ggH_matching_index_CHSJets<0)//as soon as it finds a gluon-like jet, exit
           {
             ggH_matching_index_CHSJets = r;
           }
@@ -1235,7 +1302,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                   {
                     CHSJetsVect.erase(CHSJetsVect.begin()+r);
                   }
-              }//ggH jet removed    
+              }//ggH jet removed
           }
       }
 
@@ -1390,6 +1457,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // }
 
     //TODO: Move this calculation to the PFCandidate section
+    if (!isShort){
     for(unsigned int j = 0; j < CHSJetsVect.size(); j++){
       int nTrackConstituents = 0;
       //per jet tag: number of jet constituents and number of tracks
@@ -1403,7 +1471,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
       CHSJetsVect.at(j).addUserInt("nTrackConstituents",nTrackConstituents);
     }
-
+    }
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -1516,6 +1584,36 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     //If you have a Jet, rather than a JetTag, and wish to know if it is b-tagged, there are several ways of doing so. One which always works is to perform angular matching between the Jet and the JetTag::jet(). (The match should be perfect if your JetCollection was used to produce the JetTagCollection).
+
+
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // B-tagging discriminant shape calibration for AK4 CHS jets
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    if (isShort){
+      std::map<std::string, float> btagWeights = theCHSJetAnalyzer->CalculateBtagReshapeSF(CHSJetsVect);
+      bTagWeight_central = btagWeights["weight_central"];
+      bTagWeight_jesup = btagWeights["weight_jesup"];
+      bTagWeight_jesdown = btagWeights["weight_jesdown"];
+      bTagWeight_lfup = btagWeights["weight_lfup"];
+      bTagWeight_lfdown = btagWeights["weight_lfdown"];
+      bTagWeight_hfup = btagWeights["weight_hfup"];
+      bTagWeight_hfdown = btagWeights["weight_hfdown"];
+      bTagWeight_hfstats1up = btagWeights["weight_hfstats1up"];
+      bTagWeight_hfstats1down = btagWeights["weight_hfstats1down"];
+      bTagWeight_hfstats2up = btagWeights["weight_hfstats2up"];
+      bTagWeight_hfstats2down = btagWeights["weight_hfstats2down"];
+      bTagWeight_lfstats1up = btagWeights["weight_lfstats1up"];
+      bTagWeight_lfstats1down = btagWeights["weight_lfstats1down"];
+      bTagWeight_lfstats2up = btagWeights["weight_lfstats2up"];
+      bTagWeight_lfstats2down = btagWeights["weight_lfstats2down"];
+      bTagWeight_cferr1up = btagWeights["weight_cferr1up"];
+      bTagWeight_cferr1down = btagWeights["weight_cferr1down"];
+      bTagWeight_cferr2up = btagWeights["weight_cferr2up"];
+      bTagWeight_cferr2down = btagWeights["weight_cferr2down"];
+
+    }
 
 
 
@@ -1778,6 +1876,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     nCHSFatJets = CHSFatJetsVect.size();
 
     // TODO: Move this calculation to the PFCandidate section
+    if (!isShort){
     for(unsigned int j = 0; j < CHSFatJetsVect.size(); j++){
       int nTrackConstituents = 0;
       //per jet tag: number of jet constituents and number of tracks
@@ -1790,6 +1889,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         }
       }
       CHSFatJetsVect.at(j).addUserInt("nTrackConstituents",nTrackConstituents);
+    }
     }
 
     if(isVerbose) {
@@ -1836,7 +1936,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );
     if (WriteFatJets) for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) CHSFatJets.push_back( FatJetType() );
     for(unsigned int i = 0; i < ggHJetVect.size(); i++) ggHJet.push_back( JetType() );
-
+    if (isControl) {
+      for(unsigned int i = 0; i < TightMuonVect.size(); i++) Muons.push_back( LeptonType() );
+      for(unsigned int i = 0; i < TightElecVect.size(); i++) Electrons.push_back( LeptonType() );
+    }
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -1876,12 +1979,15 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::vector<int> PFCandidateAK8JetIndex;
     std::vector<int> PFCandidateVtxIndex;
 
+    BTagVertices.clear();
+
     std::vector<reco::CandSecondaryVertexTagInfo *> bTagInfoVect;
     std::vector<reco::CandIPTagInfo *> bTagIPInfoVect;
     std::vector<int> indexSVJet;
 
     PFCandidateVect = thePFCandidateAnalyzer->FillPFCandidateVector(iEvent);
 
+    if (!isShort ||  WriteBtagInfos){
     // Initialize PFCandidate variables: Set indices to -1 (not matched)
     for(unsigned int i = 0; i < PFCandidateVect.size(); i++){
       PFCandidateAK4JetIndex.push_back(-1);
@@ -1984,7 +2090,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       std::vector<float> nHits;
 
       float alphaMax = -100.;
-      float sigIP2DMedian = -100.;
+      float sigIP2DMedian = -10000.;
       float theta2DMedian = -100.;
       float POCA_theta2DMedian = -100.;
       float nPixelHitsMedian = -1.;
@@ -2094,12 +2200,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	indexSVJet.push_back(j);
       }
 
-      CHSJetsVect[j].addUserFloat("alphaMax", alphaMax);
-      CHSJetsVect[j].addUserFloat("sigIP2DMedian", sigIP2DMedian);
-      CHSJetsVect[j].addUserFloat("theta2DMedian", theta2DMedian);
-      CHSJetsVect[j].addUserFloat("POCA_theta2DMedian", POCA_theta2DMedian);
-      CHSJetsVect[j].addUserFloat("nPixelHitsMedian", nPixelHitsMedian);
-      CHSJetsVect[j].addUserFloat("nHitsMedian", nHitsMedian);
+      CHSJetsVect[j].addUserFloat("alphaMaxOld", alphaMax);
+      CHSJetsVect[j].addUserFloat("sigIP2DMedianOld", sigIP2DMedian);
+      CHSJetsVect[j].addUserFloat("theta2DMedianOld", theta2DMedian);
+      CHSJetsVect[j].addUserFloat("POCA_theta2DMedianOld", POCA_theta2DMedian);
+      CHSJetsVect[j].addUserFloat("nPixelHitsMedianOld", nPixelHitsMedian);
+      CHSJetsVect[j].addUserFloat("nHitsMedianOld", nHitsMedian);
 
       CHSJetsVect[j].addUserInt("nTracks0PixelHits", nTracks0PixelHits);
       CHSJetsVect[j].addUserInt("nTracks1PixelHit", nTracks1PixelHit);
@@ -2129,7 +2235,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       std::vector<float> nHits;
 
       float alphaMax = -100.;
-      float sigIP2DMedian = -100.;
+      float sigIP2DMedian = -10000.;
       float theta2DMedian = -100.;
       float POCA_theta2DMedian = -100.;
       float nPixelHitsMedian = -1.;
@@ -2240,12 +2346,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //indexSVJet.push_back(j);
 
 
-      CHSFatJetsVect[j].addUserFloat("alphaMax", alphaMax);
-      CHSFatJetsVect[j].addUserFloat("sigIP2DMedian", sigIP2DMedian);
-      CHSFatJetsVect[j].addUserFloat("theta2DMedian", theta2DMedian);
-      CHSFatJetsVect[j].addUserFloat("POCA_theta2DMedian", POCA_theta2DMedian);
-      CHSFatJetsVect[j].addUserFloat("nPixelHitsMedian", nPixelHitsMedian);
-      CHSFatJetsVect[j].addUserFloat("nHitsMedian", nHitsMedian);
+      CHSFatJetsVect[j].addUserFloat("alphaMaxOld", alphaMax);
+      CHSFatJetsVect[j].addUserFloat("sigIP2DMedianOld", sigIP2DMedian);
+      CHSFatJetsVect[j].addUserFloat("theta2DMedianOld", theta2DMedian);
+      CHSFatJetsVect[j].addUserFloat("POCA_theta2DMedianOld", POCA_theta2DMedian);
+      CHSFatJetsVect[j].addUserFloat("nPixelHitsMedianOld", nPixelHitsMedian);
+      CHSFatJetsVect[j].addUserFloat("nHitsMedianOld", nHitsMedian);
 
       CHSFatJetsVect[j].addUserInt("nTracks0PixelHits", nTracks0PixelHits);
       CHSFatJetsVect[j].addUserInt("nTracks1PixelHit", nTracks1PixelHit);
@@ -2261,11 +2367,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     }//end of EXO-16-003 variables for AK8 jets
 
-
     //Store vertex information for b-taging variables
     if(WriteBtagInfos){
       for (unsigned int i = 0; i < bTagInfoVect.size(); i++) BTagVertices.push_back(VertexType());
     }
+    }//end of PFCandidates procedure, not needed for short lifetimes
+
 
 
     //------------------------------------------------------------------------------------------
@@ -2355,16 +2462,24 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillGenPType(GenHiggs[i], &GenHiggsVect[i]);
     if (WriteGenLLPs) for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillGenPType(GenLLPs[i], &GenLongLivedVect[i]);
     if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillGenPType(GenBquarks[i], &GenBquarksVect[i]);
-    //if(isZtoMM || isWtoMN) for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
-    //else if(isZtoEE || isWtoEN) for(unsigned int i = 0; i < Electrons.size() && i < TightElecVect.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
-    //else if(isTtoEM)
-    //{
-    //	for(unsigned int i = 0; i < Electrons.size() && i < TightElecVect.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
-    //	for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
-    //  }
+    if (isControl){
+      for(unsigned int i = 0; i < Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
+      for(unsigned int i = 0; i < Electrons.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
+    }
+    // else{
+    //   if(isZtoMM || isWtoMN) for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
+    //   else if(isZtoEE || isWtoEN) for(unsigned int i = 0; i < Electrons.size() && i < TightElecVect.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
+    //   else if(isTtoEM)
+    //   {
+    //     for(unsigned int i = 0; i < Electrons.size() && i < TightElecVect.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
+    //     for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
+    //   }
+    // }
     ObjectsFormat::FillCandidateType(VBF, &theVBF, isMC);
-    //ObjectsFormat::FillCandidateType(Z, &theZ, isMC);
-    //ObjectsFormat::FillCandidateType(W, &theW, isMC);
+    if (isControl) {
+        ObjectsFormat::FillCandidateType(Z, &theZ, isMC);
+        ObjectsFormat::FillCandidateType(W, &theW, isMC);
+    }
     HDiCHS = theHDiCHS.mass();
     HTriCHS = theHTriCHS.mass();
     HQuadCHS = theHQuadCHS.mass();
@@ -2493,6 +2608,35 @@ Ntuplizer::beginJob()
     tree -> Branch("LumiNumber" , &LumiNumber , "LumiNumber/L");
     tree -> Branch("RunNumber" , &RunNumber , "RunNumber/L");
     tree -> Branch("EventWeight", &EventWeight, "EventWeight/F");
+    if (isControl){
+      tree -> Branch("EventWeight_leptonSF", &EventWeight_leptonSF, "EventWeight_leptonSF/F");
+      tree -> Branch("EventWeight_leptonSFUp", &EventWeight_leptonSFUp, "EventWeight_leptonSFUp/F");
+      tree -> Branch("EventWeight_leptonSFDown", &EventWeight_leptonSFDown, "EventWeight_leptonSFDown/F");
+      tree -> Branch("LeptonWeight", &LeptonWeight, "LeptonWeight/F");
+      tree -> Branch("LeptonWeightUp", &LeptonWeightUp, "LeptonWeightUp/F");
+      tree -> Branch("LeptonWeightDown", &LeptonWeightDown, "LeptonWeightDown/F");
+    }
+    if (isShort){
+      tree -> Branch("bTagWeight_central", &bTagWeight_central, "bTagWeight_central/F");
+      tree -> Branch("bTagWeight_jesup", &bTagWeight_jesup, "bTagWeight_jesup/F");
+      tree -> Branch("bTagWeight_jesdown", &bTagWeight_jesdown, "bTagWeight_jesdown/F");
+      tree -> Branch("bTagWeight_lfup", &bTagWeight_lfup, "bTagWeight_lfup/F");
+      tree -> Branch("bTagWeight_lfdown", &bTagWeight_lfdown, "bTagWeight_lfdown/F");
+      tree -> Branch("bTagWeight_hfup", &bTagWeight_hfup, "bTagWeight_hfup/F");
+      tree -> Branch("bTagWeight_hfdown", &bTagWeight_hfdown, "bTagWeight_hfdown/F");
+      tree -> Branch("bTagWeight_hfstats1up", &bTagWeight_hfstats1up, "bTagWeight_hfstats1up/F");
+      tree -> Branch("bTagWeight_hfstats1down", &bTagWeight_hfstats1down, "bTagWeight_hfstats1down/F");
+      tree -> Branch("bTagWeight_hfstats2up", &bTagWeight_hfstats2up, "bTagWeight_hfstats2up/F");
+      tree -> Branch("bTagWeight_hfstats2down", &bTagWeight_hfstats2down, "bTagWeight_hfstats2down/F");
+      tree -> Branch("bTagWeight_lfstats1up", &bTagWeight_lfstats1up, "bTagWeight_lfstats1up/F");
+      tree -> Branch("bTagWeight_lfstats1down", &bTagWeight_lfstats1down, "bTagWeight_lfstats1down/F");
+      tree -> Branch("bTagWeight_lfstats2up", &bTagWeight_lfstats2up, "bTagWeight_lfstats2up/F");
+      tree -> Branch("bTagWeight_lfstats2down", &bTagWeight_lfstats2down, "bTagWeight_lfstats2down/F");
+      tree -> Branch("bTagWeight_cferr1up", &bTagWeight_cferr1up, "bTagWeight_cferr1up/F");
+      tree -> Branch("bTagWeight_cferr1down", &bTagWeight_cferr1down, "bTagWeight_cferr1down/F");
+      tree -> Branch("bTagWeight_cferr2up", &bTagWeight_cferr2up, "bTagWeight_cferr2up/F");
+      tree -> Branch("bTagWeight_cferr2down", &bTagWeight_cferr2down, "bTagWeight_cferr2down/F");
+    }
     tree -> Branch("GenEventWeight", &GenEventWeight, "GenEventWeight/F");
     tree -> Branch("model",       &model_);
     tree -> Branch("AtLeastOneTrigger" , &AtLeastOneTrigger , "AtLeastOneTrigger/O");
@@ -2503,7 +2647,6 @@ Ntuplizer::beginJob()
     tree -> Branch("PUWeight", &PUWeight, "PUWeight/F");
     tree -> Branch("PUWeightUp", &PUWeightUp, "PUWeightUp/F");
     tree -> Branch("PUWeightDown", &PUWeightDown, "PUWeightDown/F");
-    tree -> Branch("LeptonWeight", &LeptonWeight, "LeptonWeight/F");
     tree -> Branch("ZewkWeight", &ZewkWeight, "ZewkWeight/F");
     tree -> Branch("WewkWeight", &WewkWeight, "WewkWeight/F");
     tree -> Branch("nGenBquarks" , &nGenBquarks , "nGenBquarks/L");
@@ -2534,22 +2677,26 @@ Ntuplizer::beginJob()
     tree -> Branch("nPhotons", &nPhotons, "nPhotons/I");
     tree -> Branch("nTightElectrons", &nTightElectrons, "nTightElectrons/I");
     tree -> Branch("nTightMuons", &nTightMuons, "nTightMuons/I");
-    tree -> Branch("nPFCandidates" , &nPFCandidates, "nPFCandidates/I");
-    tree -> Branch("nPFCandidatesTrack", &nPFCandidatesTrack, "nPFCandidatesTrack/I");
-    tree -> Branch("nPFCandidatesHighPurityTrack", &nPFCandidatesHighPurityTrack, "nPFCandidatesHighPurityTrack/I");
-    tree -> Branch("nPFCandidatesFullTrackInfo", &nPFCandidatesFullTrackInfo, "nPFCandidatesFullTrackInfo/I");
-    tree -> Branch("nPFCandidatesFullTrackInfo_pt", &nPFCandidatesFullTrackInfo_pt, "nPFCandidatesFullTrackInfo_pt/I");
-    tree -> Branch("nPFCandidatesFullTrackInfo_hasTrackDetails", &nPFCandidatesFullTrackInfo_hasTrackDetails, "nPFCandidatesFullTrackInfo_hasTrackDetails/I");
+    if (!isShort){
+      tree -> Branch("nPFCandidates" , &nPFCandidates, "nPFCandidates/I");
+      tree -> Branch("nPFCandidatesTrack", &nPFCandidatesTrack, "nPFCandidatesTrack/I");
+      tree -> Branch("nPFCandidatesHighPurityTrack", &nPFCandidatesHighPurityTrack, "nPFCandidatesHighPurityTrack/I");
+      tree -> Branch("nPFCandidatesFullTrackInfo", &nPFCandidatesFullTrackInfo, "nPFCandidatesFullTrackInfo/I");
+      tree -> Branch("nPFCandidatesFullTrackInfo_pt", &nPFCandidatesFullTrackInfo_pt, "nPFCandidatesFullTrackInfo_pt/I");
+      tree -> Branch("nPFCandidatesFullTrackInfo_hasTrackDetails", &nPFCandidatesFullTrackInfo_hasTrackDetails, "nPFCandidatesFullTrackInfo_hasTrackDetails/I");
+    }
     tree -> Branch("Flag_BadPFMuon", &BadPFMuonFlag, "Flag_BadPFMuon/O");
     tree -> Branch("Flag_BadChCand", &BadChCandFlag, "Flag_BadChCand/O");
     tree -> Branch("isVBF" , &isVBF, "isVBF/O");
     tree -> Branch("isggH" , &isggH, "isggH/O");
     tree -> Branch("isTriggerVBF" , &isTriggerVBF, "isTriggerVBF/O");
-    //tree -> Branch("isZtoEE" , &isZtoEE, "isZtoEE/O");
-    //tree -> Branch("isZtoMM" , &isZtoMM, "isZtoMM/O");
-    //tree -> Branch("isWtoEN" , &isWtoEN, "isWtoEN/O");
-    //tree -> Branch("isWtoMN" , &isWtoMN, "isWtoMN/O");
-    //tree -> Branch("isTtoEM" , &isTtoEM, "isTtoEM/O");
+    if (isControl) {
+        tree -> Branch("isZtoEE" , &isZtoEE, "isZtoEE/O");
+        tree -> Branch("isZtoMM" , &isZtoMM, "isZtoMM/O");
+        tree -> Branch("isWtoEN" , &isWtoEN, "isWtoEN/O");
+        tree -> Branch("isWtoMN" , &isWtoMN, "isWtoMN/O");
+        tree -> Branch("isTtoEM" , &isTtoEM, "isTtoEM/O");
+    }
     tree -> Branch("HT" , &HT , "HT/F");
     tree -> Branch("MinJetMetDPhi", &MinJetMetDPhi, "MinJetMetDPhi/F");
     tree -> Branch("ggHJetMetDPhi", &ggHJetMetDPhi , "ggHJetMetDPhi/F");
@@ -2591,9 +2738,12 @@ Ntuplizer::beginJob()
     ////for(int i = 0; i < WriteNGenBquarks; i++) GenBquarks.push_back( GenPType() );
     ////for(int i = 0; i < WriteNGenLongLiveds; i++) GenLongLiveds.push_back( GenPType() );
     ////for(int i = 0; i < WriteNLeptons; i++) Leptons.push_back( LeptonType() );
-    ////for(int i = 0; i < WriteNLeptons; i++) Muons.push_back( LeptonType() );
-    ////for(int i = 0; i < WriteNLeptons; i++) Electrons.push_back( LeptonType() );
-
+    //      for(int i = 0; i < WriteNLeptons; i++) Muons.push_back( LeptonType() );
+    //      for(int i = 0; i < WriteNLeptons; i++) Electrons.push_back( LeptonType() );
+    if (isControl){
+      tree -> Branch("TightMuons", &Muons);
+      tree -> Branch("TightElectrons", &Electrons);
+    }
     //Set branches for objects
     //!! We save only MatchedJets for cross-checks with vectors
     ////for(int i = 0; i < WriteNJets; i++) tree->Branch(("CHSJet"+std::to_string(i+1)).c_str(), &(CHSJets[i].pt), ObjectsFormat::ListJetType().c_str());
@@ -2611,8 +2761,10 @@ Ntuplizer::beginJob()
     //for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Electron"+std::to_string(i+1)).c_str(), &(Electrons[i].pt), ObjectsFormat::ListLeptonType().c_str());
 
     tree -> Branch("VBFPair", &VBF.pt, ObjectsFormat::ListCandidateType().c_str());
-    //tree -> Branch("Z", &Z.pt, ObjectsFormat::ListCandidateType().c_str());
-    //tree -> Branch("W", &W.pt, ObjectsFormat::ListCandidateType().c_str());
+    if (isControl){
+      tree -> Branch("Z", &Z.pt, ObjectsFormat::ListCandidateType().c_str());
+      tree -> Branch("W", &W.pt, ObjectsFormat::ListCandidateType().c_str());
+    }
 
     tree -> Branch("Jets", &CHSJets);
     //tree -> Branch("CaloJets", &CaloJets);

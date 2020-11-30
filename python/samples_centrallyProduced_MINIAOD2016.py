@@ -351,7 +351,16 @@ samples = {
     #DATA
     'data_obs' : {
         'order' : 0,
-        'files' : ['METRun2016B-03Feb2017_ver2-v2'],
+        'files' : [#'METRun2016B-03Feb2017_ver2-v2'
+            'BTagCSV_Run2016B-17Jul2018_ver1-v1',
+            'BTagCSV_Run2016B-17Jul2018_ver2-v1',
+            'BTagCSV_Run2016C-17Jul2018-v1',
+            'BTagCSV_Run2016D-17Jul2018-v1',
+            'BTagCSV_Run2016E-17Jul2018-v1',
+            'BTagCSV_Run2016F-17Jul2018-v1',
+            'BTagCSV_Run2016G-17Jul2018-v1',
+            'BTagCSV_Run2016H-17Jul2018-v1',
+],
         'fillcolor' : 0,
         'fillstyle' : 1,
         'linecolor' : 1,
@@ -362,6 +371,53 @@ samples = {
         'plot': True,
         },
 
+    #btag dataset
+    'data_BTagCSV' : {
+        'order' : 0,
+        'files' : [
+            'BTagCSV_Run2016B-17Jul2018_ver1-v1',
+            'BTagCSV_Run2016B-17Jul2018_ver2-v1',
+            'BTagCSV_Run2016C-17Jul2018-v1',
+            'BTagCSV_Run2016D-17Jul2018-v1',
+            'BTagCSV_Run2016E-17Jul2018-v1',
+            'BTagCSV_Run2016F-17Jul2018-v1',
+            'BTagCSV_Run2016G-17Jul2018-v1',
+            'BTagCSV_Run2016H-17Jul2018-v1',
+                   ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "Data",
+        'weight': 1.,
+        'plot': True,
+        },
+
+    #single mu dataset
+   'data_SingleMu' : {
+        'order' : 0,
+        'files' : [
+            'SingleMuon_Run2016B-17Jul2018_ver1-v1',
+            'SingleMuon_Run2016B-17Jul2018_ver2-v1',
+            'SingleMuon_Run2016C-17Jul2018-v1',
+            'SingleMuon_Run2016D-17Jul2018-v1',
+            'SingleMuon_Run2016E-17Jul2018-v1',
+            'SingleMuon_Run2016F-17Jul2018-v1',
+            'SingleMuon_Run2016G-17Jul2018-v1',
+            'SingleMuon_Run2016H-17Jul2018-v1',
+            ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "Data",
+        'weight': 1.,
+        'plot': True,
+        },
+
+    
 
     ########################################################
 
@@ -1267,6 +1323,58 @@ samples = {
         'plot': True,
     },
 
-
+### WH signals
+    'WH_M15_ctau0' : {
+        'files' : ['WminusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-0_TuneCUETP8M1_13TeV_RunIISummer16MiniAODv3','WplusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-0_TuneCUETP8M1_13TeV_RunIISummer16MiniAODv3'],
+        'mass' : 15,
+        'ctau' : 0.0,
+        'fillcolor' : 826,
+        'fillstyle' : 0,
+        'linecolor' : 826,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "WH m_{#pi} = 15 GeV, c#tau_{0} = 0 mm",
+        'weight': 1.,
+        'plot': True,
+    },
+    'WH_M15_ctau0p05' : {
+        'files' : ['WplusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-0p05_TuneCUETP8M1_13TeV_RunIISummer16MiniAODv3'],
+        'mass' : 15,
+        'ctau' : 0.05,
+        'fillcolor' : 824,
+        'fillstyle' : 0,
+        'linecolor' : 824,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "WH m_{#pi} = 15 GeV, c#tau_{0} = 0.05 mm",
+        'weight': 1.,
+        'plot': True,
+    },
+    'WH_M15_ctau1' : {
+        'files' : ['WminusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-1_TuneCUETP8M1_13TeV_RunIISummer16MiniAODv3','WplusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-1_TuneCUETP8M1_13TeV_RunIISummer16MiniAODv3'],
+        'mass' : 15,
+        'ctau' : 0.05,
+        'fillcolor' : 813,
+        'fillstyle' : 0,
+        'linecolor' : 813,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "WH m_{#pi} = 15 GeV, c#tau_{0} = 1 mm ",
+        'weight': 1.,
+        'plot': True,
+    },
+    'WH_M15_ctau10' : {
+        'files' : ['WminusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-10_TuneCUETP8M1_13TeV_RunIISummer16MiniAODv3', 'WplusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-10_TuneCUETP8M1_13TeV_RunIISummer16MiniAODv3'],
+        'mass' : 15,
+        'ctau' : 0.1,
+        'fillcolor' : 420,
+        'fillstyle' : 0,
+        'linecolor' : 420,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "WH m_{#pi} = 15 GeV, c#tau_{0} = 10 mm",
+        'weight': 1.,
+        'plot': True,
+    },
 
     }

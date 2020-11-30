@@ -16,7 +16,6 @@ options.register(
     VarParsing.varType.bool,
     "Decide if CRAB should overwrite variables"
 )
-
 options.register(
     "PisData", False,
     VarParsing.multiplicity.singleton,
@@ -108,16 +107,106 @@ options.register(
     "JERstring parser flag"
 )
 options.register(
+    "PMuonSFIDstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "MuonSFIDstring parser flag"
+)
+options.register(
+    "PMuonSFISOstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "MuonSFISOstring parser flag"
+)
+options.register(
+    "PMuonSFTriggerstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "MuonSFTriggerstring parser flag"
+)
+options.register(
     "PjsonName", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
     " jsonName parser flag"
 )
 options.register(
+    "PeleVetoIDstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleVetoIDstring parser flag"
+)
+options.register(
+    "PeleLooseIdstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleLooseIdstring parser flag"
+)
+options.register(
+    "PeleMediumIdstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleMediumIdstring parser flag"
+)
+options.register(
+    "PeleTightIdstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleTightIdstring parser flag"
+)
+options.register(
+    "PeleMVA90noISOstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleMVA90noISOstring parser flag"
+)
+options.register(
+    "PeleMVA80noISOstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleMVA80noISOstring parser flag"
+)
+options.register(
+    "PphoLooseIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoLooseIdFilestring parser flag"
+)
+options.register(
+    "PphoMediumIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoMediumIdFilestring parser flag"
+)
+options.register(
+    "PphoTightIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoTightIdFilestring parser flag"
+)
+options.register(
+    "PphoMVANonTrigMediumIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoMVANonTrigMediumIdFilestring parser flag"
+)
+options.register(
+    "PbtagSFstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "btagSFstring parser flag"
+)
+options.register(
     "PtriggerTag", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
     "triggerTag parser flag"
+)
+options.register(
+    "PtriggerString", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "triggerString parser flag"
 )
 options.register(
     "PfilterString", "",
@@ -130,6 +219,24 @@ options.register(
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
     "calo parser flag"
+)
+options.register(
+    "Ptracking", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "tracking parser flag"
+)
+options.register(
+    "Pshort", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "short parser flag"
+)
+options.register(
+    "Pcontrol", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "control parser flag"
 )
 options.register(
     "PVBF", False,
@@ -185,7 +292,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -196,20 +303,29 @@ if len(options.inputFiles) == 0:
 
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
+            #Test central production:
+            #'root://cms-xrd-global.cern.ch//store/mc/RunIIFall17MiniAODv2/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/00000/0093CC5C-E152-EA11-AA49-0CC47A706FFE.root',
             #JiaJing's
             #'/store/group/phys_exotica/jmao/aodsim/RunIISummer16/MINIAODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh300_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi300_pl1000_ev100000_MINIAODSIM_CaltechT2/200222_061026/0000/SUS-RunIIFall17DRPremix-00183_MINIAOD_9.root'
             #'/store/user/kjpena/miniAODv3_08Feb2020/VBFH_HToSSTobbbb_MH-125_MS-50_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3_MINIAODSIM/200209_083121/0000/output_1.root'
             #'file:/nfs/dust/cms/user/lbenato/HTo2LongLivedTo4b_MH-1000_MFF-450_CTau-10000mm_privateMC_102X_RECO_v1_generation_forMS_output_100_MINIAOD.root'
             #test 2017 MC:
             #'/store/mc/RunIIFall17MiniAODv2/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/40000/D0CB832F-0742-E811-87A1-0CC47A4D76AC.root'
+#          '/store/mc/RunIIFall17MiniAODv2/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/966FD47C-6FB8-E811-8B1A-0242AC1C0500.root'
             #'/store/mc/RunIIAutumn18DRPremix/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/3017154C-F483-964E-855B-E06F2590FD6B.root'#2018 MC with muons!  #
             #2016 background
+            #'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16MiniAODv3/QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/10000/00214FA3-001F-E911-AC83-0CC47A4F1CF6.root',
             #'/store/mc/RunIISummer16MiniAODv2/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/E65DC503-55C9-E611-9A11-02163E019C7F.root',
             #'/store/mc/RunIISummer16MiniAODv3/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/270000/FE8AFB84-5DEA-E811-83C4-68CC6EA5BD1A.root',
-            #'/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
+            '/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
+          #'/store/mc/RunIISummer16MiniAODv3/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/100000/16099EC8-13EA-E811-9559-0CC47A4C7340.root',
+          #'/store/mc/RunIISummer16MiniAODv3/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/20000/08E2D468-67EF-E811-850B-7CD30ABD295A.root',
+          #'/store/mc/RunIISummer16MiniAODv3/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/100000/00A80353-4FEA-E811-9282-6CC2173CAAE0.root'
             #2018 background
-            'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/270000/FFB1D063-1653-9441-BCE5-088A8DB0086D.root'
+            #'root://cms-xrd-global.cern.ch//store/mc/RunIIAutumn18MiniAOD/QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/10000/037A79A2-18C7-314B-AD6B-A8DA89B1447B.root',
+            #'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/270000/FFB1D063-1653-9441-BCE5-088A8DB0086D.root'
             #2017 background?
+            #'root://cms-xrd-global.cern.ch//store/mc/RunIIFall17MiniAODv2/QCD_HT100to200_TuneCP5_13TeV-madgraph-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/00000/007D59B8-82B3-E811-A052-EC0D9A0B30E0.root',
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
            #'/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
             #'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/WW_TuneCP5_13TeV-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v2/80000/7639FB10-DF53-8242-89D8-7A5E5817A3E4.root'
@@ -250,12 +366,15 @@ if RunLocal:
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
     isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0] or 'HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
     isCentralProd     = True if ('HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
-    isCalo            = True #HERE for calo analyses!!!
+    isCalo            = False #HERE for calo analyses!!!
+    isTracking        = False
+    isShort           = True #HERE for short lifetime analyses!!!
+    isControl         = False #HERE for short lifetime control region!!!
     isVBF             = False
     isggH             = False
-    isTwinHiggs       = False
+    isTwinHiggs       = True
     isHeavyHiggs      = False
-    isSUSY            = True
+    isSUSY            = False
 
 else:
     isData            = options.PisData
@@ -271,6 +390,9 @@ else:
     isSignal          = options.PisSignal
     isCentralProd     = options.PisCentralProd
     isCalo            = options.Pcalo
+    isTracking        = options.Ptracking
+    isShort           = options.Pshort
+    isControl         = options.Pcontrol
     isVBF             = options.PVBF
     isggH             = options.PggH
     isTwinHiggs       = options.PTwinHiggs
@@ -301,6 +423,10 @@ print 'isCentralProd', isCentralProd
 
 if(int(isTwinHiggs) + int(isHeavyHiggs) + int(isSUSY)>1):
    print "More than one theoretical model selected! Aborting...."
+   exit()
+
+if(int(isCalo) + int(isTracking) + int(isShort)>1):
+   print "More than one phase space selected! Aborting...."
    exit()
 
 if isTwinHiggs:
@@ -371,8 +497,49 @@ if isCalo:
     print "***************************************"
     print "\n"
 
+if isTracking:
+    print "\n"
+    print "***************************************"
+    print "***************************************"
+    print "***************************************"
+    print "\n"
+    print "Performing TRACKING LIFETIMES analysis!"
+    print "\n"
+    print "***************************************"
+    print "***************************************"
+    print "***************************************"
+    print "\n"
+
+if isShort:
+    print "\n"
+    print "***************************************"
+    print "***************************************"
+    print "***************************************"
+    print "\n"
+    print "Performing analysis for SHORT LIFETIMES!"
+    print "\n"
+    print "***************************************"
+    print "***************************************"
+    print "***************************************"
+    print "\n"
+
+if isControl:
+   print "\n"
+   print "***************************************"
+   print "***************************************"
+   print "***************************************"
+   print "\n"
+   print "Running control region for short lifetimes!"
+   print "\n"
+   print "***************************************"
+   print "***************************************"
+   print "***************************************"
+   print "\n"
+
 if(isTwinHiggs and isCalo):
     pt_AK4 = 5
+elif(isShort):
+   pt_AK4 = 20
 else:
     pt_AK4 = 15
 #-----------------------#
@@ -427,7 +594,14 @@ task.add(process.primaryVertexFilter)
 #-----------------------#
 
 from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
-setupEgammaPostRecoSeq(process,runEnergyCorrections=False,era='2016-Legacy')#era='2018-Prompt'
+era_string = ''
+if is2016:
+   era_string = '2016-Legacy'
+elif is2017:
+   era_string = '2017-Nov17ReReco'
+elif is2018:
+   era_string = '2018-Prompt'
+setupEgammaPostRecoSeq(process,runEnergyCorrections=False,era=era_string)#era='2018-Prompt'
 
 #muons upstream modules
 process.cleanedMuons = cms.EDProducer('PATMuonCleanerBySegments',
@@ -464,7 +638,7 @@ if RunLocal:
         JECstring = "Summer16_23Sep2016V3_MC"
     else:#dummy!
        print "WARNING! Dummy JEC for other run eras!!!!!!!!!!!"
-       JECstring = "Summer16_23Sep2016HV3_DATA" 
+       JECstring = "Summer16_23Sep2016HV3_DATA"
 
 else:
     JECstring = options.PJECstring
@@ -472,16 +646,88 @@ print "JEC ->",JECstring
 
 
 JERstring = ''
-
+MuonSFTriggerstring = ''
+MuonSFISOstring = ''
+MuonSFIDstring = ''
+eleVetoIDstring = ''
+eleLooseIdstring = ''
+eleMediumIdstring = ''
+eleTightIdstring = ''
+eleMVA90noISOstring = ''
+eleMVA80noISOstring = ''
+phoLooseIdFilestring = ''
+phoMediumIdFilestring = ''
+phoTightIdFilestring = ''
+phoMVANonTrigMediumIdFilestring = ''
+btagSFstring = ''
 if RunLocal:
    if is2016:
       JERstring = 'Summer16_25nsV1b_MC'
+      #WARNING! Muon SF should not be here applied for 2016! It needed to be a lumi weighted SF and hence only calculated after full run and brilcalc procedure! Needed to be done after ntuplizer process!
+      MuonSFTriggerstring = 'MuonTrigger_average_RunBtoH_SF_Run2_2016'
+      MuonSFISOstring = 'MuonISO_average_RunBtoH_SF_Run2_2016'
+      MuonSFIDstring = 'MuonID_average_RunBtoH_SF_Run2_2016'
+      eleVetoIDstring = '2016_ElectronWPVeto_Fall17V2'
+      eleLooseIdstring = '2016LegacyReReco_ElectronLoose_Fall17V2'
+      eleMediumIdstring = '2016LegacyReReco_ElectronMedium_Fall17V2'
+      eleTightIdstring = '2016LegacyReReco_ElectronTight_Fall17V2'
+      eleMVA90noISOstring = '2016LegacyReReco_ElectronMVA90noiso_Fall17V2'
+      eleMVA80noISOstring = '2016LegacyReReco_ElectronMVA80noiso_Fall17V2'
+      phoLooseIdFilestring = 'Fall17V2_2016_Loose_photons'
+      phoMediumIdFilestring = 'egammaPlots_MWP_PhoSFs_2016_LegacyReReco_New'
+      phoTightIdFilestring = 'Fall17V2_2016_Tight_photons'
+      phoMVANonTrigMediumIdFilestring = 'Fall17V2_2016_MVAwp90_photons'
+      btagSFstring = 'DeepJet_2016LegacySF_V1'
    elif is2017:
       JERstring = 'Fall17_V3b_MC'
+      MuonSFTriggerstring = 'MuonTrigger_EfficienciesAndSF_RunBtoF_Nov17Nov2017'
+      MuonSFISOstring = 'MuonISO_2017_RunBCDEF_SF_ISO_Nov17'
+      MuonSFIDstring = 'MuonID_2017_RunBCDEF_SF_ID_Nov17'
+      eleVetoIDstring = '2017_ElectronWPVeto_Fall17V2'
+      eleLooseIdstring = '2017_ElectronLoose_Fall17V2'
+      eleMediumIdstring = '2017_ElectronMedium_Fall17V2'
+      eleTightIdstring = '2017_ElectronTight_Fall17V2'
+      eleMVA90noISOstring = '2017_ElectronMVA90noiso_Fall17V2'
+      eleMVA80noISOstring = '2017_ElectronMVA80noiso_Fall17V2'
+      phoLooseIdFilestring = '2017_PhotonsLoose'
+      phoMediumIdFilestring = '2017_PhotonsMedium'
+      phoTightIdFilestring = '2017_PhotonsTight'
+      phoMVANonTrigMediumIdFilestring = '2017_PhotonsMVAwp90'
+      btagSFstring = 'DeepFlavour_94XSF_V4_B_F_Run2017'
    elif is2018:
       JERstring = 'Autumn18_V7b_MC'
+      MuonSFTriggerstring = 'MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate'
+      print "WARNING! There is another SF root file for single muon triggers for Run A: run < 316361 it is called: MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_BeforeMuonHLTUpdate. TO BE IMPLEMENTED SOMEHOW!"
+      if isControl: exit()
+      MuonSFISOstring = 'MuonISO_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ISO'
+      MuonSFIDstring = 'MuonID_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID'
+      eleVetoIDstring = '2018_ElectronWPVeto_Fall17V2'
+      eleLooseIdstring = '2018_ElectronLoose_Fall17V2'
+      eleMediumIdstring = '2018_ElectronMedium_Fall17V2'
+      eleTightIdstring = '2018_ElectronTight_Fall17V2'
+      eleMVA90noISOstring = '2018_ElectronMVA90noiso_Fall17V2'
+      eleMVA80noISOstring = '2018_ElectronMVA80noiso_Fall17V2'
+      phoLooseIdFilestring = '2018_PhotonsLoose'
+      phoMediumIdFilestring = '2018_PhotonsMedium'
+      phoTightIdFilestring = '2018_PhotonsTight'
+      phoMVANonTrigMediumIdFilestring = '2018_PhotonsMVAwp90'
+      btagSFstring = 'DeepJet_102XSF_V2_Run2018'
 else:
    JERstring = options.PJERstring
+   MuonSFIDstring = options.PMuonSFIDstring
+   MuonSFISOstring = options.PMuonSFISOstring
+   MuonSFTriggerstring = options.PMuonSFTriggerstring
+   eleVetoIDstring = options.PeleVetoIDstring
+   eleLooseIdstring = options.PeleLooseIdstring
+   eleMediumIdstring = options.PeleMediumIdstring
+   eleTightIdstring = options.PeleTightIdstring
+   eleMVA90noISOstring = options.PeleMVA90noISOstring
+   eleMVA80noISOstring = options.PeleMVA80noISOstring
+   phoLooseIdFilestring = options.PphoLooseIdFilestring
+   phoMediumIdFilestring = options.PphoMediumIdFilestring
+   phoTightIdFilestring = options.PphoTightIdFilestring
+   phoMVANonTrigMediumIdFilestring = options.PphoMVANonTrigMediumIdFilestring
+   btagSFstring = options.PbtagSFstring
 print "JER ->", JERstring
 
 #-----------------------#
@@ -507,11 +753,14 @@ if RunLocal:
     # MET filters string
     if isData:
         filterString = "RECO"
+        triggerString = "DQM"
     else:
         filterString = "PAT"
+        triggerString = "PAT"
 else:
     triggerTag = options.PtriggerTag
     filterString = options.PfilterString
+    triggerString = options.PtriggerString
 
 
 # MET filters
@@ -662,7 +911,7 @@ if isCalo and pt_AK4<10:
    process.ak4PFJetsCHSCustom = ak4PFJets.clone(src = "pfCHS", doAreaFastjet = True, jetPtMin = pt_AK4)
    task.add(process.ak4PFJetsCHSCustom)
 
-   
+
    from PhysicsTools.PatAlgos.tools.jetTools import *
    addJetCollection(
       process,
@@ -1262,7 +1511,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
 *[
 #2016 menu!!!:
 ### b-like
-#'HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v', 'HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v', 'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v', 'HLT_QuadJet45_TripleBTagCSV_p087_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v',
+#'HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v', 'HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v',
+'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v', 'HLT_QuadJet45_TripleBTagCSV_p087_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v',
 
 ### displaced tracks
 #'HLT_VBF_DisplacedJet40_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_DisplacedTrack_2TrackIP2DSig5_v', 'HLT_HT350_DisplacedDijet40_DisplacedTrack_v', 'HLT_HT350_DisplacedDijet80_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_VTightID_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_VVTightID_DisplacedTrack_v', 'HLT_HT350_DisplacedDijet80_Tight_DisplacedTrack_v', 'HLT_HT650_DisplacedDijet80_Inclusive_v', 'HLT_HT750_DisplacedDijet80_Inclusive_v',
@@ -1285,10 +1535,6 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
 #'HLT_VBF_DisplacedJet40_VTightID_Hadronic_v', 'HLT_VBF_DisplacedJet40_VVTightID_Hadronic_v'#,'HLT_AK4PFJet30_v7'
 
 #2018 menu
-#'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',
-#'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',
-#'HLT_HT500_DisplacedDijet40_DisplacedTrack_v',
-#'HLT_HT650_DisplacedDijet60_Inclusive_v',
 #'HLT_AK8PFHT800_TrimMass50_v',
 #'HLT_AK8PFHT850_TrimMass50_v',
 #'HLT_AK8PFHT900_TrimMass50_v',
@@ -1357,10 +1603,10 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
 #'HLT_PFMET200_HBHE_BeamHaloCleaned_v',
 #'HLT_PFMET250_HBHECleaned_v',
 #'HLT_PFMET300_HBHECleaned_v',
-'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v',
-'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
-'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
-'HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
+#'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v',
+#'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
+#'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
+#'HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
 #'HLT_PFMETTypeOne140_PFMHT140_IDTight_v',
 #'HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v',
 #'HLT_TripleJet110_35_35_Mjj650_PFMET110_v',
@@ -1374,10 +1620,10 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         ),
         metfilters = cms.InputTag('TriggerResults', '', filterString),
         metpaths = cms.vstring('Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter','Flag_badMuons','Flag_duplicateMuons','Flag_noBadMuons') if isReMiniAod else cms.vstring('Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter'),
-        prescales = cms.InputTag('patTrigger','','PAT'),
-        l1Minprescales = cms.InputTag('patTrigger','l1min','PAT'),
-        l1Maxprescales = cms.InputTag('patTrigger','l1max','PAT'),
-        objects = cms.InputTag('selectedPatTrigger' if is2016 else 'slimmedPatTrigger','','PAT'),
+        prescales = cms.InputTag('patTrigger','',triggerString),
+        l1Minprescales = cms.InputTag('patTrigger','l1min',triggerString),
+        l1Maxprescales = cms.InputTag('patTrigger','l1max',triggerString),
+        objects = cms.InputTag('selectedPatTrigger' if is2016 else 'slimmedPatTrigger','',triggerString),
         badPFMuonFilter = cms.InputTag("BadPFMuonFilter"),
         badChCandFilter = cms.InputTag("BadChargedCandidateFilter"),
         l1Gt = cms.InputTag("gtStage2Digis"),
@@ -1424,9 +1670,9 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
             'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
         ),
         massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
-        reshapeBTag = cms.bool(True),
-        btag = cms.string('pfCombinedInclusiveSecondaryVertexV2BJetTags'),
-        btagDB = cms.string('data/CSVv2_Moriond17_B_H.csv'),
+        reshapeBTag = cms.bool(isShort),
+        btag = cms.string('deepJet'),
+        btagDB = cms.string('data/%s.csv' % (btagSFstring)),
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet2btag = cms.int32(0),
         met = cms.InputTag('slimmedMETsMuEGClean', '', '') if isReMiniAod else cms.InputTag('slimmedMETs', '', ''),# 'LLP'
@@ -1478,9 +1724,9 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
             'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
         ),
         massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
-        reshapeBTag = cms.bool(True),
-        btag = cms.string('pfCombinedInclusiveSecondaryVertexV2BJetTags'),
-        btagDB = cms.string('data/CSVv2_Moriond17_B_H.csv'),
+        reshapeBTag = cms.bool(isShort),
+        btag = cms.string('pfDeepFlavourJetTags:probb+pfDeepFlavourJetTags:probbb+pfDeepFlavourJetTags:problepb'),
+        btagDB = cms.string('data/%s.csv' % (btagSFstring)),
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet2btag = cms.int32(0),
         met = cms.InputTag('slimmedMETsMuEGClean', '', '') if isReMiniAod else cms.InputTag('slimmedMETs', '', ''),# 'LLP'
@@ -1536,9 +1782,9 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
             'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
         ),
         massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
-        reshapeBTag = cms.bool(True),
-        btag = cms.string('pfCombinedInclusiveSecondaryVertexV2BJetTags'),
-        btagDB = cms.string('data/CSVv2_Moriond17_B_H.csv'),
+        reshapeBTag = cms.bool(isShort),
+        btag = cms.string('pfDeepFlavourJetTags:probb+pfDeepFlavourJetTags:probbb+pfDeepFlavourJetTags:problepb'),
+        btagDB = cms.string('data/%s.csv' % (btagSFstring)),
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet2btag = cms.int32(0),
         met = cms.InputTag('slimmedMETsMuEGClean', '', '') if isReMiniAod else cms.InputTag('slimmedMETs', '', 'LLP'),
@@ -1590,9 +1836,9 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
             'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK8PFchs.txt',
         ),
         massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
-        reshapeBTag = cms.bool(True),
-        btag = cms.string('pfCombinedInclusiveSecondaryVertexV2BJetTags'),
-        btagDB = cms.string('data/CSVv2_Moriond17_B_H.csv'),
+        reshapeBTag = cms.bool(isShort),
+        btag = cms.string('pfDeepFlavourJetTags:probb+pfDeepFlavourJetTags:probbb+pfDeepFlavourJetTags:problepb'),
+        btagDB = cms.string('data/%s.csv' % (btagSFstring)),
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet2btag = cms.int32(0),
         met = cms.InputTag('slimmedMETsMuEGClean', '', '') if isReMiniAod else cms.InputTag('slimmedMETs', '', ''),# 'LLP'
@@ -1646,20 +1892,22 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         eleMediumId = cms.string('cutBasedElectronID-Fall17-94X-V2-medium'),
         eleTightId = cms.string('cutBasedElectronID-Fall17-94X-V2-tight'),
         eleHEEPId = cms.string('heepElectronID-HEEPV70'),
+        ## Looks like the following 4 Ids are still valid: https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentificationRun2
         eleMVANonTrigMediumId = cms.string('mvaEleID-Spring16-GeneralPurpose-V1-wp90'),#see https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaMiniAODV2#Accessing_ID_result
         eleMVANonTrigTightId = cms.string('mvaEleID-Spring16-GeneralPurpose-V1-wp80'),
         eleMVATrigMediumId = cms.string('mvaEleID-Spring16-GeneralPurpose-V1-wp90'), ### NOTE -> SAME AS NON-TRIG IN 2017
         eleMVATrigTightId = cms.string('mvaEleID-Spring16-GeneralPurpose-V1-wp80'), ### NOTE -> SAME AS NON-TRIG IN 2017
+        ###
         eleEcalRecHitCollection = cms.InputTag("reducedEgamma:reducedEBRecHits"),
-        eleSingleTriggerIsoFileName = cms.string('data/SingleEleTriggerEff.root'),
-        eleSingleTriggerFileName = cms.string('data/eleTriggerEff_MORIOND17.root'),
-        eleVetoIdFileName = cms.string('data/eleVetoIDSF_MORIOND17.root'),
-        eleLooseIdFileName = cms.string('data/eleLooseIDSF_MORIOND17.root'),
-        eleMediumIdFileName = cms.string('data/eleMediumIDSF_MORIOND17.root'),
-        eleTightIdFileName = cms.string('data/eleTightIDSF_MORIOND17.root'),
-        eleMVATrigMediumIdFileName = cms.string('data/eleMVA90IDSF_MORIOND17.root'),
-        eleMVATrigTightIdFileName = cms.string('data/eleMVA80IDSF_MORIOND17.root'),
-        eleRecoEffFileName = cms.string('data/eleRecoSF_MORIOND17.root'),
+        eleSingleTriggerIsoFileName = cms.string('data/SingleEleTriggerEff.root'), # FIXME where to find most recent file?
+        eleSingleTriggerFileName = cms.string('data/eleTriggerEff_MORIOND17.root'), # FIXME where to find most recent file?
+        eleVetoIdFileName = cms.string('data/%s.root' % (eleVetoIDstring)),
+        eleLooseIdFileName = cms.string('data/%s.root' % (eleLooseIdstring)),
+        eleMediumIdFileName = cms.string('data/%s.root' % (eleMediumIdstring)),
+        eleTightIdFileName = cms.string('data/%s.root' % (eleTightIdstring)),
+        eleMVATrigMediumIdFileName = cms.string('data/%s.root' % (eleMVA90noISOstring)), #FIXME: Double check: added here noiso files
+        eleMVATrigTightIdFileName = cms.string('data/%s.root' % (eleMVA80noISOstring)), #FIXME: Double check: added here noiso files
+        eleRecoEffFileName = cms.string('data/eleRecoSF_MORIOND17.root'), # FIXME where to find most recent file?
         eleScaleSmearCorrectionName = cms.string('EgammaAnalysis/ElectronTools/data/ScalesSmearings/Moriond17_23Jan_ele'),
         electron1id = cms.int32(0), # 0: veto, 1: loose, 2: medium, 3: tight, 4: HEEP, 5: MVA medium nonTrig, 6: MVA tight nonTrig, 7: MVA medium Trig, 8: MVA tight Trig
         electron2id = cms.int32(0),
@@ -1669,12 +1917,12 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     muonSet = cms.PSet(
         muons = cms.InputTag('cleanedMuons'),#('slimmedMuons'),#
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
-        muonTrkFileName = cms.string('data/MuonTrkEfficienciesAndSF_MORIOND17.root'),
-        muonIdFileName = cms.string('data/MuonIdEfficienciesAndSF_MORIOND17.root'),
-        muonIsoFileName = cms.string('data/MuonIsoEfficienciesAndSF_MORIOND17.root'),
-        muonTrkHighptFileName = cms.string('data/tkhighpt_2016full_absetapt.root'),
-        muonTriggerFileName = cms.string('data/MuonTrigEfficienciesAndSF_MORIOND17.root'),
-        doubleMuonTriggerFileName = cms.string('data/MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2.root'),#FIXME -> obsolete
+        #        muonTrkFileName = cms.string('data/MuonTrkEfficienciesAndSF_MORIOND17.root'),# todo: is this used?
+        muonIdFileName = cms.string('data/%s.root' %(MuonSFIDstring)),#('data/MuonIdEfficienciesAndSF_MORIOND17.root'),
+        muonIsoFileName = cms.string('data/%s.root' %(MuonSFISOstring)),#('data/MuonIsoEfficienciesAndSF_MORIOND17.root'),
+        #        muonTrkHighptFileName = cms.string('data/tkhighpt_2016full_absetapt.root'),# todo: is this used?
+        muonTriggerFileName = cms.string('data/%s.root' %(MuonSFTriggerstring)),#('data/MuonTrigEfficienciesAndSF_MORIOND17.root'),
+        #        doubleMuonTriggerFileName = cms.string('data/MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2.root'),#FIXME -> obsolete# todo: what about this???
         muon1id = cms.int32(1), # 0: tracker high pt muon id, 1: loose, 2: medium, 3: tight, 4: high pt
         muon2id = cms.int32(1),
         muon1iso = cms.int32(1), # 0: trk iso (<0.1), 1: loose (<0.25), 2: tight (<0.15) (pfIso in cone 0.4)
@@ -1703,10 +1951,10 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         phoTightId = cms.string('cutBasedPhotonID-Fall17-94X-V2-tight'),
         phoMVANonTrigMediumId = cms.string('mvaPhoID-Spring16-nonTrig-V1-wp90'),
         phoEcalRecHitCollection = cms.InputTag("reducedEgamma:reducedEBRecHits"),
-        phoLooseIdFileName = cms.string('data/phoLooseIDSF_MORIOND17.root'),
-        phoMediumIdFileName = cms.string('data/phoMediumIDSF_MORIOND17.root'),
-        phoTightIdFileName = cms.string('data/phoTightIDSF_MORIOND17.root'),
-        phoMVANonTrigMediumIdFileName = cms.string('data/phoMVA90IDSF_MORIOND17.root'),
+        phoLooseIdFileName = cms.string('data/%s.root' % (phoLooseIdFilestring)),
+        phoMediumIdFileName = cms.string('data/%s.root' % (phoMediumIdFilestring)),
+        phoTightIdFileName = cms.string('data/%s.root' % (phoTightIdFilestring)),
+        phoMVANonTrigMediumIdFileName = cms.string('data/%s.root' % (phoMVANonTrigMediumIdFilestring)),
         photonid = cms.int32(1), # 1: loose, 2: medium, 3: tight, 4:MVA NonTrig medium
         photonpt = cms.double(15.),
     ),
@@ -1757,8 +2005,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     writeAllPFCandidates = cms.bool(False), #All PFCandidates. Large collection: Please write only if needed!
     ##
     writeLostTracks = cms.bool(False),
-    writeVertices = cms.bool(True),
-    writeBtagInfos = cms.bool(True),
+    writeVertices = cms.bool(False),
+    writeBtagInfos = cms.bool(False),
     calculateNsubjettiness = cms.bool(False),
     performPreFiringStudies = cms.bool(True if ('unprefirable' in process.source.fileNames[0]) else False),
     performVBF = cms.bool(isVBF),
@@ -1767,10 +2015,156 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     verboseTrigger  = cms.bool(False),
     signal = cms.bool(isSignal),
     iscalo = cms.bool(isCalo),
+    isshort = cms.bool(isShort),
+    iscontrol = cms.bool(isControl),
     iscentralprod = cms.bool(isCentralProd),
-
+    isera2016 = cms.bool(is2016),
+    isera2017 = cms.bool(is2017),
+    isera2018 = cms.bool(is2018),
 )
 
+if (isTracking and is2016):
+    process.ntuple.triggerSet.paths = cms.vstring(
+    *[
+    ## -------------------------------------------------------------------------------------
+    ## DisplacedDijet triggers
+    ## -------------------------------------------------------------------------------------
+    'HLT_HT350_DisplacedDijet40_DisplacedTrack_v',
+    'HLT_HT350_DisplacedDijet80_DisplacedTrack_v',
+    'HLT_HT350_DisplacedDijet80_Tight_DisplacedTrack_v',
+    'HLT_HT650_DisplacedDijet80_Inclusive_v',
+    'HLT_HT750_DisplacedDijet80_Inclusive_v',
+    ])
+
+if (isTracking and is2017):
+    process.ntuple.triggerSet.paths = cms.vstring(
+    *[#2017 menu
+    ## -------------------------------------------------------------------------------------
+    ## ParkingHT triggers:
+    ## -------------------------------------------------------------------------------------
+    # 'DST_CaloJet40_BTagScouting_v',#                  control prescaled       ParkingHT
+    # 'DST_CaloJet40_CaloBTagScouting_v',#              control prescaled       ParkingHT
+    # 'DST_CaloJet40_CaloScouting_PFScouting_v',#       control prescaled       ParkingHT
+    'DST_HT250_CaloBTagScouting_v',#                    signal  unprescaled     ParkingHT
+    'DST_HT250_CaloScouting_v',#                        signal  unprescaled     ParkingHT
+    'DST_HT410_BTagScouting_v',#                        signal  unprescaled     ParkingHT
+    'DST_HT410_PFScouting_v',#                          signal  unprescaled     ParkingHT
+    # 'DST_L1HTT_BTagScouting_v',#                      control prescaled       ParkingHT
+    # 'DST_L1HTT_CaloBTagScouting_v',#                  control prescaled       ParkingHT
+    # 'DST_L1HTT_CaloScouting_PFScouting_v',#           control prescaled       ParkingHT
+    # 'DST_ZeroBias_BTagScouting_v',#                   control prescaled       ParkingHT
+    # 'DST_ZeroBias_CaloScouting_PFScouting_v',#        control prescaled       ParkingHT
+    ## -------------------------------------------------------------------------------------
+    ## ParkingMuon triggers:
+    ## -------------------------------------------------------------------------------------
+    'DST_DoubleMu3_noVtx_CaloScouting_v',#              signal  unprescaled     ParkingMuon
+    # 'DST_L1DoubleMu_BTagScouting_v',#                 control prescaled       ParkingMuon
+    # 'DST_L1DoubleMu_CaloScouting_PFScouting_v',#      control prescaled       ParkingMuon
+    ## -------------------------------------------------------------------------------------
+    ## DisplacedDijet triggers:
+    ## -------------------------------------------------------------------------------------
+    # 'HLT_HT400_DisplacedDijet40_DisplacedTrack_v',#   control prescaled       DisplacedJet
+    # 'HLT_HT425_v',#                                   control prescaled       DisplacedJet
+    'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',#     signal	unprescaled     DisplacedJet
+    'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',#     backup	unprescaled     DisplacedJet
+    'HLT_HT430_DisplacedDijet80_DisplacedTrack_v',#     backup	unprescaled     DisplacedJet
+    # 'HLT_HT550_DisplacedDijet60_Inclusive_v',#        control prescaled       DisplacedJet
+    # 'HLT_HT550_DisplacedDijet80_Inclusive_v',#        control prescaled       DisplacedJet
+    'HLT_HT650_DisplacedDijet60_Inclusive_v',#          backup	unprescaled     DisplacedJet
+    'HLT_HT650_DisplacedDijet80_Inclusive_v',#          backup	unprescaled     DisplacedJet
+    'HLT_HT750_DisplacedDijet80_Inclusive_v',#          backup	unprescaled     DisplacedJet
+    ])
+
+if (isTracking and is2018):
+    process.ntuple.triggerSet.paths = cms.vstring(
+    *[
+    ## -------------------------------------------------------------------------------------
+    ## B-Parking triggers:
+    ## -------------------------------------------------------------------------------------
+    'HLT_Mu12_IP6_part0_v',#                            signal  prescaled       ParkingBPH1
+    'HLT_Mu7_IP4_part0_v',#                             signal  prescaled       ParkingBPH1
+    'HLT_Mu8_IP3_part0_v',#                             signal  prescaled       ParkingBPH1
+    'HLT_Mu8_IP5_part0_v',#                             signal  prescaled       ParkingBPH1
+    'HLT_Mu8_IP6_part0_v',#                             signal  prescaled       ParkingBPH1
+    'HLT_Mu9_IP0_part0_v',#                             signal  prescaled       ParkingBPH1
+    'HLT_Mu9_IP3_part0_v',#                             signal  prescaled       ParkingBPH1
+    # 'HLT_Mu9_IP4_part0_v',#                           signal  disabled        ParkingBPH1
+    'HLT_Mu9_IP5_part0_v',#                             signal  prescaled       ParkingBPH1
+    'HLT_Mu9_IP6_part0_v',#                             signal  prescaled       ParkingBPH1
+    # 'HLT_Mu12_IP6_ToCSCS_v',#                         signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu7_IP4_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu8_IP3_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu8_IP5_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu8_IP6_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu9_IP4_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu9_IP5_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu9_IP6_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    'HLT_Mu12_IP6_part1_v',#                            signal  prescaled       ParkingBPH2
+    'HLT_Mu7_IP4_part1_v',#                             signal  prescaled       ParkingBPH2
+    'HLT_Mu8_IP3_part1_v',#                             signal  prescaled       ParkingBPH2
+    'HLT_Mu8_IP5_part1_v',#                             signal  prescaled       ParkingBPH2
+    'HLT_Mu8_IP6_part1_v',#                             signal  prescaled       ParkingBPH2
+    # 'HLT_Mu9_IP4_part1_v',#                           signal  disabled        ParkingBPH2
+    'HLT_Mu9_IP5_part1_v',#                             signal  prescaled       ParkingBPH2
+    'HLT_Mu9_IP6_part1_v',#                             signal  prescaled       ParkingBPH2
+    'HLT_Mu12_IP6_part2_v',#                            signal  prescaled       ParkingBPH3
+    'HLT_Mu7_IP4_part2_v',#                             signal  prescaled       ParkingBPH3
+    'HLT_Mu8_IP3_part2_v',#                             signal  prescaled       ParkingBPH3
+    'HLT_Mu8_IP5_part2_v',#                             signal  prescaled       ParkingBPH3
+    'HLT_Mu8_IP6_part2_v',#                             signal  prescaled       ParkingBPH3
+    # 'HLT_Mu9_IP4_part2_v',#                           signal  disabled        ParkingBPH3
+    'HLT_Mu9_IP5_part2_v',#                             signal  prescaled       ParkingBPH3
+    'HLT_Mu9_IP6_part2_v',#                             signal  prescaled       ParkingBPH3
+    'HLT_Mu12_IP6_part3_v',#                            signal  prescaled       ParkingBPH4
+    'HLT_Mu7_IP4_part3_v',#                             signal  prescaled       ParkingBPH4
+    'HLT_Mu8_IP3_part3_v',#                             signal  prescaled       ParkingBPH4
+    'HLT_Mu8_IP5_part3_v',#                             signal  prescaled       ParkingBPH4
+    'HLT_Mu8_IP6_part3_v',#                             signal  prescaled       ParkingBPH4
+    # 'HLT_Mu9_IP4_part3_v',#                           signal  disabled        ParkingBPH4
+    'HLT_Mu9_IP5_part3_v',#                             signal  prescaled       ParkingBPH4
+    'HLT_Mu9_IP6_part3_v',#                             signal  prescaled       ParkingBPH4
+    'HLT_Mu12_IP6_part4_v',#                            signal  prescaled       ParkingBPH5
+    'HLT_Mu7_IP4_part4_v',#                             signal  prescaled       ParkingBPH5
+    'HLT_Mu8_IP3_part4_v',#                             signal  prescaled       ParkingBPH5
+    'HLT_Mu8_IP5_part4_v',#                             signal  prescaled       ParkingBPH5
+    'HLT_Mu8_IP6_part4_v',#                             signal  prescaled       ParkingBPH5
+    # 'HLT_Mu9_IP4_part4_v',#                           signal  disabled        ParkingBPH5
+    'HLT_Mu9_IP5_part4_v',#                             signal  prescaled       ParkingBPH5
+    'HLT_Mu9_IP6_part4_v',#                             signal  prescaled       ParkingBPH5
+    ### DisplacedDijet triggers:
+    # 'HLT_HT400_DisplacedDijet40_DisplacedTrack_v',#   control prescaled       DisplacedJet
+    # 'HLT_HT425_v',#                                   control prescaled       DisplacedJet
+    'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',#     signal  unprescaled     DisplacedJet
+    'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',#     backup  unprescaled     DisplacedJet
+    'HLT_HT500_DisplacedDijet40_DisplacedTrack_v',#     backup  unprescaled     DisplacedJet
+    # 'HLT_HT550_DisplacedDijet60_Inclusive_v',#        control prescaled       DisplacedJet
+    'HLT_HT650_DisplacedDijet60_Inclusive_v',#          backup  unprescaled     DisplacedJet
+    ])
+
+if (isShort and is2016):
+   process.ntuple.triggerSet.paths = cms.vstring(
+      *[
+         ## -------------------------------------------------------------------------------------
+         ## Triggers for b-like lifetimes
+         ## -------------------------------------------------------------------------------------
+          'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v', 
+          'HLT_QuadJet45_TripleBTagCSV_p087_v', 
+          'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 
+          'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v',
+          ])
+
+if (isShort and is2017):
+#   print("Update trigger menu!")
+#   exit()
+   process.ntuple.triggerSet.paths = cms.vstring(
+      *[
+         ])
+if (isShort and is2018):
+   print("Update trigger menu!")
+   exit()
+   process.ntuple.triggerSet.paths = cms.vstring(
+      *[
+         ])
 
 #-----------------------#
 #       TEST            #
@@ -1825,4 +2219,3 @@ process.p.associate(task)
 outFile = open("tmpConfig_Ntuplizer2018.py","w")
 outFile.write(process.dumpPython())
 outFile.close()
-

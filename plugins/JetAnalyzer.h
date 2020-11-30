@@ -103,7 +103,8 @@ class JetAnalyzer {
         virtual bool isLooseJet(pat::Jet&);
         virtual bool isTightJet(pat::Jet&);
         virtual bool isTightLepVetoJet(pat::Jet&);
-        virtual std::vector<float> ReshapeBtagDiscriminator(pat::Jet&);
+	//        virtual std::vector<float> ReshapeBtagDiscriminator(pat::Jet&);
+	virtual std::map<std::string, float> CalculateBtagReshapeSF(std::vector<pat::Jet>&);
       
     private:
 
@@ -165,7 +166,8 @@ class JetAnalyzer {
         boost::shared_ptr<FactorizedJetCorrector> massCorrDATA;
         
         // Btag calibrations
-        BTagCalibration       * calib;
+        BTagCalibration        * calib;
+	BTagCalibrationReader * reader;
 	std::map < int , BTagEntry::JetFlavor > flavour_map; 
 	std::map< BTagEntry::JetFlavor, std::vector<std::string>> syst_map; 
 	std::map<std::string, BTagCalibrationReader> cr_map;

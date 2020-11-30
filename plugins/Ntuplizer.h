@@ -219,11 +219,12 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 
     //edm::EDGetTokenT<reco::JetTagCollection> BTagToken;
 
-    bool isVerbose, isVerboseTrigger, isSignal, isCalo, isCentralProd;
+  bool isVerbose, isVerboseTrigger, isSignal, isCalo, isShort, isControl, isCentralProd, is2016, is2017, is2018;
     bool isVBF, isggH;
     bool isMC;
     long int EventNumber, LumiNumber, RunNumber, nPV, nSV;
     bool AtLeastOneTrigger, AtLeastOneL1Filter;
+    bool isIsoMu24_OR_IsoTkMu24, isMu50_OR_TkMu50;
     long int nLooseCHSJets, nTightCHSJets, nCHSJets, nAllBarrelJets, nAllJets, nVBFGenMatchedJets;
     long int nLooseCHSFatJets, nTightCHSFatJets, nCHSFatJets, nGenBquarks, nGenLL;
     long int nMatchedCHSJets, nMatchedFatJets;
@@ -238,11 +239,15 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     long int number_of_SV;
   long int nPFCandidates, nPFCandidatesTrack, nPFCandidatesHighPurityTrack, nPFCandidatesFullTrackInfo, nPFCandidatesFullTrackInfo_pt, nPFCandidatesFullTrackInfo_hasTrackDetails;
     float EventWeight;
+    float EventWeight_leptonSF;
+    float EventWeight_leptonSFUp;
+    float EventWeight_leptonSFDown;
     float GenEventWeight;
     float PUWeight, PUWeightUp, PUWeightDown;
     float FacWeightUp, FacWeightDown, RenWeightUp, RenWeightDown, CorrWeightUp, CorrWeightDown;
     float PdfWeight;
-    float LeptonWeight;
+    float LeptonWeight, LeptonWeightUp, LeptonWeightDown;
+    float bTagWeight_central, bTagWeight_jesup, bTagWeight_jesdown, bTagWeight_lfup, bTagWeight_lfdown, bTagWeight_hfup, bTagWeight_hfdown, bTagWeight_hfstats1up, bTagWeight_hfstats1down, bTagWeight_hfstats2up, bTagWeight_hfstats2down, bTagWeight_lfstats1up, bTagWeight_lfstats1down, bTagWeight_lfstats2up, bTagWeight_lfstats2down, bTagWeight_cferr1up, bTagWeight_cferr1down, bTagWeight_cferr2up, bTagWeight_cferr2down;
     float ZewkWeight, WewkWeight;
     float HT;
     float MinJetMetDPhi;
@@ -257,7 +262,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //bool isVBF;
     bool isTriggerVBF;
     //Z-W-T CR
-    //bool isZtoMM, isZtoEE, isWtoMN, isWtoEN, isTtoEM;
+    bool isZtoMM, isZtoEE, isWtoMN, isWtoEN, isTtoEM;
     AddFourMomenta addP4;
     //Displaced calo tagging
     long int nLooseCaloTagJets;
