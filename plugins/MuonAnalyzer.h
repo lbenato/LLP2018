@@ -67,6 +67,7 @@ class MuonAnalyzer {
         rochcor2016 *rmcor;
         
         bool isMuonTriggerFile, isDoubleMuonTriggerFile, isMuonTrkFile, isMuonIdFile, isMuonIsoFile, isMuonTrkHighptFile;
+	bool isFile2016, isFile2017, isFile2018;
         
         TFile* MuonTriggerFile;
         TFile* DoubleMuonTriggerFile;

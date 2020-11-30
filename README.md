@@ -2,12 +2,12 @@
 
 Ntuplizer compatible with LLPDNNX tagger (https://github.com/LLPDNNX/LLPReco)
 
-## Login to naf SLC6 and setup CMSSW release
+## Login to naf SL7 and setup CMSSW release
 ```
 ssh naf-cms.desy.de
 bash #if you like bash
 source /etc/profile.d/modules.sh #if you like bash
-export SCRAM_ARCH=slc6_amd64_gcc700
+export SCRAM_ARCH=slc7_amd64_gcc700
 module use -a /afs/desy.de/group/cms/modulefiles/
 module load cmssw
 cmsrel CMSSW_10_2_18
@@ -15,6 +15,12 @@ cd CMSSW_10_2_18/src
 cmsenv
 git cms-init
 scram b -j 10
+```
+
+## Set grid environment on SL7 and CRAB3 client API
+```
+source /cvmfs/grid.desy.de/etc/profile.d/grid-ui-env.sh
+source /cvmfs/cms.cern.ch/common/crab-setup.sh
 ```
 
 ## EGAMMA modules

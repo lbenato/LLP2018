@@ -22,17 +22,24 @@ config.General.requestName = 'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MIN
 
 config.Data.inputDataset =  '/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_standard_mixing-Moriond17_80X_mcRun2_2016_MINIAOD-28028af67189b3de7224b79195bd0e1d/USER'
 config.Data.inputDBS = 'global'
-config.Data.splitting = 'EventAwareLumiBased'
-config.Data.unitsPerJob = 2500#15000
-config.Data.totalUnits = 1000000#15000
-#config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
+
+#config.Data.splitting = 'EventAwareLumiBased'
+#config.Data.unitsPerJob = 2500#15000
+#config.Data.totalUnits = 1000000#15000
+
+config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
+#config.Data.unitsPerJob = 5
+#config.Data.splitting = 'FileBased'
 
 config.Data.outLFNDirBase = '/store/user/lbenato/choose_a_folder_name'
 config.Data.publication = False
 
 config.Site.storageSite = 'T2_DE_DESY'
 
-#config.Site.ignoreGlobalBlacklist   = True #Set to true if e.g. your dataset is on a blacklisted site
+#Workaround when crab complains that this release+arch isn't supported; running on SL7 machines
+#config.JobType.allowUndistributedCMSSW = True
+
+#config.Site.ignoreGlobalBlacklist   = True #Set to true if e.g. your dataset is in a blacklisted site. Make sure you add
 #config.Site.whitelist   = ['T1_US_FNAL'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
 
 #config.Site.blacklist   = ['T2_FR_IPHC']
@@ -63,7 +70,7 @@ if __name__ == '__main__':
     # Selection of samples via python lists
     import os
 
-    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB"]#,"data_obs"
+    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB", "Others","data_BTagCSV", "WH_MH-125_2016"]#,"data_obs"
     print "Possible subgroups of samples:"
     for a in list_of_samples:
         print a
@@ -558,6 +565,7 @@ if __name__ == '__main__':
 #        config.Data.totalUnits = 200
         isCalo=False
         isShort = True
+        isTracking = True
         isControl = True
         isVBF = False
         isggH = False
@@ -773,6 +781,10 @@ if __name__ == '__main__':
                 else:
                     print "no mask available"
                     exit()
+        elif "WH_MH-125_2016" in options.groupofsamples:
+            if "WminusH_HToSSTobbbb_" in k or "WplusH_HToSSTobbbb_" in k:
+                print k
+                selected_requests[k] = requests[k]
         elif "ggH_MH-125_201" in options.groupofsamples:
             if "ggH_HToSSTobbbb" in k and "MS-" in k:
                 print k
@@ -904,7 +916,7 @@ if __name__ == '__main__':
 
         noLHEinfo = True if ('WW_TuneCUETP8M1_13TeV-pythia8' in j or 'WZ_TuneCUETP8M1_13TeV-pythia8' in j or 'ZZ_TuneCUETP8M1_13TeV-pythia8' in j or 'WW_TuneCP5_13TeV-pythia8' in j or 'WZ_TuneCP5_13TeV-pythia8' in j or 'ZZ_TuneCP5_13TeV-pythia8' in j) else False #check for PythiaLO samples
         isbbH = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in j) else False #bbH has a different label in LHEEventProduct
-        isSignal = True if ('HToSSTobbbb_MH-125' in j  or 'HToSSTo4b_MH-125' in j) else False #FIXME: Update with other signal modes & models?
+        isSignal = True if ('HToSSTobbbb_MH-125' in j  or 'HToSSTo4b_MH-125' in j or 'HToSSTobbbb_WToLNu' in j) else False #FIXME: Update with other signal modes & models?
         GT = ''
 
         if isMINIAOD:
@@ -979,6 +991,7 @@ if __name__ == '__main__':
         phoMediumIdFilestring = ''
         phoTightIdFilestring = ''
         phoMVANonTrigMediumIdFilestring = ''
+        btagSFstring = ''
         if is2016:
             JERstring = 'Summer16_25nsV1b_MC'
             #WARNING! Muon SF should not be here applied for 2016! It needed to be a lumi weighted SF and hence only calculated after full run and brilcalc procedure! Needed to be done after ntuplizer process!
@@ -996,6 +1009,7 @@ if __name__ == '__main__':
             phoMediumIdFilestring = 'egammaPlots_MWP_PhoSFs_2016_LegacyReReco_New'
             phoTightIdFilestring = 'Fall17V2_2016_Tight_photons'
             phoMVANonTrigMediumIdFilestring = 'Fall17V2_2016_MVAwp90_photons'
+            btagSFstring = 'DeepJet_2016LegacySF_V1'
         elif is2017:
             JERstring = 'Fall17_V3b_MC'
             MuonSFTriggerstring = 'MuonTrigger_EfficienciesAndSF_RunBtoF_Nov17Nov2017'
@@ -1011,6 +1025,7 @@ if __name__ == '__main__':
             phoMediumIdFilestring = '2017_PhotonsMedium'
             phoTightIdFilestring = '2017_PhotonsTight'
             phoMVANonTrigMediumIdFilestring = '2017_PhotonsMVAwp90'
+            btagSFstring = 'DeepFlavour_94XSF_V4_B_F_Run2017'
         elif is2018:
             JERstring = 'Autumn18_V7b_MC'
             MuonSFTriggerstring = 'MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate'
@@ -1029,6 +1044,7 @@ if __name__ == '__main__':
             phoMediumIdFilestring = '2018_PhotonsMedium'
             phoTightIdFilestring = '2018_PhotonsTight'
             phoMVANonTrigMediumIdFilestring = '2018_PhotonsMVAwp90'
+            btagSFstring = 'DeepJet_102XSF_V2_Run2018'
         print "JER ->", JERstring
 
         # JSON filter
@@ -1085,6 +1101,7 @@ if __name__ == '__main__':
         string_phoMediumIdFilestring = 'PphoMediumIdFilestring='+str(phoMediumIdFilestring)
         string_phoTightIdFilestring = 'PphoTightIdFilestring='+str(phoTightIdFilestring)
         string_phoMVANonTrigMediumIdFilestring = 'PphoMVANonTrigMediumIdFilestring='+str(phoMVANonTrigMediumIdFilestring)
+        string_btagSFstring = 'PbtagSFstring='+str(btagSFstring)
         string_jsonName = 'PjsonName='+str(jsonName)
         string_triggerTag = 'PtriggerTag='+str(triggerTag)
         string_triggerString = 'PtriggerString='+str(triggerString)
@@ -1146,7 +1163,7 @@ if __name__ == '__main__':
             if isAOD:
                 config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo,  string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             else:
-                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod,string_isPromptReco, string_is2016, string_is2017, string_is2018, string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_triggerTag, string_triggerString, string_filterString, string_calo, string_tracking, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod,string_isPromptReco, string_is2016, string_is2017, string_is2018, string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_btagSFstring, string_triggerTag, string_triggerString, string_filterString, string_calo, string_tracking, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
             # Submit config file
             if options.crabaction=="submit":

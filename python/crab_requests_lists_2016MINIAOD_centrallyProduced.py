@@ -90,6 +90,17 @@ requests = {
 'ggH_HToSSTobbbb_MH-125_MS-55_ctauS-100000_TuneCUETP8M1_13TeV-powheg-pythia8_RunIISummer16MiniAODv3' : '/ggH_HToSSTobbbb_MH-125_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv3-PUMoriond17_rp_94X_mcRun2_asymptotic_v3-v1/MINIAODSIM',
 
 
+### W associated Higgs production 
+#Twin Higgs model
+#WH samples W minus
+'WminusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-0_TuneCUETP8M1_13TeV_RunIISummer16MiniAODv3' : '/WminusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM',
+'WminusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-1_TuneCUETP8M1_13TeV_RunIISummer16MiniAODv3' : '/WminusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-1_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM',
+'WminusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-10_TuneCUETP8M1_13TeV_RunIISummer16MiniAODv3' : '/WminusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-10_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM',
+#WH samples W plus
+'WplusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-0_TuneCUETP8M1_13TeV_RunIISummer16MiniAODv3' : '/WplusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM',
+'WplusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-0p05_TuneCUETP8M1_13TeV_RunIISummer16MiniAODv3' : '/WplusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-0p05_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM',
+'WplusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-1_TuneCUETP8M1_13TeV_RunIISummer16MiniAODv3' : '/WplusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-1_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM',
+'WplusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-10_TuneCUETP8M1_13TeV_RunIISummer16MiniAODv3' : '/WplusH_HToSSTobbbb_WToLNu_MH-125_MS-15_ctauS-10_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM',
 
 ########################################################################################
 ###  Background samples with MiniAODRunIISummer16MiniAODv3, suggested by PPD (see https://indico.cern.ch/event/920726/contributions/3868370/attachments/2055396/3446379/20-06-11_News_PPD.pdf)
@@ -194,5 +205,29 @@ requests = {
 
 
 #'ggH_HToSSTobbbb_MH-125_TuneCUETP8M1_13TeV-powheg-pythia8_RunIISummer16DR80Premix' : '/ggH_HToSSTobbbb_MH-125_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISummer16DR80Premix-PUMoriond17_rp_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/GEN-SIM-RECO',
+
+#####################
+#      DATA      ####
+#####################
+## MiniAOD 17Jul2018, recommended by PPD: https://docs.google.com/presentation/d/1YTANRT_ZeL5VubnFq7lNGHKsiD7D3sDiOPNgXUYVI0I/edit#slide=id.g89898d65f8_0_0
+
+'BTagCSV_Run2016B-17Jul2018_ver1-v1' : '/BTagCSV/Run2016B-17Jul2018_ver1-v1/MINIAOD',
+'BTagCSV_Run2016B-17Jul2018_ver2-v1' : '/BTagCSV/Run2016B-17Jul2018_ver2-v1/MINIAOD',
+'BTagCSV_Run2016C-17Jul2018-v1' : '/BTagCSV/Run2016C-17Jul2018-v1/MINIAOD',
+'BTagCSV_Run2016D-17Jul2018-v1' : '/BTagCSV/Run2016D-17Jul2018-v1/MINIAOD',
+'BTagCSV_Run2016E-17Jul2018-v1' : '/BTagCSV/Run2016E-17Jul2018-v1/MINIAOD',
+'BTagCSV_Run2016F-17Jul2018-v1' : '/BTagCSV/Run2016F-17Jul2018-v1/MINIAOD',
+'BTagCSV_Run2016G-17Jul2018-v1' : '/BTagCSV/Run2016G-17Jul2018-v1/MINIAOD',
+'BTagCSV_Run2016H-17Jul2018-v1' : '/BTagCSV/Run2016H-17Jul2018-v1/MINIAOD',
+
+
+'SingleMuon_Run2016B-17Jul2018_ver1-v1' : '/SingleMuon/Run2016B-17Jul2018_ver1-v1/MINIAOD',
+'SingleMuon_Run2016B-17Jul2018_ver2-v1' : '/SingleMuon/Run2016B-17Jul2018_ver2-v1/MINIAOD',
+'SingleMuon_Run2016C-17Jul2018-v1' : '/SingleMuon/Run2016C-17Jul2018-v1/MINIAOD',
+'SingleMuon_Run2016D-17Jul2018-v1' : '/SingleMuon/Run2016D-17Jul2018-v1/MINIAOD',
+'SingleMuon_Run2016E-17Jul2018-v1' : '/SingleMuon/Run2016E-17Jul2018-v1/MINIAOD',
+'SingleMuon_Run2016F-17Jul2018-v1' : '/SingleMuon/Run2016F-17Jul2018-v1/MINIAOD',
+'SingleMuon_Run2016G-17Jul2018-v1' : '/SingleMuon/Run2016G-17Jul2018-v1/MINIAOD',
+'SingleMuon_Run2016H-17Jul2018-v1' : '/SingleMuon/Run2016H-17Jul2018-v1/MINIAOD',
 
 }

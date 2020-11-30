@@ -19,6 +19,7 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
     DoRochester(PSet.getParameter<bool>("doRochester"))
 {
     isMuonTriggerFile = isMuonIdFile = false;
+    isFile2016 = isFile2017 = isFile2018 = false;
 
 // //removed obsolete things for now
 //     // isDoubleMuonTriggerFile = isMuonTrkFile = isMuonTrkHighptFile =false;
@@ -76,10 +77,28 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
     //NOTE -> SF APPLIED AS PER-EVENT WEIGHTS
     MuonIdFile=new TFile(MuonIdFileName.c_str(), "READ");
     if(!MuonIdFile->IsZombie()) {
+      if(MuonIdFileName.find("2016")){
         MuonIdLoose =(TH2F*)MuonIdFile->Get("NUM_LooseID_DEN_genTracks_eta_pt");
         MuonIdMedium=(TH2F*)MuonIdFile->Get("NUM_MediumID_DEN_genTracks_eta_pt");
         MuonIdTight =(TH2F*)MuonIdFile->Get("NUM_TightID_DEN_genTracks_eta_pt");
         MuonIdHighpt=(TH2F*)MuonIdFile->Get("NUM_HighPtID_DEN_genTracks_eta_pair_newTuneP_probe_pt"); // done wrt tune-p pt
+	isFile2016 = true;
+      }
+      else if(MuonIdFileName.find("2017")){
+	MuonIdLoose =(TH2F*)MuonIdFile->Get("NUM_LooseID_DEN_genTracks_pt_abseta");
+        MuonIdMedium=(TH2F*)MuonIdFile->Get("NUM_MediumID_DEN_genTracks_pt_abseta");
+        MuonIdTight =(TH2F*)MuonIdFile->Get("NUM_TightID_DEN_genTracks_pt_abseta");
+        MuonIdHighpt=(TH2F*)MuonIdFile->Get("NUM_HighPtID_DEN_genTracks_pair_newTuneP_probe_pt_abseta");
+        isFile2017 = true;
+      }
+      else if(MuonIdFileName.find("2018")){
+	MuonIdLoose =(TH2F*)MuonIdFile->Get("NUM_LooseID_DEN_TrackerMuons_pt_abseta");
+        MuonIdMedium=(TH2F*)MuonIdFile->Get("NUM_MediumID_DEN_TrackerMuons_pt_abseta");
+        MuonIdTight =(TH2F*)MuonIdFile->Get("NUM_TightID_DEN_TrackerMuons_pt_abseta");
+        MuonIdHighpt=(TH2F*)MuonIdFile->Get("NUM_HighPtID_DEN_TrackerMuons_pair_newTuneP_probe_pt_abseta");
+        isFile2018 = true;
+      }
+      else throw cms::Exception("MuonAnalyzer", "Run era not in Muon Id Weight File Name");
         isMuonIdFile=true;
     }
     else {
@@ -91,14 +110,25 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
     //NOTE -> SF APPLIED AS PER-EVENT WEIGHTS
     MuonIsoFile=new TFile(MuonIsoFileName.c_str(), "READ");
     if(!MuonIsoFile->IsZombie()) {
-        MuonIsoHighpt=(TH2F*)MuonIsoFile->Get("NUM_LooseRelTkIso_DEN_HighPtIDandIPCut_eta_pair_newTuneP_probe_pt");
-        MuonIsoLoose=(TH2F*)MuonIsoFile->Get("NUM_LooseRelIso_DEN_LooseID_eta_pt");
-        MuonIsoTight=(TH2F*)MuonIsoFile->Get("NUM_TightRelIso_DEN_TightID_eta_pt");
-        isMuonIsoFile=true;
+      if(MuonIsoFileName.find("2016")){
+	MuonIsoHighpt=(TH2F*)MuonIsoFile->Get("NUM_LooseRelTkIso_DEN_HighPtIDandIPCut_eta_pair_newTuneP_probe_pt");
+	MuonIsoLoose=(TH2F*)MuonIsoFile->Get("NUM_LooseRelIso_DEN_LooseID_eta_pt");
+	MuonIsoTight=(TH2F*)MuonIsoFile->Get("NUM_TightRelIso_DEN_TightID_eta_pt");
+        isFile2016 = true;
+      }
+      else if(MuonIsoFileName.find("2017") || MuonIsoFileName.find("2018")){
+	MuonIsoHighpt=(TH2F*)MuonIsoFile->Get("NUM_LooseRelTkIso_DEN_HighPtIDandIPCut_pair_newTuneP_probe_pt_abseta");
+	MuonIsoLoose=(TH2F*)MuonIsoFile->Get("NUM_LooseRelIso_DEN_LooseID_pt_abseta");
+	MuonIsoTight=(TH2F*)MuonIsoFile->Get("NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta");
+        isFile2017 = MuonIsoFileName.find("2017");
+        isFile2018 = MuonIsoFileName.find("2018");
+      }
+      else throw cms::Exception("MuonAnalyzer", "Run era not in Muon ISO Weight File Name");
+      isMuonIsoFile=true;
     }
     else {
         throw cms::Exception("MuonAnalyzer", "No MuonIso Weight File");
-        return;
+         return;
     }
 
     // //Muon custom TrackerHighPt id, 2016
@@ -273,67 +303,129 @@ std::string MuonAnalyzer::GetMuon1Id(pat::Muon& mu){
 
 //ID
 float MuonAnalyzer::GetMuonIdSF(pat::Muon& mu, int id) {
+  if (id != Muon1Id || id != Muon2Id){
+    throw cms::Exception("MuonAnalyzer", "Muon ID set in Ntuplizer not equal to Muon ID set in config file!");
+  }
     if(id==0 && isMuonTrkHighptFile){
 // //removed obsolete things for now
 //         double pt = std::min( std::max( MuonIdTrkHighpt->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdTrkHighpt->GetYaxis()->GetXmax() - 0.000001 );
-//         double abseta = std::min( MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
-//         return MuonIdTrkHighpt->GetBinContent( MuonIdTrkHighpt->FindBin(abseta,pt) );
+//         double eta = std::min( MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+//         return MuonIdTrkHighpt->GetBinContent( MuonIdTrkHighpt->FindBin(eta,pt) );
 
   throw cms::Exception("MuonAnalyzer", "Muon ID 0 currently not supported!");
     }
     if(id==1 && isMuonIdFile){
-        double pt = std::min( std::max( MuonIdLoose->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 );
+      if (isFile2016){
+	  double pt = std::min( std::max( MuonIdLoose->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdLoose->GetYaxis()->GetXmax() - 0.000001 );
+	  double eta = std::min( MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+	  return MuonIdLoose->GetBinContent( MuonIdLoose->FindBin(eta,pt) );
+	}
+      else if (isFile2017 || isFile2018){
+	double pt = std::min( std::max( MuonIdLoose->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 );
         double abseta = std::min( MuonIdLoose->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
         return MuonIdLoose->GetBinContent( MuonIdLoose->FindBin(pt,abseta) );
+      }
     }
     if(id==2 && isMuonIdFile){
-        double pt = std::min( std::max( MuonIdMedium->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdMedium->GetXaxis()->GetXmax() - 0.000001 );
+      if (isFile2016){
+	double pt = std::min( std::max( MuonIdMedium->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdMedium->GetYaxis()->GetXmax() - 0.000001 );
+	double eta = std::min( MuonIdMedium->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+	return MuonIdMedium->GetBinContent( MuonIdMedium->FindBin(eta,pt) );
+      }
+      else if (isFile2017 || isFile2018){
+	double pt = std::min( std::max( MuonIdMedium->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdMedium->GetXaxis()->GetXmax() - 0.000001 );
         double abseta = std::min( MuonIdMedium->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
         return MuonIdMedium->GetBinContent( MuonIdMedium->FindBin(pt,abseta) );
+      }
     }
     if(id==3 && isMuonIdFile){
+      if (isFile2016){
+	double pt = std::min( std::max( MuonIdTight->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdTight->GetYaxis()->GetXmax() - 0.000001 );
+	double eta = std::min( MuonIdTight->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+	return MuonIdTight->GetBinContent( MuonIdTight->FindBin(eta,pt) );
+      }
+      else if (isFile2017 || isFile2018){
         double pt = std::min( std::max( MuonIdTight->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdTight->GetXaxis()->GetXmax() - 0.000001 );
         double abseta = std::min( MuonIdTight->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
         return MuonIdTight->GetBinContent( MuonIdTight->FindBin(pt,abseta) );
+      }
     }
     if(id==4 && isMuonIdFile){
+      if (isFile2016){
+	double pt = std::min( std::max( MuonIdHighpt->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdHighpt->GetYaxis()->GetXmax() - 0.000001 );
+	double eta = std::min( MuonIdHighpt->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+	return MuonIdHighpt->GetBinContent( MuonIdHighpt->FindBin(eta,pt) );
+      }
+      else if (isFile2017 || isFile2018){
         double pt = std::min( std::max( MuonIdHighpt->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdHighpt->GetXaxis()->GetXmax() - 0.000001 );
         double abseta = std::min( MuonIdHighpt->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
         return MuonIdHighpt->GetBinContent( MuonIdHighpt->FindBin(pt,abseta) );
+      } 
     }
-    else return 1.;
+    return 1.;
 }
 
 float MuonAnalyzer::GetMuonIdSFError(pat::Muon& mu, int id) {
-    if(id==0 && isMuonTrkHighptFile){
+  if (id != Muon1Id || id != Muon2Id){
+    throw cms::Exception("MuonAnalyzer", "Muon ID set in Ntuplizer not equal to Muon ID set in config file!");
+  }
+  if(id==0 && isMuonTrkHighptFile){
 // //removed obsolete things for now
 //         double pt = std::min( std::max( MuonIdTrkHighpt->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdTrkHighpt->GetYaxis()->GetXmax() - 0.000001 );
-//         double abseta = std::min( MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
-//         return MuonIdTrkHighpt->GetBinError( MuonIdTrkHighpt->FindBin(abseta,pt) );
+//         double eta = std::min( MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+//         return MuonIdTrkHighpt->GetBinError( MuonIdTrkHighpt->FindBin(eta,pt) );
 
-  throw cms::Exception("MuonAnalyzer", "Muon ID 0 currently not supported!");
+    throw cms::Exception("MuonAnalyzer", "Muon ID 0 currently not supported!");
+  }
+  if(id==1 && isMuonIdFile){
+    if (isFile2016){
+      double pt = std::min( std::max( MuonIdLoose->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdLoose->GetYaxis()->GetXmax() - 0.000001 );
+      double eta = std::min( MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+      return MuonIdLoose->GetBinError( MuonIdLoose->FindBin(eta,pt) );
     }
-    if(id==1 && isMuonIdFile){
-        double pt = std::min( std::max( MuonIdLoose->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 );
-        double abseta = std::min( MuonIdLoose->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
-        return MuonIdLoose->GetBinError( MuonIdLoose->FindBin(pt,abseta) );
+    else if (isFile2017 || isFile2018){
+      double pt = std::min( std::max( MuonIdLoose->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdLoose->GetXaxis()->GetXmax() - 0.000001 );
+      double abseta = std::min( MuonIdLoose->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
+      return MuonIdLoose->GetBinError( MuonIdLoose->FindBin(pt,abseta) );
     }
-    if(id==2 && isMuonIdFile){
-        double pt = std::min( std::max( MuonIdMedium->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdMedium->GetXaxis()->GetXmax() - 0.000001 );
-        double abseta = std::min( MuonIdMedium->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
-        return MuonIdMedium->GetBinError( MuonIdMedium->FindBin(pt,abseta) );
+  }
+  if(id==2 && isMuonIdFile){
+    if (isFile2016){
+      double pt = std::min( std::max( MuonIdMedium->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdMedium->GetYaxis()->GetXmax() - 0.000001 );
+      double eta = std::min( MuonIdMedium->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+      return MuonIdMedium->GetBinError( MuonIdMedium->FindBin(eta,pt) );
     }
-    if(id==3 && isMuonIdFile){
-        double pt = std::min( std::max( MuonIdTight->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdTight->GetXaxis()->GetXmax() - 0.000001 );
-        double abseta = std::min( MuonIdTight->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
-        return MuonIdTight->GetBinError( MuonIdTight->FindBin(pt,abseta) );
+    else if (isFile2017 || isFile2018){
+      double pt = std::min( std::max( MuonIdMedium->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdMedium->GetXaxis()->GetXmax() - 0.000001 );
+      double abseta = std::min( MuonIdMedium->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
+      return MuonIdMedium->GetBinError( MuonIdMedium->FindBin(pt,abseta) );
     }
-    if(id==4 && isMuonIdFile){
-        double pt = std::min( std::max( MuonIdHighpt->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdHighpt->GetXaxis()->GetXmax() - 0.000001 );
-        double abseta = std::min( MuonIdHighpt->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
-        return MuonIdHighpt->GetBinError( MuonIdHighpt->FindBin(pt,abseta) );
+  }
+  if(id==3 && isMuonIdFile){
+    if (isFile2016){
+      double pt = std::min( std::max( MuonIdTight->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdTight->GetYaxis()->GetXmax() - 0.000001 );
+      double eta = std::min( MuonIdTight->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+      return MuonIdTight->GetBinError( MuonIdTight->FindBin(eta,pt) );
     }
-    else return 1.;
+    else if (isFile2017 || isFile2018){
+      double pt = std::min( std::max( MuonIdTight->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdTight->GetXaxis()->GetXmax() - 0.000001 );
+      double abseta = std::min( MuonIdTight->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
+      return MuonIdTight->GetBinError( MuonIdTight->FindBin(pt,abseta) );
+    }
+  }
+  if(id==4 && isMuonIdFile){
+    if (isFile2016){
+      double pt = std::min( std::max( MuonIdHighpt->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdHighpt->GetYaxis()->GetXmax() - 0.000001 );
+      double eta = std::min( MuonIdHighpt->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+      return MuonIdHighpt->GetBinError( MuonIdHighpt->FindBin(eta,pt) );
+    }
+    else if (isFile2017 || isFile2018){
+      double pt = std::min( std::max( MuonIdHighpt->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdHighpt->GetXaxis()->GetXmax() - 0.000001 );
+      double abseta = std::min( MuonIdHighpt->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
+      return MuonIdHighpt->GetBinError( MuonIdHighpt->FindBin(pt,abseta) );
+    }
+  }
+  return 0.;
 }
 
 //TRK
@@ -363,42 +455,84 @@ float MuonAnalyzer::GetMuonTrkSFError(pat::Muon& mu) {
 
 //ISO
 float MuonAnalyzer::GetMuonIsoSF(pat::Muon& mu, int id) {
-    if(id==0 && isMuonIsoFile){
-        double pt = std::min( std::max( MuonIsoHighpt->GetXaxis()->GetXmin(), mu.pt() ) , MuonIsoHighpt->GetXaxis()->GetXmax() - 0.000001 );
-        double abseta = std::min( MuonIsoHighpt->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
-        return MuonIsoHighpt->GetBinContent( MuonIsoHighpt->FindBin(pt,abseta) );
+  if(id==0 && isMuonIsoFile){
+    if (isFile2016){
+      double pt = std::min( std::max( MuonIsoHighpt->GetYaxis()->GetXmin(), mu.pt() ) , MuonIsoHighpt->GetYaxis()->GetXmax() - 0.000001 );
+      double eta = std::min( MuonIsoHighpt->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+      return MuonIsoHighpt->GetBinContent( MuonIsoHighpt->FindBin(eta,pt) );
     }
-    if(id==1 && isMuonIsoFile){
-        double pt = std::min( std::max( MuonIsoLoose->GetXaxis()->GetXmin(), mu.pt() ) , MuonIsoLoose->GetXaxis()->GetXmax() - 0.000001 );
-        double abseta = std::min( MuonIsoLoose->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
-        return MuonIsoLoose->GetBinContent( MuonIsoLoose->FindBin(pt,abseta) );
+    else if (isFile2017 || isFile2018){
+      double pt = std::min( std::max( MuonIsoHighpt->GetXaxis()->GetXmin(), mu.pt() ) , MuonIsoHighpt->GetXaxis()->GetXmax() - 0.000001 );
+      double abseta = std::min( MuonIsoHighpt->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
+      return MuonIsoHighpt->GetBinContent( MuonIsoHighpt->FindBin(pt,abseta) );
     }
-    if(id==2 && isMuonIsoFile){
-        double pt = std::min( std::max( MuonIsoTight->GetXaxis()->GetXmin(), mu.pt() ) , MuonIsoTight->GetXaxis()->GetXmax() - 0.000001 );
-        double abseta = std::min( MuonIsoTight->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
-        return MuonIsoTight->GetBinContent( MuonIsoTight->FindBin(pt,abseta) );
+  }
+  if(id==1 && isMuonIsoFile){
+    if (isFile2016){
+      double pt = std::min( std::max( MuonIsoLoose->GetYaxis()->GetXmin(), mu.pt() ) , MuonIsoLoose->GetYaxis()->GetXmax() - 0.000001 );
+      double eta = std::min( MuonIsoLoose->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+      return MuonIsoLoose->GetBinContent( MuonIsoLoose->FindBin(eta,pt) );
     }
-    else return 1.;
+    else if (isFile2017 || isFile2018){
+      double pt = std::min( std::max( MuonIsoLoose->GetXaxis()->GetXmin(), mu.pt() ) , MuonIsoLoose->GetXaxis()->GetXmax() - 0.000001 );
+      double abseta = std::min( MuonIsoLoose->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
+      return MuonIsoLoose->GetBinContent( MuonIsoLoose->FindBin(pt,abseta) );
+    }
+  }
+  if(id==2 && isMuonIsoFile){
+    if (isFile2016){
+      double pt = std::min( std::max( MuonIsoTight->GetYaxis()->GetXmin(), mu.pt() ) , MuonIsoTight->GetYaxis()->GetXmax() - 0.000001 );
+      double eta = std::min( MuonIsoTight->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+      return MuonIsoTight->GetBinContent( MuonIsoTight->FindBin(eta,pt) );
+    }
+    else if (isFile2017 || isFile2018){
+      double pt = std::min( std::max( MuonIsoTight->GetXaxis()->GetXmin(), mu.pt() ) , MuonIsoTight->GetXaxis()->GetXmax() - 0.000001 );
+      double abseta = std::min( MuonIsoTight->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
+      return MuonIsoTight->GetBinContent( MuonIsoTight->FindBin(pt,abseta) );
+    }
+  }
+  return 1.;
 }
 
 float MuonAnalyzer::GetMuonIsoSFError(pat::Muon& mu, int id) {
-    if(!isMuonIsoFile) return 1.;
-    if(id==0){
-        double pt = std::min( std::max( MuonIsoHighpt->GetXaxis()->GetXmin(), mu.pt() ) , MuonIsoHighpt->GetXaxis()->GetXmax() - 0.000001 );
-        double abseta = std::min( MuonIsoHighpt->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
-        return MuonIsoHighpt->GetBinError( MuonIsoHighpt->FindBin(pt,abseta) );
+  if(!isMuonIsoFile) return 1.;
+  if(id==0){
+    if (isFile2016){
+      double pt = std::min( std::max( MuonIsoHighpt->GetYaxis()->GetXmin(), mu.pt() ) , MuonIsoHighpt->GetYaxis()->GetXmax() - 0.000001 );
+      double eta = std::min( MuonIsoHighpt->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+      return MuonIsoHighpt->GetBinError( MuonIsoHighpt->FindBin(eta,pt) );
     }
-    if(id==1){
-        double pt = std::min( std::max( MuonIsoLoose->GetXaxis()->GetXmin(), mu.pt() ) , MuonIsoLoose->GetXaxis()->GetXmax() - 0.000001 );
-        double abseta = std::min( MuonIsoLoose->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
-        return MuonIsoLoose->GetBinError( MuonIsoLoose->FindBin(pt,abseta) );
+    else if (isFile2017 || isFile2018){
+      double pt = std::min( std::max( MuonIsoHighpt->GetXaxis()->GetXmin(), mu.pt() ) , MuonIsoHighpt->GetXaxis()->GetXmax() - 0.000001 );
+      double abseta = std::min( MuonIsoHighpt->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
+      return MuonIsoHighpt->GetBinError( MuonIsoHighpt->FindBin(pt,abseta) );
     }
-    if(id==2){
-        double pt = std::min( std::max( MuonIsoTight->GetXaxis()->GetXmin(), mu.pt() ) , MuonIsoTight->GetXaxis()->GetXmax() - 0.000001 );
-        double abseta = std::min( MuonIsoTight->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
-        return MuonIsoTight->GetBinError( MuonIsoTight->FindBin(pt,abseta) );
+  }
+  if(id==1){
+    if (isFile2016){
+      double pt = std::min( std::max( MuonIsoLoose->GetYaxis()->GetXmin(), mu.pt() ) , MuonIsoLoose->GetYaxis()->GetXmax() - 0.000001 );
+      double eta = std::min( MuonIsoLoose->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+      return MuonIsoLoose->GetBinError( MuonIsoLoose->FindBin(eta,pt) );
     }
-    else return 1.;
+    else if (isFile2017 || isFile2018){
+      double pt = std::min( std::max( MuonIsoLoose->GetXaxis()->GetXmin(), mu.pt() ) , MuonIsoLoose->GetXaxis()->GetXmax() - 0.000001 );
+      double abseta = std::min( MuonIsoLoose->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
+      return MuonIsoLoose->GetBinError( MuonIsoLoose->FindBin(pt,abseta) );
+    }
+  }
+  if(id==2){
+    if (isFile2016){
+      double pt = std::min( std::max( MuonIsoTight->GetYaxis()->GetXmin(), mu.pt() ) , MuonIsoTight->GetYaxis()->GetXmax() - 0.000001 );
+      double eta = std::min( MuonIsoTight->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
+      return MuonIsoTight->GetBinError( MuonIsoTight->FindBin(eta,pt) );
+    }
+    else if (isFile2017 || isFile2018){
+      double pt = std::min( std::max( MuonIsoTight->GetXaxis()->GetXmin(), mu.pt() ) , MuonIsoTight->GetXaxis()->GetXmax() - 0.000001 );
+      double abseta = std::min( MuonIsoTight->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
+      return MuonIsoTight->GetBinError( MuonIsoTight->FindBin(pt,abseta) );
+    }
+  }
+  return 0.;
 }
 
 
