@@ -553,7 +553,6 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
 
-    // //// ---------- Z TO LEPTONS ----------
     if(isVerbose) std::cout << "Count leptons for Z and W" << std::endl;
     pat::CompositeCandidate theZ;
     pat::CompositeCandidate theW;
@@ -561,240 +560,241 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     float LeptonWeightUp = 1.;
     float LeptonWeightDown = 1.;
 
-    if(TightMuonVect.size()>=2 || TightElecVect.size()>=2) {
-    if(TightMuonVect.size()>=2 && TightElecVect.size()>=2) {
-    	if(TightMuonVect.at(0).pt() > TightElecVect.at(0).pt()) isZtoMM=true;
-    	else isZtoEE=true;
+    if (isShort && isControl) {
+
+      //// ---------- Z TO LEPTONS ----------
+      if(TightMuonVect.size()>=2 || TightElecVect.size()>=2) {
+        if(TightMuonVect.size()>=2 && TightElecVect.size()>=2) {
+        	if(TightMuonVect.at(0).pt() > TightElecVect.at(0).pt()) isZtoMM=true;
+        	else isZtoEE=true;
+        }
+        else if(TightElecVect.size()>=2) isZtoEE=true;
+        else if(TightMuonVect.size()>=2) isZtoMM=true;
+      }
+
+
+      ////    ---------- W TO LEPTON and NEUTRINO ----------
+      else if(TightMuonVect.size()==1 || TightElecVect.size()==1) {
+        if(TightMuonVect.size()==1 && TightElecVect.size()==1 && (TightElecVect.at(0).charge() != TightMuonVect.at(0).charge()) ) isTtoEM = true;
+        else if(TightElecVect.size()==1) isWtoEN=true;
+        else if(TightMuonVect.size()==1) isWtoMN=true;
+      }
+
+
+      if(isZtoMM) {
+        if(isVerbose) std::cout << "Do the Z->mu mu" << std::endl;
+        int m1(-1), m2(-1);
+        for(unsigned int i = 0; i < TightMuonVect.size(); i++) {
+        	for(unsigned int j = i+1; j < TightMuonVect.size(); j++) {
+        	  if(TightMuonVect[i].charge() == TightMuonVect[j].charge())
+        	    {
+        	      isZtoMM = false;
+        	      continue;
+        	    }
+        	  float Zmass = (TightMuonVect[i].p4() + TightMuonVect[j].p4()).mass();
+        	  if(Zmass > 50. && Zmass < 130.)
+        	    {
+        	      m1 = i;
+        	      m2 = j;
+        	      isZtoMM = true;
+        	    }
+        	}
+        }
+        //    Build candidate
+        if(m1 >= 0 && m2 >= 0) {
+        	theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m1) : TightMuonVect.at(m2));
+        	theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m2) : TightMuonVect.at(m1));
+        	addP4.set(theZ);
+        	isZtoMM = true;
+
+        	//SF
+
+        	if(isControl && isMC && !is2016) {
+        	  float LeptonWeightUnc = 0.;
+            LeptonWeightUp = 0.;
+            LeptonWeightDown = 0.;
+        	  /// FIXED -> APPLYING THE SF FOR IsoMu24 NOT ANYLONGER HADRCODED <- FIXED ///
+            if (isIsoMu24_OR_IsoTkMu24) {
+              if (TightMuonVect.at(m1).pt() > TightMuonVect.at(m2).pt() ) {
+                LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(m1));
+                LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorIsoMu24(MuonVect.at(m1)),2);
+              }
+              else {
+                LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(m2));
+                LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorIsoMu24(MuonVect.at(m2)),2);
+              }
+            }// IsoMu24 trigger
+            if (isMu50_OR_TkMu50) {
+              if (TightMuonVect.at(m1).pt() > TightMuonVect.at(m2).pt() ) {
+                LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFMu50(TightMuonVect.at(m1));
+                LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(MuonVect.at(m1)),2);
+              }
+              else {
+                LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFMu50(TightMuonVect.at(m2));
+                LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(MuonVect.at(m2)),2);
+              }
+            }// IsoMu50 trigger
+
+            // //removed obsolete things for now
+            // LeptonWeight *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(m1));
+            // LeptonWeight *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(m2));
+        	  // //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(MuonVect.at(m1))      ,2);
+        	  // //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(MuonVect.at(m2))      ,2);
+
+        	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m1), 3);
+         	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m2), 3);
+         	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m1), 3);
+         	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m2), 3);
+
+        	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m1), 3)    ,2);
+         	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m2), 3)    ,2);
+         	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m1), 3)   ,2);
+         	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m2), 3)   ,2);
+
+        	  LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
+    	      LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
+        	}
+        }
+      }
+
+      else if(isZtoEE) {
+        if(isVerbose) std::cout << "Do the Z->e e" << std::endl;
+        int e1(-1), e2(-1);
+        for(unsigned int i = 0; i < TightElecVect.size(); i++) {
+          for(unsigned int j = i+1; j < TightElecVect.size(); j++) {
+            if(TightElecVect[i].charge() == TightElecVect[j].charge()) {
+              isZtoEE = false;
+      	      continue;
+      	    }
+            float Zmass = (TightElecVect[i].p4() + TightElecVect[j].p4()).mass();
+            if(Zmass > 50. && Zmass < 130.) {
+              e1 = i;
+              e2 = j;
+              isZtoEE =true; // Note: This had already been set to true. Set to false if not within mass window?
+            }
+          }
+        }
+
+        // Build candidate
+        if(e1 >= 0 && e2 >= 0) {
+        	theZ.addDaughter(TightElecVect.at(e1).charge() < 0 ? TightElecVect.at(e1) : TightElecVect.at(e2));
+        	theZ.addDaughter(TightElecVect.at(e1).charge() < 0 ? TightElecVect.at(e2) : TightElecVect.at(e1));
+        	addP4.set(theZ);
+        	isZtoEE = true;
+
+        	// SF
+        	if(isControl && isMC && !is2016) {
+            float LeptonWeightUnc = 0.;
+            LeptonWeightUp = 0.;
+            LeptonWeightDown = 0.;
+        	  /// FIXME -> APPLYING THE SF FOR Ele27Tight HADRCODED <- FIXME ///
+        	  // if (TightElecVect.at(e1).pt() > TightElecVect.at(e2).pt() ){
+        	  //   LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e1));
+        	  //   //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e1)),2);
+        	  // }
+        	  // else{
+        	  //   LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e2));
+        	  //   //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e2)),2);
+        	  // }
+        	  LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(e1));
+         	  LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(e2));
+         	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(e1), 3);
+         	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(e2), 3);
+
+        	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(TightElecVect.at(e1))   ,2);
+         	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(TightElecVect.at(e2))   ,2);
+         	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(e1), 3)     ,2);
+         	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(e2), 3)     ,2);
+
+        	  LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
+            LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
+        	}
+        }
+      }
+
+      else if(isWtoMN) {
+        //// W kinematic reconstruction
+        //     float pz = Utilities::RecoverNeutrinoPz(&TightMuonVect.at(0).p4(), &MET.p4());
+        //     Neutrino.setP4(reco::Particle::LorentzVector(MET.px(), MET.py(), pz, sqrt(MET.pt()*MET.pt() + pz*pz) ));
+        theW.addDaughter(TightMuonVect.at(0));
+        theW.addDaughter(MET);
+        addP4.set(theW);
+
+        if (theW.mt()<100. && isControl){
+          return;
+        }
+
+        // SF
+        if(isControl && isMC && !is2016) {
+          float LeptonWeightUnc = 0.;
+          LeptonWeightUp = 0.;
+          LeptonWeightDown = 0.;
+          // LeptonWeight    *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(0));
+          // LeptonWeight    *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(0));
+          LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 3);
+          LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 3);
+
+          // LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(TightMuonVect.at(0)),2);
+          // LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(TightMuonVect.at(0))        ,2);
+          LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(0), 3)      ,2);
+          LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(0), 3)     ,2);
+
+          LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
+          LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
+        }
+      }
+
+      else if(isWtoEN) {
+
+        // W kinematic reconstruction
+        // float pz = Utilities::RecoverNeutrinoPz(&TightElecVect.at(0).p4(), &MET.p4());
+        // Neutrino.setP4(reco::Particle::LorentzVector(MET.px(), MET.py(), pz, sqrt(MET.pt()*MET.pt() + pz*pz) ));
+        theW.addDaughter(TightElecVect.at(0));
+        theW.addDaughter(MET);
+        addP4.set(theW);
+
+        if (theW.mt()<100. && isControl){
+          return;
+        }
+
+        if(isControl && isMC && !is2016) {
+          float LeptonWeightUnc = 0.;
+          LeptonWeightUp = 0.;
+          LeptonWeightDown = 0.;
+          // LeptonWeight    *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(0));
+          LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
+          LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
+          LeptonWeightUnc += theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(0), 0);
+
+          LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
+          LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
+        }
+      }
+
+      // else if(isTtoEM) {
+      //      //std::cout << "isTtoEM, muon 1 pt: " << TightMuonVect.at(0).pt() << std::endl;
+      // 	  if(isMC) {
+      // 	    //Trigger is non trivial; we need non-isolated triggers!
+      // 	    //if (TightElecVect.at(e).pt() > TightMuonVect.at(m).pt() ){
+      // 	    //LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e1));
+      // 	    //  //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e1)),2);
+      // 	    //}
+      // 	    //else{
+      // 	    //  LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e2));
+      // 	    //  //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e2)),2);
+      // 	    //  }
+      // 	    LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
+      // 	    LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
+      // 	    LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 0);
+      // 	    LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 0);
+      // 	}
+      // }
+
+      EventWeight_leptonSF = EventWeight * LeptonWeight;
+      EventWeight_leptonSFUp = EventWeight_leptonSF * LeptonWeightUp;
+      EventWeight_leptonSFDown = EventWeight_leptonSF * LeptonWeightDown;
+
     }
-    else if(TightElecVect.size()>=2) isZtoEE=true;
-    else if(TightMuonVect.size()>=2) isZtoMM=true;
-    }
-
-
-    // //    ---------- W TO LEPTON and NEUTRINO ----------
-    else if(TightMuonVect.size()==1 || TightElecVect.size()==1) {
-    if(TightMuonVect.size()==1 && TightElecVect.size()==1 && (TightElecVect.at(0).charge() != TightMuonVect.at(0).charge()) ) isTtoEM = true;
-    else if(TightElecVect.size()==1) isWtoEN=true;
-    else if(TightMuonVect.size()==1) isWtoMN=true;
-    }
-
-
-    if(isZtoMM) {
-    if(isVerbose) std::cout << "Do the Z->mu mu" << std::endl;
-    int m1(-1), m2(-1);
-    for(unsigned int i = 0; i < TightMuonVect.size(); i++) {
-    	for(unsigned int j = i+1; j < TightMuonVect.size(); j++) {
-    	  if(TightMuonVect[i].charge() == TightMuonVect[j].charge())
-    	    {
-    	      isZtoMM = false;
-    	      continue;
-    	    }
-    	  float Zmass = (TightMuonVect[i].p4() + TightMuonVect[j].p4()).mass();
-    	  if(Zmass > 50. && Zmass < 130.)
-    	    {
-    	      m1 = i;
-    	      m2 = j;
-    	      isZtoMM = true;
-    	    }
-    	}
-    }
-    //    Build candidate
-    if(m1 >= 0 && m2 >= 0) {
-    	theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m1) : TightMuonVect.at(m2));
-    	theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m2) : TightMuonVect.at(m1));
-    	addP4.set(theZ);
-    	isZtoMM = true;
-
-    	//SF
-
-    	if(isControl && isMC && !is2016) {
-    	  float LeptonWeightUnc = 0.;
-	  LeptonWeightUp = 0.;
-	  LeptonWeightDown = 0.;
-    	  /// FIXED -> APPLYING THE SF FOR IsoMu24 NOT ANYLONGER HADRCODED <- FIXED ///
-	  if (isIsoMu24_OR_IsoTkMu24) {
-	    if (TightMuonVect.at(m1).pt() > TightMuonVect.at(m2).pt() ) {
-	      LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(m1));
-	      LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorIsoMu24(MuonVect.at(m1)),2);
-	    }
-	    else {
-	      LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(m2));
-	      LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorIsoMu24(MuonVect.at(m2)),2);
-	    }
-	  }// IsoMu24 trigger
-	  if (isMu50_OR_TkMu50) {
-	    if (TightMuonVect.at(m1).pt() > TightMuonVect.at(m2).pt() ) {
-	      LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFMu50(TightMuonVect.at(m1));
-	      LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(MuonVect.at(m1)),2);
-	    }
-	    else {
-	      LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFMu50(TightMuonVect.at(m2));
-	      LeptonWeightUnc  += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(MuonVect.at(m2)),2);
-	    }
-	  }// IsoMu50 trigger
-
-	  // //removed obsolete things for now
-	  // LeptonWeight *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(m1));
-	  // LeptonWeight *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(m2));
-    	  // //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(MuonVect.at(m1))      ,2);
-    	  // //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(MuonVect.at(m2))      ,2);
-
-    	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m1), 3);
-     	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m2), 3);
-     	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m1), 3);
-     	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m2), 3);
-
-    	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m1), 3)    ,2);
-     	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m2), 3)    ,2);
-     	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m1), 3)   ,2);
-     	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m2), 3)   ,2);
-
-    	  LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
-	  LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
-    	}
-
-
-    }
-    }
-
-    else if(isZtoEE) {
-      if(isVerbose) std::cout << "Do the Z->e e" << std::endl;
-     int e1(-1), e2(-1);
-         for(unsigned int i = 0; i < TightElecVect.size(); i++) {
-    	for(unsigned int j = i+1; j < TightElecVect.size(); j++) {
-     	  if(TightElecVect[i].charge() == TightElecVect[j].charge())
-    	    {
-    	      isZtoEE = false;
-    	      continue;
-    	    }
-    	  float Zmass = (TightElecVect[i].p4() + TightElecVect[j].p4()).mass();
-    	  if(Zmass > 50. && Zmass < 130.)
-    	    {
-    	      e1 = i;
-    	      e2 = j;
-    	      isZtoEE =true;
-    	    }
-    	}
-    }
-	 //    Build candidate
-    if(e1 >= 0 && e2 >= 0) {
-    	theZ.addDaughter(TightElecVect.at(e1).charge() ? TightElecVect.at(e1) : TightElecVect.at(e2));
-    	theZ.addDaughter(TightElecVect.at(e1).charge() ? TightElecVect.at(e2) : TightElecVect.at(e1));
-    	addP4.set(theZ);
-    	isZtoEE = true;
-
-
-    	// SF
-    	if(isControl && isMC && !is2016) {
-    	  float LeptonWeightUnc = 0.;
-	  LeptonWeightUp = 0.;
-	  LeptonWeightDown = 0.;
-    	  /// FIXME -> APPLYING THE SF FOR Ele27Tight HADRCODED <- FIXME ///
-    	  // if (TightElecVect.at(e1).pt() > TightElecVect.at(e2).pt() ){
-    	  //   LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e1));
-    	  //   //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e1)),2);
-    	  // }
-    	  // else{
-    	  //   LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e2));
-    	  //   //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e2)),2);
-    	  // }
-    	  LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(e1));
-     	  LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(e2));
-     	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(e1), 3);
-     	  LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(e2), 3);
-
-    	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(TightElecVect.at(e1))   ,2);
-     	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(TightElecVect.at(e2))   ,2);
-     	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(e1), 3)     ,2);
-     	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(e2), 3)     ,2);
-
-    	  LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
-	  LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
-    	}
-
-
-    }
-    }
-
-    else if(isWtoMN) {
-    //// W kinematic reconstruction
-      //     float pz = Utilities::RecoverNeutrinoPz(&TightMuonVect.at(0).p4(), &MET.p4());
-     //     Neutrino.setP4(reco::Particle::LorentzVector(MET.px(), MET.py(), pz, sqrt(MET.pt()*MET.pt() + pz*pz) ));
-     theW.addDaughter(TightMuonVect.at(0));
-     theW.addDaughter(MET);
-     addP4.set(theW);
-
-     if (theW.mt()<100. && isControl){
-       return;
-     }
-         // SF
-     if(isControl && isMC && !is2016) {
-      float LeptonWeightUnc = 0.;
-      LeptonWeightUp = 0.;
-      LeptonWeightDown = 0.;
-      //      LeptonWeight    *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(0));
-      //LeptonWeight    *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(0));
-      LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 3);
-      LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 3);
-
-      //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(TightMuonVect.at(0)),2);
-      //	LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(TightMuonVect.at(0))        ,2);
-      LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(0), 3)      ,2);
-      LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(0), 3)     ,2);
-
-      LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
-      LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
-    }
-    }
-       else if(isWtoEN) {
-
-         // W kinematic reconstruction
-	 //    float pz = Utilities::RecoverNeutrinoPz(&TightElecVect.at(0).p4(), &MET.p4());
-	 //    Neutrino.setP4(reco::Particle::LorentzVector(MET.px(), MET.py(), pz, sqrt(MET.pt()*MET.pt() + pz*pz) ));
-	 theW.addDaughter(TightElecVect.at(0));
-	 theW.addDaughter(MET);
-	 addP4.set(theW);
-       if (theW.mt()<100. && isControl){
-	   return;
-	 }
-	 if(isControl && isMC && !is2016) {
-	   float LeptonWeightUnc = 0.;
-	   LeptonWeightUp = 0.;
-	   LeptonWeightDown = 0.;
-	   //    	LeptonWeight    *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(0));
-	   LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
-	   LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
-	   LeptonWeightUnc += theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(0), 0);
-
-	   LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
-	   LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
-	 }
-       }
-    // else if(isTtoEM) {
-    //      //std::cout << "isTtoEM, muon 1 pt: " << TightMuonVect.at(0).pt() << std::endl;
-    // 	  if(isMC) {
-    // 	    //Trigger is non trivial; we need non-isolated triggers!
-    // 	    //if (TightElecVect.at(e).pt() > TightMuonVect.at(m).pt() ){
-    // 	    //LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e1));
-    // 	    //  //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e1)),2);
-    // 	    //}
-    // 	    //else{
-    // 	    //  LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e2));
-    // 	    //  //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e2)),2);
-    // 	    //  }
-    // 	    LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
-    // 	    LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
-    // 	    LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 0);
-    // 	    LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 0);
-
-
-    // 	}
-    // }
-
-    EventWeight_leptonSF = EventWeight * LeptonWeight;
-    EventWeight_leptonSFUp = EventWeight_leptonSF * LeptonWeightUp;
-    EventWeight_leptonSFDown = EventWeight_leptonSF * LeptonWeightDown;
-
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -2466,18 +2466,20 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       for(unsigned int i = 0; i < Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
       for(unsigned int i = 0; i < Electrons.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
     }
-    else{
-      if(isZtoMM || isWtoMN) for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
-      else if(isZtoEE || isWtoEN) for(unsigned int i = 0; i < Electrons.size() && i < TightElecVect.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
-      else if(isTtoEM)
-	{
-	  for(unsigned int i = 0; i < Electrons.size() && i < TightElecVect.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
-	  for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
-	}
-    }
+    // else{
+    //   if(isZtoMM || isWtoMN) for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
+    //   else if(isZtoEE || isWtoEN) for(unsigned int i = 0; i < Electrons.size() && i < TightElecVect.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
+    //   else if(isTtoEM)
+    //   {
+    //     for(unsigned int i = 0; i < Electrons.size() && i < TightElecVect.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
+    //     for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
+    //   }
+    // }
     ObjectsFormat::FillCandidateType(VBF, &theVBF, isMC);
-    //ObjectsFormat::FillCandidateType(Z, &theZ, isMC);
-    ObjectsFormat::FillCandidateType(W, &theW, isMC);
+    if (isControl) {
+        ObjectsFormat::FillCandidateType(Z, &theZ, isMC);
+        ObjectsFormat::FillCandidateType(W, &theW, isMC);
+    }
     HDiCHS = theHDiCHS.mass();
     HTriCHS = theHTriCHS.mass();
     HQuadCHS = theHQuadCHS.mass();
@@ -2688,11 +2690,13 @@ Ntuplizer::beginJob()
     tree -> Branch("isVBF" , &isVBF, "isVBF/O");
     tree -> Branch("isggH" , &isggH, "isggH/O");
     tree -> Branch("isTriggerVBF" , &isTriggerVBF, "isTriggerVBF/O");
-    tree -> Branch("isZtoEE" , &isZtoEE, "isZtoEE/O");
-    tree -> Branch("isZtoMM" , &isZtoMM, "isZtoMM/O");
-    tree -> Branch("isWtoEN" , &isWtoEN, "isWtoEN/O");
-    tree -> Branch("isWtoMN" , &isWtoMN, "isWtoMN/O");
-    tree -> Branch("isTtoEM" , &isTtoEM, "isTtoEM/O");
+    if (isControl) {
+        tree -> Branch("isZtoEE" , &isZtoEE, "isZtoEE/O");
+        tree -> Branch("isZtoMM" , &isZtoMM, "isZtoMM/O");
+        tree -> Branch("isWtoEN" , &isWtoEN, "isWtoEN/O");
+        tree -> Branch("isWtoMN" , &isWtoMN, "isWtoMN/O");
+        tree -> Branch("isTtoEM" , &isTtoEM, "isTtoEM/O");
+    }
     tree -> Branch("HT" , &HT , "HT/F");
     tree -> Branch("MinJetMetDPhi", &MinJetMetDPhi, "MinJetMetDPhi/F");
     tree -> Branch("ggHJetMetDPhi", &ggHJetMetDPhi , "ggHJetMetDPhi/F");
