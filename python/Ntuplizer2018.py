@@ -2131,50 +2131,52 @@ if (isTracking and is2018):
     'HLT_Mu8_IP6_part0_v',#                             signal  prescaled       ParkingBPH1
     'HLT_Mu9_IP0_part0_v',#                             signal  prescaled       ParkingBPH1
     'HLT_Mu9_IP3_part0_v',#                             signal  prescaled       ParkingBPH1
-    # 'HLT_Mu9_IP4_part0_v',#                           signal  disabled        ParkingBPH1
+    'HLT_Mu9_IP4_part0_v',#!!                           signal  disabled        ParkingBPH1
     'HLT_Mu9_IP5_part0_v',#                             signal  prescaled       ParkingBPH1
     'HLT_Mu9_IP6_part0_v',#                             signal  prescaled       ParkingBPH1
-    # 'HLT_Mu12_IP6_ToCSCS_v',#                         signal  disabled        ParkingBPHPromptCSCS
-    # 'HLT_Mu7_IP4_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
-    # 'HLT_Mu8_IP3_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
-    # 'HLT_Mu8_IP5_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
-    # 'HLT_Mu8_IP6_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
-    # 'HLT_Mu9_IP4_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
-    # 'HLT_Mu9_IP5_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
-    # 'HLT_Mu9_IP6_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
-    'HLT_Mu12_IP6_part1_v',#                            signal  prescaled       ParkingBPH2
-    'HLT_Mu7_IP4_part1_v',#                             signal  prescaled       ParkingBPH2
-    'HLT_Mu8_IP3_part1_v',#                             signal  prescaled       ParkingBPH2
-    'HLT_Mu8_IP5_part1_v',#                             signal  prescaled       ParkingBPH2
-    'HLT_Mu8_IP6_part1_v',#                             signal  prescaled       ParkingBPH2
-    # 'HLT_Mu9_IP4_part1_v',#                           signal  disabled        ParkingBPH2
-    'HLT_Mu9_IP5_part1_v',#                             signal  prescaled       ParkingBPH2
-    'HLT_Mu9_IP6_part1_v',#                             signal  prescaled       ParkingBPH2
-    'HLT_Mu12_IP6_part2_v',#                            signal  prescaled       ParkingBPH3
-    'HLT_Mu7_IP4_part2_v',#                             signal  prescaled       ParkingBPH3
-    'HLT_Mu8_IP3_part2_v',#                             signal  prescaled       ParkingBPH3
-    'HLT_Mu8_IP5_part2_v',#                             signal  prescaled       ParkingBPH3
-    'HLT_Mu8_IP6_part2_v',#                             signal  prescaled       ParkingBPH3
-    # 'HLT_Mu9_IP4_part2_v',#                           signal  disabled        ParkingBPH3
-    'HLT_Mu9_IP5_part2_v',#                             signal  prescaled       ParkingBPH3
-    'HLT_Mu9_IP6_part2_v',#                             signal  prescaled       ParkingBPH3
-    'HLT_Mu12_IP6_part3_v',#                            signal  prescaled       ParkingBPH4
-    'HLT_Mu7_IP4_part3_v',#                             signal  prescaled       ParkingBPH4
-    'HLT_Mu8_IP3_part3_v',#                             signal  prescaled       ParkingBPH4
-    'HLT_Mu8_IP5_part3_v',#                             signal  prescaled       ParkingBPH4
-    'HLT_Mu8_IP6_part3_v',#                             signal  prescaled       ParkingBPH4
-    # 'HLT_Mu9_IP4_part3_v',#                           signal  disabled        ParkingBPH4
-    'HLT_Mu9_IP5_part3_v',#                             signal  prescaled       ParkingBPH4
-    'HLT_Mu9_IP6_part3_v',#                             signal  prescaled       ParkingBPH4
-    'HLT_Mu12_IP6_part4_v',#                            signal  prescaled       ParkingBPH5
-    'HLT_Mu7_IP4_part4_v',#                             signal  prescaled       ParkingBPH5
-    'HLT_Mu8_IP3_part4_v',#                             signal  prescaled       ParkingBPH5
-    'HLT_Mu8_IP5_part4_v',#                             signal  prescaled       ParkingBPH5
-    'HLT_Mu8_IP6_part4_v',#                             signal  prescaled       ParkingBPH5
-    # 'HLT_Mu9_IP4_part4_v',#                           signal  disabled        ParkingBPH5
-    'HLT_Mu9_IP5_part4_v',#                             signal  prescaled       ParkingBPH5
-    'HLT_Mu9_IP6_part4_v',#                             signal  prescaled       ParkingBPH5
-    ### DisplacedDijet triggers:
+    # # 'HLT_Mu12_IP6_ToCSCS_v',#                         signal  disabled        ParkingBPHPromptCSCS
+    # # 'HLT_Mu7_IP4_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # # 'HLT_Mu8_IP3_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # # 'HLT_Mu8_IP5_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # # 'HLT_Mu8_IP6_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # # 'HLT_Mu9_IP4_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # # 'HLT_Mu9_IP5_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # # 'HLT_Mu9_IP6_ToCSCS_v',#                          signal  disabled        ParkingBPHPromptCSCS
+    # 'HLT_Mu12_IP6_part1_v',#                            signal  prescaled       ParkingBPH2
+    # 'HLT_Mu7_IP4_part1_v',#                             signal  prescaled       ParkingBPH2
+    # 'HLT_Mu8_IP3_part1_v',#                             signal  prescaled       ParkingBPH2
+    # 'HLT_Mu8_IP5_part1_v',#                             signal  prescaled       ParkingBPH2
+    # 'HLT_Mu8_IP6_part1_v',#                             signal  prescaled       ParkingBPH2
+    # # 'HLT_Mu9_IP4_part1_v',#                           signal  disabled        ParkingBPH2
+    # 'HLT_Mu9_IP5_part1_v',#                             signal  prescaled       ParkingBPH2
+    # 'HLT_Mu9_IP6_part1_v',#                             signal  prescaled       ParkingBPH2
+    # 'HLT_Mu12_IP6_part2_v',#                            signal  prescaled       ParkingBPH3
+    # 'HLT_Mu7_IP4_part2_v',#                             signal  prescaled       ParkingBPH3
+    # 'HLT_Mu8_IP3_part2_v',#                             signal  prescaled       ParkingBPH3
+    # 'HLT_Mu8_IP5_part2_v',#                             signal  prescaled       ParkingBPH3
+    # 'HLT_Mu8_IP6_part2_v',#                             signal  prescaled       ParkingBPH3
+    # # 'HLT_Mu9_IP4_part2_v',#                           signal  disabled        ParkingBPH3
+    # 'HLT_Mu9_IP5_part2_v',#                             signal  prescaled       ParkingBPH3
+    # 'HLT_Mu9_IP6_part2_v',#                             signal  prescaled       ParkingBPH3
+    # 'HLT_Mu12_IP6_part3_v',#                            signal  prescaled       ParkingBPH4
+    # 'HLT_Mu7_IP4_part3_v',#                             signal  prescaled       ParkingBPH4
+    # 'HLT_Mu8_IP3_part3_v',#                             signal  prescaled       ParkingBPH4
+    # 'HLT_Mu8_IP5_part3_v',#                             signal  prescaled       ParkingBPH4
+    # 'HLT_Mu8_IP6_part3_v',#                             signal  prescaled       ParkingBPH4
+    # # 'HLT_Mu9_IP4_part3_v',#                           signal  disabled        ParkingBPH4
+    # 'HLT_Mu9_IP5_part3_v',#                             signal  prescaled       ParkingBPH4
+    # 'HLT_Mu9_IP6_part3_v',#                             signal  prescaled       ParkingBPH4
+    # 'HLT_Mu12_IP6_part4_v',#                            signal  prescaled       ParkingBPH5
+    # 'HLT_Mu7_IP4_part4_v',#                             signal  prescaled       ParkingBPH5
+    # 'HLT_Mu8_IP3_part4_v',#                             signal  prescaled       ParkingBPH5
+    # 'HLT_Mu8_IP5_part4_v',#                             signal  prescaled       ParkingBPH5
+    # 'HLT_Mu8_IP6_part4_v',#                             signal  prescaled       ParkingBPH5
+    # # 'HLT_Mu9_IP4_part4_v',#                           signal  disabled        ParkingBPH5
+    # 'HLT_Mu9_IP5_part4_v',#                             signal  prescaled       ParkingBPH5
+    # 'HLT_Mu9_IP6_part4_v',#                             signal  prescaled       ParkingBPH5
+    ## -------------------------------------------------------------------------------------
+    ## DisplacedDijet triggers:
+    ## -------------------------------------------------------------------------------------
     # 'HLT_HT400_DisplacedDijet40_DisplacedTrack_v',#   control prescaled       DisplacedJet
     # 'HLT_HT425_v',#                                   control prescaled       DisplacedJet
     'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',#     signal  unprescaled     DisplacedJet
