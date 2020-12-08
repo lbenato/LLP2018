@@ -28,7 +28,7 @@ Recipe: https://twiki.cern.ch/twiki/bin/view/CMS/EgammaMiniAODV2#2018_MiniAOD
 
 ```
 cd $CMSSW_BASE/src
-git cms-merge-topic cms-egamma:EgammaPostRecoTools #just adds in an extra file to have a setup function to make things easier 
+git cms-merge-topic cms-egamma:EgammaPostRecoTools #just adds in an extra file to have a setup function to make things easier
 git cms-merge-topic cms-egamma:PhotonIDValueMapSpeedup1029 #optional but speeds up the photon ID value module so things fun faster
 git cms-merge-topic cms-egamma:slava77-btvDictFix_10210 #fixes the Run2018D dictionary issue, see https://github.com/cms-sw/cmssw/issues/26182, may not be necessary for later releases, try it first and see if it works
 # now to add the scale and smearing for 2018 (eventually this will not be necessary in later releases but is harmless to do regardless)
@@ -62,6 +62,28 @@ cp PUJetIDWeights/weights/pileupJetId_102X_Eta* $CMSSW_BASE/src/RecoJets/JetProd
 cd $CMSSW_BASE/src
 git clone https://github.com/LLPDNNX/LLPReco.git LLPReco
 scram b
+```
+
+## Add ROI variables
+Add modified `V0Fitter` code:
+```
+cd $CMSSW_BASE/src
+cmsenv
+git cms-merge-topic kjpena:from-aehart_modifiedV0Fitter
+```
+
+Clone analysis code:
+```
+cd $CMSSW_BASE/src
+git clone https://gitlab.cern.ch/rutgers/HiggsLongLived/Analysis.git HiggsLongLived
+cd HiggsLongLived/
+
+# To avoid ROOT-related compilation errors, comment out eventDisplays executable in BuildFile:
+sed -i 's\<bin file="eventDisplays.cpp"/>\<!--bin file="eventDisplays.cpp"/-->\' ROIStudies/bin/BuildFile.xml
+
+git clone https://gitlab.cern.ch/rutgers/HiggsLongLived/TreeMaker.git
+cd ../
+scram b -j 32
 ```
 
 ## Clone LLP2018
