@@ -46,7 +46,7 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     PhotonPSet(iConfig.getParameter<edm::ParameterSet>("photonSet")),
     VertexPSet(iConfig.getParameter<edm::ParameterSet>("vertexSet")),
     PFCandidatePSet(iConfig.getParameter<edm::ParameterSet>("pfCandidateSet")),
-
+    ROIPSet(iConfig.getParameter<edm::ParameterSet>("roiSet")),
     //JetTagToken(CColl.consumes<reco::JetTagCollection>(iConfig.getParameter<edm::InputTag>("jetTagToken"))),//here????
     idLLP(iConfig.getParameter<int>("idLLP")),
     idHiggs(iConfig.getParameter<int>("idHiggs")),
@@ -79,6 +79,7 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     WriteLostTracks(iConfig.getParameter<bool>("writeLostTracks")),
     WriteVertices(iConfig.getParameter<bool>("writeVertices")),
     WriteBtagInfos(iConfig.getParameter<bool>("writeBtagInfos")),
+    WriteROIs(iConfig.getParameter<bool>("writeROIs")),
     CalculateNsubjettiness(iConfig.getParameter<bool>("calculateNsubjettiness")),
     PerformPreFiringStudies(iConfig.getParameter<bool>("performPreFiringStudies")),
     PerformVBF(iConfig.getParameter<bool>("performVBF")),
@@ -87,6 +88,7 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     isVerboseTrigger(iConfig.getParameter<bool> ("verboseTrigger")),
     isSignal(iConfig.getParameter<bool> ("signal")),
     isCalo(iConfig.getParameter<bool> ("iscalo")),
+    isTracking(iConfig.getParameter<bool> ("istracking")),
     isShort(iConfig.getParameter<bool> ("isshort")),
     isControl(iConfig.getParameter<bool> ("iscontrol")),
     isCentralProd(iConfig.getParameter<bool> ("iscentralprod")),
@@ -119,6 +121,7 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     thePhotonAnalyzer      = new PhotonAnalyzer(PhotonPSet, consumesCollector());
     theVertexAnalyzer      = new VertexAnalyzer(VertexPSet, consumesCollector());
     thePFCandidateAnalyzer = new PFCandidateAnalyzer(PFCandidatePSet, consumesCollector());
+    theROIAnalyzer         = new ROIAnalyzer(ROIPSet, consumesCollector());
 
     std::vector<std::string> TriggerList(TriggerPSet.getParameter<std::vector<std::string> >("paths"));
     for(unsigned int i = 0; i < TriggerList.size(); i++) TriggerMap[ TriggerList[i] ] = false;
@@ -183,6 +186,8 @@ Ntuplizer::~Ntuplizer()
     delete thePhotonAnalyzer;
     delete theVertexAnalyzer;
     delete thePFCandidateAnalyzer;
+    delete theROIAnalyzer;
+
 }
 
 
@@ -198,7 +203,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //if(isVerbose) std::cout << "STARTING ANALYZE METHOD!" << std::endl;
     auto start = std::chrono::system_clock::now();//time!
     using namespace edm;
-    using namespace reco;
+    //using namespace reco; // WARNING: Can't be used together with ROI variables! (Not needed anyways)
     using namespace std;
 
     // Initialize types
@@ -2416,6 +2421,23 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       }
 
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // Objects for ROI-based Tagger
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+
+    if (isTracking && WriteROIs) {
+      LostTracksROI.clear();
+      PFCandidatesROI.clear();
+      TrackClusters.clear();
+      RegionsOfInterest.clear();
+
+      LostTracksROI =  theROIAnalyzer->FillLostTrackVector(iEvent, PVertexVect.size());
+      PFCandidatesROI = theROIAnalyzer->FillPFCandidateVector(iEvent, PVertexVect.size());
+      TrackClusters = theROIAnalyzer->FillTrackClusterVector(iEvent);
+      RegionsOfInterest = theROIAnalyzer->FillROIVector(iEvent);
+    }
 
     // ---------- Fill objects ----------
     auto end = std::chrono::system_clock::now();//time!
@@ -2771,6 +2793,12 @@ Ntuplizer::beginJob()
     tree -> Branch("VBFPairJets", &VBFPairJets);
     tree -> Branch("ggHJet", &ggHJet);
     //tree -> Branch("AllBarrelJets", &AllBarrelJets);
+    if (isTracking && WriteROIs) {
+       tree -> Branch("LostTracks", &LostTracksROI);
+       tree -> Branch("PFCandidates", &PFCandidatesROI);
+       tree -> Branch("TrackClusters", &TrackClusters);
+       tree -> Branch("RegionsOfInterest", &RegionsOfInterest);
+    }
     if (WriteAllJets) tree -> Branch("AllJets", &AllJets);
     if (WriteFatJets) tree -> Branch("FatJets", &CHSFatJets);
     if (WriteVertices) tree -> Branch("PrimaryVertices", &PrimVertices);

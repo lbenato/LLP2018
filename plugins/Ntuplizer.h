@@ -86,6 +86,7 @@
 #include "PhotonAnalyzer.h"
 #include "VertexAnalyzer.h"
 #include "PFCandidateAnalyzer.h"
+#include "ROIAnalyzer.h"
 #include "Objects.h"
 #include "ObjectsFormat.h"
 #include "Utilities.h"
@@ -130,6 +131,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::ParameterSet PhotonPSet;
     edm::ParameterSet VertexPSet;
     edm::ParameterSet PFCandidatePSet;
+    edm::ParameterSet ROIPSet;
 
     edm::EDGetTokenT<GenLumiInfoHeader> genLumiHeaderToken_;
     TString     model_;
@@ -148,6 +150,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     PhotonAnalyzer* thePhotonAnalyzer;
     VertexAnalyzer* theVertexAnalyzer;
     PFCandidateAnalyzer* thePFCandidateAnalyzer;
+    ROIAnalyzer* theROIAnalyzer;
 
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP0p01Token;
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP0p1Token;
@@ -173,6 +176,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     bool WriteLostTracks;
     bool WriteVertices;
     bool WriteBtagInfos;
+    bool WriteROIs;
     bool CalculateNsubjettiness;
     bool PerformPreFiringStudies;
     bool PerformVBF;
@@ -202,6 +206,13 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     std::vector<PFCandidateType> PFCandidates;
     std::vector<PFCandidateType> LostTracks;
     std::vector<VertexType> BTagVertices;
+    // Objects for ROI tagger:
+    std::vector<LostTrack> LostTracksROI;
+    std::vector<PackedPFCandidate> PFCandidatesROI;
+    std::vector<TrackCluster> TrackClusters;
+    std::vector<RegionOfInterest> RegionsOfInterest;
+
+
 
     MEtType MEt;
     CandidateType VBF;//VBF tagging
@@ -219,7 +230,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 
     //edm::EDGetTokenT<reco::JetTagCollection> BTagToken;
 
-  bool isVerbose, isVerboseTrigger, isSignal, isCalo, isShort, isControl, isCentralProd, is2016, is2017, is2018;
+    bool isVerbose, isVerboseTrigger, isSignal, isCalo, isTracking, isShort, isControl, isCentralProd, is2016, is2017, is2018;
     bool isVBF, isggH;
     bool isMC;
     long int EventNumber, LumiNumber, RunNumber, nPV, nSV;
@@ -237,7 +248,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     long int nTightElectrons, nTightMuons;
     long int number_of_PV;
     long int number_of_SV;
-  long int nPFCandidates, nPFCandidatesTrack, nPFCandidatesHighPurityTrack, nPFCandidatesFullTrackInfo, nPFCandidatesFullTrackInfo_pt, nPFCandidatesFullTrackInfo_hasTrackDetails;
+    long int nPFCandidates, nPFCandidatesTrack, nPFCandidatesHighPurityTrack, nPFCandidatesFullTrackInfo, nPFCandidatesFullTrackInfo_pt, nPFCandidatesFullTrackInfo_hasTrackDetails;
     float EventWeight;
     float EventWeight_leptonSF;
     float EventWeight_leptonSFUp;

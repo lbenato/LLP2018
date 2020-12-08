@@ -38,6 +38,7 @@
 <use name="EgammaAnalysis/ElectronTools"/>
 <use name="fastjet"/>
 <use name="fastjet-contrib"/>
+<use name="HiggsLongLived/TreeMaker"/>
 <!--<use name="lhapdf"/>-->
 
 <flags CXXFLAGS="-Wno-delete-non-virtual-dtor"/>

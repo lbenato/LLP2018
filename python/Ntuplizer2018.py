@@ -368,7 +368,7 @@ if RunLocal:
     isCentralProd     = True if ('HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
     isCalo            = False #HERE for calo analyses!!!
     isTracking        = False
-    isShort           = True #HERE for short lifetime analyses!!!
+    isShort           = True#HERE for short lifetime analyses!!!
     isControl         = False #HERE for short lifetime control region!!!
     isVBF             = False
     isggH             = False
@@ -1379,6 +1379,41 @@ task.add(process.pfXTagInfos)
 task.add(process.pfXTags)
 
 #-----------------------#
+#   ROI-based tagger    #
+#-----------------------#
+
+if isTracking:
+    process.load("HiggsLongLived.TreeMaker.unpackedTracksAndVertices_cfi")
+
+    from HiggsLongLived.TreeMaker.goodTrackProducer_cfi import goodTrackProducer
+    process.ntupleGoodTrackProducer = goodTrackProducer.clone(
+      tracks = cms.InputTag ("unpackedTracksAndVertices", "", "ntuple"),
+    )
+
+    from HiggsLongLived.TreeMaker.generalV0Candidates_cfi import generalV0Candidates
+    process.ntupleGeneralV0Candidates = generalV0Candidates.clone(
+       vertices = cms.InputTag('unpackedTracksAndVertices', '', 'ntuple'),
+       trackRecoAlgorithm = cms.InputTag('ntupleGoodTrackProducer', '', 'ntuple'),
+    )
+
+    from HiggsLongLived.TreeMaker.regionOfInterestProducer_cfi import regionOfInterestProducer
+    process.ntupleRegionOfInterestProducer = regionOfInterestProducer.clone(
+        trackClusters = cms.InputTag ("ntupleGeneralV0Candidates", "Kshort", "ntuple"),
+    )
+
+    from HiggsLongLived.TreeMaker.regionOfInterestTagger_cfi import regionOfInterestTagger
+    process.ntupleRegionOfInterestTagger = regionOfInterestTagger.clone(
+        regionsOfInterest = cms.InputTag ("ntupleRegionOfInterestProducer", "", "ntuple"),
+    )
+
+    from HiggsLongLived.TreeMaker.clusterTrackAssociator_cfi import clusterTrackAssociator
+    process.ntupleClusterTrackAssociator = clusterTrackAssociator.clone(
+        regionsOfInterest  =  cms.InputTag  ("ntupleRegionOfInterestProducer",  "",              "ntuple"),
+        pfCandidates       =  cms.InputTag  ("ntupleRegionOfInterestTagger",    "pfCandidates",  "ntuple"),
+        lostTracks         =  cms.InputTag  ("ntupleRegionOfInterestTagger",    "lostTracks",    "ntuple"),
+    )
+
+#-----------------------#
 #       PU Jet ID       #
 #-----------------------#
 
@@ -1967,6 +2002,12 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         lostTracks = cms.InputTag('lostTracks'),
         pfCandMinPt = cms.double(0.),
     ),
+    roiSet = cms.PSet(
+        lostTracks         = cms.InputTag("ntupleClusterTrackAssociator",   "lostTracks",   "ntuple"),
+        packedPFCandidates = cms.InputTag("ntupleClusterTrackAssociator",   "pfCandidates", "ntuple"),
+        trackClusters      = cms.InputTag("ntupleClusterTrackAssociator",   "",             "ntuple"),
+        regionsOfInterest  = cms.InputTag("ntupleRegionOfInterestProducer", "",             "ntuple"),
+    ),
     #Define gen decay:
     idLLP = cms.int32(idLLP),
     idHiggs = cms.int32(idHiggs),
@@ -2007,6 +2048,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     writeLostTracks = cms.bool(False),
     writeVertices = cms.bool(False),
     writeBtagInfos = cms.bool(False),
+    writeROIs = cms.bool(False),
     calculateNsubjettiness = cms.bool(False),
     performPreFiringStudies = cms.bool(True if ('unprefirable' in process.source.fileNames[0]) else False),
     performVBF = cms.bool(isVBF),
@@ -2015,6 +2057,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     verboseTrigger  = cms.bool(False),
     signal = cms.bool(isSignal),
     iscalo = cms.bool(isCalo),
+    istracking = cms.bool(isTracking),
     isshort = cms.bool(isShort),
     iscontrol = cms.bool(isControl),
     iscentralprod = cms.bool(isCentralProd),
@@ -2147,9 +2190,9 @@ if (isShort and is2016):
          ## -------------------------------------------------------------------------------------
          ## Triggers for b-like lifetimes
          ## -------------------------------------------------------------------------------------
-          'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v', 
-          'HLT_QuadJet45_TripleBTagCSV_p087_v', 
-          'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 
+          'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v',
+          'HLT_QuadJet45_TripleBTagCSV_p087_v',
+          'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v',
           'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v',
           ])
 
@@ -2181,6 +2224,8 @@ task.add(process.patAlgosToolsTask)
 #task.add(process.pileupJetId, process.patAlgosToolsTask)
 #task.add(process.pileUpJetIDTask)
 
+process.printContent = cms.EDAnalyzer("EventContentAnalyzer")
+
 process.seq = cms.Sequence(
     process.egammaPostRecoSeq *
     #process.packedPFCandidates *
@@ -2202,6 +2247,41 @@ process.seq = cms.Sequence(
     ##process.test
     process.ntuple
 )
+
+writeROIs = True #Switch to add ROI information (set to False in the PSet above)
+if isTracking and writeROIs:
+
+    process.ntuple.writeROIs = cms.bool(writeROIs)
+
+    process.seq = cms.Sequence(
+        process.egammaPostRecoSeq *
+        #process.packedPFCandidates *
+        #process.packedCandsForTkIso *
+        #process.lostTracksForTkIso *
+        #process.lostTracks *
+        #process.reducedEgamma *
+        #process.heepIDVarValueMaps *
+        #process.egmPhotonIDs *
+        #process.egmGsfElectronIDs *
+        #process.patPhotons *
+        #process.patElectrons *
+        #process.selectedPatPhotons *
+        #process.selectedPatElectrons *
+        ##process.slimmedPhotons *
+        ##process.slimmedElectrons *
+        ####process.fullPatMetSequenceTEST *#leading to segfault
+        process.counter *
+        ##process.test
+        process.unpackedTracksAndVertices +
+        process.ntupleGoodTrackProducer +
+        process.ntupleGeneralV0Candidates +
+        process.ntupleRegionOfInterestProducer +
+        process.ntupleRegionOfInterestTagger +
+        process.ntupleClusterTrackAssociator +
+        #process.printContent *
+        process.ntuple
+    )
+
 
 process.p = cms.Path(process.seq)
 process.p.associate(task)
