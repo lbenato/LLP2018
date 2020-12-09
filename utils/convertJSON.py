@@ -4,29 +4,36 @@ import os
 # Input directory
 jsonDir = os.environ['CMSSW_BASE']+'/src/Analyzer/LLP2018/data_gen/JSON/'
 
+# Signal
+signalName = 'VBFH_HToSSTobbbb'
+#signal = 'ggH_HToSSTobbbb'
+backupDirName = 'VBFH_oldFiles'
+#backupDirName = 'ggH_oldFiles'
+
+
 # Loop over year subdirectories
 for yearDir in os.listdir(jsonDir):
-    
+
     # Create backup directory
-    if not os.path.exists(jsonDir + yearDir + '/ggH_oldFiles/'):
-        os.makedirs(jsonDir + yearDir + '/ggH_oldFiles/')
+    if not os.path.exists(jsonDir + yearDir + '/' + backupDirName):
+        os.makedirs(jsonDir + yearDir + '/' + backupDirName)
 
     # Loop over signal points
     for file in os.listdir(jsonDir + yearDir):
-        if ('ggH_HToSSTobbbb' in file):
+        if (signalName in file):
 
             # Input filename
             jsonFilename = jsonDir + yearDir + '/' + file
             print("Processing: " + jsonFilename + '\n')
-            
+
             # Create backup
-            jsonFilenameOld = jsonDir + yearDir + '/ggH_oldFiles/' + file
+            jsonFilenameOld = jsonDir + yearDir + '/' + backupDirName + '/' + file
             if not os.path.exists(jsonFilenameOld):
                 os.system('cp %s %s'%(jsonFilename, jsonFilenameOld))
 
             # Open input json file
             with open(jsonFilenameOld,'r') as jsonFileOld:
-                
+
                 # Get dict
                 lumisPerRun = json.load(jsonFileOld)
                 if not lumisPerRun: continue
@@ -39,10 +46,10 @@ for yearDir in os.listdir(jsonDir):
                 for lumi in oldLumis:
                     newLumis.append([lumi,lumi])
 
-                # Replace lumi array  
+                # Replace lumi array
                 lumisPerRun["1"] = newLumis
                 #print(lumisPerRun)
 
                 # Save new json file
                 with open(jsonFilename,'w') as jsonFile:
-                    json.dump(lumisPerRun, jsonFile) 
+                    json.dump(lumisPerRun, jsonFile)
