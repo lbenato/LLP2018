@@ -39,7 +39,6 @@ TriggerAnalyzer::~TriggerAnalyzer() {
 // ---------- TRIGGER ----------
 
 void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::string, bool>& Map, std::map<std::string, int>& PrescalesMap, bool& verbosity) {
-
     edm::Handle<edm::TriggerResults> hltTriggerResults;
     iEvent.getByToken(TriggerToken, hltTriggerResults);
     const edm::TriggerNames& trigNames = iEvent.triggerNames(*hltTriggerResults);
@@ -52,7 +51,6 @@ void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::str
 
     edm::Handle<pat::PackedTriggerPrescales> l1MaxTriggerPrescales;
     iEvent.getByToken(L1MaxPrescalesToken, l1MaxTriggerPrescales);
-
     //edm::Handle<std::vector<pat::TriggerObjectStandAlone> > triggerObjectCollection;
     //iEvent.getByToken(TriggerObjectToken, triggerObjectCollection);
 
@@ -62,10 +60,10 @@ void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::str
     for(unsigned int i = 0; i < TriggerList.size(); i++) {
         Map[TriggerList[i]] = false;
         PrescalesMap[TriggerList[i]] = -1;
-        for(unsigned int j=0, in=trigNames.size(); j < in; j++) {
+	for(unsigned int j=0, in=trigNames.size(); j < in; j++) {
             if(trigNames.triggerName(j).find(TriggerList[i]) != std::string::npos) {
                 unsigned int index = trigNames.triggerIndex(trigNames.triggerName(j));
-                if(hltTriggerResults->accept(index)) Map[TriggerList[i]] = true;
+		if(hltTriggerResults->accept(index)) Map[TriggerList[i]] = true;
                 //if(hltTriggerResults->accept(index)) PrescalesMap[TriggerList[i]] = triggerPrescales->getPrescaleForIndex(index);
 
 		//This is not necessary, can be commented because it gives errors
@@ -82,6 +80,7 @@ void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::str
     for(std::vector<pat::TriggerObjectStandAlone>::const_iterator it=triggerObjectCollection->begin(); it!=triggerObjectCollection->end(); ++it)
       {
 	pat::TriggerObjectStandAlone obj=*it;
+	obj.unpackFilterLabels(iEvent, *hltTriggerResults);
 	obj.unpackPathNames(trigNames);
 
 	std::vector< std::string > pathNamesAll = obj.pathNames(false);
@@ -136,7 +135,6 @@ void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::str
       }
     
     */
-
 }
 
 
@@ -157,6 +155,7 @@ std::vector<pat::TriggerObjectStandAlone> TriggerAnalyzer::FillTriggerObjectVect
     for(std::vector<pat::TriggerObjectStandAlone>::const_iterator it=triggerObjectCollection->begin(); it!=triggerObjectCollection->end(); ++it)
       {
 	pat::TriggerObjectStandAlone obj=*it;
+	obj.unpackFilterLabels(iEvent, *hltTriggerResults);
 	obj.unpackPathNames(trigNames);
 
 	std::vector< std::string > pathNamesAll = obj.pathNames(false);
@@ -250,12 +249,11 @@ void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::s
     edm::Handle<edm::TriggerResults> hltTriggerResults;
     iEvent.getByToken(TriggerToken, hltTriggerResults);
     const edm::TriggerNames& trigNames = iEvent.triggerNames(*hltTriggerResults);
-    
     edm::Handle<std::vector<pat::TriggerObjectStandAlone> > triggerObjectCollection;
     iEvent.getByToken(TriggerObjectToken, triggerObjectCollection);
 
 
-    //std::cout << "\n TRIGGER OBJECTS " << std::endl;
+    //    std::cout << "\n TRIGGER OBJECTS " << std::endl;
 
     for(unsigned int i = 0; i < L1FiltersList.size(); i++) {
       Map[L1FiltersList[i]] = false;
@@ -263,6 +261,7 @@ void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::s
       for(std::vector<pat::TriggerObjectStandAlone>::const_iterator it=triggerObjectCollection->begin(); it!=triggerObjectCollection->end(); ++it)
 	{
 	  pat::TriggerObjectStandAlone obj=*it;
+	  obj.unpackFilterLabels(iEvent, *hltTriggerResults);
 	  obj.unpackPathNames(trigNames);
 
 	  std::vector< std::string > pathNamesAll = obj.pathNames(false);
@@ -398,6 +397,7 @@ void TriggerAnalyzer::Debug(const edm::Event& iEvent) {
 
     std::cout << "\n TRIGGER OBJECTS " << std::endl;
     for (pat::TriggerObjectStandAlone obj : *triggerObjectCollection) { // note: not "const &" since we want to call unpackPathNames
+      obj.unpackFilterLabels(iEvent, *hltTriggerResults);
       obj.unpackPathNames(trigNames);
       std::cout << "\tTrigger object:  pt " << obj.pt() << ", eta " << obj.eta() << ", phi " << obj.phi() << std::endl;
       // Print trigger object collection and type
