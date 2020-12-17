@@ -48,8 +48,6 @@ TriggerStudies::TriggerStudies(const edm::ParameterSet& iConfig):
     MaxGenBeta(iConfig.getParameter<double>("maxGenBeta")),
     InvmassVBF(iConfig.getParameter<double>("invmassVBF")),
     DetaVBF(iConfig.getParameter<double>("detaVBF")),
-    //WriteNJets(iConfig.getParameter<int>("writeNJets")),//unused, we have vectors now 
-    //WriteNFatJets(iConfig.getParameter<int>("writeNFatJets")),//unused, we have vectors now 
     WriteNGenBquarks(iConfig.getParameter<int>("writeNGenBquarks")),
     WriteNGenLongLiveds(iConfig.getParameter<int>("writeNGenLongLiveds")),
     WriteNMatchedJets(iConfig.getParameter<int>("writeNMatchedJets")),
@@ -149,14 +147,6 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     // Initialize types
     ObjectsFormat::ResetMEtType(MEt);
-    //for(int i = 0; i < WriteNJets; i++) ObjectsFormat::ResetJetType(Jets[i]);
-    //for(int i = 0; i < WriteNFatJets; i++) ObjectsFormat::ResetFatJetType(CHSFatJets[i]);
-    //for(int i = 0; i < WriteNMatchedJets; i++) ObjectsFormat::ResetJetType(MatchedJets[i]);
-    //for(int i = 0; i < WriteNGenBquarks; i++) ObjectsFormat::ResetGenPType(GenBquarks[i]);
-    //for(int i = 0; i < WriteNGenLongLiveds; i++) ObjectsFormat::ResetGenPType(GenLongLiveds[i]);
-    //for(int i = 0; i < WriteNLeptons; i++) ObjectsFormat::ResetLeptonType(Leptons[i]);
-    //for(int i = 0; i < WriteNLeptons; i++) ObjectsFormat::ResetLeptonType(Muons[i]);
-    //for(int i = 0; i < WriteNLeptons; i++) ObjectsFormat::ResetLeptonType(Electrons[i]);
     ObjectsFormat::ResetCandidateType(VBF);
     ObjectsFormat::ResetCandidateType(TriggerVBF);
     //ObjectsFormat::ResetCandidateType(Z);
