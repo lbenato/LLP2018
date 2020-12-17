@@ -963,7 +963,9 @@ process.trigger = cms.EDAnalyzer('TriggerStudies',
 #'HLT_HT200_v', 'HLT_HT275_v','HLT_HT325_v', 'HLT_HT425_v', 
 ###Signal paths for VBF Higgs
 'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v', 'HLT_QuadJet45_TripleBTagCSV_p087_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v',
-'HLT_PFHT400_SixJet30_DoubleBTagCSV_p056_v'
+'HLT_PFHT400_SixJet30_DoubleBTagCSV_p056_v',
+# former meant as broken triggers:
+'HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v','HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v',
 #
 ###############################
 #MET
@@ -1004,6 +1006,10 @@ process.trigger = cms.EDAnalyzer('TriggerStudies',
            #Filters for HLT_PFHT400_SixJet30_DoubleBTagCSV_p056_v
            'hltBTagCaloCSVp14Single','hltBTagPFCSVp056Double','hltCaloJetFilterSixC25','hltCaloJetsSix25ForHt','hltCaloSixJet25HT300','hltHtMhtCaloJetsSixC25','hltHtMhtPFJetsSixC30','hltL1sHTT280IorHTT300','hltPFJetFilterSixC30','hltPFJetsSix30ForHt','hltPFSixJet30HT400','hltPrePFHT400SixJet30DoubleBTagCSVp056',
 #           'hltTripleJet50'
+           #Filters for HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v
+           'hltBTagCaloCSVp022Single','hltBTagPFCSVp016SingleWithMatching','hltBTagPFCSVp11DoubleWithMatching','hltDoubleJet65','hltPFDoubleJetLooseID76','hltPFQuadJetLooseID15','hltPFSingleJetLooseID92','hltPFTripleJetLooseID64','hltPreQuadPFJetBTagCSVp016p11VBFMqq240','hltQuadJet15','hltSelector6PFJets','hltSingleJet80','hltTripleJet50','hltVBFCaloJetEtaSortedMqq150Deta1p5','hltVBFPFJetCSVSortedMqq240Detaqq2p3',
+           #Filters for HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v
+           'hltPreQuadPFJetBTagCSVp016VBFMqq500','hltVBFPFJetCSVSortedMqq500Detaqq4p1',
 ),
     ),
     jetSet = cms.PSet(
