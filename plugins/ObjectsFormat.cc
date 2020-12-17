@@ -1950,6 +1950,20 @@ void ObjectsFormat::FillTriggerObjectType(TriggerObjectType& I, const pat::Trigg
     I.mass        = R->mass();
     I.energy      = R->energy();
     I.charge      = R->charge();
+    I.et          = R->et();
+    std::vector<int> types = R->triggerObjectTypes();
+    I.is_calo_jet = false;
+    I.is_calo_bjet = false;
+    I.is_l1_ht = std::find(types.begin(), types.end(), -89) != types.end();
+    I.is_l1_jet = std::find(types.begin(), types.end(), -99) != types.end();
+    I.is_pf_jet = false;
+    I.is_pf_bjet = false;
+    I.is_jet = std::find(types.begin(), types.end(), 85) != types.end() ? true : false;
+    I.is_bjet = std::find(types.begin(), types.end(), 86) != types.end() ? true : false;
+    I.is_pf_ht = false;
+    I.is_calo_ht = false;
+    I.is_hltPFCentralJetLooseIDQuad30 = R->hasFilterLabel("hltPFCentralJetLooseIDQuad30");
+    I.is_hltAK4PFJetsLooseID = R->hasFilterLabel("hltAK4PFJetsLooseID");
 }
 
 
@@ -1960,9 +1974,22 @@ void ObjectsFormat::ResetTriggerObjectType(TriggerObjectType& I) {
     I.mass        = -1.;
     I.energy      = -1.;
     I.charge      = 0;
+    I.et          = -1.;
+    I.is_calo_jet = false;
+    I.is_calo_bjet = false;
+    I.is_l1_ht = false;
+    I.is_l1_jet = false;
+    I.is_pf_jet = false;
+    I.is_pf_bjet = false;
+    I.is_jet = false;
+    I.is_bjet = false;
+    I.is_pf_ht = false;
+    I.is_calo_ht = false;
+    I.is_hltPFCentralJetLooseIDQuad30 = false;
+    I.is_hltAK4PFJetsLooseID = false;
 }
 
-std::string ObjectsFormat::ListTriggerObjectType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:charge/I";}
+std::string ObjectsFormat::ListTriggerObjectType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:charge/I:et/F:is_calo_jet/O:is_calo_bjet/O:is_l1_ht/O:is_l1_jet/O:is_pf_jet/O:is_pf_bjet/O:is_jet/O:is_bjet/O:is_pf_ht/O:is_calo_ht/O:is_hltPFCentralJetLooseIDQuad30/O:is_hltAK4PFJetsLooseID/O";}
 
 
 

@@ -917,13 +917,26 @@ GenPType(): pt(-1.), eta(-9.), rapidity(-99999.), phi(-9.), mass(-1.), energy(-1
 };
 
 struct TriggerObjectType {
-TriggerObjectType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), charge(0) {}
+TriggerObjectType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), charge(0), et(-1.), is_calo_jet(false), is_calo_bjet(false), is_l1_ht(false), is_l1_jet(false), is_pf_jet(false), is_pf_bjet(false), is_jet(false), is_bjet(false), is_pf_ht(false), is_calo_ht(false), is_hltPFCentralJetLooseIDQuad30(false), is_hltAK4PFJetsLooseID(false) {}
     float pt;
     float eta;
     float phi;
     float mass;
     float energy;
     int charge;
+    float et;
+    bool is_calo_jet;
+    bool is_calo_bjet;
+    bool is_l1_ht;
+    bool is_l1_jet;
+    bool is_pf_jet;
+    bool is_pf_bjet;
+    bool is_jet;
+    bool is_bjet;
+    bool is_pf_ht;
+    bool is_calo_ht;
+    bool is_hltPFCentralJetLooseIDQuad30;
+    bool is_hltAK4PFJetsLooseID;
 };
 
 
