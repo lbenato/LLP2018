@@ -151,6 +151,7 @@ class TriggerStudies : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
   //std::vector<JetType> MatchedJets;
     std::vector<JetType> Jets;
     std::vector<TriggerObjectType> TriggerObjects;
+    std::vector<TriggerObjectType> TriggerObjectsAll;
     std::vector<JetType> DisplacedJets;
     std::vector<JetType> VBFPairJets;
     std::vector<JetType> SelectedVBFJets;
@@ -179,6 +180,7 @@ class TriggerStudies : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     std::map<std::string, int> PrescalesTriggerMap;
     std::map<std::string, bool> MetFiltersMap;
     std::map<std::string, bool> L1FiltersMap;
+    std::vector<pat::TriggerObjectStandAlone> TriggerObjectsVector;
 
     //Initialize tree
     edm::Service<TFileService> fs;

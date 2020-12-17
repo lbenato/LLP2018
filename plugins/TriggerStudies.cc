@@ -90,7 +90,6 @@ TriggerStudies::TriggerStudies(const edm::ParameterSet& iConfig):
     std::vector<std::string> L1FiltersList(TriggerPSet.getParameter<std::vector<std::string> >("l1filters"));
     for(unsigned int i = 0; i < L1FiltersList.size(); i++) L1FiltersMap[ L1FiltersList[i] ] = false;
 
-
     //L1 bits information, thanks to scouting dijet team
     //https://github.com/CMSDIJET/DijetScoutingRootTreeMaker/blob/master/plugins/DijetScoutingTreeProducer.cc
     l1GtUtils_ = new l1t::L1TGlobalUtil(iConfig,consumesCollector());
@@ -205,12 +204,12 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     theTriggerAnalyzer->FillTriggerMap(iEvent, TriggerMap, PrescalesTriggerMap, isVerboseTrigger);
     std::string VBF_DisplacedJet40_VTightID_Hadronic_string;
     VBF_DisplacedJet40_VTightID_Hadronic_string = "VBF_DisplacedJet40_VTightID_Hadronic_v";
-       std::vector<pat::TriggerObjectStandAlone> VBF_DisplacedJet40_VTightID_Hadronic_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,VBF_DisplacedJet40_VTightID_Hadronic_string);
+    std::vector<pat::TriggerObjectStandAlone> VBF_DisplacedJet40_VTightID_Hadronic_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,VBF_DisplacedJet40_VTightID_Hadronic_string);
 
-       nTriggerObjects = VBF_DisplacedJet40_VTightID_Hadronic_Vec.size();
+    nTriggerObjects = VBF_DisplacedJet40_VTightID_Hadronic_Vec.size();
 
-          std::vector<pat::TriggerObjectStandAlone> PotentialTriggerVBFPairJets;
-             std::vector<pat::TriggerObjectStandAlone> PotentialTriggerDisplacedJets;
+    std::vector<pat::TriggerObjectStandAlone> PotentialTriggerVBFPairJets;
+    std::vector<pat::TriggerObjectStandAlone> PotentialTriggerDisplacedJets;
 
 
     //Do it for IsoMu24
@@ -243,7 +242,7 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     theTriggerAnalyzer->FillMetFiltersMap(iEvent, MetFiltersMap);
     BadPFMuonFlag = theTriggerAnalyzer->GetBadPFMuonFlag(iEvent);
     BadChCandFlag = theTriggerAnalyzer->GetBadChCandFlag(iEvent);
-    theTriggerAnalyzer->FillL1FiltersMap(iEvent, L1FiltersMap);
+    theTriggerAnalyzer->FillL1FiltersMap(iEvent, L1FiltersMap, TriggerObjectsVector);
 
     // 27 Sep 2018: saving only events that fired at least one trigger, to reduce output size
     for(auto it = TriggerMap.begin(); it != TriggerMap.end(); it++)
@@ -265,6 +264,7 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // 10 Dec 2018: saving only events that fired at least one L1 seed
     for(auto it = L1FiltersMap.begin(); it != L1FiltersMap.end(); it++)
       {
+	//	std::cout << "filter " << it->first << " is " << it->second << std::endl;
     	if(it->second)
     	  {
     	    AtLeastOneL1Filter = true;
@@ -453,7 +453,7 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //1 muon requirement; input muons already matched with IsoMu24 trigger
     //skip events with not exactly 1 muon matched to trigger!
     //    if(nTightMuons!=1 && !isSignal) return;
-
+    if (nMuons==0 && !isSignal) return;
 
     if(nTightMuons==1)
       {
@@ -1001,6 +1001,7 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //Clear the vector of structures at every event, because we are not using a fixed number of jets and not using the Reset/List function //#### Johannes
     Jets.clear();
     TriggerObjects.clear();
+    TriggerObjectsAll.clear();
     DisplacedJets.clear();
     VBFPairJets.clear();
     //TriggerVBFPairJets.clear();
@@ -1263,6 +1264,7 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(unsigned int i = 0; i < DisplacedJetsVect.size(); i++) DisplacedJets.push_back( JetType() );
     for(unsigned int i = 0; i < TripleJet50TriggerVec.size(); i++) TriggerObjects.push_back( TriggerObjectType() );
     for(unsigned int i = 0; i < MuonVect.size(); i++) Muons.push_back( LeptonType() );
+    for(unsigned int i = 0; i < TriggerObjectsVector.size(); i++) TriggerObjectsAll.push_back( TriggerObjectType() );
     ////if (WriteFatJets) for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) CHSFatJets.push_back( FatJetType() );
     //for(unsigned int i = 0; i < TriggerVBFPairJetsVect.size(); i++) TriggerVBFPairJets.push_back( TriggerObjectType() );
     //for(unsigned int i = 0; i < PotentialTriggerDisplacedJets.size(); i++) TriggerDisplacedJets.push_back( TriggerObjectType() );
@@ -1345,6 +1347,9 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     ObjectsFormat::FillCandidateType(VBF, &theVBF, isMC);
     ObjectsFormat::FillCandidateType(TriggerVBF, &theTriggerVBF, isMC);
+    for(unsigned int i = 0; i < TriggerObjectsVector.size(); i++){
+      ObjectsFormat::FillTriggerObjectType(TriggerObjectsAll[i], &TriggerObjectsVector[i]);
+    }
     for(unsigned int i = 0; i < TripleJet50TriggerVec.size(); i++){
       ObjectsFormat::FillTriggerObjectType(TriggerObjects[i], &TripleJet50TriggerVec[i]);
       //std:: cout << "Trigger object n. " << i << std::endl;
@@ -1440,6 +1445,7 @@ TriggerStudies::beginJob()
     tree -> Branch("VBFPairJets", &VBFPairJets);
     tree -> Branch("DisplacedJets", &DisplacedJets);
     tree -> Branch("TripleJet50TriggerObjects", &TriggerObjects);
+    tree -> Branch("TriggerObjectsAll", &TriggerObjectsAll);
     tree -> Branch("Muons", &Muons);
     //tree -> Branch("TriggerVBFPairJets", &TriggerVBFPairJets);
     //tree -> Branch("TriggerDisplacedJets", &TriggerDisplacedJets);
