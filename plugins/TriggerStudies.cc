@@ -160,7 +160,7 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     number_of_PV = number_of_SV = 0;//27 Sep: remember to properly initialize everything
     nJets = nLooseJets = nTightJets = nVBFPairJets = nTriggerObjectsTripleJet50 = nTriggerObjectsTripleJet50WithDuplicates = 0;
     nTriggerObjects = nTriggerVBFPairJets = 0;
-    nSelectedDisplacedJet = nSelectedVBFJets = 0;
+    //    nSelectedDisplacedJet = nSelectedVBFJets = 0;
     nCHSFatJets = nLooseCHSFatJets = nTightCHSFatJets = nGenBquarks = nGenLL = nPV = nSV = 0;
     nMatchedJets = 0;
     nDisplaced = 0;
@@ -192,23 +192,22 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // Trigger and MET filters
     //if(isVerbose) std::cout << "Trigger and met filters" << std::endl;
     theTriggerAnalyzer->FillTriggerMap(iEvent, TriggerMap, PrescalesTriggerMap, isVerboseTrigger);
-    std::string VBF_DisplacedJet40_VTightID_Hadronic_string;
-    VBF_DisplacedJet40_VTightID_Hadronic_string = "VBF_DisplacedJet40_VTightID_Hadronic_v";
-    std::vector<pat::TriggerObjectStandAlone> VBF_DisplacedJet40_VTightID_Hadronic_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,VBF_DisplacedJet40_VTightID_Hadronic_string);
 
-    nTriggerObjects = VBF_DisplacedJet40_VTightID_Hadronic_Vec.size();
+    // 2020_12_18 comment, because this trigger isn't studied!
+    // std::string VBF_DisplacedJet40_VTightID_Hadronic_string;
+    // VBF_DisplacedJet40_VTightID_Hadronic_string = "VBF_DisplacedJet40_VTightID_Hadronic_v";
+    // std::vector<pat::TriggerObjectStandAlone> VBF_DisplacedJet40_VTightID_Hadronic_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,VBF_DisplacedJet40_VTightID_Hadronic_string);
 
-    std::vector<pat::TriggerObjectStandAlone> PotentialTriggerVBFPairJets;
-    std::vector<pat::TriggerObjectStandAlone> PotentialTriggerDisplacedJets;
+    // nTriggerObjects = VBF_DisplacedJet40_VTightID_Hadronic_Vec.size();
+
+    // std::vector<pat::TriggerObjectStandAlone> PotentialTriggerVBFPairJets;
+    // std::vector<pat::TriggerObjectStandAlone> PotentialTriggerDisplacedJets;
 
 
     //Do it for IsoMu24
     std::string IsoMu24_string;
     IsoMu24_string = "HLT_IsoMu24_v";
     std::vector<pat::TriggerObjectStandAlone> IsoMu24_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,IsoMu24_string);
-
-
-
 
     //Remove duplicates from VBF_DisplacedJet40_VTightID_Hadronic_Vec
 
@@ -226,9 +225,10 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 
-    std::string VBF_DisplacedJet40_VVTightID_Hadronic_string;
-    VBF_DisplacedJet40_VVTightID_Hadronic_string = "VBF_DisplacedJet40_VVTightID_Hadronic_v";
-    std::vector<pat::TriggerObjectStandAlone> VBF_DisplacedJet40_VVTightID_Hadronic_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,VBF_DisplacedJet40_VVTightID_Hadronic_string);
+    // 2020_12_18 comment, because this trigger isn't studied!
+    // std::string VBF_DisplacedJet40_VVTightID_Hadronic_string;
+    // VBF_DisplacedJet40_VVTightID_Hadronic_string = "VBF_DisplacedJet40_VVTightID_Hadronic_v";
+    // std::vector<pat::TriggerObjectStandAlone> VBF_DisplacedJet40_VVTightID_Hadronic_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,VBF_DisplacedJet40_VVTightID_Hadronic_string);
     theTriggerAnalyzer->FillMetFiltersMap(iEvent, MetFiltersMap);
     BadPFMuonFlag = theTriggerAnalyzer->GetBadPFMuonFlag(iEvent);
     BadChCandFlag = theTriggerAnalyzer->GetBadChCandFlag(iEvent);
@@ -309,58 +309,59 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 
-    for(unsigned int r = 0; r<VBF_DisplacedJet40_VTightID_Hadronic_Vec.size(); r++)
-      {
+    // 2020_12_18 comment, because this trigger isn't studied!
+    // for(unsigned int r = 0; r<VBF_DisplacedJet40_VTightID_Hadronic_Vec.size(); r++)
+    //   {
 
-    	//std::cout << std::endl;
-    	//std::cout << "Object n. " << r << std::endl;
-    	//std::cout << "pt, eta, phi " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).pt() << " " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).eta() << " " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).phi() << std::endl;
-    	//std::cout << "Collection: " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).collection() << std::endl;
-    	//std::cout << "TypeID: ";
-    	//for (unsigned h = 0; h < VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds().size(); ++h) std::cout << "; " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds()[h] ;
-    	//std::cout << std::endl;
-    	//std::cout << "Filters: ";
-    	//for (unsigned h = 0; h < VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels().size(); ++h) std::cout << "; " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[h];
-    	//std::cout << std::endl;
+    // 	//std::cout << std::endl;
+    // 	//std::cout << "Object n. " << r << std::endl;
+    // 	//std::cout << "pt, eta, phi " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).pt() << " " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).eta() << " " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).phi() << std::endl;
+    // 	//std::cout << "Collection: " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).collection() << std::endl;
+    // 	//std::cout << "TypeID: ";
+    // 	//for (unsigned h = 0; h < VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds().size(); ++h) std::cout << "; " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds()[h] ;
+    // 	//std::cout << std::endl;
+    // 	//std::cout << "Filters: ";
+    // 	//for (unsigned h = 0; h < VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels().size(); ++h) std::cout << "; " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[h];
+    // 	//std::cout << std::endl;
 
-    	//std::cout << " ++++++ GUESS ++++++ " << std::endl;
-    	for (unsigned h = 0; h < VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds().size(); ++h)
-    	  {
-    	    if( (VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds()[h])==85 or (VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds()[h])==86)
-    	      {
-    		for (unsigned l = 0; l < VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels().size(); ++l)
-    		  {
-    		    if(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltVBFFilterDisplacedJets" or VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltVBFFilterDisplacedJetsTight" ) 
-    		      {
-    			PotentialTriggerVBFPairJets.push_back(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r));
-    			//std::cout<< "VBF!!!!!!!!! jet n. " << r << std::endl;
-    			//std::cout << "pT: " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).pt() << std::endl;
-    		      }
-    		    // //else if(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltCentralHadronCaloJetpt40VTightID" or VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltL4PromptHadronJetsFullTracksHLTCaloJetTagFilterVTightID")
-    		    else if(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltCentralHadronCaloJetpt40VTightID")
-    		      {
-    			PotentialTriggerDisplacedJets.push_back(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r));
-    			//std::cout<< "DISPLACED!!!!!!!!! jet n. " << r << std::endl;
-    			//std::cout << "pT: " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).pt() << std::endl;
-    		      }
+    // 	//std::cout << " ++++++ GUESS ++++++ " << std::endl;
+    // 	for (unsigned h = 0; h < VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds().size(); ++h)
+    // 	  {
+    // 	    if( (VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds()[h])==85 or (VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterIds()[h])==86)
+    // 	      {
+    // 		for (unsigned l = 0; l < VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels().size(); ++l)
+    // 		  {
+    // 		    if(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltVBFFilterDisplacedJets" or VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltVBFFilterDisplacedJetsTight" ) 
+    // 		      {
+    // 			PotentialTriggerVBFPairJets.push_back(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r));
+    // 			//std::cout<< "VBF!!!!!!!!! jet n. " << r << std::endl;
+    // 			//std::cout << "pT: " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).pt() << std::endl;
+    // 		      }
+    // 		    // //else if(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltCentralHadronCaloJetpt40VTightID" or VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltL4PromptHadronJetsFullTracksHLTCaloJetTagFilterVTightID")
+    // 		    else if(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltCentralHadronCaloJetpt40VTightID")
+    // 		      {
+    // 			PotentialTriggerDisplacedJets.push_back(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r));
+    // 			//std::cout<< "DISPLACED!!!!!!!!! jet n. " << r << std::endl;
+    // 			//std::cout << "pT: " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).pt() << std::endl;
+    // 		      }
 
-    		    else if(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltTripleJet50")
-    		      {
-    			//!!!!!!!!!!!!!!!!
-    			//std::cout << "Object matched to hltTripleJet50 and VBF_DisplacedJet40_VTightID_Hadronic path!" << std::endl;
-    			/////std::cout<< "DISPLACED!!!!!!!!! jet n. " << r << std::endl;
-    			//std::cout << "pT: " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).pt() << std::endl;
-    			//std::cout << "eta: " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).eta() << std::endl;
-    		      }
+    // 		    else if(VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).filterLabels()[l]=="hltTripleJet50")
+    // 		      {
+    // 			//!!!!!!!!!!!!!!!!
+    // 			//std::cout << "Object matched to hltTripleJet50 and VBF_DisplacedJet40_VTightID_Hadronic path!" << std::endl;
+    // 			/////std::cout<< "DISPLACED!!!!!!!!! jet n. " << r << std::endl;
+    // 			//std::cout << "pT: " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).pt() << std::endl;
+    // 			//std::cout << "eta: " << VBF_DisplacedJet40_VTightID_Hadronic_Vec.at(r).eta() << std::endl;
+    // 		      }
 
-    		  }		
-    	      }
+    // 		  }		
+    // 	      }
 
-    	  }
+    // 	  }
 
 
       
-      }
+    //   }
 
     //std::cout << " ++++++ END OF GUESS ++++++ " << std::endl;
     //if(isVerbose) std::cout << " ------------------------------- " << std::endl;
@@ -585,36 +586,37 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     */
 
 
-    nTriggerObjectsTripleJet50WithDuplicates = TripleJet50TriggerVec.size();
+    // 2020_12_18 comment, because this trigger isn't studied!
+    // nTriggerObjectsTripleJet50WithDuplicates = TripleJet50TriggerVec.size();
 
-    auto comp = [] ( const pat::TriggerObjectStandAlone& lhs, const pat::TriggerObjectStandAlone& rhs ) {return lhs.pt() ==rhs.pt();};
-    auto last = std::unique(TripleJet50TriggerVec.begin(), TripleJet50TriggerVec.end(),comp);
-    TripleJet50TriggerVec.erase(last, TripleJet50TriggerVec.end());
+    // auto comp = [] ( const pat::TriggerObjectStandAlone& lhs, const pat::TriggerObjectStandAlone& rhs ) {return lhs.pt() ==rhs.pt();};
+    // auto last = std::unique(TripleJet50TriggerVec.begin(), TripleJet50TriggerVec.end(),comp);
+    // TripleJet50TriggerVec.erase(last, TripleJet50TriggerVec.end());
 
-    nTriggerObjectsTripleJet50 = TripleJet50TriggerVec.size();
-
-
-    float delta_R_TripleJet50 = 1000.;
-    float current_delta_R_TripleJet50 = 1000.;
-    int ch_TripleJet50 = -1;
-
-    for(unsigned int t1 = 0; t1<TripleJet50TriggerVec.size(); t1++)
-      {
-
-    	for(unsigned int s = 0; s<JetsVect.size(); s++)
-    	  {
-    	    current_delta_R_TripleJet50 = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),TripleJet50TriggerVec.at(t1).eta(),TripleJet50TriggerVec.at(t1).phi()));
-    	    if(current_delta_R_TripleJet50<0.6 and current_delta_R_TripleJet50<delta_R_TripleJet50) 
-    	      {
-    		delta_R_TripleJet50=current_delta_R_TripleJet50;
-    		ch_TripleJet50 = s;
-    	      }
-    	  }
+    // nTriggerObjectsTripleJet50 = TripleJet50TriggerVec.size();
 
 
-    	if(ch_TripleJet50>=0) JetsVect.at(ch_TripleJet50).addUserInt("TriggerMatched_TripleJet50",1);
+    // float delta_R_TripleJet50 = 1000.;
+    // float current_delta_R_TripleJet50 = 1000.;
+    // int ch_TripleJet50 = -1;
 
-      }
+    // for(unsigned int t1 = 0; t1<TripleJet50TriggerVec.size(); t1++)
+    //   {
+
+    // 	for(unsigned int s = 0; s<JetsVect.size(); s++)
+    // 	  {
+    // 	    current_delta_R_TripleJet50 = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),TripleJet50TriggerVec.at(t1).eta(),TripleJet50TriggerVec.at(t1).phi()));
+    // 	    if(current_delta_R_TripleJet50<0.6 and current_delta_R_TripleJet50<delta_R_TripleJet50) 
+    // 	      {
+    // 		delta_R_TripleJet50=current_delta_R_TripleJet50;
+    // 		ch_TripleJet50 = s;
+    // 	      }
+    // 	  }
+
+
+    // 	if(ch_TripleJet50>=0) JetsVect.at(ch_TripleJet50).addUserInt("TriggerMatched_TripleJet50",1);
+
+    //   }
 
 
 
@@ -763,143 +765,144 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	if(!isVBF) return;
       }
 
-    //Find VBF pair in trigger standalone objects
+    // 2020_12_18 comment, because this trigger isn't studied!
+    // //Find VBF pair in trigger standalone objects
 
-    float delta_eta_reco_HLT (0.), curr_delta_eta_reco_HLT(0.) ;
-    float curr_mjj_HLT (0.);
-    pat::CompositeCandidate current_VBF_HLT;
-    int j1_HLT(-1), j2_HLT(-1);
+    // float delta_eta_reco_HLT (0.), curr_delta_eta_reco_HLT(0.) ;
+    // float curr_mjj_HLT (0.);
+    // pat::CompositeCandidate current_VBF_HLT;
+    // int j1_HLT(-1), j2_HLT(-1);
 
-    if(PotentialTriggerVBFPairJets.size()>=2) {
-      //if(isVerbose) std::cout << "Loop over trigger standalone objects to determine VBF pair" << std::endl;
-      for(unsigned int a = 0; a<PotentialTriggerVBFPairJets.size(); a++) {
-        //find the VBF pair                                                                                                                                                             
-        for(unsigned int b = 1; b<PotentialTriggerVBFPairJets.size(); b++) {
-
-
-    	  //here: loop over the filters and consider only trigger objects firing the proper filter
-    	  //not needed anymore
-
-    	  //for (unsigned l = 0; l < PotentialTriggerVBFPairJets.at(a).filterLabels().size(); ++l)
-    	  //{//TOBECLOSED
-
-    	  //for (unsigned m = 0; m < PotentialTriggerVBFPairJets.at(b).filterLabels().size(); ++m)
-    	  //{//TOBECLOSED
-
-    	  //if(PotentialTriggerVBFPairJets.at(a).filterLabels()[l]=="hltVBFFilterDisplacedJets" and PotentialTriggerVBFPairJets.at(b).filterLabels()[m]=="hltVBFFilterDisplacedJets" and b!=a and PotentialTriggerVBFPairJets.at(a).pt()>=20 and PotentialTriggerVBFPairJets.at(b).pt()>=20 and (PotentialTriggerVBFPairJets.at(a).eta()*PotentialTriggerVBFPairJets.at(b).eta())<0)//CHECK!!!!!!!!!!!
+    // if(PotentialTriggerVBFPairJets.size()>=2) {
+    //   //if(isVerbose) std::cout << "Loop over trigger standalone objects to determine VBF pair" << std::endl;
+    //   for(unsigned int a = 0; a<PotentialTriggerVBFPairJets.size(); a++) {
+    //     //find the VBF pair                                                                                                                                                             
+    //     for(unsigned int b = 1; b<PotentialTriggerVBFPairJets.size(); b++) {
 
 
-    		  if(b!=a and PotentialTriggerVBFPairJets.at(a).pt()>=20 and PotentialTriggerVBFPairJets.at(b).pt()>=20 and (PotentialTriggerVBFPairJets.at(a).eta()*PotentialTriggerVBFPairJets.at(b).eta())<0)//CHECK!!!!!!!!!!!
+    // 	  //here: loop over the filters and consider only trigger objects firing the proper filter
+    // 	  //not needed anymore
 
-    		    {
-    		      //calculate delta eta
-    		      curr_delta_eta_reco_HLT = abs(PotentialTriggerVBFPairJets[a].eta() - PotentialTriggerVBFPairJets[b].eta());
-    		      current_VBF_HLT.clearDaughters();
-    		      current_VBF_HLT.addDaughter(PotentialTriggerVBFPairJets[a]);
-    		      current_VBF_HLT.addDaughter(PotentialTriggerVBFPairJets[b]);
-    		      addP4.set(current_VBF_HLT);
-    		      curr_mjj_HLT = current_VBF_HLT.mass();
-    		      ////if(EventNumber==40628 or EventNumber==8841 or EventNumber==9952 or EventNumber==12405)
-    		      ////{
-    		      ////std::cout << "Event number: " << EventNumber << std::endl;
-    		      ////std::cout << "Trigger pair: " << a << " , " << b <<std::endl;
-    		      ////std::cout << "n of trigger objects: " << PotentialTriggerVBFPairJets.size() << std::endl;
-    		      ////std::cout << "eta: " << PotentialTriggerVBFPairJets[a].eta() << " , " << PotentialTriggerVBFPairJets[b].eta() <<std::endl;
-    		      ////std::cout << "Collection: " << PotentialTriggerVBFPairJets.at(a).collection() << PotentialTriggerVBFPairJets.at(b).collection() << std::endl;
-    		      ////std::cout << "TypeID: ";
-    		      ////for (unsigned h = 0; h < PotentialTriggerVBFPairJets[a].filterIds().size(); ++h) std::cout << " " << PotentialTriggerVBFPairJets[a].filterIds()[h] ;
-    		      ////std::cout << std::endl;
-    		      ////for (unsigned h = 0; h < PotentialTriggerVBFPairJets[b].filterIds().size(); ++h) std::cout << " " << PotentialTriggerVBFPairJets[b].filterIds()[h] ;
-    		      ////std::cout << std::endl;
-    		      ////std::cout << "dEta: " << curr_delta_eta_reco_HLT << std::endl;
-    		      ////std::cout << "mjj: " << curr_mjj_HLT << std::endl;
-    		      ////}
-    		      if(curr_delta_eta_reco_HLT>delta_eta_reco_HLT and curr_delta_eta_reco_HLT>DetaVBF and curr_mjj_HLT>InvmassVBF)//Work in progress
-    			{
-    			  delta_eta_reco_HLT = curr_delta_eta_reco_HLT;
-    			  j1_HLT=std::min(a,b);
-    			  j2_HLT=std::max(a,b);
-    			}
-    		    }
+    // 	  //for (unsigned l = 0; l < PotentialTriggerVBFPairJets.at(a).filterLabels().size(); ++l)
+    // 	  //{//TOBECLOSED
 
-    	  //}
+    // 	  //for (unsigned m = 0; m < PotentialTriggerVBFPairJets.at(b).filterLabels().size(); ++m)
+    // 	  //{//TOBECLOSED
 
-    	  //}
-
-        }
-      }
-
-      //if(isVerbose) std::cout << "Chosen indices of HLT VBF Pair: " << j1_HLT << "\t" << j2_HLT << std::endl;
-
-      if(j1_HLT>=0 && j2_HLT>=0)//otherwise, if indices are -1, theVBF seg faults
-
-    	//CHECK HERE VBF TRIGGER CONDITIONS
-    	{
-
-    	  //if(isVerbose) std::cout << "=========================================================" << std::endl;
-    	  //if(isVerbose) std::cout << "=========================================================" << std::endl;
-    	  //if(isVerbose) std::cout << "VBF Trigger pair: " <<std::endl;
-    	  //if(isVerbose) std::cout << "A: pt, eta, phi " << PotentialTriggerVBFPairJets.at(j1_HLT).pt() << " " << PotentialTriggerVBFPairJets.at(j1_HLT).eta() << " " << PotentialTriggerVBFPairJets.at(j1_HLT).phi() << std::endl;
-    	  //if(isVerbose) std::cout << "B: pt, eta, phi " << PotentialTriggerVBFPairJets.at(j2_HLT).pt() << " " << PotentialTriggerVBFPairJets.at(j2_HLT).eta() << " " << PotentialTriggerVBFPairJets.at(j2_HLT).phi() << std::endl;
-    	  //if(isVerbose) std::cout << "Collection: a: " << PotentialTriggerVBFPairJets.at(j1_HLT).collection() << " , b: "<< PotentialTriggerVBFPairJets.at(j2_HLT).collection() << std::endl;
-    	  //if(isVerbose) std::cout << "TypeID: ";
-    	  //if(isVerbose) {for (unsigned h = 0; h < PotentialTriggerVBFPairJets[j1_HLT].filterIds().size(); ++h) std::cout << " " << PotentialTriggerVBFPairJets[j1_HLT].filterIds()[h] ;}
-    	  //if(isVerbose) std::cout << std::endl;
-    	  //if(isVerbose) {for (unsigned h = 0; h < PotentialTriggerVBFPairJets[j2_HLT].filterIds().size(); ++h) std::cout << " " << PotentialTriggerVBFPairJets[j2_HLT].filterIds()[h] ;}
-    	  //if(isVerbose) std::cout << std::endl;
-    	  //if(isVerbose) std::cout << "Filters: ";
-    	  //if(isVerbose) {for (unsigned h = 0; h < PotentialTriggerVBFPairJets[j1_HLT].filterLabels().size(); ++h) std::cout << " " << PotentialTriggerVBFPairJets[j1_HLT].filterLabels()[h];}
-    	  //if(isVerbose) std::cout << std::endl;
-    	  //if(isVerbose) {for (unsigned h = 0; h < PotentialTriggerVBFPairJets[j2_HLT].filterLabels().size(); ++h) std::cout << " " << PotentialTriggerVBFPairJets[j2_HLT].filterLabels()[h];}
-    	  //if(isVerbose) std::cout << std::endl;
-
-    	  theTriggerVBF.addDaughter(PotentialTriggerVBFPairJets.at(j1_HLT));
-    	  theTriggerVBF.addDaughter(PotentialTriggerVBFPairJets.at(j2_HLT));
-    	  addP4.set(theTriggerVBF);
-    	  //if(isVerbose) std::cout << "HLT VBF pair decided; proceed with HLT VBF pair jet vector" << std::endl;
-    	  //if(theTriggerVBF.mass()>400 and fabs(theTriggerVBF.daughter(0)->eta() - theTriggerVBF.daughter(1)->eta())>3)
-    	  //{
-    	  TriggerVBFPairJetsVect.push_back(PotentialTriggerVBFPairJets.at(j1_HLT));
-    	  TriggerVBFPairJetsVect.push_back(PotentialTriggerVBFPairJets.at(j2_HLT));
-    	  //}
-    	  //if(isVerbose) std::cout<< "d eta: " << abs(theTriggerVBF.daughter(1)->eta() - theTriggerVBF.daughter(0)->eta()) << std::endl;
-    	  //if(isVerbose) std::cout<< "mjj: " << theTriggerVBF.mass() << std::endl;
-    	}
-    }
-
-    if(theTriggerVBF.pt()>0 && theTriggerVBF.mass()>InvmassVBF && abs(theTriggerVBF.daughter(1)->eta() - theTriggerVBF.daughter(0)->eta())>DetaVBF) {isTriggerVBF = true;}
-
-    nTriggerVBFPairJets = TriggerVBFPairJetsVect.size();
+    // 	  //if(PotentialTriggerVBFPairJets.at(a).filterLabels()[l]=="hltVBFFilterDisplacedJets" and PotentialTriggerVBFPairJets.at(b).filterLabels()[m]=="hltVBFFilterDisplacedJets" and b!=a and PotentialTriggerVBFPairJets.at(a).pt()>=20 and PotentialTriggerVBFPairJets.at(b).pt()>=20 and (PotentialTriggerVBFPairJets.at(a).eta()*PotentialTriggerVBFPairJets.at(b).eta())<0)//CHECK!!!!!!!!!!!
 
 
+    // 		  if(b!=a and PotentialTriggerVBFPairJets.at(a).pt()>=20 and PotentialTriggerVBFPairJets.at(b).pt()>=20 and (PotentialTriggerVBFPairJets.at(a).eta()*PotentialTriggerVBFPairJets.at(b).eta())<0)//CHECK!!!!!!!!!!!
 
-    float delta_R_VBF = 1000.;
-    float current_delta_R_VBF = 1000.;
-    int ch_VBF = -1;
-    std::vector<pat::Jet> SelectedVBFJetsVect;
+    // 		    {
+    // 		      //calculate delta eta
+    // 		      curr_delta_eta_reco_HLT = abs(PotentialTriggerVBFPairJets[a].eta() - PotentialTriggerVBFPairJets[b].eta());
+    // 		      current_VBF_HLT.clearDaughters();
+    // 		      current_VBF_HLT.addDaughter(PotentialTriggerVBFPairJets[a]);
+    // 		      current_VBF_HLT.addDaughter(PotentialTriggerVBFPairJets[b]);
+    // 		      addP4.set(current_VBF_HLT);
+    // 		      curr_mjj_HLT = current_VBF_HLT.mass();
+    // 		      ////if(EventNumber==40628 or EventNumber==8841 or EventNumber==9952 or EventNumber==12405)
+    // 		      ////{
+    // 		      ////std::cout << "Event number: " << EventNumber << std::endl;
+    // 		      ////std::cout << "Trigger pair: " << a << " , " << b <<std::endl;
+    // 		      ////std::cout << "n of trigger objects: " << PotentialTriggerVBFPairJets.size() << std::endl;
+    // 		      ////std::cout << "eta: " << PotentialTriggerVBFPairJets[a].eta() << " , " << PotentialTriggerVBFPairJets[b].eta() <<std::endl;
+    // 		      ////std::cout << "Collection: " << PotentialTriggerVBFPairJets.at(a).collection() << PotentialTriggerVBFPairJets.at(b).collection() << std::endl;
+    // 		      ////std::cout << "TypeID: ";
+    // 		      ////for (unsigned h = 0; h < PotentialTriggerVBFPairJets[a].filterIds().size(); ++h) std::cout << " " << PotentialTriggerVBFPairJets[a].filterIds()[h] ;
+    // 		      ////std::cout << std::endl;
+    // 		      ////for (unsigned h = 0; h < PotentialTriggerVBFPairJets[b].filterIds().size(); ++h) std::cout << " " << PotentialTriggerVBFPairJets[b].filterIds()[h] ;
+    // 		      ////std::cout << std::endl;
+    // 		      ////std::cout << "dEta: " << curr_delta_eta_reco_HLT << std::endl;
+    // 		      ////std::cout << "mjj: " << curr_mjj_HLT << std::endl;
+    // 		      ////}
+    // 		      if(curr_delta_eta_reco_HLT>delta_eta_reco_HLT and curr_delta_eta_reco_HLT>DetaVBF and curr_mjj_HLT>InvmassVBF)//Work in progress
+    // 			{
+    // 			  delta_eta_reco_HLT = curr_delta_eta_reco_HLT;
+    // 			  j1_HLT=std::min(a,b);
+    // 			  j2_HLT=std::max(a,b);
+    // 			}
+    // 		    }
+
+    // 	  //}
+
+    // 	  //}
+
+    //     }
+    //   }
+
+    //   //if(isVerbose) std::cout << "Chosen indices of HLT VBF Pair: " << j1_HLT << "\t" << j2_HLT << std::endl;
+
+    //   if(j1_HLT>=0 && j2_HLT>=0)//otherwise, if indices are -1, theVBF seg faults
+
+    // 	//CHECK HERE VBF TRIGGER CONDITIONS
+    // 	{
+
+    // 	  //if(isVerbose) std::cout << "=========================================================" << std::endl;
+    // 	  //if(isVerbose) std::cout << "=========================================================" << std::endl;
+    // 	  //if(isVerbose) std::cout << "VBF Trigger pair: " <<std::endl;
+    // 	  //if(isVerbose) std::cout << "A: pt, eta, phi " << PotentialTriggerVBFPairJets.at(j1_HLT).pt() << " " << PotentialTriggerVBFPairJets.at(j1_HLT).eta() << " " << PotentialTriggerVBFPairJets.at(j1_HLT).phi() << std::endl;
+    // 	  //if(isVerbose) std::cout << "B: pt, eta, phi " << PotentialTriggerVBFPairJets.at(j2_HLT).pt() << " " << PotentialTriggerVBFPairJets.at(j2_HLT).eta() << " " << PotentialTriggerVBFPairJets.at(j2_HLT).phi() << std::endl;
+    // 	  //if(isVerbose) std::cout << "Collection: a: " << PotentialTriggerVBFPairJets.at(j1_HLT).collection() << " , b: "<< PotentialTriggerVBFPairJets.at(j2_HLT).collection() << std::endl;
+    // 	  //if(isVerbose) std::cout << "TypeID: ";
+    // 	  //if(isVerbose) {for (unsigned h = 0; h < PotentialTriggerVBFPairJets[j1_HLT].filterIds().size(); ++h) std::cout << " " << PotentialTriggerVBFPairJets[j1_HLT].filterIds()[h] ;}
+    // 	  //if(isVerbose) std::cout << std::endl;
+    // 	  //if(isVerbose) {for (unsigned h = 0; h < PotentialTriggerVBFPairJets[j2_HLT].filterIds().size(); ++h) std::cout << " " << PotentialTriggerVBFPairJets[j2_HLT].filterIds()[h] ;}
+    // 	  //if(isVerbose) std::cout << std::endl;
+    // 	  //if(isVerbose) std::cout << "Filters: ";
+    // 	  //if(isVerbose) {for (unsigned h = 0; h < PotentialTriggerVBFPairJets[j1_HLT].filterLabels().size(); ++h) std::cout << " " << PotentialTriggerVBFPairJets[j1_HLT].filterLabels()[h];}
+    // 	  //if(isVerbose) std::cout << std::endl;
+    // 	  //if(isVerbose) {for (unsigned h = 0; h < PotentialTriggerVBFPairJets[j2_HLT].filterLabels().size(); ++h) std::cout << " " << PotentialTriggerVBFPairJets[j2_HLT].filterLabels()[h];}
+    // 	  //if(isVerbose) std::cout << std::endl;
+
+    // 	  theTriggerVBF.addDaughter(PotentialTriggerVBFPairJets.at(j1_HLT));
+    // 	  theTriggerVBF.addDaughter(PotentialTriggerVBFPairJets.at(j2_HLT));
+    // 	  addP4.set(theTriggerVBF);
+    // 	  //if(isVerbose) std::cout << "HLT VBF pair decided; proceed with HLT VBF pair jet vector" << std::endl;
+    // 	  //if(theTriggerVBF.mass()>400 and fabs(theTriggerVBF.daughter(0)->eta() - theTriggerVBF.daughter(1)->eta())>3)
+    // 	  //{
+    // 	  TriggerVBFPairJetsVect.push_back(PotentialTriggerVBFPairJets.at(j1_HLT));
+    // 	  TriggerVBFPairJetsVect.push_back(PotentialTriggerVBFPairJets.at(j2_HLT));
+    // 	  //}
+    // 	  //if(isVerbose) std::cout<< "d eta: " << abs(theTriggerVBF.daughter(1)->eta() - theTriggerVBF.daughter(0)->eta()) << std::endl;
+    // 	  //if(isVerbose) std::cout<< "mjj: " << theTriggerVBF.mass() << std::endl;
+    // 	}
+    // }
+
+    // if(theTriggerVBF.pt()>0 && theTriggerVBF.mass()>InvmassVBF && abs(theTriggerVBF.daughter(1)->eta() - theTriggerVBF.daughter(0)->eta())>DetaVBF) {isTriggerVBF = true;}
+
+    // nTriggerVBFPairJets = TriggerVBFPairJetsVect.size();
 
 
 
-    for(unsigned int t1 = 0; t1<TriggerVBFPairJetsVect.size(); t1++)
-      {
-
-    	for(unsigned int s = 0; s<JetsVect.size(); s++)
-    	  {
-    	    current_delta_R_VBF = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),TriggerVBFPairJetsVect.at(t1).eta(),TriggerVBFPairJetsVect.at(t1).phi()));
-    	    if(current_delta_R_VBF<0.6 and current_delta_R_VBF<delta_R_VBF) 
-    	      {
-    		delta_R_VBF=current_delta_R_VBF;
-    		ch_VBF = s;
-    	      }
-    	  }
+    // float delta_R_VBF = 1000.;
+    // float current_delta_R_VBF = 1000.;
+    // int ch_VBF = -1;
+    // std::vector<pat::Jet> SelectedVBFJetsVect;
 
 
-	if(ch_VBF>=0) SelectedVBFJetsVect.push_back(JetsVect.at(ch_VBF));
 
-      }
+    // for(unsigned int t1 = 0; t1<TriggerVBFPairJetsVect.size(); t1++)
+    //   {
+
+    // 	for(unsigned int s = 0; s<JetsVect.size(); s++)
+    // 	  {
+    // 	    current_delta_R_VBF = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),TriggerVBFPairJetsVect.at(t1).eta(),TriggerVBFPairJetsVect.at(t1).phi()));
+    // 	    if(current_delta_R_VBF<0.6 and current_delta_R_VBF<delta_R_VBF) 
+    // 	      {
+    // 		delta_R_VBF=current_delta_R_VBF;
+    // 		ch_VBF = s;
+    // 	      }
+    // 	  }
 
 
-    nSelectedVBFJets = SelectedVBFJetsVect.size();
+    // 	if(ch_VBF>=0) SelectedVBFJetsVect.push_back(JetsVect.at(ch_VBF));
+
+    //   }
+
+
+    // nSelectedVBFJets = SelectedVBFJetsVect.size();
     //std::cout << "Size of SelectedVBFJetsVect: " << nSelectedVBFJets << std::endl; 
 
 
@@ -936,37 +939,38 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     //if(isVerbose) std::cout << "Matching VBF jets with trigger objects " << std::endl;
 
-    for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
-      {
+    // 2020_12_18 comment, because this trigger isn't studied!
+    // for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
+    //   {
 
-    	//VBF_DisplacedJet40_VTightID_Hadronic
-    	float delta_R_trigVBFJets_t1 = 1000.;
-    	float current_delta_R_trigVBFJets_t1 = 1000.;
-    	for(unsigned int t1 = 0; t1<PotentialTriggerVBFPairJets.size(); t1++)
-    	  {
-    	    current_delta_R_trigVBFJets_t1 = fabs(reco::deltaR(VBFPairJetsVect.at(s).eta(),VBFPairJetsVect.at(s).phi(),PotentialTriggerVBFPairJets.at(t1).eta(),PotentialTriggerVBFPairJets.at(t1).phi()));
-    	    if(current_delta_R_trigVBFJets_t1<0.5 and current_delta_R_trigVBFJets_t1<delta_R_trigVBFJets_t1) 
-    	      {
-    		delta_R_trigVBFJets_t1=current_delta_R_trigVBFJets_t1;
-    		////if(!VBFPairJetsVect.at(s).hasUserInt("TriggerMatched_VBFJet")) VBFPairJetsVect.at(s).addUserInt("TriggerMatched_VBFJet",1);
-    	      }
-    	  }
+    // 	//VBF_DisplacedJet40_VTightID_Hadronic
+    // 	float delta_R_trigVBFJets_t1 = 1000.;
+    // 	float current_delta_R_trigVBFJets_t1 = 1000.;
+    // 	for(unsigned int t1 = 0; t1<PotentialTriggerVBFPairJets.size(); t1++)
+    // 	  {
+    // 	    current_delta_R_trigVBFJets_t1 = fabs(reco::deltaR(VBFPairJetsVect.at(s).eta(),VBFPairJetsVect.at(s).phi(),PotentialTriggerVBFPairJets.at(t1).eta(),PotentialTriggerVBFPairJets.at(t1).phi()));
+    // 	    if(current_delta_R_trigVBFJets_t1<0.5 and current_delta_R_trigVBFJets_t1<delta_R_trigVBFJets_t1) 
+    // 	      {
+    // 		delta_R_trigVBFJets_t1=current_delta_R_trigVBFJets_t1;
+    // 		////if(!VBFPairJetsVect.at(s).hasUserInt("TriggerMatched_VBFJet")) VBFPairJetsVect.at(s).addUserInt("TriggerMatched_VBFJet",1);
+    // 	      }
+    // 	  }
 
-    	//VBF_DisplacedJet40_VVTightID_Hadronic
-    	float delta_R_trigVBFJets_t2 = 1000.;
-    	float current_delta_R_trigVBFJets_t2 = 1000.;
-    	// for(unsigned int t2 = 0; t2<VBF_DisplacedJet40_VVTightID_Hadronic_Vec.size(); t2++)
-    	//   {
-    	//     current_delta_R_trigVBFJets_t2 = fabs(reco::deltaR(VBFPairJetsVect.at(s).eta(),VBFPairJetsVect.at(s).phi(),VBF_DisplacedJet40_VVTightID_Hadronic_Vec.at(t2).eta(),VBF_DisplacedJet40_VVTightID_Hadronic_Vec.at(t2).phi()));
-    	//     if(current_delta_R_trigVBFJets_t2<0.5 and current_delta_R_trigVBFJets_t2<delta_R_trigVBFJets_t2) 
-    	//       {
-    	// 	delta_R_trigVBFJets_t2=current_delta_R_trigVBFJets_t2;
-    	// 	if(!VBFPairJetsVect.at(s).hasUserInt("VBF_DisplacedJet40_VVTightID_Hadronic_match")) VBFPairJetsVect.at(s).addUserInt("VBF_DisplacedJet40_VVTightID_Hadronic_match",1);
-    	//       }
-    	//   }
+    // 	//VBF_DisplacedJet40_VVTightID_Hadronic
+    // 	float delta_R_trigVBFJets_t2 = 1000.;
+    // 	float current_delta_R_trigVBFJets_t2 = 1000.;
+    // 	// for(unsigned int t2 = 0; t2<VBF_DisplacedJet40_VVTightID_Hadronic_Vec.size(); t2++)
+    // 	//   {
+    // 	//     current_delta_R_trigVBFJets_t2 = fabs(reco::deltaR(VBFPairJetsVect.at(s).eta(),VBFPairJetsVect.at(s).phi(),VBF_DisplacedJet40_VVTightID_Hadronic_Vec.at(t2).eta(),VBF_DisplacedJet40_VVTightID_Hadronic_Vec.at(t2).phi()));
+    // 	//     if(current_delta_R_trigVBFJets_t2<0.5 and current_delta_R_trigVBFJets_t2<delta_R_trigVBFJets_t2) 
+    // 	//       {
+    // 	// 	delta_R_trigVBFJets_t2=current_delta_R_trigVBFJets_t2;
+    // 	// 	if(!VBFPairJetsVect.at(s).hasUserInt("VBF_DisplacedJet40_VVTightID_Hadronic_match")) VBFPairJetsVect.at(s).addUserInt("VBF_DisplacedJet40_VVTightID_Hadronic_match",1);
+    // 	//       }
+    // 	//   }
 
 
-      }
+    //   }
 
 
     //if(isVerbose) std::cout << "AK4 CHS counting ID" << std::endl;
@@ -1013,129 +1017,132 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //if(isVerbose) std::cout << "AK4 CHS" << std::endl;
 
     //if(isVerbose) std::cout << "Fill displaced jets" << std::endl;
-    std::vector<pat::Jet> DisplacedJetsVect;//here: require centrality, eta<2
+    // 2020_12_18 comment, because this isn't studied!
+    // std::vector<pat::Jet> DisplacedJetsVect;//here: require centrality, eta<2
 
-    //std::cout<< "size of jet vect: " << JetsVect.size() << std::endl;
+    // //std::cout<< "size of jet vect: " << JetsVect.size() << std::endl;
 
-    for(unsigned int s = 0; s<JetsVect.size(); s++)
-      {
-	if( abs(JetsVect.at(s).eta()) <2.4) //Prev version(v4): eta<2; Now: eta<2.4
-	  {
-	  //if(fabs(JetsVect.at(s).eta())>2) DisplacedJetsVect.erase(DisplacedJetsVect.begin()+s);
-	    DisplacedJetsVect.push_back(JetsVect.at(s));
-	  }
-      }
+    // for(unsigned int s = 0; s<JetsVect.size(); s++)
+    //   {
+    // 	if( abs(JetsVect.at(s).eta()) <2.4) //Prev version(v4): eta<2; Now: eta<2.4
+    // 	  {
+    // 	  //if(fabs(JetsVect.at(s).eta())>2) DisplacedJetsVect.erase(DisplacedJetsVect.begin()+s);
+    // 	    DisplacedJetsVect.push_back(JetsVect.at(s));
+    // 	  }
+    //   }
     //if(isVerbose) std::cout<< "size of displaced jet vect: " << DisplacedJetsVect.size() << std::endl;
 
 
 
     //Remove Trigger Jets marked as VBF
+    // 2020_12_18 comment, because this trigger isn't studied!
+    // for(unsigned int s = 0; s<TriggerVBFPairJetsVect.size(); s++)
+    //   {
 
-    for(unsigned int s = 0; s<TriggerVBFPairJetsVect.size(); s++)
-      {
-
-    	for(unsigned int r = 0; r<PotentialTriggerDisplacedJets.size(); r++)
-    	  {
-    	    if(TriggerVBFPairJetsVect.at(s).pt()==PotentialTriggerDisplacedJets.at(r).pt() && isTriggerVBF) //if jets are don't tagged as VBF jets, don't remove them
-    	      {
-    		PotentialTriggerDisplacedJets.erase(PotentialTriggerDisplacedJets.begin()+r);
-    	      }
-    	  }//VBF jet pair removed
-      }
+    // 	for(unsigned int r = 0; r<PotentialTriggerDisplacedJets.size(); r++)
+    // 	  {
+    // 	    if(TriggerVBFPairJetsVect.at(s).pt()==PotentialTriggerDisplacedJets.at(r).pt() && isTriggerVBF) //if jets are don't tagged as VBF jets, don't remove them
+    // 	      {
+    // 		PotentialTriggerDisplacedJets.erase(PotentialTriggerDisplacedJets.begin()+r);
+    // 	      }
+    // 	  }//VBF jet pair removed
+    //   }
 
     //if(isVerbose) std::cout<< "Removed: " << std::endl;
 
 
     //VBF OFFLINE might be wrongly assigned. First of all, get the jet matched to the trigger object that is not the trigger VBF pair
     //Matching: DisplacedJetsVect and PotentialTriggerDisplacedJets. Save the match as SelectedDisplacedJet
+    // 2020_12_18 comment, because this trigger isn't studied!
+    // float delta_R = 1000.;
+    // float current_delta_R = 1000.;
+    // int ch = -1;
+    // std::vector<pat::Jet> SelectedDisplacedJetVect;
 
-    float delta_R = 1000.;
-    float current_delta_R = 1000.;
-    int ch = -1;
-    std::vector<pat::Jet> SelectedDisplacedJetVect;
+    // for(unsigned int s = 0; s<DisplacedJetsVect.size(); s++)
+    //   {
 
-    for(unsigned int s = 0; s<DisplacedJetsVect.size(); s++)
-      {
+    // 	if(DisplacedJetsVect.at(s).neutralHadronEnergyFraction()>0.9) nDisplaced++;
 
-    	if(DisplacedJetsVect.at(s).neutralHadronEnergyFraction()>0.9) nDisplaced++;
+    // 	////if(isVerbose) std::cout << " - - - - - - - - - - - - - - - - - " << std::endl;
+    // 	////if(isVerbose) std::cout << "Jet n. " << s << std::endl;
+    // 	////if(isVerbose) std::cout << "pt " << DisplacedJetsVect.at(s).pt() << "; eta " << DisplacedJetsVect.at(s).eta() << "; phi " << DisplacedJetsVect.at(s).phi() << std::endl;
 
-    	////if(isVerbose) std::cout << " - - - - - - - - - - - - - - - - - " << std::endl;
-    	////if(isVerbose) std::cout << "Jet n. " << s << std::endl;
-    	////if(isVerbose) std::cout << "pt " << DisplacedJetsVect.at(s).pt() << "; eta " << DisplacedJetsVect.at(s).eta() << "; phi " << DisplacedJetsVect.at(s).phi() << std::endl;
+    // 	for(unsigned int t1 = 0; t1<PotentialTriggerDisplacedJets.size(); t1++)
+    // 	  {
 
-    	for(unsigned int t1 = 0; t1<PotentialTriggerDisplacedJets.size(); t1++)
-    	  {
+    // 	    ////if(s==DisplacedJetsVect.size()-1)
+    // 	    ////{
+    // 	    ////std::cout << " * * * * * * * * * * * * * * * * * " << std::endl;
+    // 	    ////std::cout << "Trig obj n. " << t1 << std::endl;
+    // 	    ////std::cout << "pt " << PotentialTriggerDisplacedJets.at(t1).pt() << "; eta " << PotentialTriggerDisplacedJets.at(t1).eta() << "; phi " << PotentialTriggerDisplacedJets.at(t1).phi() << std::endl;
+    // 	    ////std::cout << "; isJet " << PotentialTriggerDisplacedJets.at(t1).isJet() << "; pdgId " << PotentialTriggerDisplacedJets.at(t1).pdgId() << std::endl;
+    // 	    ////std::cout << "filter ids " << PotentialTriggerDisplacedJets.at(t1).filterIds() << "; filter labels " << PotentialTriggerDisplacedJets.at(t1).filterLabels() << "; isJet " << PotentialTriggerDisplacedJets.at(t1).isJet() << "; pdgId " << PotentialTriggerDisplacedJets.at(t1).pdgId() << std::endl;
+    // 	    ////std::cout << " * * * * * * * * * * * * * * * * * " << std::endl;
+    // 	    ////}
 
-    	    ////if(s==DisplacedJetsVect.size()-1)
-    	    ////{
-    	    ////std::cout << " * * * * * * * * * * * * * * * * * " << std::endl;
-    	    ////std::cout << "Trig obj n. " << t1 << std::endl;
-    	    ////std::cout << "pt " << PotentialTriggerDisplacedJets.at(t1).pt() << "; eta " << PotentialTriggerDisplacedJets.at(t1).eta() << "; phi " << PotentialTriggerDisplacedJets.at(t1).phi() << std::endl;
-    	    ////std::cout << "; isJet " << PotentialTriggerDisplacedJets.at(t1).isJet() << "; pdgId " << PotentialTriggerDisplacedJets.at(t1).pdgId() << std::endl;
-    	    ////std::cout << "filter ids " << PotentialTriggerDisplacedJets.at(t1).filterIds() << "; filter labels " << PotentialTriggerDisplacedJets.at(t1).filterLabels() << "; isJet " << PotentialTriggerDisplacedJets.at(t1).isJet() << "; pdgId " << PotentialTriggerDisplacedJets.at(t1).pdgId() << std::endl;
-    	    ////std::cout << " * * * * * * * * * * * * * * * * * " << std::endl;
-    	    ////}
+    // 	    current_delta_R = fabs(reco::deltaR(DisplacedJetsVect.at(s).eta(),DisplacedJetsVect.at(s).phi(),PotentialTriggerDisplacedJets.at(t1).eta(),PotentialTriggerDisplacedJets.at(t1).phi()));
+    // 	    ////if(isVerbose) std::cout << "Matching jet n." << s << " and trigger obj n." << t1 << std::endl;
+    // 	    ////if(isVerbose) std::cout << "Trig obj n. " << t1 << std::endl;
+    // 	    ////if(isVerbose) std::cout << "pt " << PotentialTriggerDisplacedJets.at(t1).pt() << "; eta " << PotentialTriggerDisplacedJets.at(t1).eta() << "; phi " << PotentialTriggerDisplacedJets.at(t1).phi() << std::endl;
+    // 	    ////if(isVerbose) std::cout << "Their dR: " << current_delta_R << std::endl;
+    // 	    if(current_delta_R<0.6 and current_delta_R<delta_R) 
+    // 	      {
+    // 		////if(isVerbose) std::cout << "Smaller than 0.6!!!!!!!!!!!!!!" << std::endl;
+    // 		////if(isVerbose) std::cout << "Delta pt: " << fabs(PotentialTriggerDisplacedJets.at(t1).pt() - DisplacedJetsVect.at(s).pt()) << std::endl;
 
-    	    current_delta_R = fabs(reco::deltaR(DisplacedJetsVect.at(s).eta(),DisplacedJetsVect.at(s).phi(),PotentialTriggerDisplacedJets.at(t1).eta(),PotentialTriggerDisplacedJets.at(t1).phi()));
-    	    ////if(isVerbose) std::cout << "Matching jet n." << s << " and trigger obj n." << t1 << std::endl;
-    	    ////if(isVerbose) std::cout << "Trig obj n. " << t1 << std::endl;
-    	    ////if(isVerbose) std::cout << "pt " << PotentialTriggerDisplacedJets.at(t1).pt() << "; eta " << PotentialTriggerDisplacedJets.at(t1).eta() << "; phi " << PotentialTriggerDisplacedJets.at(t1).phi() << std::endl;
-    	    ////if(isVerbose) std::cout << "Their dR: " << current_delta_R << std::endl;
-    	    if(current_delta_R<0.6 and current_delta_R<delta_R) 
-    	      {
-    		////if(isVerbose) std::cout << "Smaller than 0.6!!!!!!!!!!!!!!" << std::endl;
-    		////if(isVerbose) std::cout << "Delta pt: " << fabs(PotentialTriggerDisplacedJets.at(t1).pt() - DisplacedJetsVect.at(s).pt()) << std::endl;
-
-    		//if(isVerbose) std::cout << "* * * ** * * ** *** * ** * * " << std::endl;
-    		//if(isVerbose) std::cout << "Trigger object selected as displaced jet: " <<std::endl;
-    		//if(isVerbose) std::cout << "pt, eta, phi " << PotentialTriggerDisplacedJets.at(t1).pt() << " " << PotentialTriggerDisplacedJets.at(t1).eta() << " " << PotentialTriggerDisplacedJets.at(t1).phi() << std::endl;
-    		//if(isVerbose) std::cout << "Collection: " << PotentialTriggerDisplacedJets.at(t1).collection() << std::endl;
-    		//if(isVerbose) std::cout << "TypeID: ";
-    		//if(isVerbose) {for (unsigned h = 0; h < PotentialTriggerDisplacedJets.at(t1).filterIds().size(); ++h) std::cout << " " << PotentialTriggerDisplacedJets.at(t1).filterIds()[h] ;}
-    		//if(isVerbose) std::cout << std::endl;
-    		//if(isVerbose) std::cout << "Filters: ";
-    		//if(isVerbose)  {for (unsigned h = 0; h < PotentialTriggerDisplacedJets.at(t1).filterLabels().size(); ++h) std::cout << " " << PotentialTriggerDisplacedJets.at(t1).filterLabels()[h];}
-    		//if(isVerbose) std::cout << std::endl;
-    		delta_R=current_delta_R;
-    		ch = s;
-    	      }
-    	  }
+    // 		//if(isVerbose) std::cout << "* * * ** * * ** *** * ** * * " << std::endl;
+    // 		//if(isVerbose) std::cout << "Trigger object selected as displaced jet: " <<std::endl;
+    // 		//if(isVerbose) std::cout << "pt, eta, phi " << PotentialTriggerDisplacedJets.at(t1).pt() << " " << PotentialTriggerDisplacedJets.at(t1).eta() << " " << PotentialTriggerDisplacedJets.at(t1).phi() << std::endl;
+    // 		//if(isVerbose) std::cout << "Collection: " << PotentialTriggerDisplacedJets.at(t1).collection() << std::endl;
+    // 		//if(isVerbose) std::cout << "TypeID: ";
+    // 		//if(isVerbose) {for (unsigned h = 0; h < PotentialTriggerDisplacedJets.at(t1).filterIds().size(); ++h) std::cout << " " << PotentialTriggerDisplacedJets.at(t1).filterIds()[h] ;}
+    // 		//if(isVerbose) std::cout << std::endl;
+    // 		//if(isVerbose) std::cout << "Filters: ";
+    // 		//if(isVerbose)  {for (unsigned h = 0; h < PotentialTriggerDisplacedJets.at(t1).filterLabels().size(); ++h) std::cout << " " << PotentialTriggerDisplacedJets.at(t1).filterLabels()[h];}
+    // 		//if(isVerbose) std::cout << std::endl;
+    // 		delta_R=current_delta_R;
+    // 		ch = s;
+    // 	      }
+    // 	  }
 
 
-      }
+    //   }
 
     //if(isVerbose) std::cout << "Chosen matched jet is " << ch << std::endl;
-    if(ch>=0)
-      {
-    	//if(!DisplacedJetsVect.at(ch).hasUserInt("VBF_DisplacedJet40_VTightID_Hadronic_match"))
-    	/////////DisplacedJetsVect.at(ch).addUserInt("TriggerMatched_DisplacedJet",1);
-    	SelectedDisplacedJetVect.push_back(DisplacedJetsVect.at(ch));
-      }
+    // 2020_12_18 comment, because this trigger isn't studied!
+    // if(ch>=0)
+    //   {
+    // 	//if(!DisplacedJetsVect.at(ch).hasUserInt("VBF_DisplacedJet40_VTightID_Hadronic_match"))
+    // 	/////////DisplacedJetsVect.at(ch).addUserInt("TriggerMatched_DisplacedJet",1);
+    // 	SelectedDisplacedJetVect.push_back(DisplacedJetsVect.at(ch));
+    //   }
 
-    nSelectedDisplacedJet = SelectedDisplacedJetVect.size();
+    // nSelectedDisplacedJet = SelectedDisplacedJetVect.size();
 
     //REMOVE VBF JETS FROM SIGNAL COLLECTION ONLY!!!
     
     //Remove jets tagged as VBF from the list of potential signal    
     //if(isVerbose) std::cout << "Remove VBF pair from displaced jets" << std::endl;
 
-    for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
-      {
-    	//std::cout << "VBF pair jet index: " << s << std::endl;
-    	for(unsigned int r = 0; r<DisplacedJetsVect.size(); r++)
-    	  {
-    	    //std::cout << "displ jet index: " << r << std::endl;
-    	    if(VBFPairJetsVect.at(s).pt()==DisplacedJetsVect.at(r).pt() && isVBF) //if jets are don't tagged as VBF jets, don't remove them
-    	      {
-    		//std::cout << "same jet: jet n." << r  << " , VBF pair n." << s << std::endl;
-    		DisplacedJetsVect.erase(DisplacedJetsVect.begin()+r);
-    		//std::cout << "jet n." << r  << " removed!!! " << std::endl;
-    		//std::cout << "size of displaced jet vect now: " << DisplacedJetsVect.size() << std::endl;
-    		//std::cout << "But r is still: " << r << std::endl;
-    	      }
-    	    //std::cout << "size of displaced jet vect: " << DisplacedJetsVect.size() << std::endl;
-    	  }//VBF jet pair removed
-      }
+    // 2020_12_18 comment, because this trigger isn't studied!
+    // for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
+    //   {
+    // 	//std::cout << "VBF pair jet index: " << s << std::endl;
+    // 	for(unsigned int r = 0; r<DisplacedJetsVect.size(); r++)
+    // 	  {
+    // 	    //std::cout << "displ jet index: " << r << std::endl;
+    // 	    if(VBFPairJetsVect.at(s).pt()==DisplacedJetsVect.at(r).pt() && isVBF) //if jets are don't tagged as VBF jets, don't remove them
+    // 	      {
+    // 		//std::cout << "same jet: jet n." << r  << " , VBF pair n." << s << std::endl;
+    // 		DisplacedJetsVect.erase(DisplacedJetsVect.begin()+r);
+    // 		//std::cout << "jet n." << r  << " removed!!! " << std::endl;
+    // 		//std::cout << "size of displaced jet vect now: " << DisplacedJetsVect.size() << std::endl;
+    // 		//std::cout << "But r is still: " << r << std::endl;
+    // 	      }
+    // 	    //std::cout << "size of displaced jet vect: " << DisplacedJetsVect.size() << std::endl;
+    // 	  }//VBF jet pair removed
+    //   }
     
     
     
@@ -1150,53 +1157,53 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //.at(k).addUserInt("TriggerMatched_VBFJet",1);
     //.at(k).addUserInt("TriggerMatched_DisplacedJet",1);
 
+    // 2020_12_18 comment, because this trigger isn't studied!
+    // for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
+    //   {
 
-    for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
-      {
+    // 	//VBF Trigger
+    // 	for(unsigned int a = 0; a<SelectedVBFJetsVect.size(); a++)
+    // 	  {
+    // 	    if(SelectedVBFJetsVect.at(a).pt()==VBFPairJetsVect.at(s).pt())
+    // 	      {
+    // 		if(!VBFPairJetsVect.at(s).hasUserInt("TriggerMatched_VBFJet")) VBFPairJetsVect.at(s).addUserInt("TriggerMatched_VBFJet",1);
+    // 	      }
+    //       }
 
-    	//VBF Trigger
-    	for(unsigned int a = 0; a<SelectedVBFJetsVect.size(); a++)
-    	  {
-    	    if(SelectedVBFJetsVect.at(a).pt()==VBFPairJetsVect.at(s).pt())
-    	      {
-    		if(!VBFPairJetsVect.at(s).hasUserInt("TriggerMatched_VBFJet")) VBFPairJetsVect.at(s).addUserInt("TriggerMatched_VBFJet",1);
-    	      }
-          }
+    // 	//Displaced Trigger
+    // 	for(unsigned int b = 0; b<SelectedDisplacedJetVect.size(); b++)
+    // 	  {
+    // 	    if(SelectedDisplacedJetVect.at(b).pt()==VBFPairJetsVect.at(s).pt())
+    // 	      {
+    // 		if(!VBFPairJetsVect.at(s).hasUserInt("TriggerMatched_DisplacedJet")) VBFPairJetsVect.at(s).addUserInt("TriggerMatched_DisplacedJet",1);
+    // 	      }
+    //       }
 
-    	//Displaced Trigger
-    	for(unsigned int b = 0; b<SelectedDisplacedJetVect.size(); b++)
-    	  {
-    	    if(SelectedDisplacedJetVect.at(b).pt()==VBFPairJetsVect.at(s).pt())
-    	      {
-    		if(!VBFPairJetsVect.at(s).hasUserInt("TriggerMatched_DisplacedJet")) VBFPairJetsVect.at(s).addUserInt("TriggerMatched_DisplacedJet",1);
-    	      }
-          }
-
-      }
+    //   }
 
     
-    for(unsigned int s = 0; s<DisplacedJetsVect.size(); s++)
-      {
+    // for(unsigned int s = 0; s<DisplacedJetsVect.size(); s++)
+    //   {
 
-    	//VBF Trigger
-    	for(unsigned int a = 0; a<SelectedVBFJetsVect.size(); a++)
-    	  {
-    	    if(SelectedVBFJetsVect.at(a).pt()==DisplacedJetsVect.at(s).pt())
-    	      {
-    		if(!DisplacedJetsVect.at(s).hasUserInt("TriggerMatched_VBFJet")) DisplacedJetsVect.at(s).addUserInt("TriggerMatched_VBFJet",1);
-    	      }
-          }
+    // 	//VBF Trigger
+    // 	for(unsigned int a = 0; a<SelectedVBFJetsVect.size(); a++)
+    // 	  {
+    // 	    if(SelectedVBFJetsVect.at(a).pt()==DisplacedJetsVect.at(s).pt())
+    // 	      {
+    // 		if(!DisplacedJetsVect.at(s).hasUserInt("TriggerMatched_VBFJet")) DisplacedJetsVect.at(s).addUserInt("TriggerMatched_VBFJet",1);
+    // 	      }
+    //       }
 
-    	//Displaced Trigger
-    	for(unsigned int b = 0; b<SelectedDisplacedJetVect.size(); b++)
-    	  {
-    	    if(SelectedDisplacedJetVect.at(b).pt()==DisplacedJetsVect.at(s).pt())
-    	      {
-    		if(!DisplacedJetsVect.at(s).hasUserInt("TriggerMatched_DisplacedJet")) DisplacedJetsVect.at(s).addUserInt("TriggerMatched_DisplacedJet",1);
-    	      }
-          }
+    // 	//Displaced Trigger
+    // 	for(unsigned int b = 0; b<SelectedDisplacedJetVect.size(); b++)
+    // 	  {
+    // 	    if(SelectedDisplacedJetVect.at(b).pt()==DisplacedJetsVect.at(s).pt())
+    // 	      {
+    // 		if(!DisplacedJetsVect.at(s).hasUserInt("TriggerMatched_DisplacedJet")) DisplacedJetsVect.at(s).addUserInt("TriggerMatched_DisplacedJet",1);
+    // 	      }
+    //       }
 
-      }
+    //   }
     
 
     
@@ -1241,8 +1248,8 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       std::cout << "VBF jets pair:  " << VBFPairJetsVect.size() << std::endl;
       if(isVBF) std::cout << "VBF conditions satisfied" << std::endl;
       for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) std::cout << "  VBF jet  [" << i << "]\tpt: " << VBFPairJetsVect[i].pt() << "\teta: " << VBFPairJetsVect[i].eta() << "\tphi: " << VBFPairJetsVect[i].phi() << "\tmass: " << VBFPairJetsVect[i].mass() << std::endl;
-      std::cout << "number of displaced AK4 jets:  " << DisplacedJetsVect.size() << std::endl;
-      for(unsigned int i = 0; i < DisplacedJetsVect.size(); i++) std::cout << "  displaced CHS AK4 jet  [" << i << "]\tpt: " << DisplacedJetsVect[i].pt() << "\teta: " << DisplacedJetsVect[i].eta() << "\tphi: " << DisplacedJetsVect[i].phi() << "\tmass: " << DisplacedJetsVect[i].mass() << std::endl;
+      // std::cout << "number of displaced AK4 jets:  " << DisplacedJetsVect.size() << std::endl;
+      // for(unsigned int i = 0; i < DisplacedJetsVect.size(); i++) std::cout << "  displaced CHS AK4 jet  [" << i << "]\tpt: " << DisplacedJetsVect[i].pt() << "\teta: " << DisplacedJetsVect[i].eta() << "\tphi: " << DisplacedJetsVect[i].phi() << "\tmass: " << DisplacedJetsVect[i].mass() << std::endl;
 
     }
 
@@ -1251,8 +1258,9 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //Here it doesn't know JetsVect size, hence we cannot store a dynamic amount of things. Trying to do it inside Analyze method
     for(unsigned int i = 0; i < JetsVect.size(); i++) Jets.push_back( JetType() );
     for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );
-    for(unsigned int i = 0; i < DisplacedJetsVect.size(); i++) DisplacedJets.push_back( JetType() );
-    for(unsigned int i = 0; i < TripleJet50TriggerVec.size(); i++) TriggerObjects.push_back( TriggerObjectType() );
+    // 2020_12_18 comment, because this trigger isn't studied!
+    // for(unsigned int i = 0; i < DisplacedJetsVect.size(); i++) DisplacedJets.push_back( JetType() );
+    // for(unsigned int i = 0; i < TripleJet50TriggerVec.size(); i++) TriggerObjects.push_back( TriggerObjectType() );
     for(unsigned int i = 0; i < MuonVect.size(); i++) Muons.push_back( LeptonType() );
     for(unsigned int i = 0; i < TriggerObjectsVector.size(); i++) TriggerObjectsAll.push_back( TriggerObjectType() );
     ////if (WriteFatJets) for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) CHSFatJets.push_back( FatJetType() );
@@ -1277,12 +1285,12 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     for(unsigned int i = 0; i < JetsVect.size(); i++){
       ObjectsFormat::FillJetType(Jets[i], &JetsVect[i], isMC);//, nullInt[i]);//Remove Jets.size(), testing
-      if(isVerbose) {
+      //      if(isVerbose) {
 	//std::cout << " j[" << i << "] n const: " << Jets[i].nConstituents << std::endl; 
 	//std::cout << " j[" << i << "] n Track const: " << Jets[i].nTrackConstituents << std::endl; 
 	//std::cout << " j[" << i << "] n selected track: " << Jets[i].nSelectedTracks << std::endl; 
 	//std::cout << " j[" << i << "] matched to trigger: " << Jets[i].VBF_DisplacedJet40_VTightID_Hadronic_match << std::endl; 
-      }
+      //      }
     }
 
 
@@ -1300,16 +1308,16 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       ObjectsFormat::FillJetType(VBFPairJets[i], &VBFPairJetsVect[i], isMC);//, nullInt[i]);
     }
 
-
-    nullFloat.clear();
-    nullInt.clear();
-    for(unsigned int i = 0; i < DisplacedJetsVect.size(); i++) {
-      nullFloat.push_back(-100.);
-      nullInt.push_back(-1);
-    }
-    for(unsigned int i = 0; i < DisplacedJetsVect.size(); i++){
-      ObjectsFormat::FillJetType(DisplacedJets[i], &DisplacedJetsVect[i], isMC);//, nullInt[i]);
-    }
+    // 2020_12_18 comment, because this trigger isn't studied!
+    // nullFloat.clear();
+    // nullInt.clear();
+    // for(unsigned int i = 0; i < DisplacedJetsVect.size(); i++) {
+    //   nullFloat.push_back(-100.);
+    //   nullInt.push_back(-1);
+    // }
+    // for(unsigned int i = 0; i < DisplacedJetsVect.size(); i++){
+    //   ObjectsFormat::FillJetType(DisplacedJets[i], &DisplacedJetsVect[i], isMC);//, nullInt[i]);
+    // }
 
     //nullFloat.clear();
     //nullInt.clear();
@@ -1340,14 +1348,15 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(unsigned int i = 0; i < TriggerObjectsVector.size(); i++){
       ObjectsFormat::FillTriggerObjectType(TriggerObjectsAll[i], &TriggerObjectsVector[i]);
     }
-    for(unsigned int i = 0; i < TripleJet50TriggerVec.size(); i++){
-      ObjectsFormat::FillTriggerObjectType(TriggerObjects[i], &TripleJet50TriggerVec[i]);
-      //std:: cout << "Trigger object n. " << i << std::endl;
-      //std:: cout << "pt " << TriggerObjects[i].pt << std::endl;
-      //std:: cout << "pt " << TripleJet50TriggerVec.at(i).pt() << std::endl;
-      //std:: cout << "eta " << TripleJet50TriggerVec.at(i).eta() << std::endl;
-      //std:: cout << "phi " << TripleJet50TriggerVec.at(i).phi() << std::endl;
-    }
+    // 2020_12_18 comment, because this trigger isn't studied!
+    // for(unsigned int i = 0; i < TripleJet50TriggerVec.size(); i++){
+    //   ObjectsFormat::FillTriggerObjectType(TriggerObjects[i], &TripleJet50TriggerVec[i]);
+    //   //std:: cout << "Trigger object n. " << i << std::endl;
+    //   //std:: cout << "pt " << TriggerObjects[i].pt << std::endl;
+    //   //std:: cout << "pt " << TripleJet50TriggerVec.at(i).pt() << std::endl;
+    //   //std:: cout << "eta " << TripleJet50TriggerVec.at(i).eta() << std::endl;
+    //   //std:: cout << "phi " << TripleJet50TriggerVec.at(i).phi() << std::endl;
+    // }
 
     for(unsigned int i = 0; i < Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &MuonVect[i], isMC);
     //for(unsigned int i = 0; i < TriggerVBFPairJetsVect.size(); i++){
@@ -1399,8 +1408,8 @@ TriggerStudies::beginJob()
     tree -> Branch("nTaus", &nTaus, "nTaus/I");
     tree -> Branch("nPhotons", &nPhotons, "nPhotons/I");
     tree -> Branch("nTriggerObjects" , &nTriggerObjects , "nTriggerObjects/L");
-    tree -> Branch("nSelectedDisplacedJet" , &nSelectedDisplacedJet , "nSelectedDisplacedJet/L");
-    tree -> Branch("nSelectedVBFJets" , &nSelectedVBFJets , "nSelectedVBFJets/L");
+    // tree -> Branch("nSelectedDisplacedJet" , &nSelectedDisplacedJet , "nSelectedDisplacedJet/L");
+    // tree -> Branch("nSelectedVBFJets" , &nSelectedVBFJets , "nSelectedVBFJets/L");
     tree -> Branch("nDisplaced" , &nDisplaced , "nDisplaced/L");
     tree -> Branch("Flag_BadPFMuon", &BadPFMuonFlag, "Flag_BadPFMuon/O");
     tree -> Branch("Flag_BadChCand", &BadChCandFlag, "Flag_BadChCand/O");
@@ -1433,8 +1442,8 @@ TriggerStudies::beginJob()
     tree -> Branch("TriggerVBFPair", &TriggerVBF.pt, ObjectsFormat::ListCandidateType().c_str());
     tree -> Branch("Jets", &Jets);
     tree -> Branch("VBFPairJets", &VBFPairJets);
-    tree -> Branch("DisplacedJets", &DisplacedJets);
-    tree -> Branch("TripleJet50TriggerObjects", &TriggerObjects);
+    // tree -> Branch("DisplacedJets", &DisplacedJets);
+    // tree -> Branch("TripleJet50TriggerObjects", &TriggerObjects);
     tree -> Branch("TriggerObjectsAll", &TriggerObjectsAll);
     tree -> Branch("Muons", &Muons);
     //tree -> Branch("TriggerVBFPairJets", &TriggerVBFPairJets);
