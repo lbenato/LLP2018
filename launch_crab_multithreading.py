@@ -36,7 +36,7 @@ config.Data.publication = False
 config.Site.storageSite = 'T2_DE_DESY'
 
 #Workaround when crab complains that this release+arch isn't supported; running on SL7 machines
-#config.JobType.allowUndistributedCMSSW = True
+config.JobType.allowUndistributedCMSSW = True
 
 #config.Site.ignoreGlobalBlacklist   = True #Set to true if e.g. your dataset is in a blacklisted site. Make sure you add
 #config.Site.whitelist   = ['T1_US_FNAL'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
@@ -503,6 +503,9 @@ if __name__ == '__main__':
         isMINIAOD = False
         isAOD  = True
         isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
         isVBF = False
         isggH = False
         isTwinHiggs = False
@@ -915,7 +918,7 @@ if __name__ == '__main__':
 
         noLHEinfo = True if ('WW_TuneCUETP8M1_13TeV-pythia8' in j or 'WZ_TuneCUETP8M1_13TeV-pythia8' in j or 'ZZ_TuneCUETP8M1_13TeV-pythia8' in j or 'WW_TuneCP5_13TeV-pythia8' in j or 'WZ_TuneCP5_13TeV-pythia8' in j or 'ZZ_TuneCP5_13TeV-pythia8' in j) else False #check for PythiaLO samples
         isbbH = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in j) else False #bbH has a different label in LHEEventProduct
-        isSignal = True if ('HToSSTobbbb_MH-125' in j  or 'HToSSTo4b_MH-125' in j or 'HToSSTobbbb_WToLNu') else False #FIXME: Update with other signal modes & models?
+        isSignal = True if ('HToSSTobbbb_MH-125' in j  or 'HToSSTo4b_MH-125' in j or 'HToSSTobbbb_WToLNu' in j) else False #FIXME: Update with other signal modes & models?
         GT = ''
 
         if isMINIAOD:
@@ -1068,7 +1071,9 @@ if __name__ == '__main__':
             if isMINIAOD:
                 filterString = "PAT"
                 triggerString = "PAT"
-            if isAOD: filterString = "RECO"
+            if isAOD:
+                filterString = "RECO"
+                triggerString = ""#dummy, not used
 
         #Prepare inputstrings for pyCfg
         string_runLocal = 'runLocal=False'

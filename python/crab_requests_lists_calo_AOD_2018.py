@@ -147,7 +147,8 @@ requests = {
 #'n3n2-n1-hbb-hbb_mh127_pl1000' : '/n3n2-n1-hbb-hbb_mh127_pl1000_ev100000/jmao-crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi127_pl1000_ev100000_AODSIM_CaltechT2-37ac8d442b9840be1abba4facfa67e70/USER',
 
 ###High stat
-'TChiHH_mass400_pl1000' : '/TChiHH_mass400_pl1000/apresyan-crab_PrivateProduction_Fall18_DR_step2_TChiHH_mass400_pl1000_batch1_v1-2fd59cbde119ecab78af65e08efe8aae/USER',
+#'TChiHH_mass400_pl1000' : '/TChiHH_mass400_pl1000/apresyan-crab_PrivateProduction_Fall18_DR_step2_TChiHH_mass400_pl1000_batch1_v1-2fd59cbde119ecab78af65e08efe8aae/USER',
+'n3n2-n1-hbb-hbb_mh200_pl1000' : '/n3n2-n1-hbb-hbb_mh200_pl1000_ev100000/jmao-crab_CMSSW_10_2_11_n3n2-n1-hbb-hbb_mchi200_pl1000_ev100000_AODSIM_CaltechT2-05ab6a21d925342611e50bb80c2191f7/USER',
 ##'n3n2-n1-hbb-hbb_mh200_pl1000_2018' : '/n3n2-n1-hbb-hbb_mh200_pl1000_ev100000/jmao-crab_CMSSW_10_2_11_n3n2-n1-hbb-hbb_mchi200_pl1000_ev100000_GENSIM_CaltechT2-f30b642cff340931c61e0cda79b85df0/USER',
 
 ###############################################
