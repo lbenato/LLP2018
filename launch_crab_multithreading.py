@@ -36,7 +36,7 @@ config.Data.publication = False
 config.Site.storageSite = 'T2_DE_DESY'
 
 #Workaround when crab complains that this release+arch isn't supported; running on SL7 machines
-#config.JobType.allowUndistributedCMSSW = True
+config.JobType.allowUndistributedCMSSW = True
 
 #config.Site.ignoreGlobalBlacklist   = True #Set to true if e.g. your dataset is in a blacklisted site. Make sure you add
 #config.Site.whitelist   = ['T1_US_FNAL'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
@@ -503,6 +503,9 @@ if __name__ == '__main__':
         isMINIAOD = False
         isAOD  = True
         isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
         isVBF = False
         isggH = False
         isTwinHiggs = False
@@ -1068,7 +1071,9 @@ if __name__ == '__main__':
             if isMINIAOD:
                 filterString = "PAT"
                 triggerString = "PAT"
-            if isAOD: filterString = "RECO"
+            if isAOD:
+                filterString = "RECO"
+                triggerString = ""#dummy, not used
 
         #Prepare inputstrings for pyCfg
         string_runLocal = 'runLocal=False'
