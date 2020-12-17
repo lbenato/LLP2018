@@ -210,9 +210,6 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     IsoMu24_string = "HLT_IsoMu24_v";
     std::vector<pat::TriggerObjectStandAlone> IsoMu24_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,IsoMu24_string);
 
-
-    //TODO: ADD MATCHING TO JETS!!!!!
-
     std::string DoubleJet90_string = "HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v";
     std::vector<pat::TriggerObjectStandAlone> DoubleJet90_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,DoubleJet90_string);
     nTriggerObjectsDoubleJet90 = DoubleJet90_Vec.size();
@@ -1087,7 +1084,14 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //Clear the vector of structures at every event, because we are not using a fixed number of jets and not using the Reset/List function //#### Johannes
     Jets.clear();
     TriggerObjects.clear();
-    TriggerObjectsAll.clear();
+    //    TriggerObjectsAll.clear();
+    TriggerObjects_DoubleJet90.clear();
+    TriggerObjects_QuadJet45.clear();
+    TriggerObjects_DoubleJetC112MaxDeta1p6.clear();
+    TriggerObjects_DoubleJetC112.clear();
+    TriggerObjects_SixJet30.clear();
+    TriggerObjects_QuadPFJetMqq240.clear();
+    TriggerObjects_QuadPFJetMqq500.clear();
     DisplacedJets.clear();
     VBFPairJets.clear();
     //TriggerVBFPairJets.clear();
@@ -1354,7 +1358,14 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // for(unsigned int i = 0; i < DisplacedJetsVect.size(); i++) DisplacedJets.push_back( JetType() );
     // for(unsigned int i = 0; i < TripleJet50TriggerVec.size(); i++) TriggerObjects.push_back( TriggerObjectType() );
     for(unsigned int i = 0; i < MuonVect.size(); i++) Muons.push_back( LeptonType() );
-    for(unsigned int i = 0; i < TriggerObjectsVector.size(); i++) TriggerObjectsAll.push_back( TriggerObjectType() );
+    //    for(unsigned int i = 0; i < TriggerObjectsVector.size(); i++) TriggerObjectsAll.push_back( TriggerObjectType() );
+    for(unsigned int i = 0; i < DoubleJet90_Vec.size(); i++) TriggerObjects_DoubleJet90.push_back( TriggerObjectType() );
+    for(unsigned int i = 0; i < QuadJet45_Vec.size(); i++) TriggerObjects_QuadJet45.push_back( TriggerObjectType() );
+    for(unsigned int i = 0; i < DoubleJetC112MaxDeta1p6_Vec.size(); i++) TriggerObjects_DoubleJetC112MaxDeta1p6.push_back( TriggerObjectType() );
+    for(unsigned int i = 0; i < DoubleJetC112_Vec.size(); i++) TriggerObjects_DoubleJetC112.push_back( TriggerObjectType() );
+    for(unsigned int i = 0; i < SixJet30_Vec.size(); i++) TriggerObjects_SixJet30.push_back( TriggerObjectType() );
+    for(unsigned int i = 0; i < QuadPFJetMqq240_Vec.size(); i++) TriggerObjects_QuadPFJetMqq240.push_back( TriggerObjectType() );
+    for(unsigned int i = 0; i < QuadPFJetMqq500_Vec.size(); i++) TriggerObjects_QuadPFJetMqq500.push_back( TriggerObjectType() );
     ////if (WriteFatJets) for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) CHSFatJets.push_back( FatJetType() );
     //for(unsigned int i = 0; i < TriggerVBFPairJetsVect.size(); i++) TriggerVBFPairJets.push_back( TriggerObjectType() );
     //for(unsigned int i = 0; i < PotentialTriggerDisplacedJets.size(); i++) TriggerDisplacedJets.push_back( TriggerObjectType() );
@@ -1437,9 +1448,32 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     ObjectsFormat::FillCandidateType(VBF, &theVBF, isMC);
     ObjectsFormat::FillCandidateType(TriggerVBF, &theTriggerVBF, isMC);
-    for(unsigned int i = 0; i < TriggerObjectsVector.size(); i++){
-      ObjectsFormat::FillTriggerObjectType(TriggerObjectsAll[i], &TriggerObjectsVector[i]);
+    // for(unsigned int i = 0; i < TriggerObjectsVector.size(); i++){
+    //   ObjectsFormat::FillTriggerObjectType(TriggerObjectsAll[i], &TriggerObjectsVector[i]);
+    // }
+    for(unsigned int i = 0; i < DoubleJet90_Vec.size(); i++){
+      ObjectsFormat::FillTriggerObjectType(TriggerObjects_DoubleJet90[i], &DoubleJet90_Vec[i]);
     }
+    for(unsigned int i = 0; i < QuadJet45_Vec.size(); i++){
+      ObjectsFormat::FillTriggerObjectType(TriggerObjects_QuadJet45[i], &QuadJet45_Vec[i]);
+    }
+    for(unsigned int i = 0; i < DoubleJetC112MaxDeta1p6_Vec.size(); i++){
+      ObjectsFormat::FillTriggerObjectType(TriggerObjects_DoubleJetC112MaxDeta1p6[i], &DoubleJetC112MaxDeta1p6_Vec[i]);
+    }
+    for(unsigned int i = 0; i < DoubleJetC112_Vec.size(); i++){
+      ObjectsFormat::FillTriggerObjectType(TriggerObjects_DoubleJetC112[i], &DoubleJetC112_Vec[i]);
+    }
+    for(unsigned int i = 0; i < SixJet30_Vec.size(); i++){
+      ObjectsFormat::FillTriggerObjectType(TriggerObjects_SixJet30[i], &SixJet30_Vec[i]);
+    }
+    for(unsigned int i = 0; i < QuadPFJetMqq240_Vec.size(); i++){
+      ObjectsFormat::FillTriggerObjectType(TriggerObjects_QuadPFJetMqq240[i], &QuadPFJetMqq240_Vec[i]);
+    }
+    for(unsigned int i = 0; i < QuadPFJetMqq500_Vec.size(); i++){
+      ObjectsFormat::FillTriggerObjectType(TriggerObjects_QuadPFJetMqq500[i], &QuadPFJetMqq500_Vec[i]);
+    }
+
+
     // 2020_12_18 comment, because this trigger isn't studied!
     // for(unsigned int i = 0; i < TripleJet50TriggerVec.size(); i++){
     //   ObjectsFormat::FillTriggerObjectType(TriggerObjects[i], &TripleJet50TriggerVec[i]);
@@ -1543,7 +1577,14 @@ TriggerStudies::beginJob()
     tree -> Branch("VBFPairJets", &VBFPairJets);
     // tree -> Branch("DisplacedJets", &DisplacedJets);
     // tree -> Branch("TripleJet50TriggerObjects", &TriggerObjects);
-    tree -> Branch("TriggerObjectsAll", &TriggerObjectsAll);
+    //    tree -> Branch("TriggerObjectsAll", &TriggerObjectsAll);
+    tree -> Branch("TriggerObjects_DoubleJet90", &TriggerObjects_DoubleJet90);
+    tree -> Branch("TriggerObjects_QuadJet45", &TriggerObjects_QuadJet45);
+    tree -> Branch("TriggerObjects_DoubleJetC112MaxDeta1p6", &TriggerObjects_DoubleJetC112MaxDeta1p6);
+    tree -> Branch("TriggerObjects_DoubleJetC112", &TriggerObjects_DoubleJetC112);
+    tree -> Branch("TriggerObjects_SixJet30", &TriggerObjects_SixJet30);
+    tree -> Branch("TriggerObjects_QuadPFJetMqq240", &TriggerObjects_QuadPFJetMqq240);
+    tree -> Branch("TriggerObjects_QuadPFJetMqq500", &TriggerObjects_QuadPFJetMqq500);
     tree -> Branch("Muons", &Muons);
     //tree -> Branch("TriggerVBFPairJets", &TriggerVBFPairJets);
     //tree -> Branch("TriggerDisplacedJets", &TriggerDisplacedJets);

@@ -151,7 +151,14 @@ class TriggerStudies : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
   //std::vector<JetType> MatchedJets;
     std::vector<JetType> Jets;
     std::vector<TriggerObjectType> TriggerObjects;
-    std::vector<TriggerObjectType> TriggerObjectsAll;
+  //    std::vector<TriggerObjectType> TriggerObjectsAll;
+    std::vector<TriggerObjectType> TriggerObjects_DoubleJet90;
+    std::vector<TriggerObjectType> TriggerObjects_QuadJet45;
+    std::vector<TriggerObjectType> TriggerObjects_DoubleJetC112MaxDeta1p6;
+    std::vector<TriggerObjectType> TriggerObjects_DoubleJetC112;
+    std::vector<TriggerObjectType> TriggerObjects_SixJet30;
+    std::vector<TriggerObjectType> TriggerObjects_QuadPFJetMqq240;
+    std::vector<TriggerObjectType> TriggerObjects_QuadPFJetMqq500;
     std::vector<JetType> DisplacedJets;
     std::vector<JetType> VBFPairJets;
     std::vector<JetType> SelectedVBFJets;

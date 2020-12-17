@@ -86,13 +86,16 @@ std::vector<pat::TriggerObjectStandAlone> TriggerAnalyzer::FillTriggerObjectVect
 
     edm::Handle<std::vector<pat::TriggerObjectStandAlone> > triggerObjectCollection;
     iEvent.getByToken(TriggerObjectToken, triggerObjectCollection);
+    const pat::TriggerObjectStandAloneCollection& triggerObjects = (*triggerObjectCollection.product());
 
     std::vector<pat::TriggerObjectStandAlone> Vect;
 
     //std::cout << "\n TRIGGER OBJECTS " << std::endl;
-    for(std::vector<pat::TriggerObjectStandAlone>::const_iterator it=triggerObjectCollection->begin(); it!=triggerObjectCollection->end(); ++it)
+    //    for(std::vector<pat::TriggerObjectStandAlone>::const_iterator it=triggerObjectCollection->begin(); it!=triggerObjectCollection->end(); ++it)
+    for (size_t it = 0; it < triggerObjects.size(); ++it)
       {
-	pat::TriggerObjectStandAlone obj=*it;
+	//	pat::TriggerObjectStandAlone obj=*it;
+	pat::TriggerObjectStandAlone obj = triggerObjects.at(it);
 	obj.unpackFilterLabels(iEvent, *hltTriggerResults);
 	obj.unpackPathNames(trigNames);
 
