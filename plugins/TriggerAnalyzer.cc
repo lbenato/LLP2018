@@ -100,25 +100,10 @@ std::vector<pat::TriggerObjectStandAlone> TriggerAnalyzer::FillTriggerObjectVect
 	std::vector< std::string > pathNamesLast = obj.pathNames(true);
 	if(pathNamesAll.size()>0)
 	  {
-
 		for (unsigned h = 0, n = pathNamesAll.size(); h < n; ++h)
 		  {
-		    //if(pathNamesAll[h].find("HLT_VBF_DisplacedJet40_VTightID_Hadronic_v") != std::string::npos)
 		    if(pathNamesAll[h].find(TrigName) != std::string::npos)
 		      {
-			/*
-			std::cout << "\tTrigger accomplished: " << pathNamesAll[h] << std::endl;
-			std::cout << "\tTrigger object:  pt " << obj.pt() << ", eta " << obj.eta() << ", phi " << obj.phi() << std::endl;
-			//// Print trigger object collection and type
-			std::cout << "\t   Collection: " << obj.collection() << std::endl;
-			std::cout << "\t   Type IDs:   ";
-			for (unsigned h = 0; h < obj.filterIds().size(); ++h) std::cout << " " << obj.filterIds()[h] ;
-			std::cout << std::endl;
-			//// Print associated trigger filters
-			std::cout << "\t   Filters:    ";
-			for (unsigned h = 0; h < obj.filterLabels().size(); ++h) std::cout << " " << obj.filterLabels()[h];
-			std::cout << std::endl;
-			*/
 			bool type = false;
 			for (unsigned l = 0; l < obj.filterIds().size(); ++l)
 			  {
@@ -147,15 +132,9 @@ std::vector<pat::TriggerObjectStandAlone> TriggerAnalyzer::FillTriggerObjectVect
 			std::cout << std::endl;
 			*/
 		      }
-
 		  }
-	      
-	    
 	  }
-	
-
       }
-    
     return Vect;
 
 }
@@ -210,10 +189,7 @@ void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::s
 	    Map[L1FiltersList[i]] = true;
 	  }
 	}
-	
-
-	}//loop trigger object collection
-    
+      }//loop trigger object collection
 }
 
 bool TriggerAnalyzer::GetBadPFMuonFlag(const edm::Event& iEvent) { 
