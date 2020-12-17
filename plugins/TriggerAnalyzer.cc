@@ -260,53 +260,7 @@ void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::s
       Map[L1FiltersList[i]] = false;
     }
     TriggerObjectVect.clear();
-    
-    //todo: comment for new setup from here until lines of new setup
-    // for(unsigned int i = 0; i < L1FiltersList.size(); i++) {
-    //   //      std::cout << "Filter " << L1FiltersList[i] << std::endl;
-    //   //      for(std::vector<pat::TriggerObjectStandAlone>::const_iterator it=triggerObjectCollection->begin(); it!=triggerObjectCollection->end(); ++it)
-    //   for (size_t it = 0; it < triggerObjects.size(); ++it)
-    // 	{
-    // 	  //	  pat::TriggerObjectStandAlone obj=*it;
-    // 	  pat::TriggerObjectStandAlone obj = triggerObjects.at(it);
-    // 	  obj.unpackFilterLabels(iEvent, *hltTriggerResults);
-    // 	  obj.unpackPathNames(trigNames);
-
-    // 	  std::vector< std::string > pathNamesAll = obj.pathNames(false);
-    // 	  std::vector< std::string > pathNamesLast = obj.pathNames(true);
-    // 	  if(pathNamesAll.size()>0)
-    // 	    {
-
-    // 	      for (unsigned h = 0, n = pathNamesAll.size(); h < n; ++h)
-    // 	  	{
-    // 		  //	  	  std::cout << "path names " << pathNamesAll[h] << std::endl;
-    // 	  	  //if(pathNamesAll[h].find("HLT_VBF_DisplacedJet40_VTightID_Hadronic_v") != std::string::npos)//new!NO!IN THIS WAY IT SAVES THE FILTERS ONLY IF THE MAIN PATH IS FIRED! BUUUG!
-
-    // 	  	    //{//new! and to be debugged....
-
-    // 	  	      //bool type = false;
-
-    // 	  	      for (unsigned h = 0; h < obj.filterLabels().size(); ++h)
-    // 	  		{
-    // 	  		  /////if(obj.filterLabels()[h]==) then.... fill the map;
-    // 	  		  if(obj.filterLabels()[h].find(L1FiltersList[i]) != std::string::npos) {
-    // 	  		    //std::cout << "Looping over L1 filters, this found: " << std::endl;
-    // 	  		    //std::cout << obj.filterLabels()[h] << std::endl;
-    // 	  		    Map[L1FiltersList[i]] = true;
-    // 			    //	  		    std::cout << "filter true " << std::endl;
-    // 	  		    //unsigned int index = trigNames.triggerIndex(trigNames.triggerName(j));
-    // 	  		    //if(hltTriggerResults->accept(index)) Map[MetFiltersList[i]] = true;
-			
-    // 	  		  }//if clause L1 filters 
-    // 	  		}//loop filterLabels
-    // 	  	 //}//new!
-
-    // 	  	}//loop pathNames
-	      
-	    
-    // 	    }//if pathNames exist
-
-    //	  todo: new setup works differently!
+    //	  2020_12_18: new setup works differently! Filter not broken!
     for (size_t it = 0; it < triggerObjects.size(); ++it)
       {
 	pat::TriggerObjectStandAlone obj = triggerObjects.at(it);
@@ -321,8 +275,6 @@ void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::s
 	
 
 	}//loop trigger object collection
-      //todo: comment the following line as well for new setup
-//      }//loop L1FiltersList set to false
     
 }
 
