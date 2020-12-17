@@ -160,6 +160,7 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     number_of_PV = number_of_SV = 0;//27 Sep: remember to properly initialize everything
     nJets = nLooseJets = nTightJets = nVBFPairJets = nTriggerObjectsTripleJet50 = nTriggerObjectsTripleJet50WithDuplicates = 0;
     nTriggerObjects = nTriggerVBFPairJets = 0;
+    nTriggerObjectsDoubleJet90 = nTriggerObjectsQuadJet45 = nTriggerObjectsDoubleJetC112MaxDeta1p6 = nTriggerObjectsDoubleJetC112 = nTriggerObjectsSixJet30 = nTriggerObjectsQuadPFJetMqq240 = nTriggerObjectsQuadPFJetMqq500 = 0;
     //    nSelectedDisplacedJet = nSelectedVBFJets = 0;
     nCHSFatJets = nLooseCHSFatJets = nTightCHSFatJets = nGenBquarks = nGenLL = nPV = nSV = 0;
     nMatchedJets = 0;
@@ -208,6 +209,37 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::string IsoMu24_string;
     IsoMu24_string = "HLT_IsoMu24_v";
     std::vector<pat::TriggerObjectStandAlone> IsoMu24_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,IsoMu24_string);
+
+
+    //TODO: ADD MATCHING TO JETS!!!!!
+
+    std::string DoubleJet90_string = "HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v";
+    std::vector<pat::TriggerObjectStandAlone> DoubleJet90_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,DoubleJet90_string);
+    nTriggerObjectsDoubleJet90 = DoubleJet90_Vec.size();
+
+    std::string QuadJet45_string = "HLT_QuadJet45_TripleBTagCSV_p087_v";
+    std::vector<pat::TriggerObjectStandAlone> QuadJet45_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,QuadJet45_string);
+    nTriggerObjectsQuadJet45 = QuadJet45_Vec.size();
+
+    std::string DoubleJetC112MaxDeta1p6_string = "HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v";
+    std::vector<pat::TriggerObjectStandAlone> DoubleJetC112MaxDeta1p6_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,DoubleJetC112MaxDeta1p6_string);
+    nTriggerObjectsDoubleJetC112MaxDeta1p6 = DoubleJetC112MaxDeta1p6_Vec.size();
+
+    std::string DoubleJetC112_string = "HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v";
+    std::vector<pat::TriggerObjectStandAlone> DoubleJetC112_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,DoubleJetC112_string);
+    nTriggerObjectsDoubleJetC112 = DoubleJetC112_Vec.size();
+    
+    std::string SixJet30_string = "HLT_PFHT400_SixJet30_DoubleBTagCSV_p056_v";
+    std::vector<pat::TriggerObjectStandAlone> SixJet30_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,SixJet30_string);
+    nTriggerObjectsSixJet30 = SixJet30_Vec.size();
+
+    std::string QuadPFJetMqq240_string = "HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v";
+    std::vector<pat::TriggerObjectStandAlone> QuadPFJetMqq240_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,QuadPFJetMqq240_string);
+    nTriggerObjectsQuadPFJetMqq240 = QuadPFJetMqq240_Vec.size();
+
+    std::string QuadPFJetMqq500_string = "HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v";
+    std::vector<pat::TriggerObjectStandAlone> QuadPFJetMqq500_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,QuadPFJetMqq500_string);
+    nTriggerObjectsQuadPFJetMqq500 = QuadPFJetMqq500_Vec.size();
 
     //Remove duplicates from VBF_DisplacedJet40_VTightID_Hadronic_Vec
 
@@ -514,37 +546,37 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
     // Debug hltTripleJet50
-    std::string all_trigger_string;
-    all_trigger_string = "HLT";
-    std::vector<pat::TriggerObjectStandAlone> AllTriggerVec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,all_trigger_string);
-    std::vector<pat::TriggerObjectStandAlone> TripleJet50TriggerVec;
-    std::vector<pat::TriggerObjectStandAlone> TripleJet50TriggerWithDuplicatesVec;
+    // std::string all_trigger_string;
+    // all_trigger_string = "HLT";
+    // std::vector<pat::TriggerObjectStandAlone> AllTriggerVec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,all_trigger_string);
+    // std::vector<pat::TriggerObjectStandAlone> TripleJet50TriggerVec;
+    // std::vector<pat::TriggerObjectStandAlone> TripleJet50TriggerWithDuplicatesVec;
 
-    for(unsigned int r = 0; r<AllTriggerVec.size(); r++)
-      {
+    // for(unsigned int r = 0; r<AllTriggerVec.size(); r++)
+    //   {
 
-    	for (unsigned h = 0; h < AllTriggerVec.at(r).filterIds().size(); ++h)
-    	  {
-    	    //if( (AllTriggerVec.at(r).filterIds()[h])==85 or (AllTriggerVec.at(r).filterIds()[h])==86)
-    	      //remove condition of being jets?
-    	      //{
-    		for (unsigned l = 0; l < AllTriggerVec.at(r).filterLabels().size(); ++l)
-    		  {
-    		    if(AllTriggerVec.at(r).filterLabels()[l]=="hltTripleJet50")
-    		      {
-    			//std::cout << "Object matched to hltTripleJet50!" << std::endl;
-    			//std::cout << "pT: " << AllTriggerVec.at(r).pt() << std::endl;
-    			//std::cout << "eta: " << AllTriggerVec.at(r).eta() << std::endl;
-    			TripleJet50TriggerWithDuplicatesVec.push_back(AllTriggerVec.at(r));
-    			TripleJet50TriggerVec.push_back(AllTriggerVec.at(r));
-    		      }
+    // 	for (unsigned h = 0; h < AllTriggerVec.at(r).filterIds().size(); ++h)
+    // 	  {
+    // 	    //if( (AllTriggerVec.at(r).filterIds()[h])==85 or (AllTriggerVec.at(r).filterIds()[h])==86)
+    // 	      //remove condition of being jets?
+    // 	      //{
+    // 		for (unsigned l = 0; l < AllTriggerVec.at(r).filterLabels().size(); ++l)
+    // 		  {
+    // 		    if(AllTriggerVec.at(r).filterLabels()[l]=="hltTripleJet50")
+    // 		      {
+    // 			//std::cout << "Object matched to hltTripleJet50!" << std::endl;
+    // 			//std::cout << "pT: " << AllTriggerVec.at(r).pt() << std::endl;
+    // 			//std::cout << "eta: " << AllTriggerVec.at(r).eta() << std::endl;
+    // 			TripleJet50TriggerWithDuplicatesVec.push_back(AllTriggerVec.at(r));
+    // 			TripleJet50TriggerVec.push_back(AllTriggerVec.at(r));
+    // 		      }
 
-    		  }		
-    	      //}
+    // 		  }		
+    // 	      //}
 
-    	  }
+    // 	  }
 
-      }
+    //   }
 
 
     /*
@@ -619,6 +651,66 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //   }
 
 
+    for(unsigned int s = 0; s<JetsVect.size(); s++){
+      float current_delta_R_DoubleJet90 = 1000.;
+      for(unsigned int t1 = 0; t1 < DoubleJet90_Vec.size(); t1++){
+	current_delta_R_DoubleJet90 = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),DoubleJet90_Vec.at(t1).eta(),DoubleJet90_Vec.at(t1).phi()));
+	if (current_delta_R_DoubleJet90<0.5){
+	  JetsVect.at(s).addUserInt("TriggerMatched_DoubleJet90",1);
+	  break;
+	}
+      }
+      float current_delta_R_QuadJet45 = 1000.;
+      for(unsigned int t1 = 0; t1 < QuadJet45_Vec.size(); t1++){
+	current_delta_R_QuadJet45 = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),QuadJet45_Vec.at(t1).eta(),QuadJet45_Vec.at(t1).phi()));
+	if (current_delta_R_QuadJet45<0.5){
+	  JetsVect.at(s).addUserInt("TriggerMatched_QuadJet45",1);
+	  break;
+	}
+      }
+      float current_delta_R_DoubleJetC112MaxDeta1p6 = 1000.;
+      for(unsigned int t1 = 0; t1 < DoubleJetC112MaxDeta1p6_Vec.size(); t1++){
+	current_delta_R_DoubleJetC112MaxDeta1p6 = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),DoubleJetC112MaxDeta1p6_Vec.at(t1).eta(),DoubleJetC112MaxDeta1p6_Vec.at(t1).phi()));
+	if (current_delta_R_DoubleJetC112MaxDeta1p6<0.5){
+	  JetsVect.at(s).addUserInt("TriggerMatched_DoubleJetC112MaxDeta1p6",1);
+	  break;
+	}
+      }
+      float current_delta_R_DoubleJetC112 = 1000.;
+      for(unsigned int t1 = 0; t1 < DoubleJetC112_Vec.size(); t1++){
+	current_delta_R_DoubleJetC112 = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),DoubleJetC112_Vec.at(t1).eta(),DoubleJetC112_Vec.at(t1).phi()));
+	if (current_delta_R_DoubleJetC112<0.5){
+	  JetsVect.at(s).addUserInt("TriggerMatched_DoubleJetC112",1);
+	  break;
+	}
+      }
+      float current_delta_R_SixJet30 = 1000.;
+      for(unsigned int t1 = 0; t1 < SixJet30_Vec.size(); t1++){
+	current_delta_R_SixJet30 = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),SixJet30_Vec.at(t1).eta(),SixJet30_Vec.at(t1).phi()));
+	if (current_delta_R_SixJet30<0.5){
+	  JetsVect.at(s).addUserInt("TriggerMatched_SixJet30",1);
+	  break;
+	}
+      }
+      float current_delta_R_QuadPFJetMqq240 = 1000.;
+      for(unsigned int t1 = 0; t1 < QuadPFJetMqq240_Vec.size(); t1++){
+	current_delta_R_QuadPFJetMqq240 = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),QuadPFJetMqq240_Vec.at(t1).eta(),QuadPFJetMqq240_Vec.at(t1).phi()));
+	if (current_delta_R_QuadPFJetMqq240<0.5){
+	  JetsVect.at(s).addUserInt("TriggerMatched_QuadPFJetMqq240",1);
+	  break;
+	}
+      }
+      float current_delta_R_QuadPFJetMqq500 = 1000.;
+      for(unsigned int t1 = 0; t1 < QuadPFJetMqq500_Vec.size(); t1++){
+	current_delta_R_QuadPFJetMqq500 = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),QuadPFJetMqq500_Vec.at(t1).eta(),QuadPFJetMqq500_Vec.at(t1).phi()));
+	if (current_delta_R_QuadPFJetMqq500<0.5){
+	  JetsVect.at(s).addUserInt("TriggerMatched_QuadPFJetMqq500",1);
+	  break;
+	}
+      }
+
+
+    }//end loop over jets
 
 
     /*
@@ -1243,8 +1335,8 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       std::cout << "number of CHS AK4 jets:  " << JetsVect.size() << std::endl;
       for(unsigned int i = 0; i < JetsVect.size(); i++) std::cout << "  CHS AK4 jet  [" << i << "]\tpt: " << JetsVect[i].pt() << "\teta: " << JetsVect[i].eta() << "\tphi: " << JetsVect[i].phi() << "\tmass: " << JetsVect[i].mass() << std::endl;
 
-      std::cout << "number of trigger objects matched to hltTripleJet50:  " << TripleJet50TriggerVec.size() << std::endl;
-      for(unsigned int i = 0; i < TripleJet50TriggerVec.size(); i++) std::cout << "  Trigger object  [" << i << "]\tpt: " << TripleJet50TriggerVec[i].pt() << "\teta: " << TripleJet50TriggerVec[i].eta() << "\tphi: " << TripleJet50TriggerVec[i].phi() << "\tmass: " << TripleJet50TriggerVec[i].mass() << std::endl;
+      //      std::cout << "number of trigger objects matched to hltTripleJet50:  " << TripleJet50TriggerVec.size() << std::endl;
+      //      for(unsigned int i = 0; i < TripleJet50TriggerVec.size(); i++) std::cout << "  Trigger object  [" << i << "]\tpt: " << TripleJet50TriggerVec[i].pt() << "\teta: " << TripleJet50TriggerVec[i].eta() << "\tphi: " << TripleJet50TriggerVec[i].phi() << "\tmass: " << TripleJet50TriggerVec[i].mass() << std::endl;
       std::cout << "VBF jets pair:  " << VBFPairJetsVect.size() << std::endl;
       if(isVBF) std::cout << "VBF conditions satisfied" << std::endl;
       for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) std::cout << "  VBF jet  [" << i << "]\tpt: " << VBFPairJetsVect[i].pt() << "\teta: " << VBFPairJetsVect[i].eta() << "\tphi: " << VBFPairJetsVect[i].phi() << "\tmass: " << VBFPairJetsVect[i].mass() << std::endl;
@@ -1396,8 +1488,15 @@ TriggerStudies::beginJob()
     //tree -> Branch("ZewkWeight", &ZewkWeight, "ZewkWeight/F");
     //tree -> Branch("WewkWeight", &WewkWeight, "WewkWeight/F");
     tree -> Branch("nJets" , &nJets , "nJets/L");
-    tree -> Branch("nTriggerObjectsTripleJet50" , &nTriggerObjectsTripleJet50 , "nTriggerObjectsTripleJet50/L");
-    tree -> Branch("nTriggerObjectsTripleJet50WithDuplicates" , &nTriggerObjectsTripleJet50WithDuplicates , "nTriggerObjectsTripleJet50WithDuplicates/L");
+    //    tree -> Branch("nTriggerObjectsTripleJet50" , &nTriggerObjectsTripleJet50 , "nTriggerObjectsTripleJet50/L");
+    //    tree -> Branch("nTriggerObjectsTripleJet50WithDuplicates" , &nTriggerObjectsTripleJet50WithDuplicates , "nTriggerObjectsTripleJet50WithDuplicates/L");
+    tree -> Branch("nTriggerObjectsDoubleJet90" , &nTriggerObjectsDoubleJet90 , "nTriggerObjectsDoubleJet90/L");
+    tree -> Branch("nTriggerObjectsQuadJet45" , &nTriggerObjectsQuadJet45 , "nTriggerObjectsQuadJet45/L");
+    tree -> Branch("nTriggerObjectsDoubleJetC112MaxDeta1p6" , &nTriggerObjectsDoubleJetC112MaxDeta1p6 , "nTriggerObjectsDoubleJetC112MaxDeta1p6/L");
+    tree -> Branch("nTriggerObjectsDoubleJetC112" , &nTriggerObjectsDoubleJetC112 , "nTriggerObjectsDoubleJetC112/L");
+    tree -> Branch("nTriggerObjectsSixJet30" , &nTriggerObjectsSixJet30 , "nTriggerObjectsSixJet30/L");
+    tree -> Branch("nTriggerObjectsQuadPFJetMqq240" , &nTriggerObjectsQuadPFJetMqq240 , "nTriggerObjectsQuadPFJetMqq240/L");
+    tree -> Branch("nTriggerObjectsQuadPFJetMqq500" , &nTriggerObjectsQuadPFJetMqq500 , "nTriggerObjectsQuadPFJetMqq500/L");
     tree -> Branch("nLooseJets" , &nLooseJets , "nLooseJets/L");
     tree -> Branch("nTightJets" , &nTightJets , "nTightJets/L");
     tree -> Branch("nLooseCaloTagJets" , &nLooseCaloTagJets , "nLooseCaloTagJets/L");

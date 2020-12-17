@@ -196,6 +196,7 @@ class TriggerStudies : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     long int nMatchedJets;
     long int nSelectedDisplacedJet, nSelectedVBFJets;
     long int nDisplaced;
+    long int nTriggerObjectsDoubleJet90, nTriggerObjectsQuadJet45, nTriggerObjectsDoubleJetC112MaxDeta1p6, nTriggerObjectsDoubleJetC112, nTriggerObjectsSixJet30, nTriggerObjectsQuadPFJetMqq240, nTriggerObjectsQuadPFJetMqq500;
     long int number_of_b_matched_to_Jets;
     long int nElectrons, nMuons, nTaus, nPhotons;
     long int nTightElectrons, nTightMuons;
