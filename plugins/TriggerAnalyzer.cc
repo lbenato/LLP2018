@@ -51,8 +51,6 @@ void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::str
 
     edm::Handle<pat::PackedTriggerPrescales> l1MaxTriggerPrescales;
     iEvent.getByToken(L1MaxPrescalesToken, l1MaxTriggerPrescales);
-    //edm::Handle<std::vector<pat::TriggerObjectStandAlone> > triggerObjectCollection;
-    //iEvent.getByToken(TriggerObjectToken, triggerObjectCollection);
 
     //for(unsigned int j=0, in=trigNames.size(); j < in; j++) std::cout << trigNames.triggerName(j) << std::endl;
     
@@ -75,66 +73,6 @@ void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::str
         }
     }
 
-    /*
-    std::cout << "\n TRIGGER OBJECTS " << std::endl;
-    for(std::vector<pat::TriggerObjectStandAlone>::const_iterator it=triggerObjectCollection->begin(); it!=triggerObjectCollection->end(); ++it)
-      {
-	pat::TriggerObjectStandAlone obj=*it;
-	obj.unpackFilterLabels(iEvent, *hltTriggerResults);
-	obj.unpackPathNames(trigNames);
-
-	std::vector< std::string > pathNamesAll = obj.pathNames(false);
-	std::vector< std::string > pathNamesLast = obj.pathNames(true);
-	if(pathNamesAll.size()>0)
-	  {
-
-	    for(unsigned int i = 0; i < TriggerList.size(); i++)
-	      {
-		for (unsigned h = 0, n = pathNamesAll.size(); h < n; ++h)
-		  {
-		    if(pathNamesAll[h].find(TriggerList[i]) != std::string::npos)
-		      {
-			std::cout << "\tTrigger accomplished: " << TriggerList[i]  << std::endl;
-			std::cout << "\tTrigger object:  pt " << obj.pt() << ", eta " << obj.eta() << ", phi " << obj.phi() << std::endl;
-			//// Print trigger object collection and type
-			std::cout << "\t   Collection: " << obj.collection() << std::endl;
-			std::cout << "\t   Type IDs:   ";
-			for (unsigned h = 0; h < obj.filterIds().size(); ++h) std::cout << " " << obj.filterIds()[h] ;
-			std::cout << std::endl;
-			//// Print associated trigger filters
-			std::cout << "\t   Filters:    ";
-			for (unsigned h = 0; h < obj.filterLabels().size(); ++h) std::cout << " " << obj.filterLabels()[h];
-			std::cout << std::endl;
-
-			// Print all trigger paths, for each one record also if the object is associated to a 'l3' filter (always true for the
-			// definition used in the PAT trigger producer) and if it's associated to the last filter of a successfull path (which
-			// means that this object did cause this trigger to succeed; however, it doesn't work on some multi-object triggers)
-			std::cout << "\t   Paths (" << pathNamesAll.size()<<"/"<<pathNamesLast.size()<<"):    ";
-			for (unsigned h = 0, n = pathNamesAll.size(); h < n; ++h)
-			  {
-			    bool isBoth = obj.hasPathName( pathNamesAll[h], true, true );
-			    bool isL3   = obj.hasPathName( pathNamesAll[h], false, true );
-			    bool isLF   = obj.hasPathName( pathNamesAll[h], true, false );
-			    bool isNone = obj.hasPathName( pathNamesAll[h], false, false );
-			    std::cout << "   " << pathNamesAll[h];
-			    if (isBoth) std::cout << "(L,3)";
-			    if (isL3 && !isBoth) std::cout << "(*,3)";
-			    if (isLF && !isBoth) std::cout << "(L,*)";
-			    if (isNone && !isBoth && !isL3 && !isLF) std::cout << "(*,*)";
-			  }
-			std::cout << std::endl;
-			std::cout << std::endl;
-		      }
-
-		  }
-	      }
-	    
-	  }
-
-
-      }
-    
-    */
 }
 
 
