@@ -244,86 +244,85 @@ void TriggerAnalyzer::FillMetFiltersMap(const edm::Event& iEvent, std::map<std::
 }
 
 ////////////////////////////////////////////////
-void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::string, bool>& Map) {
+void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::string, bool>& Map, std::vector<pat::TriggerObjectStandAlone>& TriggerObjectVect) {
 
     edm::Handle<edm::TriggerResults> hltTriggerResults;
     iEvent.getByToken(TriggerToken, hltTriggerResults);
     const edm::TriggerNames& trigNames = iEvent.triggerNames(*hltTriggerResults);
+
     edm::Handle<std::vector<pat::TriggerObjectStandAlone> > triggerObjectCollection;
     iEvent.getByToken(TriggerObjectToken, triggerObjectCollection);
-
+    const pat::TriggerObjectStandAloneCollection& triggerObjects = (*triggerObjectCollection.product());
 
     //    std::cout << "\n TRIGGER OBJECTS " << std::endl;
 
     for(unsigned int i = 0; i < L1FiltersList.size(); i++) {
       Map[L1FiltersList[i]] = false;
+    }
+    TriggerObjectVect.clear();
+    
+    //todo: comment for new setup from here until lines of new setup
+    // for(unsigned int i = 0; i < L1FiltersList.size(); i++) {
+    //   //      std::cout << "Filter " << L1FiltersList[i] << std::endl;
+    //   //      for(std::vector<pat::TriggerObjectStandAlone>::const_iterator it=triggerObjectCollection->begin(); it!=triggerObjectCollection->end(); ++it)
+    //   for (size_t it = 0; it < triggerObjects.size(); ++it)
+    // 	{
+    // 	  //	  pat::TriggerObjectStandAlone obj=*it;
+    // 	  pat::TriggerObjectStandAlone obj = triggerObjects.at(it);
+    // 	  obj.unpackFilterLabels(iEvent, *hltTriggerResults);
+    // 	  obj.unpackPathNames(trigNames);
 
-      for(std::vector<pat::TriggerObjectStandAlone>::const_iterator it=triggerObjectCollection->begin(); it!=triggerObjectCollection->end(); ++it)
-	{
-	  pat::TriggerObjectStandAlone obj=*it;
-	  obj.unpackFilterLabels(iEvent, *hltTriggerResults);
-	  obj.unpackPathNames(trigNames);
+    // 	  std::vector< std::string > pathNamesAll = obj.pathNames(false);
+    // 	  std::vector< std::string > pathNamesLast = obj.pathNames(true);
+    // 	  if(pathNamesAll.size()>0)
+    // 	    {
 
-	  std::vector< std::string > pathNamesAll = obj.pathNames(false);
-	  std::vector< std::string > pathNamesLast = obj.pathNames(true);
-	  if(pathNamesAll.size()>0)
-	    {
+    // 	      for (unsigned h = 0, n = pathNamesAll.size(); h < n; ++h)
+    // 	  	{
+    // 		  //	  	  std::cout << "path names " << pathNamesAll[h] << std::endl;
+    // 	  	  //if(pathNamesAll[h].find("HLT_VBF_DisplacedJet40_VTightID_Hadronic_v") != std::string::npos)//new!NO!IN THIS WAY IT SAVES THE FILTERS ONLY IF THE MAIN PATH IS FIRED! BUUUG!
 
-	      for (unsigned h = 0, n = pathNamesAll.size(); h < n; ++h)
-		{
+    // 	  	    //{//new! and to be debugged....
 
+    // 	  	      //bool type = false;
 
-
-
-
-		  
-		  //if(pathNamesAll[h].find("HLT_VBF_DisplacedJet40_VTightID_Hadronic_v") != std::string::npos)//new!NO!IN THIS WAY IT SAVES THE FILTERS ONLY IF THE MAIN PATH IS FIRED! BUUUG!
-
-		    //{//new! and to be debugged....
-
-		      //bool type = false;
-
-		      for (unsigned h = 0; h < obj.filterLabels().size(); ++h)
-			{
-			  /////if(obj.filterLabels()[h]==) then.... fill the map;
-			  if(obj.filterLabels()[h].find(L1FiltersList[i]) != std::string::npos) {
-			    //std::cout << "Looping over L1 filters, this found: " << std::endl;
-			    //std::cout << obj.filterLabels()[h] << std::endl;
-			    Map[L1FiltersList[i]] = true;
-			    //unsigned int index = trigNames.triggerIndex(trigNames.triggerName(j));
-			    //if(hltTriggerResults->accept(index)) Map[MetFiltersList[i]] = true;
+    // 	  	      for (unsigned h = 0; h < obj.filterLabels().size(); ++h)
+    // 	  		{
+    // 	  		  /////if(obj.filterLabels()[h]==) then.... fill the map;
+    // 	  		  if(obj.filterLabels()[h].find(L1FiltersList[i]) != std::string::npos) {
+    // 	  		    //std::cout << "Looping over L1 filters, this found: " << std::endl;
+    // 	  		    //std::cout << obj.filterLabels()[h] << std::endl;
+    // 	  		    Map[L1FiltersList[i]] = true;
+    // 			    //	  		    std::cout << "filter true " << std::endl;
+    // 	  		    //unsigned int index = trigNames.triggerIndex(trigNames.triggerName(j));
+    // 	  		    //if(hltTriggerResults->accept(index)) Map[MetFiltersList[i]] = true;
 			
-			  }
-		      
-			}
+    // 	  		  }//if clause L1 filters 
+    // 	  		}//loop filterLabels
+    // 	  	 //}//new!
 
-
-
-		 //}//new!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		}
+    // 	  	}//loop pathNames
 	      
 	    
-	    }
+    // 	    }//if pathNames exist
+
+    //	  todo: new setup works differently!
+    for (size_t it = 0; it < triggerObjects.size(); ++it)
+      {
+	pat::TriggerObjectStandAlone obj = triggerObjects.at(it);
+	obj.unpackFilterLabels(iEvent, *hltTriggerResults);
+	obj.unpackPathNames(trigNames);
+	TriggerObjectVect.push_back(obj);
+	for(unsigned int i = 0; i < L1FiltersList.size(); i++) {
+	  if (obj.hasFilterLabel(L1FiltersList[i])){
+	    Map[L1FiltersList[i]] = true;
+	  }
+	}
 	
 
-	}
-
-    }
+	}//loop trigger object collection
+      //todo: comment the following line as well for new setup
+//      }//loop L1FiltersList set to false
     
 }
 

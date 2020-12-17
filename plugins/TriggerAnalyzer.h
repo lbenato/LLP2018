@@ -34,7 +34,7 @@ class TriggerAnalyzer {
 	virtual bool EvaluatePrefiring(const edm::Event&);//Pre-Firing
 	virtual std::vector<pat::TriggerObjectStandAlone> FillTriggerObjectVector(const edm::Event&, std::string&);
 	//virtual std::vector<pat::TriggerObjectStandAlone> FillTriggerObjectVector(const edm::Event&);
-        virtual void FillL1FiltersMap(const edm::Event&, std::map<std::string, bool>&);
+        virtual void FillL1FiltersMap(const edm::Event&, std::map<std::string, bool>&, std::vector<pat::TriggerObjectStandAlone>&);
         virtual void Debug(const edm::Event&);
         virtual void L1Bits(const edm::Event&);
       
