@@ -473,6 +473,13 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     //I.TriggerMatched_VBFJet = R->hasUserInt("TriggerMatched_VBFJet") ? R->userInt("TriggerMatched_VBFJet") : 0;
     //I.TriggerMatched_DisplacedJet = R->hasUserInt("TriggerMatched_DisplacedJet") ? R->userInt("TriggerMatched_DisplacedJet") : 0;
     //I.TriggerMatched_TripleJet50 = R->hasUserInt("TriggerMatched_TripleJet50") ? R->userInt("TriggerMatched_TripleJet50") : 0;
+    I.TriggerMatched_DoubleJet90 = R->hasUserInt("TriggerMatched_DoubleJet90") ? R->userInt("TriggerMatched_DoubleJet90") : 0;
+    I.TriggerMatched_QuadJet45 = R->hasUserInt("TriggerMatched_QuadJet45") ? R->userInt("TriggerMatched_QuadJet45") : 0;
+    I.TriggerMatched_DoubleJetC112MaxDeta1p6 = R->hasUserInt("TriggerMatched_DoubleJetC112MaxDeta1p6") ? R->userInt("TriggerMatched_DoubleJetC112MaxDeta1p6") : 0;
+    I.TriggerMatched_DoubleJetC112 = R->hasUserInt("TriggerMatched_DoubleJetC112") ? R->userInt("TriggerMatched_DoubleJetC112") : 0;
+    I.TriggerMatched_SixJet30 = R->hasUserInt("TriggerMatched_SixJet30") ? R->userInt("TriggerMatched_SixJet30") : 0;
+    I.TriggerMatched_QuadPFJetMqq240 = R->hasUserInt("TriggerMatched_QuadPFJetMqq240") ? R->userInt("TriggerMatched_QuadPFJetMqq240") : 0;
+    I.TriggerMatched_QuadPFJetMqq500 = R->hasUserInt("TriggerMatched_QuadPFJetMqq500") ? R->userInt("TriggerMatched_QuadPFJetMqq500") : 0;
     I.nConstituents = R->hasUserInt("nConstituents") ? R->userInt("nConstituents") : -1;
     I.nTrackConstituents = R->hasUserInt("nTrackConstituents") ? R->userInt("nTrackConstituents") : -1;
     I.nTracks0PixelHits = R->hasUserInt("nTracks0PixelHits") ? R->userInt("nTracks0PixelHits") : -1;
@@ -769,6 +776,13 @@ void ObjectsFormat::ResetJetType(JetType& I) {
     //I.TriggerMatched_VBFJet = 0;
     //I.TriggerMatched_DisplacedJet = 0;
     //I.TriggerMatched_TripleJet50 = 0;
+    I.TriggerMatched_DoubleJet90 = 0;
+    I.TriggerMatched_QuadJet45 = 0;
+    I.TriggerMatched_DoubleJetC112MaxDeta1p6 = 0;
+    I.TriggerMatched_DoubleJetC112 = 0;
+    I.TriggerMatched_SixJet30 = 0;
+    I.TriggerMatched_QuadPFJetMqq240 = 0;
+    I.TriggerMatched_QuadPFJetMqq500 = 0;
     I.tau1 = -1.;
     I.tau2 = -1.;
     I.tau3 = -1.;

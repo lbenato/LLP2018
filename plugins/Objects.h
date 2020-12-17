@@ -131,7 +131,8 @@ sig1PF(-1.), sig2PF(-1.), sigAvPF(-1.),tan2thetaPF(-99999999.),ptDPF(-1.),
 //LLP calo tagger
 sigprob(-1.),
 //Imperial College tagger
-pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP1000(-1.), deepCSV_probb_probbb(-99.), deepCSV_probc_probudsg(-99.), deepCSV_probudsg(-99.), deepCSV_probb(-99.), deepCSV_probc(-99.), deepCSV_probbb(-99.), deepJet_probc_probg_probuds(-99.), deepJet_probb_probbb_problepb(-99.), deepJet_probuds(-99.),deepJet_probg(-99.), deepJet_problepb(-99.), deepJet_probb(-99.), deepJet_probc(-99.), deepJet_probbb(-99.){}
+    pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP1000(-1.), deepCSV_probb_probbb(-99.), deepCSV_probc_probudsg(-99.), deepCSV_probudsg(-99.), deepCSV_probb(-99.), deepCSV_probc(-99.), deepCSV_probbb(-99.), deepJet_probc_probg_probuds(-99.), deepJet_probb_probbb_problepb(-99.), deepJet_probuds(-99.),deepJet_probg(-99.), deepJet_problepb(-99.), deepJet_probb(-99.), deepJet_probc(-99.), deepJet_probbb(-99.),
+    TriggerMatched_DoubleJet90(0),  TriggerMatched_QuadJet45(0),  TriggerMatched_DoubleJetC112MaxDeta1p6(0),  TriggerMatched_DoubleJetC112(0),  TriggerMatched_SixJet30(0),  TriggerMatched_QuadPFJetMqq240(0),  TriggerMatched_QuadPFJetMqq500(0){}
     float pt;
     float eta;
     float phi;
@@ -442,6 +443,14 @@ pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP10
     float deepJet_probb;
     float deepJet_probc;
     float deepJet_probbb;
+
+    int TriggerMatched_DoubleJet90;
+    int TriggerMatched_QuadJet45;
+    int TriggerMatched_DoubleJetC112MaxDeta1p6;
+    int TriggerMatched_DoubleJetC112;
+    int TriggerMatched_SixJet30;
+    int TriggerMatched_QuadPFJetMqq240;
+    int TriggerMatched_QuadPFJetMqq500;
 };
 
 
