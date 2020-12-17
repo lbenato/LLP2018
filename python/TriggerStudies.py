@@ -993,7 +993,8 @@ process.trigger = cms.EDAnalyzer('TriggerStudies',
            'hltPreDoubleJetsC112DoubleBTagCSVp026DoublePFJetsC172','hltBTagCaloCSVp026DoubleWithMatching','hltDoublePFJetsC172',
            #Filters for HLT_ QuadJet45_TripleBTagCSV_p087
            # 'HLTAK4CaloJetsSequence','HLTFastPrimaryVertexSequence','HLTBtagCSVSequenceL3','HLTAK4PFJetsSequence',
-           'hltL1sQuadJetCIorTripleJetVBFIorHTT','hltPreQuadJet45TripleBTagCSVp087','hltQuadCentralJet45','hltBTagCaloCSVp087Triple','hltQuadPFCentralJetLooseID4',
+           'hltL1sQuadJetC50IorQuadJetC60IorHTT280IorHTT300IorHTT320IorTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBF',
+           'hltL1sQuadJetCIorTripleJetVBFIorHTT','hltPreQuadJet45TripleBTagCSVp087','hltQuadCentralJet45','hltBTagCaloCSVp087Triple','hltQuadPFCentralJetLooseID45',
            #Filters for HLT_DoubleJet90_Double30_TripleBTagCSV_p087
            'hltL1sTripleJetVBFIorHTTIorDoubleJetCIorSingleJet', 'hltPreDoubleJet90Double30TripleBTagCSVp087',
            #'HLTAK4CaloJetsSequence',
