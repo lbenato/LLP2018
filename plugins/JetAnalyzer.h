@@ -99,7 +99,7 @@ class JetAnalyzer {
         virtual pat::MET FillMetVector(const edm::Event&);
 	virtual float GetMetTriggerEfficiency(pat::MET&);
         virtual void ApplyRecoilCorrections(pat::MET&, const reco::Candidate::LorentzVector*, const reco::Candidate::LorentzVector*, int);
-        virtual float CalculateHT(const edm::Event&, const edm::EventSetup&, int, float, float);
+        virtual float CalculateHT(const edm::Event&, const edm::EventSetup&, int, float, float, bool);
         virtual bool isLooseJet(pat::Jet&);
         virtual bool isTightJet(pat::Jet&);
         virtual bool isTightLepVetoJet(pat::Jet&);
