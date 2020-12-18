@@ -231,7 +231,9 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     std::vector<JetType> ggHJet;
     //std::vector<RecoJetType> ManualJets;
     std::vector<CaloJetType> CaloJets;
-    //std::vector<LeptonType> Muons; //maybe later!
+    std::vector<LeptonType> Muons;
+    std::vector<LeptonType> Electrons;
+    std::vector<PhotonType> Photons;
     std::vector<GenPType> GenVBFquarks;
     std::vector<GenPType> GenBquarks;
     std::vector<GenPType> GenLLPs;
@@ -311,6 +313,7 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     
     AddFourMomenta addP4;
     float HT;
+    float HTNoSmear;
     float MinJetMetDPhi;
     float MinJetMetDPhiAllJets;
     float ggHJetMetDPhi;
@@ -565,6 +568,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     EventNumber = LumiNumber = RunNumber = nPV = 0;
     GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = 1.;
     HT = 0.;
+    HTNoSmear = 0.;
     nMatchedCHSJets = 0;
     nMatchedCaloJets = 0;
     nVBFGenMatchedCHSJets = 0;
@@ -710,7 +714,8 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     
-    HT = theCHSJetAnalyzer->CalculateHT(iEvent,iSetup,3,15,3.);
+    HT = theCHSJetAnalyzer->CalculateHT(iEvent,iSetup,3,15,3.,true);
+    HTNoSmear = theCHSJetAnalyzer->CalculateHT(iEvent,iSetup,3,15,3.,false);
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -798,11 +803,13 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //if(EventNumber!=44169) return;
     //if(HT<100) return;//Avoid events with low HT//WAIT!!
-    if(isCalo && MET.pt()<120) return;//Avoid events with very low MET for calo analysis
-    if(isCalo && nMuons>0) return;//Veto leptons and photons!
-    if(isCalo && nTaus>0) return;//Veto leptons and photons!
-    if(isCalo && nElectrons>0) return;//Veto leptons and photons!
-    if(isCalo && nPhotons>0) return;//Veto leptons and photons!
+    //17.12.2020 : remove MET cut
+    //if(isCalo && MET.pt()<120) return;//Avoid events with very low MET for calo analysis
+    //17.12.2020 : remove lepton veto
+    //if(isCalo && nMuons>0) return;//Veto leptons and photons!
+    //if(isCalo && nTaus>0) return;//Veto leptons and photons!
+    //if(isCalo && nElectrons>0) return;//Veto leptons and photons!
+    //if(isCalo && nPhotons>0) return;//Veto leptons and photons!
 
 
     //------------------------------------------------------------------------------------------
@@ -3496,6 +3503,15 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) CHSFatJets.push_back( FatJetType() );
     for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) ObjectsFormat::FillFatJetType(CHSFatJets[i], &CHSFatJetsVect[i], SoftdropPuppiMassString, isMC);
     
+    for(unsigned int i = 0; i < MuonVect.size(); i++) Muons.push_back( LeptonType() );
+    for(unsigned int i = 0; i < MuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &MuonVect[i], isMC);
+
+    for(unsigned int i = 0; i < ElecVect.size(); i++) Electrons.push_back( LeptonType() );
+    for(unsigned int i = 0; i < ElecVect.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &ElecVect[i], isMC);
+
+    for(unsigned int i = 0; i < PhotonVect.size(); i++) Photons.push_back( PhotonType() );
+    for(unsigned int i = 0; i < PhotonVect.size(); i++) ObjectsFormat::FillPhotonType(Photons[i], &PhotonVect[i], isMC);
+
     //for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );//slim ntuple
     //for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) ObjectsFormat::FillJetType(VBFPairJets[i], &VBFPairJetsVect[i], isMC);//slim ntuple
 
@@ -3651,6 +3667,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     HcalRecHitsAK4.clear();
     EcalRecHitsAK8.clear();
     HcalRecHitsAK8.clear();
+    Muons.clear();
+    Electrons.clear();
+    Photons.clear();
     CaloJets.clear();
     VBFPairJets.clear();
     CHSFatJets.clear();
@@ -3700,6 +3719,7 @@ AODNtuplizer::beginJob()
    tree -> Branch("isVBF" , &isVBF, "isVBF/O");
    tree -> Branch("isggH" , &isggH, "isggH/O");
    tree -> Branch("HT" , &HT , "HT/F");
+   tree -> Branch("HTNoSmear" , &HTNoSmear , "HTNoSmear/F");
    tree -> Branch("MinJetMetDPhi", &MinJetMetDPhi, "MinJetMetDPhi/F");
    tree -> Branch("ggHJetMetDPhi", &ggHJetMetDPhi , "ggHJetMetDPhi/F");
    tree -> Branch("nGenBquarks" , &nGenBquarks , "nGenBquarks/L");
@@ -3792,6 +3812,9 @@ AODNtuplizer::beginJob()
    tree -> Branch("MEt", &MEt);
    tree -> Branch("Jets", &CHSJets);
    tree -> Branch("FatJets", &CHSFatJets);
+   tree -> Branch("Muons", &Muons);
+   tree -> Branch("Electrons", &Electrons);
+   tree -> Branch("Photons", &Photons);
    tree -> Branch("EcalRecHitsAK4", &EcalRecHitsAK4);
    tree -> Branch("HcalRecHitsAK4", &HcalRecHitsAK4);
    tree -> Branch("EcalRecHitsAK8", &EcalRecHitsAK8);
