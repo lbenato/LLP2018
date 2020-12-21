@@ -234,6 +234,7 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     std::vector<LeptonType> Muons;
     std::vector<LeptonType> Electrons;
     std::vector<PhotonType> Photons;
+    std::vector<TauType> Taus;
     std::vector<GenPType> GenVBFquarks;
     std::vector<GenPType> GenBquarks;
     std::vector<GenPType> GenLLPs;
@@ -3512,6 +3513,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(unsigned int i = 0; i < PhotonVect.size(); i++) Photons.push_back( PhotonType() );
     for(unsigned int i = 0; i < PhotonVect.size(); i++) ObjectsFormat::FillPhotonType(Photons[i], &PhotonVect[i], isMC);
 
+    for(unsigned int i = 0; i < TauVect.size(); i++) Taus.push_back( TauType() );
+    for(unsigned int i = 0; i < TauVect.size(); i++) ObjectsFormat::FillTauType(Taus[i], &TauVect[i], isMC);
+
     //for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );//slim ntuple
     //for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) ObjectsFormat::FillJetType(VBFPairJets[i], &VBFPairJetsVect[i], isMC);//slim ntuple
 
@@ -3670,6 +3674,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     Muons.clear();
     Electrons.clear();
     Photons.clear();
+    Taus.clear();
     CaloJets.clear();
     VBFPairJets.clear();
     CHSFatJets.clear();
@@ -3815,6 +3820,7 @@ AODNtuplizer::beginJob()
    tree -> Branch("Muons", &Muons);
    tree -> Branch("Electrons", &Electrons);
    tree -> Branch("Photons", &Photons);
+   tree -> Branch("Taus", &Taus);
    tree -> Branch("EcalRecHitsAK4", &EcalRecHitsAK4);
    tree -> Branch("HcalRecHitsAK4", &HcalRecHitsAK4);
    tree -> Branch("EcalRecHitsAK8", &EcalRecHitsAK8);
