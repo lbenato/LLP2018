@@ -96,6 +96,30 @@ options.register(
     "JECstring parser flag"
 )
 options.register(
+    "PJERstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "JERstring parser flag"
+)
+options.register(
+    "PMuonSFIDstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "MuonSFIDstring parser flag"
+)
+options.register(
+    "PMuonSFISOstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "MuonSFISOstring parser flag"
+)
+options.register(
+    "PMuonSFTriggerstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "MuonSFTriggerstring parser flag"
+)
+options.register(
     "PjsonName", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
@@ -153,6 +177,9 @@ options.register(
 
 
 options.parseArguments()
+
+from Configuration.Eras.Era_Run2_2016_cff import Run2_2016
+
 process = cms.Process("ntuple")
 task = cms.Task()
 
@@ -174,7 +201,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -185,94 +212,27 @@ if len(options.inputFiles) == 0:
 
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
-            #causing 8012 error
-            #'/store/mc/RunIIAutumn18DRPremix/QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/60001/AA432DEC-7BC9-9C4E-B464-D9A4257FA5A4.root'
-            #2018 ZJets
-            #'/store/mc/RunIIAutumn18DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/026915A1-D6C8-E740-974D-96E7C0BD4BA9.root',
-            #2018 MET
-            #'/store/data/Run2018A/MET/AOD/17Sep2018-v1/100000/0091F52C-BD8E-294E-A40D-3761CE3869CE.root',
-            #SUSY comparison
-            #Wjets comparison
-            #'/store/mc/RunIIAutumn18DRPremix/WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/0100E24E-49C3-764F-A65A-17F78028EB95.root',#binned
-            #'/store/mc/RunIIAutumn18DRPremix/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v2/100000/063D2FBB-EB80-304B-8F1E-A35DFF34C618.root',#unbinned
-            #'/store/group/phys_exotica/jmao/aodsim/RunIIAutumn18/AODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh200_pl1000_ev100000/crab_CMSSW_10_2_11_n3n2-n1-hbb-hbb_mchi200_pl1000_ev100000_AODSIM_CaltechT2/200325_182003/0000/Fullsim_TChiHH_200_pl1000_step2_102.root',
-            #SUSY high stat, Si
+            ## 2018 MC, signal
+            #'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
             #'/store/group/phys_exotica/privateProduction/DR/step2_AODSIM/RunIIFall18/TChiHH_mass400_pl1000/batch1/v1/TChiHH_mass400_pl1000/crab_PrivateProduction_Fall18_DR_step2_TChiHH_mass400_pl1000_batch1_v1/200911_133803/0004/AODSIM_4998.root',
-            #'file:pickevents_0.root',
-            #'file:pickevents_1.root',
-            #'file:pickevents_2.root',
-            #'file:pickevents_3.root',
-            #GENSIMRECO twin higgs
-            #'/store/mc/RunIIFall17DRPremix/VBFH_HToSSTo4b_MH-125_TuneCP5_13TeV-powheg-pythia8/GEN-SIM-RECO/PU2017_rp_94X_mc2017_realistic_v11-v2/260001/189F132B-9F60-EA11-ADD2-A0369F7F9B10.root',
-            #'/store/mc/RunIIFall17DRPremix/VBFH_HToSSTo4b_MH-125_TuneCP5_13TeV-powheg-pythia8/GEN-SIM-RECO/PU2017_rp_94X_mc2017_realistic_v11-v2/00000/CE1EEF79-D85D-EA11-B8FC-B42E99AB0138.root',#DOES NOT EXIST????
-            #'/store/mc/RunIISummer16DR80Premix/VBFH_HToSSTo4b_MH-125_TuneCUETP8M1_13TeV-powheg-pythia8/GEN-SIM-RECO/PUMoriond17_rp_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/510000/D8C41404-866E-EA11-9341-001E67DBE3EF.root'#Why is this listed in 2017 dataset????
-            #test 2017 MC:
+            ## 2018 MC, background
+            #'/store/mc/RunIIAutumn18DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/026915A1-D6C8-E740-974D-96E7C0BD4BA9.root',
+            ## 2018 data
+            #'/store/data/Run2018A/MET/AOD/17Sep2018-v1/100000/0091F52C-BD8E-294E-A40D-3761CE3869CE.root',
+            
+            ## 2017 MC, signal
+            ## 2017 MC, background
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/40000/002DE866-7407-E811-ABBB-0CC47AA989C0.root',
-            #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/40000/002DE866-7407-E811-ABBB-0CC47AA989C0.root',
-            #'/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/70000/1CA26DE4-8E1C-E811-9283-20CF305616FF.root',
-            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
-            #Data
-            #UL requires newer release
-            ##'/store/data/Run2017E/MET/AOD/09Aug2019_UL2017-v1/310002/FF956FC3-F457-6848-BC34-9972B048DD47.root'
-            #'/store/data/Run2018A/MET/AOD/17Sep2018-v1/100000/F501985D-5169-6542-81B1-3E7BD741750F.root',
-            ##'/store/data/Run2018A/MET/AOD/17Sep2018-v1/110000/7E5806DC-CD69-B64F-A802-7AE6476C0881.root',
-            #'/store/data/Run2017F/MET/AOD/17Nov2017-v1/710000/FEDB9732-CDEF-E711-A750-02163E013594.root'
-            #Heavy Higgs signal
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_2.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_3.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_4.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_5.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_6.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_7.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_8.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_9.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_10.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_11.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_12.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_13.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_14.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_15.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_16.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_17.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_18.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_19.root',
-            #'/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_20.root',
-
-            ##'file:/nfs/dust/cms/user/lbenato/HTo2LongLivedTo4b_MH-1000_MFF-450_CTau-10000mm_privateMC_102X_RECO_v1_generation_forMS_output_100.root'
-
-          #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/00000/C4BC9DEE-2F10-E811-AE4F-00A0D1EEEEC8.root',
-          #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/00000/BAE421CA-2F10-E811-9ED9-FA163ED7E826.root',
-          #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/00000/9069B800-3010-E811-81CD-B083FED045EC.root',
-          #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/00000/5A35489F-2F10-E811-8202-02163E013716.root',
-          #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/00000/54DB5B95-3010-E811-B106-24BE05C4D8C1.root',
-          #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/00000/34745C9E-3010-E811-B510-0CC47A74527A.root',
-          #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/00000/1A24BBCD-2F10-E811-A4A6-0025905C54DA.root',
-          #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/00000/16B3AA07-3010-E811-A7B9-0CC47AD99148.root',
-
-
-            #Jiajing
-            #gives segviolation
-            #'/store/group/phys_exotica/jmao/aodsim/RunIISummer16/AODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh200_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi200_pl1000_ev100000_AODSIM_CaltechT2/191003_233403/0000/SUS-RunIIFall17DRPremix-00183_38.root'
-            #'/store/group/phys_exotica/jmao/aodsim/RunIISummer16/AODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh300_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi300_pl1000_ev100000_AODSIM_CaltechT2/200212_190144/0000/SUS-RunIIFall17DRPremix-00183_99.root'
-            #Jiajing: local copy
-            #'file:/nfs/dust/cms/user/lbenato/n3n2-n1-hbb-hbb_mh300_pl1000_AOD_99.root'
-           #'/store/group/phys_exotica/jmao/aodsim/RunIISummer16/AODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh150_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi150_pl1000_ev100000_AODSIM_CaltechT2/200114_191134/0000/SUS-RunIIFall17DRPremix-00183_112.root'
-           #Heavy Higgs
-           #'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
-#          '/store/group/phys_exotica/jmao/aodsim/RunIISummer16/AODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh250_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi250_pl1000_ev100000_AODSIM_CaltechT2/200213_180444/0000/SUS-RunIIFall17DRPremix-00183_99.root',
-#          '/store/group/phys_exotica/jmao/aodsim/RunIISummer16/AODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh250_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi250_pl1000_ev100000_AODSIM_CaltechT2/200213_180444/0000/SUS-RunIIFall17DRPremix-00183_98.root',
-#          '/store/group/phys_exotica/jmao/aodsim/RunIISummer16/AODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh250_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi250_pl1000_ev100000_AODSIM_CaltechT2/200213_180444/0000/SUS-RunIIFall17DRPremix-00183_97.root',
-#          '/store/group/phys_exotica/jmao/aodsim/RunIISummer16/AODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh250_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi250_pl1000_ev100000_AODSIM_CaltechT2/200213_180444/0000/SUS-RunIIFall17DRPremix-00183_96.root',
-#          '/store/group/phys_exotica/jmao/aodsim/RunIISummer16/AODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh250_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi250_pl1000_ev100000_AODSIM_CaltechT2/200213_180444/0000/SUS-RunIIFall17DRPremix-00183_95.root',
-#          '/store/group/phys_exotica/jmao/aodsim/RunIISummer16/AODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh250_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi250_pl1000_ev100000_AODSIM_CaltechT2/200213_180444/0000/SUS-RunIIFall17DRPremix-00183_94.root',
-#          '/store/group/phys_exotica/jmao/aodsim/RunIISummer16/AODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh250_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi250_pl1000_ev100000_AODSIM_CaltechT2/200213_180444/0000/SUS-RunIIFall17DRPremix-00183_93.root',
-#          '/store/group/phys_exotica/jmao/aodsim/RunIISummer16/AODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh250_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi250_pl1000_ev100000_AODSIM_CaltechT2/200213_180444/0000/SUS-RunIIFall17DRPremix-00183_92.root',
-            #Background
-            #'/store/mc/RunIIAutumn18DRPremix/ZJetsToNuNu_HT-400To600_TuneCP5_13TeV-madgraph/AODSIM/102X_upgrade2018_realistic_v15-v1/70000/FE771BB7-BD36-6747-BBF4-C38C7C63399B.root'
-            #2016 not working
-            #'/store/mc/RunIISummer16DR80Premix/ZJetsToNuNu_HT-800To1200_13TeV-madgraph/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/FE57DDB4-DDBA-E611-A344-0025905A6064.root'
+            #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/00000/C4BC9DEE-2F10-E811-AE4F-00A0D1EEEEC8.root',
+            ## 2017 data
+            #'file:/pnfs/desy.de/cms/tier2/store/data/Run2017F/SingleMuon/AOD/17Nov2017-v1/70000/0649A342-48DF-E711-9082-FA163EF97216.root',
+            
+            ## 2016 MC, signal
+            ## 2016 MC, background
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIISummer16DR80Premix/ZJetsToNuNu_HT-400To600_13TeV-madgraph/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/DA01B558-8FD5-E611-AE17-02163E01412C.root'
+            ## 2016 data
+            'file:/pnfs/desy.de/cms/tier2/store/data/Run2016F/MET/AOD/07Aug17-v1/50000/228B7DCB-BFA1-E711-818C-0CC47A7452DA.root'
+            
         ),
         ##skipEvents=cms.untracked.uint32(220),
         #lumisToProcess = cms.untracked.VLuminosityBlockRange('1:11871'),
@@ -300,7 +260,7 @@ if RunLocal:
     isReHLT           = ('_reHLT_' in process.source.fileNames[0])
     isReReco          = ('23Sep2016' in process.source.fileNames[0])
     isReMiniAod       = ('03Feb2017' in process.source.fileNames[0])
-    is2016            = False#('RunIISummer16' in process.source.fileNames[0])
+    is2016            = ('RunIISummer16' in process.source.fileNames[0]) or ('Run2016' in process.source.fileNames[0])
     is2017            = ('RunIIFall17' in process.source.fileNames[0]) or ('Run2017' in process.source.fileNames[0])
     is2018            = ('RunIIAutumn18' in process.source.fileNames[0]) or ('n3n2-n1-hbb-hbb' in process.source.fileNames[0]) or ('TChiHH' in process.source.fileNames[0]) or ('Run2018' in process.source.fileNames[0]) or ('pickevents' in process.source.fileNames[0])
     isPromptReco      = ('PromptReco' in process.source.fileNames[0])
@@ -532,7 +492,7 @@ import PhysicsTools.PatAlgos.tools.helpers as configtools
 patAlgosToolsTask = configtools.getPatAlgosToolsTask(process)
 
 
-#Puppi, double check if needed????
+#Puppi, currently not needed. Kept as future reference
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~
 '''
 process.load('CommonTools.PileupAlgos.Puppi_cff')
@@ -556,6 +516,8 @@ process.load( "PhysicsTools.PatAlgos.producersLayer1.patCandidates_cff" )
 patAlgosToolsTask.add(process.patCandidatesTask)
 ##Temporary customize to the unit tests that fail due to old input samples
 process.patTaus.skipMissingTauID = True
+
+
 if is2016:
    process.load('RecoBTag.Combined.deepFlavour_cff')
    task.add(process.pfDeepCSVDiscriminatorsJetTags)
@@ -565,8 +527,37 @@ if is2016:
          cms.InputTag('pfDeepCSVDiscriminatorsJetTags:CvsL'   ),
          ])
 
-#for some reasons, complaining about patTrigger
 process.load( "PhysicsTools.PatAlgos.triggerLayer1.triggerProducer_cff" )
+#Fix exceptions in 2016 data/MC
+if is2016:
+    process.patTrigger.onlyStandAlone = cms.bool(False)
+    process.patTrigger.packTriggerLabels = cms.bool(False)
+    process.patTrigger.packTriggerPathNames = cms.bool(True)
+    process.patTrigger.packTriggerPrescales = cms.bool(False)
+
+#needed?
+#https://github.com/cms-sw/cmssw/blob/ba6e8604a35283e39e89bc031766843d0afc3240/L1Trigger/L1TGlobal/python/PrescalesVetos_cff.py
+process.L1TGlobalPrescalesVetosRcdSource = cms.ESSource("EmptyESSource",
+    recordName = cms.string('L1TGlobalPrescalesVetosRcd'),
+    iovIsRunNotTime = cms.bool(True),
+    firstValid = cms.vuint32(1)
+)
+
+process.L1TGlobalPrescalesVetos = cms.ESProducer("L1TGlobalPrescalesVetosESProducer",
+    TriggerMenuLuminosity = cms.string('startup'),
+    Verbosity = cms.int32(0),
+    AlgoBxMaskDefault = cms.int32(1),
+    PrescaleXMLFile = cms.string('UGT_BASE_RS_PRESCALES_v11.xml'),
+    AlgoBxMaskXMLFile = cms.string('UGT_BASE_RS_ALGOBX_MASK_V1.xml'),
+    FinOrMaskXMLFile = cms.string('UGT_BASE_RS_FINOR_MASK_v17.xml'),
+    VetoMaskXMLFile = cms.string('UGT_BASE_RS_VETO_MASK_v1.xml'),
+
+)
+
+
+if is2016:
+    patAlgosToolsTask.add(process.L1TGlobalPrescalesVetosRcdSource)
+    patAlgosToolsTask.add(process.L1TGlobalPrescalesVetos)
 patAlgosToolsTask.add(process.patTrigger)
 patAlgosToolsTask.add(process.patTriggerEvent)
 
@@ -753,11 +744,36 @@ if is2016:
 
 from PhysicsTools.PatAlgos.slimming.miniAOD_tools import miniAOD_customizeCommon, miniAOD_customizeMC, miniAOD_customizeData
 miniAOD_customizeCommon(process)
-#miniAOD_customizeMC(process)
+
 if isData:
     miniAOD_customizeData(process)
 else:
     miniAOD_customizeMC(process)
+
+##Needed for 2016 MC/data
+process.makePatJetsTask.add(process.pfImpactParameterTagInfos, 
+                            process.pfSecondaryVertexTagInfos,
+                            process.pfInclusiveSecondaryVertexFinderTagInfos)
+                            
+
+process.patJets.discriminatorSources = cms.VInputTag(
+    cms.InputTag("pfJetBProbabilityBJetTags"),
+    cms.InputTag("pfJetProbabilityBJetTags"),
+    cms.InputTag("pfTrackCountingHighEffBJetTags"),
+    cms.InputTag("pfSimpleSecondaryVertexHighEffBJetTags"),
+    cms.InputTag("pfSimpleInclusiveSecondaryVertexHighEffBJetTags"),
+    cms.InputTag("pfCombinedSecondaryVertexV2BJetTags"),
+    cms.InputTag("pfCombinedInclusiveSecondaryVertexV2BJetTags"),
+    cms.InputTag("softPFMuonBJetTags"),
+    cms.InputTag("softPFElectronBJetTags"),
+    cms.InputTag("pfCombinedMVAV2BJetTags"),   
+    )
+process.patJets.addTagInfos     = cms.bool(True)
+process.patJets.tagInfoSources  = cms.VInputTag( 'pfImpactParameterTagInfos'
+                                                 ,'pfSecondaryVertexTagInfos'
+                                                 ,'pfInclusiveSecondaryVertexFinderTagInfos')
+
+
 
 
 ## Output
@@ -908,6 +924,90 @@ else:
     JECstring = options.PJECstring
 print "JEC ->",JECstring
 
+JERstring = ''
+MuonSFTriggerstring = ''
+MuonSFISOstring = ''
+MuonSFIDstring = ''
+eleVetoIDstring = ''
+eleLooseIdstring = ''
+eleMediumIdstring = ''
+eleTightIdstring = ''
+eleMVA90noISOstring = ''
+eleMVA80noISOstring = ''
+phoLooseIdFilestring = ''
+phoMediumIdFilestring = ''
+phoTightIdFilestring = ''
+phoMVANonTrigMediumIdFilestring = ''
+btagSFstring = ''
+if RunLocal:
+   if is2016:
+      JERstring = 'Summer16_25nsV1b_MC'
+      #WARNING! Muon SF should not be here applied for 2016! It needed to be a lumi weighted SF and hence only calculated after full run and brilcalc procedure! Needed to be done after ntuplizer process!
+      MuonSFTriggerstring = 'MuonTrigger_average_RunBtoH_SF_Run2_2016'
+      MuonSFISOstring = 'MuonISO_average_RunBtoH_SF_Run2_2016'
+      MuonSFIDstring = 'MuonID_average_RunBtoH_SF_Run2_2016'
+      eleVetoIDstring = '2016_ElectronWPVeto_Fall17V2'
+      eleLooseIdstring = '2016LegacyReReco_ElectronLoose_Fall17V2'
+      eleMediumIdstring = '2016LegacyReReco_ElectronMedium_Fall17V2'
+      eleTightIdstring = '2016LegacyReReco_ElectronTight_Fall17V2'
+      eleMVA90noISOstring = '2016LegacyReReco_ElectronMVA90noiso_Fall17V2'
+      eleMVA80noISOstring = '2016LegacyReReco_ElectronMVA80noiso_Fall17V2'
+      phoLooseIdFilestring = 'Fall17V2_2016_Loose_photons'
+      phoMediumIdFilestring = 'egammaPlots_MWP_PhoSFs_2016_LegacyReReco_New'
+      phoTightIdFilestring = 'Fall17V2_2016_Tight_photons'
+      phoMVANonTrigMediumIdFilestring = 'Fall17V2_2016_MVAwp90_photons'
+      btagSFstring = 'DeepJet_2016LegacySF_V1'
+   elif is2017:
+      JERstring = 'Fall17_V3b_MC'
+      MuonSFTriggerstring = 'MuonTrigger_EfficienciesAndSF_RunBtoF_Nov17Nov2017'
+      MuonSFISOstring = 'MuonISO_2017_RunBCDEF_SF_ISO_Nov17'
+      MuonSFIDstring = 'MuonID_2017_RunBCDEF_SF_ID_Nov17'
+      eleVetoIDstring = '2017_ElectronWPVeto_Fall17V2'
+      eleLooseIdstring = '2017_ElectronLoose_Fall17V2'
+      eleMediumIdstring = '2017_ElectronMedium_Fall17V2'
+      eleTightIdstring = '2017_ElectronTight_Fall17V2'
+      eleMVA90noISOstring = '2017_ElectronMVA90noiso_Fall17V2'
+      eleMVA80noISOstring = '2017_ElectronMVA80noiso_Fall17V2'
+      phoLooseIdFilestring = '2017_PhotonsLoose'
+      phoMediumIdFilestring = '2017_PhotonsMedium'
+      phoTightIdFilestring = '2017_PhotonsTight'
+      phoMVANonTrigMediumIdFilestring = '2017_PhotonsMVAwp90'
+      btagSFstring = 'DeepFlavour_94XSF_V4_B_F_Run2017'
+   elif is2018:
+      JERstring = 'Autumn18_V7b_MC'
+      MuonSFTriggerstring = 'MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate'
+      print "WARNING! There is another SF root file for single muon triggers for Run A: run < 316361 it is called: MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_BeforeMuonHLTUpdate. TO BE IMPLEMENTED SOMEHOW!"
+      #if isControl: exit()
+      MuonSFISOstring = 'MuonISO_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ISO'
+      MuonSFIDstring = 'MuonID_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID'
+      eleVetoIDstring = '2018_ElectronWPVeto_Fall17V2'
+      eleLooseIdstring = '2018_ElectronLoose_Fall17V2'
+      eleMediumIdstring = '2018_ElectronMedium_Fall17V2'
+      eleTightIdstring = '2018_ElectronTight_Fall17V2'
+      eleMVA90noISOstring = '2018_ElectronMVA90noiso_Fall17V2'
+      eleMVA80noISOstring = '2018_ElectronMVA80noiso_Fall17V2'
+      phoLooseIdFilestring = '2018_PhotonsLoose'
+      phoMediumIdFilestring = '2018_PhotonsMedium'
+      phoTightIdFilestring = '2018_PhotonsTight'
+      phoMVANonTrigMediumIdFilestring = '2018_PhotonsMVAwp90'
+      btagSFstring = 'DeepJet_102XSF_V2_Run2018'
+else:
+   JERstring = options.PJERstring
+   MuonSFIDstring = options.PMuonSFIDstring
+   MuonSFISOstring = options.PMuonSFISOstring
+   MuonSFTriggerstring = options.PMuonSFTriggerstring
+   eleVetoIDstring = options.PeleVetoIDstring
+   eleLooseIdstring = options.PeleLooseIdstring
+   eleMediumIdstring = options.PeleMediumIdstring
+   eleTightIdstring = options.PeleTightIdstring
+   eleMVA90noISOstring = options.PeleMVA90noISOstring
+   eleMVA80noISOstring = options.PeleMVA80noISOstring
+   phoLooseIdFilestring = options.PphoLooseIdFilestring
+   phoMediumIdFilestring = options.PphoMediumIdFilestring
+   phoTightIdFilestring = options.PphoTightIdFilestring
+   phoMVANonTrigMediumIdFilestring = options.PphoMVANonTrigMediumIdFilestring
+   btagSFstring = options.PbtagSFstring
+print "JER ->", JERstring
 
 
 #-----------------------#
@@ -965,6 +1065,7 @@ bTagDiscriminators = [
    'pfBoostedDoubleSecondaryVertexAK8BJetTags'
    ]
 
+                                      
 #-----------------------#
 #    AK4 only for CALO  # #NEW
 #-----------------------#
@@ -1191,7 +1292,6 @@ if pt_AK8<170:
                                                       cms.InputTag('ak8PFJetsPuppiValueMap','mass'),
                                                       ]
 
-
 #-----------------------#
 #       B-Tag           #
 #-----------------------#
@@ -1220,7 +1320,7 @@ bTagInfos = [
    ,'pfInclusiveSecondaryVertexFinderCvsLTagInfos'
    ,'pfInclusiveSecondaryVertexFinderNegativeCvsLTagInfos'
    ,'pfDeepCSVTagInfos' #Imperial
-#   ,'pfDeepFlavourTagInfos' # not available for 2016
+   ,'pfDeepFlavourTagInfos' # not available for 2016
 ]
 
 
@@ -1427,6 +1527,7 @@ if pt_AK8<170:
 #Update AK8 if pt>=170?
 #issues with: Path 'p' contains a module of type 'CandIPProducer' which has no assigned label.
 elif pt_AK8>=170:
+#if pt_AK8>=170:
    postfix = 'FinalAK8'#TODO
 
    bTagInfosFat = [
@@ -2066,12 +2167,12 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         eleEcalRecHitCollection = cms.InputTag("reducedEgamma:reducedEBRecHits"),
         eleSingleTriggerIsoFileName = cms.string('data/SingleEleTriggerEff.root'),
         eleSingleTriggerFileName = cms.string('data/eleTriggerEff_MORIOND17.root'),
-        eleVetoIdFileName = cms.string('data/eleVetoIDSF_MORIOND17.root'),
-        eleLooseIdFileName = cms.string('data/eleLooseIDSF_MORIOND17.root'),
-        eleMediumIdFileName = cms.string('data/eleMediumIDSF_MORIOND17.root'),
-        eleTightIdFileName = cms.string('data/eleTightIDSF_MORIOND17.root'),
-        eleMVATrigMediumIdFileName = cms.string('data/eleMVA90IDSF_MORIOND17.root'),
-        eleMVATrigTightIdFileName = cms.string('data/eleMVA80IDSF_MORIOND17.root'),
+        eleVetoIdFileName = cms.string('data/%s.root' % (eleVetoIDstring)),
+        eleLooseIdFileName = cms.string('data/%s.root' % (eleLooseIdstring)),
+        eleMediumIdFileName = cms.string('data/%s.root' % (eleMediumIdstring)),
+        eleTightIdFileName = cms.string('data/%s.root' % (eleTightIdstring)),
+        eleMVATrigMediumIdFileName = cms.string('data/%s.root' % (eleMVA90noISOstring)), #FIXME: Double check: added here noiso files
+        eleMVATrigTightIdFileName = cms.string('data/%s.root' % (eleMVA80noISOstring)), #FIXME: Double check: added here noiso files
         eleRecoEffFileName = cms.string('data/eleRecoSF_MORIOND17.root'),
         eleScaleSmearCorrectionName = cms.string('EgammaAnalysis/ElectronTools/data/ScalesSmearings/Moriond17_23Jan_ele'),
         electron1id = cms.int32(0), # 0: veto, 1: loose, 2: medium, 3: tight, 4: HEEP, 5: MVA medium nonTrig, 6: MVA tight nonTrig, 7: MVA medium Trig, 8: MVA tight Trig
@@ -2082,11 +2183,11 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
     muonSet = cms.PSet(
         muons = cms.InputTag('slimmedMuons'),#('cleanedMuons'),#
         vertices = cms.InputTag('offlinePrimaryVertices'),
-        muonTrkFileName = cms.string('data/MuonTrkEfficienciesAndSF_MORIOND17.root'),
-        muonIdFileName = cms.string('data/MuonIdEfficienciesAndSF_MORIOND17.root'),
-        muonIsoFileName = cms.string('data/MuonIsoEfficienciesAndSF_MORIOND17.root'),
-        muonTrkHighptFileName = cms.string('data/tkhighpt_2016full_absetapt.root'),
-        muonTriggerFileName = cms.string('data/MuonTrigEfficienciesAndSF_MORIOND17.root'),
+        #muonTrkFileName = cms.string('data/MuonTrkEfficienciesAndSF_MORIOND17.root'),
+        muonIdFileName = cms.string('data/%s.root' %(MuonSFIDstring)),
+        muonIsoFileName = cms.string('data/%s.root' %(MuonSFISOstring)),
+        #muonTrkHighptFileName = cms.string('data/tkhighpt_2016full_absetapt.root'),# todo: is this used?
+        muonTriggerFileName = cms.string('data/%s.root' %(MuonSFTriggerstring)),
         doubleMuonTriggerFileName = cms.string('data/MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2.root'),#FIXME -> obsolete
         muon1id = cms.int32(1), # 0: tracker high pt muon id, 1: loose, 2: medium, 3: tight, 4: high pt
         muon2id = cms.int32(1),
