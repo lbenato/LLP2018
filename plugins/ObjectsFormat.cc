@@ -195,10 +195,23 @@ void ObjectsFormat::FillTauType(TauType& I, const pat::Tau* R, bool isMC) {
     I.dz          = R->hasUserFloat("dz") ? R->userFloat("dz") : 0.;
     I.charge      = R->charge();
     I.pdgId       = R->pdgId();
-    I.isLoose     = R->hasUserInt("isLoose") ? R->userInt("isLoose") : false;
-    I.isMedium    = R->hasUserInt("isMedium") ? R->userInt("isMedium") : false;
-    I.isTight     = R->hasUserInt("isTight") ? R->userInt("isTight") : false;
+    //I.isLoose     = R->hasUserInt("isLoose") ? R->userInt("isLoose") : false;
+    //I.isMedium    = R->hasUserInt("isMedium") ? R->userInt("isMedium") : false;
+    //I.isTight     = R->hasUserInt("isTight") ? R->userInt("isTight") : false;
     if(isMC) I.isMatched = false;//(Utilities::FindMotherId(dynamic_cast<const reco::Candidate*>(R->genLepton()))==23);
+    I.decayModeFinding = R->tauID("decayModeFinding");
+    I.decayModeFindingNewDMs = R->tauID("decayModeFindingNewDMs");
+    I.byLooseCombinedIsolationDeltaBetaCorr3Hits = R->tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits");
+    I.byMediumCombinedIsolationDeltaBetaCorr3Hits = R->tauID("byMediumCombinedIsolationDeltaBetaCorr3Hits");
+    I.byTightCombinedIsolationDeltaBetaCorr3Hits = R->tauID("byTightCombinedIsolationDeltaBetaCorr3Hits");
+    I.againstElectronVLooseMVA6 = R->tauID("againstElectronVLooseMVA6");
+    I.againstElectronVTightMVA6 = R->tauID("againstElectronVTightMVA6");
+    I.byVLooseIsolationMVArun2v1DBnewDMwLT = R->tauID("byVLooseIsolationMVArun2v1DBnewDMwLT");
+    I.byLooseIsolationMVArun2v1DBnewDMwLT = R->tauID("byLooseIsolationMVArun2v1DBnewDMwLT");
+    I.byMediumIsolationMVArun2v1DBnewDMwLT = R->tauID("byMediumIsolationMVArun2v1DBnewDMwLT");
+    I.byTightIsolationMVArun2v1DBnewDMwLT = R->tauID("byTightIsolationMVArun2v1DBnewDMwLT");
+    I.byVTightIsolationMVArun2v1DBnewDMwLT = R->tauID("byVTightIsolationMVArun2v1DBnewDMwLT");
+    I.byVVTightIsolationMVArun2v1DBnewDMwLT = R->tauID("byVVTightIsolationMVArun2v1DBnewDMwLT");
 }
 
 
@@ -212,9 +225,9 @@ void ObjectsFormat::ResetTauType(TauType& I) {
     I.dz          = -99.;
     I.charge      = 0;
     I.pdgId       = 0;
-    I.isLoose     = false;
-    I.isMedium    = false;
-    I.isTight     = false;
+    //I.isLoose     = false;
+    //I.isMedium    = false;
+    //I.isTight     = false;
     I.isMatched   = false;
 }
 

@@ -70,7 +70,7 @@ PhotonType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), pfIso(-1.), d
 };
 
 struct TauType {
-TauType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), pfIso(-1.), dz(-99.), charge(0), pdgId(0), isLoose(false), isMedium(false), isTight(false), isMatched(false) {}
+TauType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), pfIso(-1.), dz(-99.), charge(0), pdgId(0), isMatched(false), decayModeFinding(false), decayModeFindingNewDMs(false), byLooseCombinedIsolationDeltaBetaCorr3Hits(false), byMediumCombinedIsolationDeltaBetaCorr3Hits(false), byTightCombinedIsolationDeltaBetaCorr3Hits(false), againstElectronVLooseMVA6(false), againstElectronVTightMVA6(false), byVLooseIsolationMVArun2v1DBnewDMwLT(false), byLooseIsolationMVArun2v1DBnewDMwLT(false), byMediumIsolationMVArun2v1DBnewDMwLT(false), byTightIsolationMVArun2v1DBnewDMwLT(false), byVTightIsolationMVArun2v1DBnewDMwLT(false), byVVTightIsolationMVArun2v1DBnewDMwLT(false) {}
     float pt;
     float eta;
     float phi;
@@ -80,10 +80,23 @@ TauType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), pfIso(-1.), dz(-
     float dz;
     int charge;
     int pdgId;
-    bool isLoose;
-    bool isMedium;
-    bool isTight;
+    //bool isLoose;
+    //bool isMedium;
+    //bool isTight;
     bool isMatched;
+    bool decayModeFinding;
+    bool decayModeFindingNewDMs;
+    bool byLooseCombinedIsolationDeltaBetaCorr3Hits;
+    bool byMediumCombinedIsolationDeltaBetaCorr3Hits;
+    bool byTightCombinedIsolationDeltaBetaCorr3Hits;
+    bool againstElectronVLooseMVA6;
+    bool againstElectronVTightMVA6;
+    bool byVLooseIsolationMVArun2v1DBnewDMwLT;
+    bool byLooseIsolationMVArun2v1DBnewDMwLT;
+    bool byMediumIsolationMVArun2v1DBnewDMwLT;
+    bool byTightIsolationMVArun2v1DBnewDMwLT;
+    bool byVTightIsolationMVArun2v1DBnewDMwLT;
+    bool byVVTightIsolationMVArun2v1DBnewDMwLT;
 };
 
 
