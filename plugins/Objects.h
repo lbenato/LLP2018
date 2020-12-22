@@ -70,7 +70,29 @@ PhotonType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), pfIso(-1.), d
 };
 
 struct TauType {
-TauType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), pfIso(-1.), dz(-99.), charge(0), pdgId(0), isMatched(false), decayModeFinding(false), decayModeFindingNewDMs(false), byLooseCombinedIsolationDeltaBetaCorr3Hits(false), byMediumCombinedIsolationDeltaBetaCorr3Hits(false), byTightCombinedIsolationDeltaBetaCorr3Hits(false), againstElectronVLooseMVA6(false), againstElectronVTightMVA6(false), byVLooseIsolationMVArun2v1DBnewDMwLT(false), byLooseIsolationMVArun2v1DBnewDMwLT(false), byMediumIsolationMVArun2v1DBnewDMwLT(false), byTightIsolationMVArun2v1DBnewDMwLT(false), byVTightIsolationMVArun2v1DBnewDMwLT(false), byVVTightIsolationMVArun2v1DBnewDMwLT(false) {}
+TauType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), pfIso(-1.), dz(-99.), charge(0), pdgId(0), isMatched(false), decayModeFinding(false), decayModeFindingNewDMs(false), byLooseCombinedIsolationDeltaBetaCorr3Hits(false), byMediumCombinedIsolationDeltaBetaCorr3Hits(false), byTightCombinedIsolationDeltaBetaCorr3Hits(false), againstElectronVLooseMVA6(false), againstElectronVTightMVA6(false), byVLooseIsolationMVArun2v1DBnewDMwLT(false), byLooseIsolationMVArun2v1DBnewDMwLT(false), byMediumIsolationMVArun2v1DBnewDMwLT(false), byTightIsolationMVArun2v1DBnewDMwLT(false), byVTightIsolationMVArun2v1DBnewDMwLT(false), byVVTightIsolationMVArun2v1DBnewDMwLT(false),
+    byVVVLooseDeepTau2017v2p1VSjet(false), 
+    byVVLooseDeepTau2017v2p1VSjet(false), 
+    byVLooseDeepTau2017v2p1VSjet(false), 
+    byLooseDeepTau2017v2p1VSjet(false), 
+    byMediumDeepTau2017v2p1VSjet(false), 
+    byTightDeepTau2017v2p1VSjet(false), 
+    byVTightDeepTau2017v2p1VSjet(false), 
+    byVVTightDeepTau2017v2p1VSjet(false), 
+    byVVVLooseDeepTau2017v2p1VSe(false),
+    byVVLooseDeepTau2017v2p1VSe(false),
+    byVLooseDeepTau2017v2p1VSe(false),
+    byLooseDeepTau2017v2p1VSe(false),
+    byMediumDeepTau2017v2p1VSe(false),
+    byTightDeepTau2017v2p1VSe(false),
+    byVTightDeepTau2017v2p1VSe(false),
+    byVVTightDeepTau2017v2p1VSe(false),
+    byVLooseDeepTau2017v2p1VSmu(false),
+    byLooseDeepTau2017v2p1VSmu(false),
+    byMediumDeepTau2017v2p1VSmu(false),
+    byTightDeepTau2017v2p1VSmu(false),
+    decayMode(-1) {}
+
     float pt;
     float eta;
     float phi;
@@ -97,6 +119,27 @@ TauType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), pfIso(-1.), dz(-
     bool byTightIsolationMVArun2v1DBnewDMwLT;
     bool byVTightIsolationMVArun2v1DBnewDMwLT;
     bool byVVTightIsolationMVArun2v1DBnewDMwLT;
+    bool byVVVLooseDeepTau2017v2p1VSjet ;
+    bool byVVLooseDeepTau2017v2p1VSjet;
+    bool byVLooseDeepTau2017v2p1VSjet;
+    bool byLooseDeepTau2017v2p1VSjet;
+    bool byMediumDeepTau2017v2p1VSjet;
+    bool byTightDeepTau2017v2p1VSjet;
+    bool byVTightDeepTau2017v2p1VSjet;
+    bool byVVTightDeepTau2017v2p1VSjet;
+    bool byVVVLooseDeepTau2017v2p1VSe;
+    bool byVVLooseDeepTau2017v2p1VSe;
+    bool byVLooseDeepTau2017v2p1VSe;
+    bool byLooseDeepTau2017v2p1VSe;
+    bool byMediumDeepTau2017v2p1VSe;
+    bool byTightDeepTau2017v2p1VSe;
+    bool byVTightDeepTau2017v2p1VSe;
+    bool byVVTightDeepTau2017v2p1VSe;
+    bool byVLooseDeepTau2017v2p1VSmu;
+    bool byLooseDeepTau2017v2p1VSmu;
+    bool byMediumDeepTau2017v2p1VSmu;
+    bool byTightDeepTau2017v2p1VSmu;
+    int decayMode;
 };
 
 

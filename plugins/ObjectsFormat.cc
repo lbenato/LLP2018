@@ -212,6 +212,27 @@ void ObjectsFormat::FillTauType(TauType& I, const pat::Tau* R, bool isMC) {
     I.byTightIsolationMVArun2v1DBnewDMwLT = R->tauID("byTightIsolationMVArun2v1DBnewDMwLT");
     I.byVTightIsolationMVArun2v1DBnewDMwLT = R->tauID("byVTightIsolationMVArun2v1DBnewDMwLT");
     I.byVVTightIsolationMVArun2v1DBnewDMwLT = R->tauID("byVVTightIsolationMVArun2v1DBnewDMwLT");
+    I.byVVVLooseDeepTau2017v2p1VSjet = R->tauID("byVVVLooseDeepTau2017v2p1VSjet");
+    I.byVVLooseDeepTau2017v2p1VSjet = R->tauID("byVVLooseDeepTau2017v2p1VSjet");
+    I.byVLooseDeepTau2017v2p1VSjet = R->tauID("byVLooseDeepTau2017v2p1VSjet");
+    I.byLooseDeepTau2017v2p1VSjet = R->tauID("byLooseDeepTau2017v2p1VSjet");
+    I.byMediumDeepTau2017v2p1VSjet = R->tauID("byMediumDeepTau2017v2p1VSjet");
+    I.byTightDeepTau2017v2p1VSjet = R->tauID("byTightDeepTau2017v2p1VSjet");
+    I.byVTightDeepTau2017v2p1VSjet = R->tauID("byVTightDeepTau2017v2p1VSjet");
+    I.byVVTightDeepTau2017v2p1VSjet = R->tauID("byVVTightDeepTau2017v2p1VSjet");
+    I.byVVVLooseDeepTau2017v2p1VSe = R->tauID("byVVVLooseDeepTau2017v2p1VSe");
+    I.byVVLooseDeepTau2017v2p1VSe = R->tauID("byVVLooseDeepTau2017v2p1VSe");
+    I.byVLooseDeepTau2017v2p1VSe = R->tauID("byVLooseDeepTau2017v2p1VSe");
+    I.byLooseDeepTau2017v2p1VSe = R->tauID("byLooseDeepTau2017v2p1VSe");
+    I.byMediumDeepTau2017v2p1VSe = R->tauID("byMediumDeepTau2017v2p1VSe");
+    I.byTightDeepTau2017v2p1VSe = R->tauID("byTightDeepTau2017v2p1VSe");
+    I.byVTightDeepTau2017v2p1VSe = R->tauID("byVTightDeepTau2017v2p1VSe");
+    I.byVVTightDeepTau2017v2p1VSe = R->tauID("byVVTightDeepTau2017v2p1VSe");
+    I.byVLooseDeepTau2017v2p1VSmu = R->tauID("byVLooseDeepTau2017v2p1VSmu");
+    I.byLooseDeepTau2017v2p1VSmu = R->tauID("byLooseDeepTau2017v2p1VSmu");
+    I.byMediumDeepTau2017v2p1VSmu = R->tauID("byMediumDeepTau2017v2p1VSmu");
+    I.byTightDeepTau2017v2p1VSmu = R->tauID("byTightDeepTau2017v2p1VSmu");
+    I.decayMode = R->decayMode();
 }
 
 
