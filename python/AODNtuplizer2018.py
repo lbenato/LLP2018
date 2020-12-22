@@ -201,7 +201,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -213,7 +213,7 @@ if len(options.inputFiles) == 0:
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
             ## 2018 MC, signal
-            #'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
+            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
             #'/store/group/phys_exotica/privateProduction/DR/step2_AODSIM/RunIIFall18/TChiHH_mass400_pl1000/batch1/v1/TChiHH_mass400_pl1000/crab_PrivateProduction_Fall18_DR_step2_TChiHH_mass400_pl1000_batch1_v1/200911_133803/0004/AODSIM_4998.root',
             ## 2018 MC, background
             #'/store/mc/RunIIAutumn18DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/026915A1-D6C8-E740-974D-96E7C0BD4BA9.root',
@@ -223,6 +223,8 @@ if len(options.inputFiles) == 0:
             ## 2017 MC, signal
             ## 2017 MC, background
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/40000/002DE866-7407-E811-ABBB-0CC47AA989C0.root',
+            #Powheg, to check weights --> they look fine
+            #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17DRPremix/TTToSemiLeptonic_widthx0p85_TuneCP5_13TeV-powheg-pythia8/AODSIM/94X_mc2017_realistic_v11-v1/00000/803B3757-AE1D-E811-AEDB-008CFA197D2C.root',
             #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/00000/C4BC9DEE-2F10-E811-AE4F-00A0D1EEEEC8.root',
             ## 2017 data
             #'file:/pnfs/desy.de/cms/tier2/store/data/Run2017F/SingleMuon/AOD/17Nov2017-v1/70000/0649A342-48DF-E711-9082-FA163EF97216.root',
@@ -231,7 +233,7 @@ if len(options.inputFiles) == 0:
             ## 2016 MC, background
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIISummer16DR80Premix/ZJetsToNuNu_HT-400To600_13TeV-madgraph/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/DA01B558-8FD5-E611-AE17-02163E01412C.root'
             ## 2016 data
-            'file:/pnfs/desy.de/cms/tier2/store/data/Run2016F/MET/AOD/07Aug17-v1/50000/228B7DCB-BFA1-E711-818C-0CC47A7452DA.root'
+            #'file:/pnfs/desy.de/cms/tier2/store/data/Run2016F/MET/AOD/07Aug17-v1/50000/228B7DCB-BFA1-E711-818C-0CC47A7452DA.root'
             
         ),
         ##skipEvents=cms.untracked.uint32(220),
@@ -407,9 +409,9 @@ GT = ''
 if RunLocal:
     if isData:
         if is2016:
-            GT = '80X_dataRun2_2016SeptRepro_v7'
+            GT = '102X_dataRun2_v13'#'80X_dataRun2_2016SeptRepro_v7'
         elif is2017:
-            GT = '94X_dataRun2_v11'
+            GT = '102X_dataRun2_v13'#'94X_dataRun2_v11'
         elif is2018:
             if any(s in process.source.fileNames[0] for s in theRun2018ABC): 
                 GT = '102X_dataRun2_v13'
@@ -417,11 +419,11 @@ if RunLocal:
                 GT = '102X_dataRun2_Prompt_v16'
     elif not(isData):
         if is2016:
-            GT = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
+            GT = '102X_mcRun2_asymptotic_v8'#'80X_mcRun2_asymptotic_2016_TrancheIV_v8'
         elif is2017:
-            GT = '94X_mc2017_realistic_v17'
+            GT = '102X_mc2017_realistic_v8'#'94X_mc2017_realistic_v17'
         elif is2018:
-            GT = '102X_upgrade2018_realistic_v20'
+            GT = '102X_upgrade2018_realistic_v21'#'102X_upgrade2018_realistic_v20'
 else:
     GT = options.PGT
 
@@ -490,7 +492,7 @@ process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 ## Processing
 import PhysicsTools.PatAlgos.tools.helpers as configtools
 patAlgosToolsTask = configtools.getPatAlgosToolsTask(process)
-
+#process.rerunMvaIsolationSequence * getattr(process,updatedTauName) * 
 
 #Puppi, currently not needed. Kept as future reference
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -774,8 +776,6 @@ process.patJets.tagInfoSources  = cms.VInputTag( 'pfImpactParameterTagInfos'
                                                  ,'pfInclusiveSecondaryVertexFinderTagInfos')
 
 
-
-
 ## Output
 '''
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoCleaning
@@ -856,9 +856,9 @@ process.counter = cms.EDAnalyzer('CounterAnalyzer',
     pythiaLOSample = cms.bool(True if noLHEinfo else False),
 )
 
-#-----------------------#
-#  E-MU-GAMMA MODULES   #
-#-----------------------#
+#---------------------------#
+#  E-MU-GAMMA-TAU MODULES   #
+#---------------------------#
 
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 photon_id_config = cms.PSet(photon_ids = cms.vstring([                   
@@ -882,6 +882,20 @@ for idmod in photon_id_config.photon_ids.value():
 from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
 setupEgammaPostRecoSeq(process,runEnergyCorrections=False,era='2016-Legacy')#era='2018-Prompt'
 '''
+
+#Add DeepTau IDs
+#https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuidePFTauID#Running_of_the_DeepTauIDs_ver_20
+updatedTauName = "slimmedTausNewID" #name of pat::Tau collection with new tau-Ids
+import RecoTauTag.RecoTau.tools.runTauIdMVA as tauIdConfig
+tauIdEmbedder = tauIdConfig.TauIDEmbedder(process, cms, debug = False,
+                    updatedTauName = updatedTauName,
+                    toKeep = [ "2017v2", #"dR0p32017v2", "newDM2017v2", #classic MVAIso tau-Ids
+                               "deepTau2017v2p1", #deepTau Tau-Ids
+                               #"DPFTau_2016_v0", #D[eep]PF[low] Tau-Id #this is causing exceptions
+                               ])
+tauIdEmbedder.runTauID()
+#task.add(process.rerunMvaIsolationSequence)#-->to be added to sequence
+task.add(getattr(process,updatedTauName))
 
 #muons upstream modules
 process.cleanedMuons = cms.EDProducer('PATMuonCleanerBySegments',
@@ -2199,12 +2213,12 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         doRochester = cms.bool(False),
     ),
     tauSet = cms.PSet(
-        taus = cms.InputTag('slimmedTaus'),
+        taus = cms.InputTag(updatedTauName),#('slimmedTaus'),
         vertices = cms.InputTag('offlinePrimaryVertices'),
         taupt = cms.double(18.),
         taueta = cms.double(2.3),
-        tauIdByDecayMode = cms.int32(1),# 0: not set, 1: old, 2: new
-        tauIdByDeltaBetaIso = cms.int32(1),# 0: not set, 1: loose, 2: medium, 3: tight
+        tauIdByDecayMode = cms.int32(2),# 0: not set, 1: old, 2: new
+        tauIdByDeltaBetaIso = cms.int32(0),# 0: not set, 1: loose, 2: medium, 3: tight
         tauIdByMVAIso = cms.int32(0),# 0: not set, 1: V loose, 2: loose, 3: medium, 4: tight, 5: V tight
         tauIdByMuonRejection = cms.int32(0),# 0: not set, 1: loose, 2: tight
         tauIdByElectronRejection = cms.int32(0),# 0: not set, 1: V loose, 2: loose, 3: medium, 4: tight
@@ -2299,6 +2313,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
 
 
 process.seq = cms.Sequence(
+    process.rerunMvaIsolationSequence *#needed for taus
     process.counter *
     ##process.dumpES *
     ##process.ParticleListDrawer #*
@@ -2309,6 +2324,7 @@ process.seq = cms.Sequence(
 )
 
 #process.p = cms.Path(process.egmPhotonIDSequence * process.seq)
+
 process.p = cms.Path(process.seq)
 #process.p.associate(task)
 process.p.associate(task, patAlgosToolsTask)
