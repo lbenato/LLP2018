@@ -334,7 +334,7 @@ samples = {
     },
     'MET' : {
         'order' : 0,
-        'files' : ['METRun2017B-17Nov2017-v1','METRun2017C-17Nov2017-v1','METRun2017D-17Nov2017-v1','METRun2017E-17Nov2017-v1','METRun2017F-17Nov2017-v1'],
+        'files' : ['METRun2016B-07Aug17_ver1-v1','METRun2016B-07Aug17_ver2-v1','METRun2016C-07Aug17_v1','METRun2016D-07Aug17_v1','METRun2016E-07Aug17_v1','METRun2016F-07Aug17_v1','METRun2016G-07Aug17_v1','METRun2016H-07Aug17_v1'],
         'fillcolor' : 0,
         'fillstyle' : 1,
         'linecolor' : 1,
@@ -346,7 +346,7 @@ samples = {
     },
     'SingleMuon' : {
         'order' : 0,
-        'files' : ['SingleMuonRun2017B-17Nov2017-v1','SingleMuonRun2017C-17Nov2017-v1','SingleMuonRun2017D-17Nov2017-v1','SingleMuonRun2017E-17Nov2017-v1','SingleMuonRun2017F-17Nov2017-v1','SingleMuonRun2017G-17Nov2017-v1','SingleMuonRun2017H-17Nov2017-v2'],
+        'files' : ['SingleMuonRun2016B-07Aug17_ver1-v1','SingleMuonRun2016B-07Aug17_ver2-v1','SingleMuonRun2016C-07Aug17-v1','SingleMuonRun2016D-07Aug17-v1','SingleMuonRun2016E-07Aug17-v1','SingleMuonRun2016F-07Aug17-v1','SingleMuonRun2016G-07Aug17-v1','SingleMuonRun2016H-07Aug17-v1'],
         'fillcolor' : 0,
         'fillstyle' : 1,
         'linecolor' : 1,
@@ -358,7 +358,7 @@ samples = {
     },
     'SingleElectron' : {
         'order' : 0,
-        'files' : ['SingleElectronRun2017B-17Nov2017-v1','SingleElectronRun2017C-17Nov2017-v1','SingleElectronRun2017D-17Nov2017-v1','SingleElectronRun2017E-17Nov2017-v1','SingleElectronRun2017F-17Nov2017-v1'],
+        'files' : ['SingleElectronRun2016B-07Aug17_ver1-v1','SingleElectronRun2016B-07Aug17_ver2-v2','SingleElectronRun2016C-07Aug17-v1','SingleElectronRun2016D-07Aug17-v1','SingleElectronRun2016E-07Aug17-v1','SingleElectronRun2016F-07Aug17-v1','SingleElectronRun2016G-07Aug17-v1','SingleElectronRun2016H-07Aug17-v1'],
         'fillcolor' : 0,
         'fillstyle' : 1,
         'linecolor' : 1,
@@ -370,7 +370,7 @@ samples = {
     },
     'JetHT' : {
         'order' : 0,
-        'files' : ['JetHTRun2017B-17Nov2017-v1','JetHTRun2017C-17Nov2017-v1','JetHTRun2017D-17Nov2017-v1','JetHTRun2017E-17Nov2017-v1','JetHTRun2017F-17Nov2017-v1'],
+        'files' : ['JetHTRun2016B-07Aug17_ver1-v1','JetHTRun2016B-07Aug17_ver2-v1','JetHTRun2016C-07Aug17-v1','JetHTRun2016D-07Aug17-v1','JetHTRun2016E-07Aug17-v1','JetHTRun2016F-07Aug17-v1','JetHTRun2016G-07Aug17-v1','JetHTRun2016H-07Aug17-v1'],
         'fillcolor' : 0,
         'fillstyle' : 1,
         'linecolor' : 1,
@@ -382,7 +382,7 @@ samples = {
     },
     'MuonEG' : {
         'order' : 0,
-        'files' : ['MuonEGRun2017B-17Nov2017-v1','MuonEGRun2017C-17Nov2017-v1','MuonEGRun2017D-17Nov2017-v1','MuonEGRun2017E-17Nov2017-v1','MuonEGRun2017F-17Nov2017-v1',],
+        'files' : ['MuonEGRun2016B-07Aug17_ver1-v1','MuonEGRun2016B-07Aug17_ver2-v1','MuonEGRun2016C-07Aug17-v1','MuonEGRun2016D-07Aug17-v1','MuonEGRun2016E-07Aug17-v1','MuonEGRun2016F-07Aug17-v1','MuonEGRun2016G-07Aug17-v1','MuonEGRun2016H-07Aug17-v1'],
         'fillcolor' : 0,
         'fillstyle' : 1,
         'linecolor' : 1,
@@ -394,7 +394,7 @@ samples = {
     },
     'SinglePhoton' : {
         'order' : 0,
-        'files' : ['SinglePhotonRun2017B-17Nov2017-v1','SinglePhotonRun2017C-17Nov2017-v1','SinglePhotonRun2017D-17Nov2017-v1','SinglePhotonRun2017E-17Nov2017-v1','SinglePhotonRun2017F-17Nov2017-v1'],
+        'files' : ['SinglePhotonRun2016B-07Aug17_ver1-v1','SinglePhotonRun2016B-07Aug17_ver2-v1','SinglePhotonRun2016C-07Aug17-v1','SinglePhotonRun2016D-07Aug17-v1','SinglePhotonRun2016E-07Aug17-v1','SinglePhotonRun2016F-07Aug17-v1','SinglePhotonRun2016G-07Aug17-v1','SinglePhotonRun2016H-07Aug17-v1'],
         'fillcolor' : 0,
         'fillstyle' : 1,
         'linecolor' : 1,

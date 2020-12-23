@@ -152,7 +152,44 @@ requests = {
 ###############################################
 #Data
 ###!!
-### Let's start with RunG, that was one of the best in 2016 (no trigger inefficiencies, no HIP issue, better calibrations, but starting to have a bit of pre-firing!)
+#MET
+'METRun2017B-17Nov2017-v1' : '/MET/Run2017B-17Nov2017-v1/AOD',
+'METRun2017C-17Nov2017-v1' : '/MET/Run2017C-17Nov2017-v1/AOD',
+'METRun2017D-17Nov2017-v1' : '/MET/Run2017D-17Nov2017-v1/AOD',
+'METRun2017E-17Nov2017-v1' : '/MET/Run2017E-17Nov2017-v1/AOD',
+'METRun2017F-17Nov2017-v1' : '/MET/Run2017F-17Nov2017-v1/AOD',
+#SingleMuon
+'SingleMuonRun2017B-17Nov2017-v1' : '/SingleMuon/Run2017B-17Nov2017-v1/AOD',
+'SingleMuonRun2017C-17Nov2017-v1' : '/SingleMuon/Run2017C-17Nov2017-v1/AOD',
+'SingleMuonRun2017D-17Nov2017-v1' : '/SingleMuon/Run2017D-17Nov2017-v1/AOD',
+'SingleMuonRun2017E-17Nov2017-v1' : '/SingleMuon/Run2017E-17Nov2017-v1/AOD',
+'SingleMuonRun2017F-17Nov2017-v1' : '/SingleMuon/Run2017F-17Nov2017-v1/AOD',
+'SingleMuonRun2017G-17Nov2017-v1' : '/SingleMuon/Run2017G-17Nov2017-v1/AOD',
+'SingleMuonRun2017H-17Nov2017-v2' : '/SingleMuon/Run2017H-17Nov2017-v2/AOD',
+#SingleElectron
+'SingleElectronRun2017B-17Nov2017-v1' : '/SingleElectron/Run2017B-17Nov2017-v1/AOD',
+'SingleElectronRun2017C-17Nov2017-v1' : '/SingleElectron/Run2017C-17Nov2017-v1/AOD',
+'SingleElectronRun2017D-17Nov2017-v1' : '/SingleElectron/Run2017D-17Nov2017-v1/AOD',
+'SingleElectronRun2017E-17Nov2017-v1' : '/SingleElectron/Run2017E-17Nov2017-v1/AOD',
+'SingleElectronRun2017F-17Nov2017-v1' : '/SingleElectron/Run2017F-17Nov2017-v1/AOD',
+#JetHT
+'JetHTRun2017B-17Nov2017-v1' : '/JetHT/Run2017B-17Nov2017-v1/AOD',
+'JetHTRun2017C-17Nov2017-v1' : '/JetHT/Run2017C-17Nov2017-v1/AOD',
+'JetHTRun2017D-17Nov2017-v1' : '/JetHT/Run2017D-17Nov2017-v1/AOD',
+'JetHTRun2017E-17Nov2017-v1' : '/JetHT/Run2017E-17Nov2017-v1/AOD',
+'JetHTRun2017F-17Nov2017-v1' : '/JetHT/Run2017F-17Nov2017-v1/AOD',
+#MuonEG
+'MuonEGRun2017B-17Nov2017-v1' : '/MuonEG/Run2017B-17Nov2017-v1/AOD',
+'MuonEGRun2017C-17Nov2017-v1' : '/MuonEG/Run2017C-17Nov2017-v1/AOD',
+'MuonEGRun2017D-17Nov2017-v1' : '/MuonEG/Run2017D-17Nov2017-v1/AOD',
+'MuonEGRun2017E-17Nov2017-v1' : '/MuonEG/Run2017E-17Nov2017-v1/AOD',
+'MuonEGRun2017F-17Nov2017-v1' : '/MuonEG/Run2017F-17Nov2017-v1/AOD',
+#SinglePhoton
+'SinglePhotonRun2017B-17Nov2017-v1' : '/SinglePhoton/Run2017B-17Nov2017-v1/AOD',
+'SinglePhotonRun2017C-17Nov2017-v1' : '/SinglePhoton/Run2017C-17Nov2017-v1/AOD',
+'SinglePhotonRun2017D-17Nov2017-v1' : '/SinglePhoton/Run2017D-17Nov2017-v1/AOD',
+'SinglePhotonRun2017E-17Nov2017-v1' : '/SinglePhoton/Run2017E-17Nov2017-v1/AOD',
+'SinglePhotonRun2017F-17Nov2017-v1' : '/SinglePhoton/Run2017F-17Nov2017-v1/AOD',
 ###!!
 
 ###############################################

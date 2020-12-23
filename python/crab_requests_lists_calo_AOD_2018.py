@@ -134,8 +134,37 @@ requests = {
 ### Let's start with RunG, that was one of the best in 2016 (no trigger inefficiencies, no HIP issue, better calibrations, but starting to have a bit of pre-firing!)
 ###!!
 #2018: available at T2 aachen
+#MET
 'METRun2018A-17Sep2018-v1' : '/MET/Run2018A-17Sep2018-v1/AOD',
-
+'METRun2018B-17Sep2018-v1' : '/MET/Run2018B-17Sep2018-v1/AOD',
+'METRun2018C-17Sep2018-v1' : '/MET/Run2018C-17Sep2018-v1/AOD',
+'METRun2018D-PromptReco-v1' : '/MET/Run2018D-PromptReco-v1/AOD',
+'METRun2018D-PromptReco-v2' : '/MET/Run2018D-PromptReco-v2/AOD',
+'METRun2018E-PromptReco-v1' : '/MET/Run2018E-PromptReco-v1/AOD',
+#SingleMuon
+'SingleMuonRun2018A-17Sep2018-v2' : '/SingleMuon/Run2018A-17Sep2018-v2/AOD',
+'SingleMuonRun2018B-17Sep2018-v1' : '/SingleMuon/Run2018B-17Sep2018-v1/AOD',
+'SingleMuonRun2018C-17Sep2018-v1' : '/SingleMuon/Run2018C-17Sep2018-v1/AOD',
+'SingleMuonRun2018D-PromptReco-v2' : '/SingleMuon/Run2018D-PromptReco-v2/AOD',
+#EGamma
+'EGammaRun2018A-17Sep2018-v2' : '/EGamma/Run2018A-17Sep2018-v2/AOD',
+'EGammaRun2018B-17Sep2018-v1' : '/EGamma/Run2018B-17Sep2018-v1/AOD',
+'EGammaRun2018C-17Sep2018-v1' : '/EGamma/Run2018C-17Sep2018-v1/AOD',
+'EGammaRun2018D-PromptReco-v1' : '/EGamma/Run2018D-PromptReco-v1/AOD',
+'EGammaRun2018D-PromptReco-v2' : '/EGamma/Run2018D-PromptReco-v2/AOD',
+'EGammaRun2018E-PromptReco-v1' : '/EGamma/Run2018E-PromptReco-v1/AOD',
+#JetHT
+'JetHTRun2018A-17Sep2018-v1' : '/JetHT/Run2018A-17Sep2018-v1/AOD',
+'JetHTRun2018B-17Sep2018-v1' : '/JetHT/Run2018B-17Sep2018-v1/AOD',
+'JetHTRun2018C-17Sep2018-v1' : '/JetHT/Run2018C-17Sep2018-v1/AOD',
+'JetHTRun2018D-PromptReco-v1' : '/JetHT/Run2018D-PromptReco-v1/AOD',
+'JetHTRun2018D-PromptReco-v2' : '/JetHT/Run2018D-PromptReco-v2/AOD',
+'JetHTRun2018E-PromptReco-v1' : '/JetHT/Run2018E-PromptReco-v1/AOD',
+#MuonEG
+'MuonEGRun2018A-17Sep2018-v2' : '/MuonEG/Run2018A-17Sep2018-v2/AOD',
+'MuonEGRun2018B-17Sep2018-v1' : '/MuonEG/Run2018B-17Sep2018-v1/AOD',
+'MuonEGRun2018C-17Sep2018-v1' : '/MuonEG/Run2018C-17Sep2018-v1/AOD',
+'MuonEGRun2018D-PromptReco-v2' : '/MuonEG/Run2018D-PromptReco-v2/AOD',
 ###############################################
 #Jiajing's
 #'n3n2-n1-hbb-hbb_mh400_pl1000' : '/n3n2-n1-hbb-hbb_mh400_pl1000_ev100000/jmao-crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi400_pl1000_ev100000_AODSIM_CaltechT2-37ac8d442b9840be1abba4facfa67e70/USER',
