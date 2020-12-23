@@ -201,7 +201,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -442,7 +442,8 @@ process.dumpES = cms.EDAnalyzer("PrintEventSetupContent")
 if isData:
     import FWCore.PythonUtilities.LumiList as LumiList
     if is2016:
-        jsonName = "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON"#"Cert_294927-305364_13TeV_PromptReco_Collisions17_JSON"#"Cert_294927-301567_13TeV_PromptReco_Collisions17_JSON" #golden json
+        jsonName = "Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON"
+        #jsonName = "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON"#"Cert_294927-305364_13TeV_PromptReco_Collisions17_JSON"#"Cert_294927-301567_13TeV_PromptReco_Collisions17_JSON" #golden json
     elif is2017:
         jsonName = "Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON"
     elif is2018:
@@ -1774,6 +1775,223 @@ elif is2018:
     data_era = "2018"
     scenario = "2018_25ns_UltraLegacy_PoissonOOTPU"
 
+if isData:
+   trig_list = [
+      #'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',
+      #'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',
+      #'HLT_HT500_DisplacedDijet40_DisplacedTrack_v',
+      #'HLT_HT650_DisplacedDijet60_Inclusive_v',
+      #'HLT_AK8PFHT800_TrimMass50_v',
+      #'HLT_AK8PFHT850_TrimMass50_v',
+      #'HLT_AK8PFHT900_TrimMass50_v',
+      #'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p17_v',
+      #'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p1_v',
+      #'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2_v',
+      #'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np4_v',
+      #'HLT_AK8PFJet360_TrimMass30_v',
+      #'HLT_AK8PFJet380_TrimMass30_v',
+      #'HLT_AK8PFJet400_TrimMass30_v',
+      #'HLT_AK8PFJet420_TrimMass30_v',
+      #'HLT_AK8PFJet500_v',
+      #'HLT_AK8PFJet550_v',
+      #'HLT_AK8PFJetFwd500_v',
+      #'HLT_CaloJet500_NoJetID_v',
+      #'HLT_CaloJet550_NoJetID_v',
+      #'HLT_DoublePFJets116MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
+      #'HLT_DoublePFJets128MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
+      #'HLT_Mu12_DoublePFJets40MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
+      #'HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5_v',
+      #'HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5_v',
+      #'HLT_PFHT400_FivePFJet_120_120_60_30_30_DoublePFBTagDeepCSV_4p5_v',
+      #'HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94_v',
+      #'HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59_v',
+      #'HLT_PFHT500_PFMET100_PFMHT100_IDTight_v',
+      #'HLT_PFHT500_PFMET110_PFMHT110_IDTight_v',
+      #'HLT_PFHT700_PFMET85_PFMHT85_IDTight_v',
+      #'HLT_PFHT700_PFMET95_PFMHT95_IDTight_v',
+      #'HLT_PFHT800_PFMET75_PFMHT75_IDTight_v',
+      #'HLT_PFHT800_PFMET85_PFMHT85_IDTight_v',
+      #'HLT_PFJet500_v',
+      #'HLT_PFJet550_v',
+      #'HLT_PFJetFwd450_v',
+      #'HLT_PFJetFwd500_v',
+      #'HLT_QuadPFJet103_88_75_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
+      #'HLT_QuadPFJet103_88_75_15_PFBTagDeepCSV_1p3_VBF2_v',
+      #'HLT_QuadPFJet105_88_76_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
+      #'HLT_QuadPFJet105_88_76_15_PFBTagDeepCSV_1p3_VBF2_v',
+      #'HLT_QuadPFJet111_90_80_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
+      #'HLT_QuadPFJet111_90_80_15_PFBTagDeepCSV_1p3_VBF2_v',
+      #'HLT_QuadPFJet98_83_71_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
+      #'HLT_QuadPFJet98_83_71_15_PFBTagDeepCSV_1p3_VBF2_v',
+      #'HLT_Rsq0p35_v',
+      #'HLT_Rsq0p40_v',
+      #'HLT_RsqMR300_Rsq0p09_MR200_4jet_v',
+      #'HLT_RsqMR300_Rsq0p09_MR200_v',
+      #'HLT_RsqMR320_Rsq0p09_MR200_4jet_v',
+      #'HLT_RsqMR320_Rsq0p09_MR200_v',
+      #'HLT_CaloMET350_HBHECleaned_v',
+      #'HLT_DiJet110_35_Mjj650_PFMET110_v',
+      #'HLT_DiJet110_35_Mjj650_PFMET120_v',
+      #'HLT_DiJet110_35_Mjj650_PFMET130_v',
+      #'HLT_MET105_IsoTrk50_v',
+      #'HLT_MET120_IsoTrk50_v',
+      #'HLT_MonoCentralPFJet80_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
+      #'HLT_MonoCentralPFJet80_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
+      #'HLT_MonoCentralPFJet80_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
+      #'HLT_PFMET110_PFMHT110_IDTight_CaloBTagDeepCSV_3p1_v',
+      #'HLT_PFMET120_PFMHT120_IDTight_CaloBTagDeepCSV_3p1_v',
+      #'HLT_PFMET120_PFMHT120_IDTight_PFHT60_v',
+      #'HLT_PFMET120_PFMHT120_IDTight_v',
+      #'HLT_PFMET130_PFMHT130_IDTight_CaloBTagDeepCSV_3p1_v',
+      #'HLT_PFMET130_PFMHT130_IDTight_v',
+      #'HLT_PFMET140_PFMHT140_IDTight_CaloBTagDeepCSV_3p1_v',
+      #'HLT_PFMET140_PFMHT140_IDTight_v',
+      #'HLT_PFMET200_HBHE_BeamHaloCleaned_v',
+      #'HLT_PFMET250_HBHECleaned_v',
+      #'HLT_PFMET300_HBHECleaned_v',
+      'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v',
+      'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
+      'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
+      'HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
+      #'HLT_PFMETTypeOne140_PFMHT140_IDTight_v',
+      #'HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v',
+      #'HLT_TripleJet110_35_35_Mjj650_PFMET110_v',
+      #'HLT_TripleJet110_35_35_Mjj650_PFMET120_v',
+      #'HLT_TripleJet110_35_35_Mjj650_PFMET130_v',
+
+      ## Muon CR
+      'HLT_IsoMu24_v',
+      'HLT_IsoMu27_v',
+      'HLT_IsoMu24_eta2p1_v',#partially prescaled in 2018
+      ## Electron CR
+      'HLT_Ele32_WPTight_Gsf_v',
+      'HLT_Ele32_eta2p1_WPLoose_Gsf_v',#not available in 2018
+      'HLT_Ele35_WPTight_Gsf_v',
+      ## e-mu CR
+      'HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v',#not available in 2018
+      'HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v',#not available in 2018
+      'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v',#ok
+      'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v',#ok
+      'HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v',#not available in 2018
+      'HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v',#not available in 2018
+      'HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v',#not available in 2018
+      'HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v',#not available in 2018
+      'HLT_Mu27_Ele37_CaloIdL_MW_v',#ok
+      'HLT_Mu37_Ele27_CaloIdL_MW_v',#ok
+      ## Photon CR
+      'HLT_Photon22_v',#not available in 2018
+      'HLT_Photon30_v',#not available in 2018
+      'HLT_Photon33_v',
+      'HLT_Photon36_v',#not available in 2018
+      'HLT_Photon50_v',
+      'HLT_Photon75_v',
+      'HLT_Photon90_v',
+      'HLT_Photon120_v',
+      'HLT_Photon125_v',#not available in 2018
+      'HLT_Photon150_v',
+      'HLT_Photon200_v',#unprescaled
+      'HLT_Photon175_v',
+      'HLT_Photon250_NoHE_v',#not available in 2018
+      'HLT_Photon300_NoHE_v',
+      'HLT_Photon500_v',#not available in 2018
+      'HLT_Photon600_v',#not available in 2018
+      ## Jet HT CR
+      'HLT_DiPFJetAve40_v',
+      'HLT_DiPFJetAve60_v',
+      'HLT_DiPFJetAve80_v',
+      'HLT_DiPFJetAve200_v',
+      'HLT_DiPFJetAve500_v',
+      'HLT_PFJet40_v',
+      'HLT_PFJet60_v',
+      'HLT_PFJet80_v',
+      'HLT_PFJet140_v',
+      'HLT_PFJet200_v',
+      'HLT_PFJet260_v',
+      'HLT_PFJet320_v',
+      'HLT_PFJet400_v',
+      'HLT_PFJet450_v',
+      'HLT_PFJet500_v',#unprescaled
+      'HLT_PFJet550_v',#unprescaled
+      'HLT_AK8PFJet40_v',
+      'HLT_AK8PFJet60_v',
+      'HLT_AK8PFJet80_v',
+      'HLT_AK8PFJet200_v',
+      'HLT_AK8PFJet500_v',#unprescaled
+      'HLT_AK8PFJet550_v',#unprescaled
+      ###production for MET
+      #'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
+      #'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
+      #'HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
+   ]
+else:
+   #only unprescaled triggers, to keep output size under control
+   trig_list = [
+      'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v',
+      'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
+      'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
+      'HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
+      ## Muon CR
+      'HLT_IsoMu24_v',
+      'HLT_IsoMu27_v',
+      'HLT_IsoMu24_eta2p1_v',#partially prescaled in 2018
+      ## Electron CR
+      'HLT_Ele32_WPTight_Gsf_v',
+      'HLT_Ele32_eta2p1_WPLoose_Gsf_v',#not available in 2018
+      'HLT_Ele35_WPTight_Gsf_v',
+      ## e-mu CR
+      'HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v',#not available in 2018
+      'HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v',#not available in 2018
+      'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v',#ok
+      'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v',#ok
+      'HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v',#not available in 2018
+      'HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v',#not available in 2018
+      'HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v',#not available in 2018
+      'HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v',#not available in 2018
+      'HLT_Mu27_Ele37_CaloIdL_MW_v',#ok
+      'HLT_Mu37_Ele27_CaloIdL_MW_v',#ok
+      ## Photon CR
+      #'HLT_Photon22_v',#not available in 2018
+      #'HLT_Photon30_v',#not available in 2018
+      #'HLT_Photon33_v',
+      #'HLT_Photon36_v',#not available in 2018
+      #'HLT_Photon50_v',
+      #'HLT_Photon75_v',
+      #'HLT_Photon90_v',
+      #'HLT_Photon120_v',
+      #'HLT_Photon125_v',#not available in 2018
+      #'HLT_Photon150_v',
+      'HLT_Photon200_v',#unprescaled
+      #'HLT_Photon175_v',
+      'HLT_Photon250_NoHE_v',#not available in 2018
+      'HLT_Photon300_NoHE_v',
+      'HLT_Photon500_v',#not available in 2018
+      'HLT_Photon600_v',#not available in 2018
+      ## Jet HT CR
+      #'HLT_DiPFJetAve40_v',
+      #'HLT_DiPFJetAve60_v',
+      #'HLT_DiPFJetAve80_v',
+      #'HLT_DiPFJetAve200_v',
+      #'HLT_DiPFJetAve500_v',
+      #'HLT_PFJet40_v',
+      #'HLT_PFJet60_v',
+      #'HLT_PFJet80_v',
+      #'HLT_PFJet140_v',
+      #'HLT_PFJet200_v',
+      #'HLT_PFJet260_v',
+      #'HLT_PFJet320_v',
+      #'HLT_PFJet400_v',
+      #'HLT_PFJet450_v',
+      'HLT_PFJet500_v',#unprescaled
+      'HLT_PFJet550_v',#unprescaled
+      #'HLT_AK8PFJet40_v',
+      #'HLT_AK8PFJet60_v',
+      #'HLT_AK8PFJet80_v',
+      #'HLT_AK8PFJet200_v',
+      'HLT_AK8PFJet500_v',#unprescaled
+      'HLT_AK8PFJet550_v',#unprescaled
+   ]
+#
+
 process.ntuple = cms.EDAnalyzer('AODNtuplizer',
 ###process.ntuple = cms.EDAnalyzer('Ntuplizer',
     genSet = cms.PSet(
@@ -1793,7 +2011,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         pythiaLOSample = cms.bool(True if noLHEinfo else False),#(True if isDibosonInclusive else False),
     ),
     pileupSet = cms.PSet(
-        pileup = cms.InputTag('slimmedAddPileupInfo'),
+        pileup = cms.InputTag('slimmedAddPileupInfo'),#('mixData'),#
         vertices = cms.InputTag('offlinePrimaryVertices'),
         dataFileName     = cms.string('data/PU_69200_%s.root' % (data_era)),#updated
         dataFileNameUp   = cms.string('data/PU_72380_%s.root' % (data_era)),#updated
@@ -1804,156 +2022,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
     ),
     triggerSet = cms.PSet(
         trigger = cms.InputTag('TriggerResults', '', triggerTag),
-        paths = cms.vstring(
-*[
-#2018 menu
-#'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',
-#'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',
-#'HLT_HT500_DisplacedDijet40_DisplacedTrack_v',
-#'HLT_HT650_DisplacedDijet60_Inclusive_v',
-#'HLT_AK8PFHT800_TrimMass50_v',
-#'HLT_AK8PFHT850_TrimMass50_v',
-#'HLT_AK8PFHT900_TrimMass50_v',
-#'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p17_v',
-#'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p1_v',
-#'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2_v',
-#'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np4_v',
-#'HLT_AK8PFJet360_TrimMass30_v',
-#'HLT_AK8PFJet380_TrimMass30_v',
-#'HLT_AK8PFJet400_TrimMass30_v',
-#'HLT_AK8PFJet420_TrimMass30_v',
-#'HLT_AK8PFJet500_v',
-#'HLT_AK8PFJet550_v',
-#'HLT_AK8PFJetFwd500_v',
-#'HLT_CaloJet500_NoJetID_v',
-#'HLT_CaloJet550_NoJetID_v',
-#'HLT_DoublePFJets116MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
-#'HLT_DoublePFJets128MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
-#'HLT_Mu12_DoublePFJets40MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
-#'HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5_v',
-#'HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5_v',
-#'HLT_PFHT400_FivePFJet_120_120_60_30_30_DoublePFBTagDeepCSV_4p5_v',
-#'HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94_v',
-#'HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59_v',
-#'HLT_PFHT500_PFMET100_PFMHT100_IDTight_v',
-#'HLT_PFHT500_PFMET110_PFMHT110_IDTight_v',
-#'HLT_PFHT700_PFMET85_PFMHT85_IDTight_v',
-#'HLT_PFHT700_PFMET95_PFMHT95_IDTight_v',
-#'HLT_PFHT800_PFMET75_PFMHT75_IDTight_v',
-#'HLT_PFHT800_PFMET85_PFMHT85_IDTight_v',
-#'HLT_PFJet500_v',
-#'HLT_PFJet550_v',
-#'HLT_PFJetFwd450_v',
-#'HLT_PFJetFwd500_v',
-#'HLT_QuadPFJet103_88_75_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
-#'HLT_QuadPFJet103_88_75_15_PFBTagDeepCSV_1p3_VBF2_v',
-#'HLT_QuadPFJet105_88_76_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
-#'HLT_QuadPFJet105_88_76_15_PFBTagDeepCSV_1p3_VBF2_v',
-#'HLT_QuadPFJet111_90_80_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
-#'HLT_QuadPFJet111_90_80_15_PFBTagDeepCSV_1p3_VBF2_v',
-#'HLT_QuadPFJet98_83_71_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
-#'HLT_QuadPFJet98_83_71_15_PFBTagDeepCSV_1p3_VBF2_v',
-#'HLT_Rsq0p35_v',
-#'HLT_Rsq0p40_v',
-#'HLT_RsqMR300_Rsq0p09_MR200_4jet_v',
-#'HLT_RsqMR300_Rsq0p09_MR200_v',
-#'HLT_RsqMR320_Rsq0p09_MR200_4jet_v',
-#'HLT_RsqMR320_Rsq0p09_MR200_v',
-#'HLT_CaloMET350_HBHECleaned_v',
-#'HLT_DiJet110_35_Mjj650_PFMET110_v',
-#'HLT_DiJet110_35_Mjj650_PFMET120_v',
-#'HLT_DiJet110_35_Mjj650_PFMET130_v',
-#'HLT_MET105_IsoTrk50_v',
-#'HLT_MET120_IsoTrk50_v',
-#'HLT_MonoCentralPFJet80_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
-#'HLT_MonoCentralPFJet80_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
-#'HLT_MonoCentralPFJet80_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
-#'HLT_PFMET110_PFMHT110_IDTight_CaloBTagDeepCSV_3p1_v',
-#'HLT_PFMET120_PFMHT120_IDTight_CaloBTagDeepCSV_3p1_v',
-#'HLT_PFMET120_PFMHT120_IDTight_PFHT60_v',
-#'HLT_PFMET120_PFMHT120_IDTight_v',
-#'HLT_PFMET130_PFMHT130_IDTight_CaloBTagDeepCSV_3p1_v',
-#'HLT_PFMET130_PFMHT130_IDTight_v',
-#'HLT_PFMET140_PFMHT140_IDTight_CaloBTagDeepCSV_3p1_v',
-#'HLT_PFMET140_PFMHT140_IDTight_v',
-#'HLT_PFMET200_HBHE_BeamHaloCleaned_v',
-#'HLT_PFMET250_HBHECleaned_v',
-#'HLT_PFMET300_HBHECleaned_v',
-'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v',
-'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
-'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
-'HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
-#'HLT_PFMETTypeOne140_PFMHT140_IDTight_v',
-#'HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v',
-#'HLT_TripleJet110_35_35_Mjj650_PFMET110_v',
-#'HLT_TripleJet110_35_35_Mjj650_PFMET120_v',
-#'HLT_TripleJet110_35_35_Mjj650_PFMET130_v',
-
-## Muon CR
-'HLT_IsoMu24_v',
-'HLT_IsoMu27_v',
-'HLT_IsoMu24_eta2p1_v',#partially prescaled in 2018
-## Electron CR
-'HLT_Ele32_WPTight_Gsf_v',
-'HLT_Ele32_eta2p1_WPLoose_Gsf_v',#not available in 2018
-'HLT_Ele35_WPTight_Gsf_v',
-## e-mu CR
-'HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v',#not available in 2018
-'HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v',#not available in 2018
-'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v',#ok
-'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v',#ok
-'HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v',#not available in 2018
-'HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v',#not available in 2018
-'HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v',#not available in 2018
-'HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v',#not available in 2018
-'HLT_Mu27_Ele37_CaloIdL_MW_v',#ok
-'HLT_Mu37_Ele27_CaloIdL_MW_v',#ok
-## Photon CR
-'HLT_Photon22_v',#not available in 2018
-'HLT_Photon30_v',#not available in 2018
-'HLT_Photon33_v',
-'HLT_Photon36_v',#not available in 2018
-'HLT_Photon50_v',
-'HLT_Photon75_v',
-'HLT_Photon90_v',
-'HLT_Photon120_v',
-'HLT_Photon125_v',#not available in 2018
-'HLT_Photon150_v',
-'HLT_Photon200_v',#unprescaled
-'HLT_Photon175_v',
-'HLT_Photon250_NoHE_v',#not available in 2018
-'HLT_Photon300_NoHE_v',
-'HLT_Photon500_v',#not available in 2018
-'HLT_Photon600_v',#not available in 2018
-## Jet HT CR
-'HLT_DiPFJetAve40_v',
-'HLT_DiPFJetAve60_v',
-'HLT_DiPFJetAve80_v',
-'HLT_DiPFJetAve200_v',
-'HLT_DiPFJetAve500_v',
-'HLT_PFJet40_v',
-'HLT_PFJet60_v',
-'HLT_PFJet80_v',
-'HLT_PFJet140_v',
-'HLT_PFJet200_v',
-'HLT_PFJet260_v',
-'HLT_PFJet320_v',
-'HLT_PFJet400_v',
-'HLT_PFJet450_v',
-'HLT_PFJet500_v',#unprescaled
-'HLT_PFJet550_v',#unprescaled
-'HLT_AK8PFJet40_v',
-'HLT_AK8PFJet60_v',
-'HLT_AK8PFJet80_v',
-'HLT_AK8PFJet200_v',
-'HLT_AK8PFJet500_v',#unprescaled
-'HLT_AK8PFJet550_v',#unprescaled
-###production for MET
-#'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
-#'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
-#'HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
-]
-        ),
+        paths = cms.vstring(*trig_list),
         metfilters = cms.InputTag('TriggerResults', '', filterString),
         metpaths = cms.vstring('Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter','Flag_badMuons','Flag_duplicateMuons','Flag_noBadMuons') if isReMiniAod else cms.vstring('Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter','Flag_globalSuperTightHalo2016Filter'),
         prescales = cms.InputTag('patTrigger','',''),
@@ -2259,6 +2328,12 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
     #displacedStandaloneMuonsSet = cms.PSet(
     #    standaloneMuons = cms.InputTag('displacedStandAloneMuons')
     #),
+    #rhoAll = cms.InputTag("fixedGridRhoAll", "", "RECO"),
+    #rhoFastjetAll = cms.InputTag("fixedGridRhoFastjetAll", "", "RECO"),
+    #rhoFastjetAllCalo = cms.InputTag("fixedGridRhoFastjetAllCalo", "", "RECO"),
+    #rhoFastjetCentralCalo = cms.InputTag("fixedGridRhoFastjetCentralCalo", "", "RECO"),
+    #rhoFastjetCentralChargedPileUp = cms.InputTag("fixedGridRhoFastjetCentralChargedPileUp", "", "RECO"),
+    #rhoFastjetCentralNeutral = cms.InputTag("fixedGridRhoFastjetCentralNeutral", "", "RECO"),
     #Define gen decay:
     idLLP1 = cms.int32(idLLP1),
     idLLP2 = cms.int32(idLLP2),
