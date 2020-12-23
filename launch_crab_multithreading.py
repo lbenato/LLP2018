@@ -738,6 +738,81 @@ if __name__ == '__main__':
         is2017 = False
         is2018 = True
         config.JobType.inputFiles = ['data']
+    elif options.lists == "v5_calo_AOD_2018":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+        from Analyzer.LLP2018.samplesAOD2018 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        folder = "v5_calo_AOD_2018_23December2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['data']
+        config.JobType.maxMemoryMB = 5000#15900 #more memory
+        config.JobType.numCores = 8
+        config.Data.splitting = 'Automatic'
+        is2016 = False
+        is2017 = False#!!!
+        is2018 = True#!!!
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
+    elif options.lists == "v5_calo_AOD_2017":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
+        from Analyzer.LLP2018.samplesAOD2017 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        folder = "v5_calo_AOD_2017_23December2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['data']
+        config.JobType.maxMemoryMB = 5000#15900 #more memory
+        config.JobType.numCores = 8
+        config.Data.splitting = 'Automatic'
+        is2016 = False
+        is2017 = True
+        is2018 = False
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
+    elif options.lists == "v5_calo_AOD_2016":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2016 import *
+        from Analyzer.LLP2018.samplesAOD2016 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        folder = "v5_calo_AOD_2016_23December2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['data']
+        config.JobType.maxMemoryMB = 5000#15900 #more memory
+        config.JobType.numCores = 8
+        config.Data.splitting = 'Automatic'
+        is2016 = True
+        is2017 = False#
+        is2018 = False#
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
     else:
         print "No list indicated, aborting!"
         exit()
@@ -1052,7 +1127,8 @@ if __name__ == '__main__':
         # JSON filter
         jsonName = ""
         if is2016:
-            jsonName = "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON"
+            #jsonName = "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON"
+            jsonName = "Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON"
         elif is2017:
             jsonName = "Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON"
         elif is2018:
