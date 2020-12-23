@@ -272,11 +272,22 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::EDGetTokenT<bool> ecalBadCalibFilterToken_;
     edm::EDGetTokenT<bool> eeBadScFilterToken_;
     edm::EDGetTokenT<bool> primaryVertexFilterToken_;  
-    
+    //rho
+    edm::EDGetTokenT<double> rhoAllToken;
+    edm::EDGetTokenT<double> rhoFastjetAllToken;
+    edm::EDGetTokenT<double> rhoFastjetAllCaloToken;
+    edm::EDGetTokenT<double> rhoFastjetCentralCaloToken;
+    edm::EDGetTokenT<double> rhoFastjetCentralChargedPileUpToken;
+    edm::EDGetTokenT<double> rhoFastjetCentralNeutralToken;
+
     bool isMC;
     bool isVBF;
     bool isggH;
     long int EventNumber, LumiNumber, RunNumber, nPV, nSV;
+    int MeanNumInteractions, nBunchCrossing;
+    std::vector<int> BunchCrossing;
+    std::vector<int> TrueNumInteractions;
+    std::vector<int> PUNumInteractions;
     bool AtLeastOneTrigger, AtLeastOneL1Filter;
     float EventWeight;
     float GenEventWeight;
@@ -347,6 +358,13 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     bool Flag2_ecalBadCalibFilter;
     bool Flag2_eeBadScFilter;
     
+    float fixedGridRhoAll;
+    float fixedGridRhoFastjetAll;
+    float fixedGridRhoFastjetAllCalo;
+    float fixedGridRhoFastjetCentralCalo;
+    float fixedGridRhoFastjetCentralChargedPileUp;
+    float fixedGridRhoFastjetCentralNeutral;
+
     //Initialize tree                                                                                                                     
     edm::Service<TFileService> fs;
     TTree* tree;
@@ -429,7 +447,13 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     HBHEIsoNoiseFilterToken_(consumes<bool>(edm::InputTag("HBHENoiseFilterResultProducer","HBHEIsoNoiseFilterResult"))),
     ecalBadCalibFilterToken_(consumes<bool>(edm::InputTag("ecalBadCalibReducedMINIAODFilter"))),
     eeBadScFilterToken_(consumes<bool>(edm::InputTag("eeBadScFilter"))),
-    primaryVertexFilterToken_(consumes<bool>(edm::InputTag("primaryVertexFilter")))
+    primaryVertexFilterToken_(consumes<bool>(edm::InputTag("primaryVertexFilter"))),
+    rhoAllToken(consumes<double>(edm::InputTag("fixedGridRhoAll"))),
+    rhoFastjetAllToken(consumes<double>(edm::InputTag("fixedGridRhoFastjetAll"))),
+    rhoFastjetAllCaloToken(consumes<double>(edm::InputTag("fixedGridRhoFastjetAllCalo"))),
+    rhoFastjetCentralCaloToken(consumes<double>(edm::InputTag("fixedGridRhoFastjetCentralCalo"))),
+    rhoFastjetCentralChargedPileUpToken(consumes<double>(edm::InputTag("fixedGridRhoFastjetCentralChargedPileUp"))),
+    rhoFastjetCentralNeutralToken(consumes<double>(edm::InputTag("fixedGridRhoFastjetCentralNeutral")))
 
 {
 
@@ -568,6 +592,8 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     isggH = false;
     EventNumber = LumiNumber = RunNumber = nPV = 0;
     GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = 1.;
+    MeanNumInteractions = 0;
+    nBunchCrossing = 0;
     HT = 0.;
     HTNoSmear = 0.;
     nMatchedCHSJets = 0;
@@ -662,6 +688,13 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     edm::Handle<bool> HBHEIsoNoiseFilter;
     edm::Handle<bool> primaryVertexFilter;
     
+    edm::Handle<double> rhoAllHandle;
+    edm::Handle<double> rhoFastjetAllHandle;
+    edm::Handle<double> rhoFastjetAllCaloHandle;
+    edm::Handle<double> rhoFastjetCentralCaloHandle;
+    edm::Handle<double> rhoFastjetCentralChargedPileUpHandle;
+    edm::Handle<double> rhoFastjetCentralNeutralHandle;
+
     iEvent.getByToken(globalSuperTightHalo2016FilterToken_, globalSuperTightHalo2016Filter);
     iEvent.getByToken(globalTightHalo2016FilterToken_, globalTightHalo2016Filter);
     iEvent.getByToken(BadChargedCandidateFilterToken_, BadChargedCandidateFilter);
@@ -672,6 +705,13 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     iEvent.getByToken(ecalBadCalibFilterToken_, ecalBadCalibReducedMINIAODFilter);
     iEvent.getByToken(eeBadScFilterToken_, eeBadScFilter);
     //iEvent.getByToken(primaryVertexFilterToken_, primaryVertexFilter);
+
+    iEvent.getByToken(rhoAllToken,rhoAllHandle);
+    iEvent.getByToken(rhoFastjetAllToken,rhoFastjetAllHandle);
+    iEvent.getByToken(rhoFastjetAllCaloToken,rhoFastjetAllCaloHandle);
+    iEvent.getByToken(rhoFastjetCentralCaloToken,rhoFastjetCentralCaloHandle);
+    iEvent.getByToken(rhoFastjetCentralChargedPileUpToken,rhoFastjetCentralChargedPileUpHandle);
+    iEvent.getByToken(rhoFastjetCentralNeutralToken,rhoFastjetCentralNeutralHandle);
     
     Flag2_globalSuperTightHalo2016Filter = *globalSuperTightHalo2016Filter;
     Flag2_globalTightHalo2016Filter = *globalTightHalo2016Filter;
@@ -684,6 +724,12 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     Flag2_eeBadScFilter = *eeBadScFilter;
     //Flag2_goodVertices = *primaryVertexFilter;
 
+    fixedGridRhoAll = *rhoAllHandle;
+    fixedGridRhoFastjetAll = *rhoFastjetAllHandle;
+    fixedGridRhoFastjetAllCalo = *rhoFastjetAllCaloHandle;
+    fixedGridRhoFastjetCentralCalo = *rhoFastjetCentralCaloHandle;
+    fixedGridRhoFastjetCentralChargedPileUp = *rhoFastjetCentralChargedPileUpHandle;
+    fixedGridRhoFastjetCentralNeutral = *rhoFastjetCentralNeutralHandle;
 
 
     //theTriggerAnalyzer->FillL1FiltersMap(iEvent, L1FiltersMap);//commented; filters are treated differently in 2016 w.r.t. 2017/2018
@@ -1094,8 +1140,12 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     PUWeightUp   = thePileupAnalyzer->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
     PUWeightDown = thePileupAnalyzer->GetPUWeightDown(iEvent);//syst uncertainties due to pileup
     nPV = thePileupAnalyzer->GetPV(iEvent);//calculates number of vertices
-    
-    EventWeight *= PUWeight;
+    MeanNumInteractions = thePileupAnalyzer->GetMeanNumInteractions(iEvent);
+    BunchCrossing = thePileupAnalyzer->GetBunchCrossing(iEvent);
+    TrueNumInteractions = thePileupAnalyzer->GetTrueNumInteractions(iEvent);
+    PUNumInteractions = thePileupAnalyzer->GetPUNumInteractions(iEvent);
+    nBunchCrossing = BunchCrossing.size();
+    //EventWeight *= PUWeight;//not done by Caltech; done sample-by-sample
     
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -3665,6 +3715,10 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     tree -> Fill();
     if(isVerbose) std::cout << "TREE FILLED!!!!!!!!!!!! Go to next event...--->" << std::endl;
 
+    BunchCrossing.clear();
+    TrueNumInteractions.clear();
+    PUNumInteractions.clear();
+
     //ManualJets.clear();
     CHSJets.clear();
     EcalRecHitsAK4.clear();
@@ -3720,6 +3774,16 @@ AODNtuplizer::beginJob()
    tree -> Branch("AtLeastOneL1Filter" , &AtLeastOneL1Filter , "AtLeastOneL1Filter/O");
    tree -> Branch("Prefired" , &Prefired , "Prefired/O");
    tree -> Branch("nPV" , &nPV , "nPV/L");
+   tree -> Branch("MeanNumInteractions" , &MeanNumInteractions , "MeanNumInteractions/I");
+   tree -> Branch("nBunchCrossing" , &nBunchCrossing , "nBunchCrossing/I");
+   tree -> Branch("BunchCrossing" , &BunchCrossing);
+   tree -> Branch("TrueNumInteractions" , &TrueNumInteractions);
+   tree -> Branch("PUNumInteractions" , &PUNumInteractions);
+   //std::cout << "MeanNumInteractions: " << MeanNumInteractions << std::endl;
+   //std::cout << "nBunchCrossing: " << nBunchCrossing << std::endl;
+   //std::cout << "size BunchCrossing: " << BunchCrossing.size() << std::endl;
+   //std::cout << "size TrueNumInteractions: " << TrueNumInteractions.size() << std::endl;  
+   //std::cout << "size PUNumInteractions: " << PUNumInteractions.size() << std::endl;
    tree -> Branch("nLLPInCalo" , &nLLPInCalo , "nLLPInCalo/I");
    tree -> Branch("isVBF" , &isVBF, "isVBF/O");
    tree -> Branch("isggH" , &isggH, "isggH/O");
@@ -3800,6 +3864,13 @@ AODNtuplizer::beginJob()
    tree->Branch("Flag2_eeBadScFilter", &Flag2_eeBadScFilter, "Flag2_eeBadScFilter/O");
    tree->Branch("Flag2_BadPFMuonFilter", &Flag2_BadPFMuonFilter, "Flag2_BadPFMuonFilter/O");
    tree->Branch("Flag2_BadChargedCandidateFilter", &Flag2_BadChargedCandidateFilter, "Flag2_BadChargedCandidateFilter/O");
+
+   tree->Branch("fixedGridRhoAll", &fixedGridRhoAll, "fixedGridRhoAll/F");
+   tree->Branch("fixedGridRhoFastjetAll", &fixedGridRhoFastjetAll, "fixedGridRhoFastjetAll/F");
+   tree->Branch("fixedGridRhoFastjetAllCalo", &fixedGridRhoFastjetAllCalo, "fixedGridRhoFastjetAllCalo/F");
+   tree->Branch("fixedGridRhoFastjetCentralCalo", &fixedGridRhoFastjetCentralCalo, "fixedGridRhoFastjetCentralCalo/F");
+   tree->Branch("fixedGridRhoFastjetCentralChargedPileUp", &fixedGridRhoFastjetCentralChargedPileUp, "fixedGridRhoFastjetCentralChargedPileUp/F");
+   tree->Branch("fixedGridRhoFastjetCentralNeutral", &fixedGridRhoFastjetCentralNeutral, "fixedGridRhoFastjetCentralNeutral/F");
 
    //tree -> Branch("ManualJets", &ManualJets);
    tree -> Branch("GenHiggs", &GenHiggs);
