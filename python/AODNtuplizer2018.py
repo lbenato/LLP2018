@@ -84,6 +84,12 @@ options.register(
     "isSignal parser flag"
 )
 options.register(
+    "PisCentralProd", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "isCentralProd parser flag"
+)
+options.register(
     "PGT", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
@@ -126,10 +132,82 @@ options.register(
     " jsonName parser flag"
 )
 options.register(
+    "PeleVetoIDstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleVetoIDstring parser flag"
+)
+options.register(
+    "PeleLooseIdstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleLooseIdstring parser flag"
+)
+options.register(
+    "PeleMediumIdstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleMediumIdstring parser flag"
+)
+options.register(
+    "PeleTightIdstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleTightIdstring parser flag"
+)
+options.register(
+    "PeleMVA90noISOstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleMVA90noISOstring parser flag"
+)
+options.register(
+    "PeleMVA80noISOstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleMVA80noISOstring parser flag"
+)
+options.register(
+    "PphoLooseIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoLooseIdFilestring parser flag"
+)
+options.register(
+    "PphoMediumIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoMediumIdFilestring parser flag"
+)
+options.register(
+    "PphoTightIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoTightIdFilestring parser flag"
+)
+options.register(
+    "PphoMVANonTrigMediumIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoMVANonTrigMediumIdFilestring parser flag"
+)
+options.register(
+    "PbtagSFstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "btagSFstring parser flag"
+)
+options.register(
     "PtriggerTag", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
     "triggerTag parser flag"
+)
+options.register(
+    "PtriggerString", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "triggerString parser flag"
 )
 options.register(
     "PfilterString", "",
@@ -142,6 +220,24 @@ options.register(
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
     "calo parser flag"
+)
+options.register(
+    "Ptracking", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "tracking parser flag"
+)
+options.register(
+    "Pshort", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "short parser flag"
+)
+options.register(
+    "Pcontrol", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "control parser flag"
 )
 options.register(
     "PVBF", False,
@@ -201,7 +297,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -269,7 +365,11 @@ if RunLocal:
     noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8' or 'WW_TuneCP5_13TeV-pythia8' or 'WZ_TuneCP5_13TeV-pythia8' or 'ZZ_TuneCP5_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
     isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0]) else False
+    isCentralProd     = True if ('HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
     isCalo            = True #HERE for calo analyses!!!
+    isTracking        = False
+    isShort           = False
+    isControl         = False
     isVBF             = False
     isggH             = False
     isTwinHiggs       = False
@@ -288,7 +388,11 @@ else:
     noLHEinfo         = options.PnoLHEinfo
     isbbH             = options.PisbbH
     isSignal          = options.PisSignal
+    isCentralProd     = options.PisCentralProd
     isCalo            = options.Pcalo
+    isTracking        = options.Ptracking
+    isShort           = options.Pshort
+    isControl         = options.Pcontrol    
     isVBF             = options.PVBF
     isggH             = options.PggH
     isTwinHiggs       = options.PTwinHiggs
@@ -458,12 +562,14 @@ if RunLocal:
     # MET filters string
     if isData:
         filterString = "RECO"
+        triggerString = "DQM"
     else:
         filterString = "RECO" #if AOD!
+        triggerString = "PAT"
 else:
     triggerTag = options.PtriggerTag
     filterString = options.PfilterString
-
+    triggerString = options.PtriggerString
 
 #########################################################
 
@@ -1777,10 +1883,10 @@ elif is2018:
 
 if isData:
    trig_list = [
-      #'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',
-      #'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',
-      #'HLT_HT500_DisplacedDijet40_DisplacedTrack_v',
-      #'HLT_HT650_DisplacedDijet60_Inclusive_v',
+      'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',
+      'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',
+      'HLT_HT500_DisplacedDijet40_DisplacedTrack_v',
+      'HLT_HT650_DisplacedDijet60_Inclusive_v',
       #'HLT_AK8PFHT800_TrimMass50_v',
       #'HLT_AK8PFHT850_TrimMass50_v',
       #'HLT_AK8PFHT900_TrimMass50_v',
@@ -1926,6 +2032,11 @@ if isData:
 else:
    #only unprescaled triggers, to keep output size under control
    trig_list = [
+      #Princeton's
+      'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',
+      'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',
+      'HLT_HT500_DisplacedDijet40_DisplacedTrack_v',
+      'HLT_HT650_DisplacedDijet60_Inclusive_v',
       'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v',
       'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
       'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
@@ -2025,10 +2136,10 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         paths = cms.vstring(*trig_list),
         metfilters = cms.InputTag('TriggerResults', '', filterString),
         metpaths = cms.vstring('Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter','Flag_badMuons','Flag_duplicateMuons','Flag_noBadMuons') if isReMiniAod else cms.vstring('Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter','Flag_globalSuperTightHalo2016Filter'),
-        prescales = cms.InputTag('patTrigger','',''),
-        l1Minprescales = cms.InputTag('patTrigger','l1min',''),
-        l1Maxprescales = cms.InputTag('patTrigger','l1max',''),
-        objects = cms.InputTag('selectedPatTrigger' if is2016 else 'slimmedPatTrigger','',''),
+        prescales = cms.InputTag('patTrigger','',triggerString),
+        l1Minprescales = cms.InputTag('patTrigger','l1min',triggerString),
+        l1Maxprescales = cms.InputTag('patTrigger','l1max',triggerString),
+        objects = cms.InputTag('selectedPatTrigger' if is2016 else 'slimmedPatTrigger','',triggerString),
         badPFMuonFilter = cms.InputTag("BadPFMuonFilter"),
         badChCandFilter = cms.InputTag("BadChargedCandidateFilter"),
         l1Gt = cms.InputTag("gtStage2Digis"),
