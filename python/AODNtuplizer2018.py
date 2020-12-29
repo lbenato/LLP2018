@@ -4,19 +4,12 @@ options = VarParsing('analysis')
 
 
 ## Var parsing, for CRAB
-#options.register(
-#    "runLocal", True,
-#    VarParsing.multiplicity.singleton,
-#    VarParsing.varType.bool,
-#    "Decide if CRAB should overwrite variables"
-#)
 options.register(
     "runLocal", True,
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
     "Decide if CRAB should overwrite variables"
 )
-
 options.register(
     "PisData", False,
     VarParsing.multiplicity.singleton,
@@ -297,7 +290,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -309,12 +302,12 @@ if len(options.inputFiles) == 0:
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
             ## 2018 MC, signal
-            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
+            #'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
             #'/store/group/phys_exotica/privateProduction/DR/step2_AODSIM/RunIIFall18/TChiHH_mass400_pl1000/batch1/v1/TChiHH_mass400_pl1000/crab_PrivateProduction_Fall18_DR_step2_TChiHH_mass400_pl1000_batch1_v1/200911_133803/0004/AODSIM_4998.root',
             ## 2018 MC, background
             #'/store/mc/RunIIAutumn18DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/026915A1-D6C8-E740-974D-96E7C0BD4BA9.root',
             ## 2018 data
-            #'/store/data/Run2018A/MET/AOD/17Sep2018-v1/100000/0091F52C-BD8E-294E-A40D-3761CE3869CE.root',
+            '/store/data/Run2018A/MET/AOD/17Sep2018-v1/100000/0091F52C-BD8E-294E-A40D-3761CE3869CE.root',
             
             ## 2017 MC, signal
             ## 2017 MC, background
@@ -1421,8 +1414,12 @@ from PhysicsTools.PatAlgos.tools.jetTools import *
 
 #Seth
 jetSource = chosen_jets
-jetCorrectionsAK4 = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None')
-jetCorrectionsAK8 = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None')
+if isData:
+   jetCorrectionsAK4 = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'], 'None')
+   jetCorrectionsAK8 = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'], 'None')
+else:
+   jetCorrectionsAK4 = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None')
+   jetCorrectionsAK8 = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None')
 pfCandidates = 'particleFlow'#'packedPFCandidates'#???
 pvSource = 'offlinePrimaryVertices'#'offlineSlimmedPrimaryVertices'#???
 svSource = 'inclusiveCandidateSecondaryVertices'#'slimmedSecondaryVertices'#???
@@ -1562,8 +1559,15 @@ updateJetCollection(
 for m in ['updatedPatJets'+postfix, 'updatedPatJetsTransientCorrected'+postfix]:
     setattr( getattr(process,m), 'addTagInfos', cms.bool(True) )
 
-
-
+if isData:
+   process.patJetCorrFactorsFinal.levels = ['L1FastJet',
+                                            'L2Relative',
+                                            'L3Absolute',
+                                            'L2L3Residual']
+else:
+   process.patJetCorrFactorsFinal.levels = ['L1FastJet',
+                                            'L2Relative',
+                                            'L3Absolute']
 
 #Imperial
 #process.updatedPatJetsFinal.addBTagInfo = cms.bool(True)
@@ -1589,6 +1593,7 @@ task.add(process.updatedPatJetsTransientCorrectedFinal)
 #---------------------------------------#
 
 if pt_AK8<170:
+   #some JECs missing, to be checked
    jetSourceSoftDrop = "selectedPatJetsAK8CHSSoftDropSubjets"
    postfixSoftDrop = "SoftDropSubjetsLisa"
 
@@ -1680,6 +1685,15 @@ elif pt_AK8>=170:
    for m in ['updatedPatJets'+postfix, 'updatedPatJetsTransientCorrected'+postfix]:
       setattr( getattr(process,m), 'addTagInfos', cms.bool(True) )
 
+   if isData:
+      process.patJetCorrFactorsFinalAK8.levels = ['L1FastJet',
+                                                  'L2Relative',
+                                                  'L3Absolute',
+                                                  'L2L3Residual']
+   else:
+      process.patJetCorrFactorsFinalAK8.levels = ['L1FastJet',
+                                                  'L2Relative',
+                                                  'L3Absolute']
    task.add(process.updatedPatJetsFinalAK8)
    task.add(process.updatedPatJetsTransientCorrectedFinalAK8)
 
