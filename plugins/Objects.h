@@ -170,7 +170,8 @@ alphaMaxOld(-100.), sumPtJetOld(-1.), betaMaxOld(-100.), gammaMaxOld(-100.), gam
 ptAllTracks(-1.), ptAllPVTracks(-1.), ptPVTracksMax(-1.), nTracksAll(-1), nTracksPVMax(-1), medianIP2D(-10000.), medianTheta2D(-100.), alphaMax(-100.), betaMax(-100.), gammaMax(-100.), gammaMaxEM(-100.), gammaMaxHadronic(-100.), gammaMaxET(-100.), minDeltaRAllTracks(999.), minDeltaRPVTracks(999.), nPixelHitsMedian(-1.0), nHitsMedian(-1.0), dzMedian(-9999.), dxyMedian(-9999.),
 hcalE(-100.), ecalE(-100.), FracCal(-100.), flightDist2d(-100.), flightDist2dError(-100.), flightDist3d(-100.), flightDist3dError(-100.), nSV(-1), nSVCand(-1), nVertexTracks(-1), nSelectedTracks(-1), dRSVJet(-100.), SV_x(-1000.), SV_y(-1000.), SV_z(-1000.), SV_dx(-100.), SV_dy(-100.), SV_dz(-100.), nTracksSV(-1), SV_mass(-100.),  isCaloTag(0),
 //VBF_DisplacedJet40_VTightID_Hadronic_match(0), VBF_DisplacedJet40_VVTightID_Hadronic_match(0),
-ptJESUp (-1.), ptJESDown (-1.), ptJER(-1.), ptJERUp (-1.), ptJERDown (-1.), tau1(-1.), tau2(-1.), tau3(-1.), nSubJets(-1), tau21(-1.), tau31(-1.), tau32(-1.), tau1_neutral(-1.), tau2_neutral(-1.), tau21_neutral(-1.), tau1_charged(-1.), tau2_charged(-1.), tau21_charged(-1.), 
+ptJESUp (-1.), ptJESDown (-1.), ptJER(-1.), ptJERUp (-1.), ptJERDown (-1.), energyJER (-1.), energyJERUp (-1.), energyJERDown (-1.), etaJER (-1.), etaJERUp (-1.), etaJERDown (-1.), JERresolution (-1.), JERsf (-1.), JERsfUp (1.), JERsfDown (-1), JERsmearFactor(-1.), JERsmearFactorUp(-1.), JERsmearFactorDown(-1.),
+tau1(-1.), tau2(-1.), tau3(-1.), nSubJets(-1), tau21(-1.), tau31(-1.), tau32(-1.), tau1_neutral(-1.), tau2_neutral(-1.), tau21_neutral(-1.), tau1_charged(-1.), tau2_charged(-1.), tau21_charged(-1.), 
 //TriggerMatched_VBFJet(0), TriggerMatched_DisplacedJet(0), TriggerMatched_TripleJet50(0),//currently not used
 nConstituents (-1), nTrackConstituents (-1), nTracks0PixelHits(-1), nTracks1PixelHit(-1),nTracks2PixelHits(-1),nTracks3PixelHits(-1),nTracks4PixelHits(-1),nTracks5PixelHits(-1),nTracksAtLeast6PixelHits(-1),
 nTracksValidHitInBPix1(-1),nTracks0LostInnerHits(-1), nTracks1LostInnerHit(-1), nTracksAtLeast2LostInnerHits(-1), nTrackConstituentsWithPtLarger0p95(-1), nTrackConstituentsWithTrackDetails(-1), nTrackConstituentsWithTrackDetailsPtLarger0p95(-1), nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1),
@@ -378,6 +379,19 @@ pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP10
     float ptJER;
     float ptJERUp;
     float ptJERDown;
+    float energyJER;
+    float energyJERUp;
+    float energyJERDown;
+    float etaJER;
+    float etaJERUp;
+    float etaJERDown;
+    float JERresolution;
+    float JERsf;
+    float JERsfUp;
+    float JERsfDown;
+    float JERsmearFactor;
+    float JERsmearFactorUp;
+    float JERsmearFactorDown;
     float tau1;
     float tau2;
     float tau3;
@@ -827,7 +841,11 @@ nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1) {}
 
 struct MEtType {
   //MEtType(): pt(-1.), eta(-9.), phi(-9.), sign(-1.), ptRaw(-1.), phiRaw(-9.), ptType1(-1.), phiType1(-9.), ptGen(-1.), phiGen(-9.), ptScaleUp(-1.), ptScaleDown(-1.), ptResUp(-1.), ptResDown(-1.), ptCalo(-1.) {}
-    MEtType(): pt(-1.), eta(-9.), phi(-9.), sign(-1.), ptShiftJetResUp(-1.), ptShiftJetResDown(-1.), ptShiftJetEnUp(-1.), ptShiftJetEnDown(-1.), ptShiftUnclusteredEnUp(-1.), ptShiftUnclusteredEnDown(-1.), ptShiftJetResUpSmear(-1.), ptShiftJetResDownSmear(-1.), ptRaw(-1.), phiRaw(-9.), ptGen(-1.), phiGen(-9.), ptCalo(-1.) {}
+MEtType(): pt(-1.), eta(-9.), phi(-9.), sign(-1.), ptShiftJetResUp(-1.), ptShiftJetResDown(-1.), ptShiftJetEnUp(-1.), ptShiftJetEnDown(-1.), 
+//ptShiftJetResUpSmear(-1.), ptShiftJetResDownSmear(-1.), 
+ptShiftMuonEnUp (-1.), ptShiftMuonEnDown (-1.), ptShiftElectronEnUp(-1.), ptShiftElectronEnDown(-1.), ptShiftTauEnUp(-1.), ptShiftTauEnDown (-1.), ptShiftPhotonEnUp (-1.), ptShiftPhotonEnDown (-1.), ptShiftNoShift (-1.), 
+//ptShiftMETUncertaintySize (-1.), ptShiftMETFullUncertaintySize (-1.), 
+ptShiftUnclusteredEnUp(-1.), ptShiftUnclusteredEnDown(-1.), ptRaw(-1.), phiRaw(-9.), ptGen(-1.), phiGen(-9.), ptCalo(-1.) {}
     float pt;
     float eta;
     float phi;
@@ -836,10 +854,21 @@ struct MEtType {
     float ptShiftJetResDown;
     float ptShiftJetEnUp;
     float ptShiftJetEnDown;
+  //float ptShiftJetResUpSmear;
+  //float ptShiftJetResDownSmear;
+    float ptShiftMuonEnUp; 
+    float ptShiftMuonEnDown;
+    float ptShiftElectronEnUp;
+    float ptShiftElectronEnDown; 
+    float ptShiftTauEnUp;
+    float ptShiftTauEnDown;
+    float ptShiftPhotonEnUp;
+    float ptShiftPhotonEnDown;
+    float ptShiftNoShift;
+  //float ptShiftMETUncertaintySize;
+  //float ptShiftMETFullUncertaintySize;
     float ptShiftUnclusteredEnUp;
     float ptShiftUnclusteredEnDown;
-    float ptShiftJetResUpSmear;
-    float ptShiftJetResDownSmear;
     float ptRaw;
     float phiRaw;
   //float ptType1;

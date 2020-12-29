@@ -484,9 +484,25 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     //I.VBF_DisplacedJet40_VVTightID_Hadronic_match = R->hasUserInt("VBF_DisplacedJet40_VVTightID_Hadronic_match") ? R->userInt("VBF_DisplacedJet40_VVTightID_Hadronic_match") : 0;
     I.ptJESUp = R->hasUserFloat("ptJESUp") ? R->userFloat("ptJESUp") : -1.;
     I.ptJESDown = R->hasUserFloat("ptJESDown") ? R->userFloat("ptJESDown") : -1.;
+
     I.ptJER = R->hasUserFloat("ptJER") ? R->userFloat("ptJER") : -1.;
     I.ptJERUp = R->hasUserFloat("ptJERUp") ? R->userFloat("ptJERUp") : -1.;
     I.ptJERDown = R->hasUserFloat("ptJERDown") ? R->userFloat("ptJERDown") : -1.;
+    I.energyJER = R->hasUserFloat("energyJER") ? R->userFloat("energyJER") : -1.;
+    I.energyJERUp = R->hasUserFloat("energyJERUp") ? R->userFloat("energyJERUp") : -1.;
+    I.energyJERDown = R->hasUserFloat("energyJERDown") ? R->userFloat("energyJERDown") : -1.;
+    I.etaJER = R->hasUserFloat("etaJER") ? R->userFloat("etaJER") : -1.;
+    I.etaJERUp = R->hasUserFloat("etaJERUp") ? R->userFloat("etaJERUp") : -1.;
+    I.etaJERDown = R->hasUserFloat("etaJERDown") ? R->userFloat("etaJERDown") : -1.;
+    //scale factors
+    I.JERresolution = R->hasUserFloat("JERresolution") ? R->userFloat("JERresolution") : -1.;
+    I.JERsf = R->hasUserFloat("JERsf") ? R->userFloat("JERsf") : -1.;
+    I.JERsfUp = R->hasUserFloat("JERsfUp") ? R->userFloat("JERsfUp") : -1.;
+    I.JERsfDown = R->hasUserFloat("JERsfDown") ? R->userFloat("JERsfDown") : -1.;
+    I.JERsmearFactor = R->hasUserFloat("JERsmearFactor") ? R->userFloat("JERsmearFactor") : -1.;
+    I.JERsmearFactorUp = R->hasUserFloat("JERsmearFactorUp") ? R->userFloat("JERsmearFactorUp") : -1.;
+    I.JERsmearFactorDown = R->hasUserFloat("JERsmearFactorDown") ? R->userFloat("JERsmearFactorDown") : -1.;
+
     I.tau1 = R->hasUserFloat("tau1") ? R->userFloat("tau1") : -1.;
     I.tau2 = R->hasUserFloat("tau2") ? R->userFloat("tau2") : -1.;
     I.tau3 = R->hasUserFloat("tau3") ? R->userFloat("tau3") : -1.;
@@ -1650,23 +1666,6 @@ std::string ObjectsFormat::ListCustomFatJetType() {return "pt/F:eta/F:phi/F:mass
 //  Missing energy   //
 //*******************//
 
-//void ObjectsFormat::FillMEtType(MEtType& I, const pat::MET* R, bool isMC) {
-//    I.pt          = R->pt();
-//    I.eta         = R->eta();
-//    I.phi         = R->phi();
-//    I.sign        = R->metSignificance();
-//}
-
-//void ObjectsFormat::ResetMEtType(MEtType& I) {
-//    I.pt          = -1.;
-//    I.eta         = -9.;
-//    I.phi         = -9.;
-//    I.sign        = -1.;
-//}
-
-//std::string ObjectsFormat::ListMEtType() {return "pt/F:eta/F:phi/F:sign/F";}
-
-
 void ObjectsFormat::FillMEtType(MEtType& I, const pat::MET* R, bool isMC) {
     I.pt          = R->pt();
     I.eta         = R->eta();
@@ -1676,10 +1675,21 @@ void ObjectsFormat::FillMEtType(MEtType& I, const pat::MET* R, bool isMC) {
     I.ptShiftJetResDown = R->hasUserFloat("ptShiftJetResDown") ? R->userFloat("ptShiftJetResDown") : -1;
     I.ptShiftJetEnUp = R->hasUserFloat("ptShiftJetEnUp") ? R->userFloat("ptShiftJetEnUp") : -1;
     I.ptShiftJetEnDown = R->hasUserFloat("ptShiftJetEnDown") ? R->userFloat("ptShiftJetEnDown") : -1;
+    //I.ptShiftJetResUpSmear = R->hasUserFloat("ptShiftJetResUpSmear") ? R->userFloat("ptShiftJetResUpSmear") : -1.;
+    //I.ptShiftJetResDownSmear = R->hasUserFloat("ptShiftJetResDownSmear") ? R->userFloat("ptShiftJetResDownSmear") : -1.;
+    I.ptShiftMuonEnUp = R->hasUserFloat("ptShiftMuonEnUp") ? R->userFloat("ptShiftMuonEnUp") : -1.;
+    I.ptShiftMuonEnDown = R->hasUserFloat("ptShiftMuonEnDown") ? R->userFloat("ptShiftMuonEnDown") : -1.;
+    I.ptShiftElectronEnUp = R->hasUserFloat("ptShiftElectronEnUp") ? R->userFloat("ptShiftElectronEnUp") : -1.;
+    I.ptShiftElectronEnDown = R->hasUserFloat("ptShiftElectronEnDown") ? R->userFloat("ptShiftElectronEnDown") : -1.;
+    I.ptShiftTauEnUp = R->hasUserFloat("ptShiftTauEnUp") ? R->userFloat("ptShiftTauEnUp") : -1.;
+    I.ptShiftTauEnDown = R->hasUserFloat("ptShiftTauEnDown") ? R->userFloat("ptShiftTauEnDown") : -1.;
+    I.ptShiftPhotonEnUp = R->hasUserFloat("ptShiftPhotonEnUp") ? R->userFloat("ptShiftPhotonEnUp") : -1.;
+    I.ptShiftPhotonEnDown = R->hasUserFloat("ptShiftPhotonEnDown") ? R->userFloat("ptShiftPhotonEnDown") : -1.;
+    I.ptShiftNoShift = R->hasUserFloat("ptShiftNoShift") ? R->userFloat("ptShiftNoShift") : -1.;
+    //I.ptShiftMETUncertaintySize = R->hasUserFloat("ptShiftMETUncertaintySize") ? R->userFloat("ptShiftMETUncertaintySize") : -1.;
+    //I.ptShiftMETFullUncertaintySize = R->hasUserFloat("ptShiftMETFullUncertaintySize") ? R->userFloat("ptShiftMETFullUncertaintySize") : -1.;
     I.ptShiftUnclusteredEnUp = R->hasUserFloat("ptShiftUnclusteredEnUp") ? R->userFloat("ptShiftUnclusteredEnUp") : -1;
     I.ptShiftUnclusteredEnDown = R->hasUserFloat("ptShiftUnclusteredEnDown") ? R->userFloat("ptShiftUnclusteredEnDown") : -1;
-    I.ptShiftJetResUpSmear = R->hasUserFloat("ptShiftJetResUpSmear") ? R->userFloat("ptShiftJetResUpSmear") : -1.;
-    I.ptShiftJetResDownSmear = R->hasUserFloat("ptShiftJetResDownSmear") ? R->userFloat("ptShiftJetResDownSmear") : -1.;
     I.ptRaw       = R->hasUserFloat("ptRaw") ? R->userFloat("ptRaw") : -1.;
     I.phiRaw      = R->hasUserFloat("phiRaw") ? R->userFloat("phiRaw") : -9.;
     //I.ptType1     = R->hasUserFloat("ptType1") ? R->userFloat("ptType1") : -1.;
@@ -1704,8 +1714,8 @@ void ObjectsFormat::ResetMEtType(MEtType& I) {
     I.ptShiftJetEnDown = -1.;
     I.ptShiftUnclusteredEnUp = -1.;
     I.ptShiftUnclusteredEnDown = -1.;
-    I.ptShiftJetResUpSmear = -1.;
-    I.ptShiftJetResDownSmear = -1.;
+    //I.ptShiftJetResUpSmear = -1.;
+    //I.ptShiftJetResDownSmear = -1.;
     I.ptRaw       = -1.;
     I.phiRaw      = -9.;
     //I.ptType1     = -1.;
