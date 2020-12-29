@@ -748,10 +748,10 @@ if __name__ == '__main__':
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
         from Analyzer.LLP2018.samplesAOD2018 import samples, sample
         pset = "AODNtuplizer2018.py"
-        folder = "v5_calo_AOD_2018_23December2020"#CHANGE here your crab folder name
+        folder = "v5_calo_AOD_2018_28December2020"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
-        config.JobType.inputFiles = ['data']
+        config.JobType.inputFiles = ['dataAOD']
         config.JobType.maxMemoryMB = 5000#15900 #more memory
         config.JobType.numCores = 8
         config.Data.splitting = 'Automatic'
@@ -776,7 +776,7 @@ if __name__ == '__main__':
         folder = "v5_calo_AOD_2017_23December2020"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
-        config.JobType.inputFiles = ['data']
+        config.JobType.inputFiles = ['dataAOD']
         config.JobType.maxMemoryMB = 5000#15900 #more memory
         config.JobType.numCores = 8
         config.Data.splitting = 'Automatic'
@@ -801,7 +801,7 @@ if __name__ == '__main__':
         folder = "v5_calo_AOD_2016_23December2020"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
-        config.JobType.inputFiles = ['data']
+        config.JobType.inputFiles = ['dataAOD']
         config.JobType.maxMemoryMB = 5000#15900 #more memory
         config.JobType.numCores = 8
         config.Data.splitting = 'Automatic'
