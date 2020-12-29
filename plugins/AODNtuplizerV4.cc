@@ -761,8 +761,8 @@ AODNtuplizerV4::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     
-    HT = theCHSJetAnalyzer->CalculateHT(iEvent,iSetup,3,15,3.,true);
-    HTNoSmear = theCHSJetAnalyzer->CalculateHT(iEvent,iSetup,3,15,3.,false);
+    HT = theCHSJetAnalyzer->CalculateHT(iEvent,iSetup,2,15,3.,true);
+    HTNoSmear = theCHSJetAnalyzer->CalculateHT(iEvent,iSetup,2,15,3.,false);
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
