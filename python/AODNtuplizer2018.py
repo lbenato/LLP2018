@@ -290,7 +290,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -316,11 +316,11 @@ if len(options.inputFiles) == 0:
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17DRPremix/TTToSemiLeptonic_widthx0p85_TuneCP5_13TeV-powheg-pythia8/AODSIM/94X_mc2017_realistic_v11-v1/00000/803B3757-AE1D-E811-AEDB-008CFA197D2C.root',
             #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/00000/C4BC9DEE-2F10-E811-AE4F-00A0D1EEEEC8.root',
             ## 2017 data
-            #'file:/pnfs/desy.de/cms/tier2/store/data/Run2017F/SingleMuon/AOD/17Nov2017-v1/70000/0649A342-48DF-E711-9082-FA163EF97216.root',
+            'file:/pnfs/desy.de/cms/tier2/store/data/Run2017F/SingleMuon/AOD/17Nov2017-v1/70000/0649A342-48DF-E711-9082-FA163EF97216.root',
             
             ## 2016 MC, signal
             ## 2016 MC, background
-            'file:/pnfs/desy.de/cms/tier2/store/mc/RunIISummer16DR80Premix/ZJetsToNuNu_HT-400To600_13TeV-madgraph/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/DA01B558-8FD5-E611-AE17-02163E01412C.root'
+            #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIISummer16DR80Premix/ZJetsToNuNu_HT-400To600_13TeV-madgraph/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/DA01B558-8FD5-E611-AE17-02163E01412C.root'
             ## 2016 data
             #'file:/pnfs/desy.de/cms/tier2/store/data/Run2016F/MET/AOD/07Aug17-v1/50000/228B7DCB-BFA1-E711-818C-0CC47A7452DA.root'
             
@@ -1891,19 +1891,19 @@ if isData:
       'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',
       'HLT_HT500_DisplacedDijet40_DisplacedTrack_v',
       'HLT_HT650_DisplacedDijet60_Inclusive_v',
-      #'HLT_AK8PFHT800_TrimMass50_v',
-      #'HLT_AK8PFHT850_TrimMass50_v',
-      #'HLT_AK8PFHT900_TrimMass50_v',
-      #'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p17_v',
-      #'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p1_v',
-      #'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2_v',
-      #'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np4_v',
-      #'HLT_AK8PFJet360_TrimMass30_v',
-      #'HLT_AK8PFJet380_TrimMass30_v',
-      #'HLT_AK8PFJet400_TrimMass30_v',
-      #'HLT_AK8PFJet420_TrimMass30_v',
-      #'HLT_AK8PFJet500_v',
-      #'HLT_AK8PFJet550_v',
+      'HLT_AK8PFHT800_TrimMass50_v',
+      'HLT_AK8PFHT850_TrimMass50_v',
+      'HLT_AK8PFHT900_TrimMass50_v',
+      'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p17_v',
+      'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p1_v',
+      'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2_v',
+      'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np4_v',
+      'HLT_AK8PFJet360_TrimMass30_v',
+      'HLT_AK8PFJet380_TrimMass30_v',
+      'HLT_AK8PFJet400_TrimMass30_v',
+      'HLT_AK8PFJet420_TrimMass30_v',
+      'HLT_AK8PFJet500_v',
+      'HLT_AK8PFJet550_v',
       #'HLT_AK8PFJetFwd500_v',
       #'HLT_CaloJet500_NoJetID_v',
       #'HLT_CaloJet550_NoJetID_v',
@@ -1915,8 +1915,8 @@ if isData:
       #'HLT_PFHT400_FivePFJet_120_120_60_30_30_DoublePFBTagDeepCSV_4p5_v',
       #'HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94_v',
       #'HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59_v',
-      #'HLT_PFHT500_PFMET100_PFMHT100_IDTight_v',
-      #'HLT_PFHT500_PFMET110_PFMHT110_IDTight_v',
+      'HLT_PFHT500_PFMET100_PFMHT100_IDTight_v',
+      'HLT_PFHT500_PFMET110_PFMHT110_IDTight_v',
       #'HLT_PFHT700_PFMET85_PFMHT85_IDTight_v',
       #'HLT_PFHT700_PFMET95_PFMHT95_IDTight_v',
       #'HLT_PFHT800_PFMET75_PFMHT75_IDTight_v',
@@ -2041,6 +2041,22 @@ else:
       'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',
       'HLT_HT500_DisplacedDijet40_DisplacedTrack_v',
       'HLT_HT650_DisplacedDijet60_Inclusive_v',
+      #AK8 and substructure
+      'HLT_AK8PFHT800_TrimMass50_v',
+      'HLT_AK8PFHT850_TrimMass50_v',
+      'HLT_AK8PFHT900_TrimMass50_v',
+      'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p17_v',
+      'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p1_v',
+      'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2_v',
+      'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np4_v',
+      'HLT_AK8PFJet360_TrimMass30_v',
+      'HLT_AK8PFJet380_TrimMass30_v',
+      'HLT_AK8PFJet400_TrimMass30_v',
+      'HLT_AK8PFJet420_TrimMass30_v',
+      'HLT_AK8PFJet500_v',
+      'HLT_AK8PFJet550_v',
+      'HLT_PFHT500_PFMET100_PFMHT100_IDTight_v',
+      'HLT_PFHT500_PFMET110_PFMHT110_IDTight_v',
       'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v',
       'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
       'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
