@@ -302,7 +302,11 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 
         // First pt cut, to avoid issues with AK8!
         if(jet.pt()<PtTh) continue;
-        
+	//std::cout << "check isPFJet()" << jet.isPFJet() << std::endl;
+	//std::cout << "check isJPTJet()" << jet.isJPTJet() << std::endl;
+        //if( !(jet.isJPTJet() or jet.isPFJet()) ) std::cout<< " - - - - NOT VALID! SKIP!!! - - - - - " << std::endl;
+        if( !(jet.isJPTJet() or jet.isPFJet()) ) continue;
+	
 
 	//First of all, jet id selections
         // Quality cut
@@ -365,7 +369,6 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 
 	////Already done via updateJetCollection. Kept as future reference for FW lite
         //if(RecalibrateJets) CorrectJet(jet, *rho_handle, PVCollection->size(), isMC);
-
 	edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
 	iSetup.get<JetCorrectionsRecord>().get(JECUncertaintyName,JetCorParColl); 
 	JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"];
@@ -418,7 +421,6 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         
 
         // JER NEW IMPLEMENTATION
-
 
 
         if(SmearJets) {//Note: use (isMC && SmearJets) to apply JER only to data
@@ -594,6 +596,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             jet.addUserFloat("QGLikelihood", (*QGHandle)[jetRef]);
         }
         */
+
 
         //Find ECAL/HCAL recHits
         //Initialize
@@ -902,6 +905,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 	*/
         Vect.push_back(jet); // Fill vector
     }
+
     return Vect;
 }
 
