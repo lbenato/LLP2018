@@ -286,8 +286,8 @@ process.options   = cms.untracked.PSet(
 )
 
 #Enable multithreading!
-process.options.numberOfThreads=cms.untracked.uint32(8)
-process.options.numberOfStreams=cms.untracked.uint32(0)
+#process.options.numberOfThreads=cms.untracked.uint32(2)
+#process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
@@ -316,18 +316,21 @@ if len(options.inputFiles) == 0:
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17DRPremix/TTToSemiLeptonic_widthx0p85_TuneCP5_13TeV-powheg-pythia8/AODSIM/94X_mc2017_realistic_v11-v1/00000/803B3757-AE1D-E811-AEDB-008CFA197D2C.root',
             #'/store/mc/RunIIFall17DRPremix/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/AODSIM/94X_mc2017_realistic_v10-v1/00000/C4BC9DEE-2F10-E811-AE4F-00A0D1EEEEC8.root',
             ## 2017 data
-            'file:/pnfs/desy.de/cms/tier2/store/data/Run2017F/SingleMuon/AOD/17Nov2017-v1/70000/0649A342-48DF-E711-9082-FA163EF97216.root',
+            #'file:/pnfs/desy.de/cms/tier2/store/data/Run2017F/SingleMuon/AOD/17Nov2017-v1/70000/0649A342-48DF-E711-9082-FA163EF97216.root',
             
             ## 2016 MC, signal
             ## 2016 MC, background
             #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIISummer16DR80Premix/ZJetsToNuNu_HT-400To600_13TeV-madgraph/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/DA01B558-8FD5-E611-AE17-02163E01412C.root'
             ## 2016 data
             #'file:/pnfs/desy.de/cms/tier2/store/data/Run2016F/MET/AOD/07Aug17-v1/50000/228B7DCB-BFA1-E711-818C-0CC47A7452DA.root'
+           
+            #Causing exceptions
+            '/store/mc/RunIIAutumn18DRPremix/QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/110000/8CCF1613-38C3-7949-8CB5-A2EC33CEF145.root',
             
         ),
-        ##skipEvents=cms.untracked.uint32(220),
+        ##skipEvents=cms.untracked.uint32(261),
         #lumisToProcess = cms.untracked.VLuminosityBlockRange('1:11871'),
-        #eventsToProcess = cms.untracked.VEventRange('1:1187029'),
+        #eventsToProcess = cms.untracked.VEventRange('1:46697143'),
         #lumisToProcess = cms.untracked.VLuminosityBlockRange('1:12025'),
         #eventsToProcess = cms.untracked.VEventRange('1:1202419'),
     )
@@ -368,7 +371,6 @@ if RunLocal:
     isTwinHiggs       = False
     isHeavyHiggs      = False
     isSUSY            = True#False
-
 else:
     isData            = options.PisData
     isReHLT           = options.PisReHLT
@@ -391,6 +393,7 @@ else:
     isTwinHiggs       = options.PTwinHiggs
     isHeavyHiggs      = options.PHeavyHiggs
     isSUSY            = options.PSUSY
+
 
 theRunBCD2016 = ['Run2016B','Run2016C','Run2016D']
 theRunEF2016  = ['Run2016E','Run2016F']
@@ -543,16 +546,19 @@ process.dumpES = cms.EDAnalyzer("PrintEventSetupContent")
 
 # JSON filter
 if isData:
-    import FWCore.PythonUtilities.LumiList as LumiList
-    if is2016:
-        jsonName = "Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON"
-        #jsonName = "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON"#"Cert_294927-305364_13TeV_PromptReco_Collisions17_JSON"#"Cert_294927-301567_13TeV_PromptReco_Collisions17_JSON" #golden json
-    elif is2017:
-        jsonName = "Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON"
-    elif is2018:
-        jsonName = "Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON"
-    process.source.lumisToProcess = LumiList.LumiList(filename = 'dataAOD/JSON/'+jsonName+'.txt').getVLuminosityBlockRange()
-    print "JSON file loaded: ", jsonName
+   import FWCore.PythonUtilities.LumiList as LumiList
+   if RunLocal:
+      if is2016:
+         jsonName = "Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt"
+         #jsonName = "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON"#"Cert_294927-305364_13TeV_PromptReco_Collisions17_JSON"#"Cert_294927-301567_13TeV_PromptReco_Collisions17_JSON" #golden json
+      elif is2017:
+         jsonName = "Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt"
+      elif is2018:
+         jsonName = "Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt"
+   else:
+      jsonName = options.PjsonName
+   process.source.lumisToProcess = LumiList.LumiList(filename = 'dataAOD/JSON/'+jsonName).getVLuminosityBlockRange()
+   print "JSON file loaded: ", jsonName
 
 if RunLocal:
     # Trigger filter
@@ -1241,6 +1247,7 @@ if isCalo and pt_AK4<10:
 #-----------------------#
 
 pt_AK8 = 170
+print "pt_AK8 = ", pt_AK8
 
 if pt_AK8<170:
    print "% % % % % % % % % % % % % % % % % % % % % % % % % %"
@@ -2515,7 +2522,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
     performPreFiringStudies = cms.bool(True if ('unprefirable' in process.source.fileNames[0]) else False),
     performVBF = cms.bool(isVBF),
     performggH = cms.bool(isggH),
-    verbose = cms.bool(False),
+    verbose = cms.bool(False),#False
     verboseTrigger  = cms.bool(False),
     signal = cms.bool(isSignal),
     iscalo = cms.bool(isCalo),
