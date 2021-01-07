@@ -7,6 +7,8 @@ long_string += ")"
 selection = {
     "none" : "",
     "isMC" : "isMC",
+    "HiggsMassHigh" : "isMC && GenHiggs.mass>1500",
+    "HiggsMassLow" : "isMC && GenHiggs.mass<=1500",
     "VBF" : "isVBF",
     ##Comment: including only triggers from BTagCSV, DisplacedJet and MET datasets, as per: https://docs.google.com/spreadsheets/d/1oBxzCCM1XP_dfezelrlamR6sfuAdnWm3cHTcaKbt1xA/edit?usp=sharing
     "METfilters" : "(isMC?Flag_eeBadScFilter:1) && (Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_globalTightHalo2016Filter && Flag_goodVertices && Flag_BadPFMuon && Flag_BadChCand)",

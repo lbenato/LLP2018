@@ -527,6 +527,8 @@ def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75):
         "METPreSelSUSYAODAK4HCAL" : "LL decay in HCAL barr.",
         "METPreSelSUSYAODAK8ECAL" : "LL decay in ECAL barr.",
         "METPreSelSUSYAODAK8HCAL" : "LL decay in HCAL barr.",
+        "HiggsMassLow" : "m_{H2}<=1.5 TeV",
+        "HiggsMassHigh" : "m_{H2}>1.5 TeV",
         }
     
     text = ""
