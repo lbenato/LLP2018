@@ -98,6 +98,8 @@
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
+//GenLumiInfoHeader
+#include "SimDataFormats/GeneratorProducts/interface/GenLumiInfoHeader.h"
 
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
@@ -174,6 +176,8 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::EDGetTokenT<vector<reco::Track> > generalTracksToken;
     edm::EDGetTokenT<edm::View<reco::Track> > generalTracksViewToken;
 
+    edm::EDGetTokenT<GenLumiInfoHeader> genLumiInfoToken;
+    TString     Model;
 
     JetAnalyzer* theCHSJetAnalyzer;
     CaloJetAnalyzer* theCaloJetAnalyzer;
@@ -520,6 +524,9 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     generalTracksToken = consumes<std::vector<reco::Track>>(IT_generalTracks);
     generalTracksViewToken = consumes<edm::View<reco::Track>>(IT_generalTracks);
 
+    //GenLumiInfo
+    edm::InputTag genLumiInfo = edm::InputTag(std::string("generator"));
+    genLumiInfoToken          = consumes <GenLumiInfoHeader,edm::InLumi> (genLumiInfo);
         
     ////edm::InputTag IT_met = edm::InputTag("patMETs");
     ////edm::InputTag IT_met = edm::InputTag("slimmedMETs");
@@ -591,6 +598,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     isVBF = false;
     isggH = false;
     EventNumber = LumiNumber = RunNumber = nPV = 0;
+    Model="";
     GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = 1.;
     MeanNumInteractions = 0;
     nBunchCrossing = 0;
@@ -644,6 +652,15 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
     //std::cout << " Event Number: " << EventNumber << std::endl;
 
+    //GenLumiInfo
+    if(isSignal){
+      edm::Handle<GenLumiInfoHeader> GenHeader;
+      iEvent.getLuminosityBlock().getByToken(genLumiInfoToken,GenHeader);
+      Model = GenHeader->configDescription();
+    }
+    //std::cout << "isSignal: " << isSignal << std::endl;
+    //const char *model_ = Model.Data();
+    //std::cout << "Model TString: " << model_ << std::endl;
 
     //GenEventWeight
     GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
@@ -3761,6 +3778,7 @@ AODNtuplizer::beginJob()
   //
 
    tree = fs->make<TTree>("tree", "tree");
+   if(isSignal) tree -> Branch("Model",       &Model);
    tree -> Branch("isMC" , &isMC, "isMC/O");
    tree -> Branch("EventNumber" , &EventNumber , "EventNumber/L");
    tree -> Branch("LumiNumber" , &LumiNumber , "LumiNumber/L");
