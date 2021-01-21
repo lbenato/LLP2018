@@ -603,18 +603,18 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         }
         //    Build candidate
         if(m1 >= 0 && m2 >= 0) {
-        	theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m1) : TightMuonVect.at(m2));
-        	theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m2) : TightMuonVect.at(m1));
-        	addP4.set(theZ);
-        	isZtoMM = true;
+	  theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m1) : TightMuonVect.at(m2));
+	  theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m2) : TightMuonVect.at(m1));
+	  addP4.set(theZ);
+	  isZtoMM = true;
 
-        	//SF
+	  //SF
 
-        	if(isControl && isMC && !is2016) {
-        	  float LeptonWeightUnc = 0.;
-            LeptonWeightUp = 0.;
-            LeptonWeightDown = 0.;
-        	  /// FIXED -> APPLYING THE SF FOR IsoMu24 NOT ANYLONGER HADRCODED <- FIXED ///
+	  if(isControl && isMC && !is2016) {
+	    LeptonWeightUnc = 0.;
+	    LeptonWeightUp = 0.;
+	    LeptonWeightDown = 0.;
+	    /// FIXED -> APPLYING THE SF FOR IsoMu24 NOT ANYLONGER HADRCODED <- FIXED ///
             if (isIsoMu24_OR_IsoTkMu24) {
               if (TightMuonVect.at(m1).pt() > TightMuonVect.at(m2).pt() ) {
                 LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(m1));
@@ -642,19 +642,19 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         	  // //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(MuonVect.at(m1))      ,2);
         	  // //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(MuonVect.at(m2))      ,2);
 
-        	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m1), 3);
-         	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m2), 3);
-         	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m1), 3);
-         	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m2), 3);
-
-        	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m1), 3)    ,2);
-         	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m2), 3)    ,2);
-         	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m1), 3)   ,2);
-         	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m2), 3)   ,2);
-
-        	  LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
-    	      LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
-        	}
+	    LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m1), 3);
+	    LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m2), 3);
+	    LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m1), 3);
+	    LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m2), 3);
+	    
+	    LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m1), 3)    ,2);
+	    LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m2), 3)    ,2);
+	    LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m1), 3)   ,2);
+	    LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m2), 3)   ,2);
+	    
+	    LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
+	    LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
+	  }
         }
       }
 
@@ -685,9 +685,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
         	// SF
         	if(isControl && isMC && !is2016) {
-            float LeptonWeightUnc = 0.;
-            LeptonWeightUp = 0.;
-            LeptonWeightDown = 0.;
+		  LeptonWeightUnc = 0.;
+		  LeptonWeightUp = 0.;
+		  LeptonWeightDown = 0.;
         	  /// FIXME -> APPLYING THE SF FOR Ele27Tight HADRCODED <- FIXME ///
         	  // if (TightElecVect.at(e1).pt() > TightElecVect.at(e2).pt() ){
         	  //   LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e1));
@@ -708,7 +708,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
          	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(e2), 3)     ,2);
 
         	  LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
-            LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
+		  LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
         	}
         }
       }
@@ -1030,6 +1030,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (WriteAllJets) AllJets.clear();
     //AllBarrelJets.clear();
     CHSJets.clear();
+    ggHJet.clear();
     VBFPairJets.clear();
     if(WriteFatJets) CHSFatJets.clear();
     //CaloJets.clear();
