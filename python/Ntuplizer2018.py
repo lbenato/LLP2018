@@ -292,7 +292,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -1513,7 +1513,9 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
 ### b-like
 #'HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v', 'HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v',
 'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v', 'HLT_QuadJet45_TripleBTagCSV_p087_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v',
-
+'HLT_PFHT400_SixJet30_DoubleBTagCSV_p056_v',
+# former meant as broken triggers:
+'HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v','HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v',
 ### displaced tracks
 #'HLT_VBF_DisplacedJet40_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_DisplacedTrack_2TrackIP2DSig5_v', 'HLT_HT350_DisplacedDijet40_DisplacedTrack_v', 'HLT_HT350_DisplacedDijet80_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_VTightID_DisplacedTrack_v', 'HLT_VBF_DisplacedJet40_VVTightID_DisplacedTrack_v', 'HLT_HT350_DisplacedDijet80_Tight_DisplacedTrack_v', 'HLT_HT650_DisplacedDijet80_Inclusive_v', 'HLT_HT750_DisplacedDijet80_Inclusive_v',
 
@@ -1623,7 +1625,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         prescales = cms.InputTag('patTrigger','',triggerString),
         l1Minprescales = cms.InputTag('patTrigger','l1min',triggerString),
         l1Maxprescales = cms.InputTag('patTrigger','l1max',triggerString),
-        objects = cms.InputTag('selectedPatTrigger' if is2016 else 'slimmedPatTrigger','',triggerString),
+        objects = cms.InputTag('slimmedPatTrigger','',triggerString),
         badPFMuonFilter = cms.InputTag("BadPFMuonFilter"),
         badChCandFilter = cms.InputTag("BadChargedCandidateFilter"),
         l1Gt = cms.InputTag("gtStage2Digis"),
