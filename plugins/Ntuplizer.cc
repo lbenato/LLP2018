@@ -1939,7 +1939,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );
     if (WriteFatJets) for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) CHSFatJets.push_back( FatJetType() );
     for(unsigned int i = 0; i < ggHJetVect.size(); i++) ggHJet.push_back( JetType() );
-    if (is Short or isControl) {
+    if (isShort or isControl) {
       for(unsigned int i = 0; i < TightMuonVect.size(); i++) Muons.push_back( LeptonType() );
       for(unsigned int i = 0; i < TightElecVect.size(); i++) Electrons.push_back( LeptonType() );
     }
