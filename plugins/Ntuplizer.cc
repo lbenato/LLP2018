@@ -468,7 +468,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "Electrons" << std::endl;
     std::vector<pat::Electron> ElecVect = theElectronAnalyzer->FillElectronVector(iEvent);
     std::vector<pat::Electron> TightElecVect;
-    if (isControl) Electrons.clear();
+    if (isControl or isShort) Electrons.clear();
 
     for(unsigned int a = 0; a<ElecVect.size(); a++)
       {
@@ -488,7 +488,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "Muons" << std::endl;
     std::vector<pat::Muon> MuonVect = theMuonAnalyzer->FillMuonVector(iEvent);
     std::vector<pat::Muon> TightMuonVect;
-    if (isControl) Muons.clear();
+    if (isControl or isShort) Muons.clear();
     for(unsigned int a = 0; a<MuonVect.size(); a++)
       {
 	if(MuonVect.at(a).hasUserInt("isTight") && MuonVect.at(a).userInt("isTight")>0 && MuonVect.at(a).hasUserFloat("pfIso04") && MuonVect.at(a).userFloat("pfIso04")<0.15)//tight iso for muons
@@ -532,18 +532,19 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isCalo && nElectrons>0) return;//Veto leptons and photons!
     if(isCalo && nPhotons>0) return;//Veto leptons and photons!
 
-    if(isShort && !isControl){
-      if (nMuons>0) return;//Veto leptons and photons!
-      if( nTaus>0) return;//Veto leptons and photons!
-      if(nElectrons>0) return;//Veto leptons and photons!
-      if(nPhotons>0) return;//Veto leptons and photons!
-    }
-    if(isShort && isControl){
-      //if(nTightMuons!=1 || nTightElectrons!=1) return; //Control region for short lifetimes
-      if(nTightMuons<1 && nTightElectrons<1) return; //Control region for short lifetimes
-      //      if(nTaus<1) return;//Veto taus!
-      //      if(nPhotons<1) return;//Veto photons!
-    }
+    // commented to write one bunch of ntuples for signal and control region
+    // if(isShort && !isControl){
+    //   if (nMuons>0) return;//Veto leptons and photons!
+    //   if( nTaus>0) return;//Veto leptons and photons!
+    //   if(nElectrons>0) return;//Veto leptons and photons!
+    //   if(nPhotons>0) return;//Veto leptons and photons!
+    // }
+    // if(isShort && isControl){
+    //   //if(nTightMuons!=1 || nTightElectrons!=1) return; //Control region for short lifetimes
+    //   if(nTightMuons<1 && nTightElectrons<1) return; //Control region for short lifetimes
+    //   //      if(nTaus<1) return;//Veto taus!
+    //   //      if(nPhotons<1) return;//Veto photons!
+    // }
 
 
     //------------------------------------------------------------------------------------------
@@ -560,7 +561,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     float LeptonWeightUp = 1.;
     float LeptonWeightDown = 1.;
 
-    if (isShort && isControl) {
+    if (isShort or isControl) {
 
       //// ---------- Z TO LEPTONS ----------
       if(TightMuonVect.size()>=2 || TightElecVect.size()>=2) {
@@ -720,12 +721,13 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         theW.addDaughter(MET);
         addP4.set(theW);
 
-        if (theW.mt()<100. && isControl){
-          return;
-        }
+	// commented to write one bunch of ntuples for signal and control region
+        // if (theW.mt()<100. && isControl){
+        //   return;
+        // }
 
         // SF
-        if(isControl && isMC && !is2016) {
+        if((isShort or isControl) && isMC && !is2016) {
           float LeptonWeightUnc = 0.;
           LeptonWeightUp = 0.;
           LeptonWeightDown = 0.;
@@ -753,11 +755,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         theW.addDaughter(MET);
         addP4.set(theW);
 
-        if (theW.mt()<100. && isControl){
-          return;
-        }
+	// commented to write one bunch of ntuples for signal and control region
+        // if (theW.mt()<100. && isControl){
+        //   return;
+        // }
 
-        if(isControl && isMC && !is2016) {
+        if((isShort or isControl) && isMC && !is2016) {
           float LeptonWeightUnc = 0.;
           LeptonWeightUp = 0.;
           LeptonWeightDown = 0.;
@@ -1936,7 +1939,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );
     if (WriteFatJets) for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) CHSFatJets.push_back( FatJetType() );
     for(unsigned int i = 0; i < ggHJetVect.size(); i++) ggHJet.push_back( JetType() );
-    if (isControl) {
+    if (is Short or isControl) {
       for(unsigned int i = 0; i < TightMuonVect.size(); i++) Muons.push_back( LeptonType() );
       for(unsigned int i = 0; i < TightElecVect.size(); i++) Electrons.push_back( LeptonType() );
     }
@@ -2462,7 +2465,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillGenPType(GenHiggs[i], &GenHiggsVect[i]);
     if (WriteGenLLPs) for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillGenPType(GenLLPs[i], &GenLongLivedVect[i]);
     if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillGenPType(GenBquarks[i], &GenBquarksVect[i]);
-    if (isControl){
+    if (isShort or isControl){
       for(unsigned int i = 0; i < Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
       for(unsigned int i = 0; i < Electrons.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
     }
@@ -2476,7 +2479,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //   }
     // }
     ObjectsFormat::FillCandidateType(VBF, &theVBF, isMC);
-    if (isControl) {
+    if (isShort or isControl) {
         ObjectsFormat::FillCandidateType(Z, &theZ, isMC);
         ObjectsFormat::FillCandidateType(W, &theW, isMC);
     }
@@ -2608,7 +2611,7 @@ Ntuplizer::beginJob()
     tree -> Branch("LumiNumber" , &LumiNumber , "LumiNumber/L");
     tree -> Branch("RunNumber" , &RunNumber , "RunNumber/L");
     tree -> Branch("EventWeight", &EventWeight, "EventWeight/F");
-    if (isControl){
+    if (isShort or isControl){
       tree -> Branch("EventWeight_leptonSF", &EventWeight_leptonSF, "EventWeight_leptonSF/F");
       tree -> Branch("EventWeight_leptonSFUp", &EventWeight_leptonSFUp, "EventWeight_leptonSFUp/F");
       tree -> Branch("EventWeight_leptonSFDown", &EventWeight_leptonSFDown, "EventWeight_leptonSFDown/F");
@@ -2690,7 +2693,7 @@ Ntuplizer::beginJob()
     tree -> Branch("isVBF" , &isVBF, "isVBF/O");
     tree -> Branch("isggH" , &isggH, "isggH/O");
     tree -> Branch("isTriggerVBF" , &isTriggerVBF, "isTriggerVBF/O");
-    if (isControl) {
+    if (isShort or isControl) {
         tree -> Branch("isZtoEE" , &isZtoEE, "isZtoEE/O");
         tree -> Branch("isZtoMM" , &isZtoMM, "isZtoMM/O");
         tree -> Branch("isWtoEN" , &isWtoEN, "isWtoEN/O");
@@ -2740,7 +2743,7 @@ Ntuplizer::beginJob()
     ////for(int i = 0; i < WriteNLeptons; i++) Leptons.push_back( LeptonType() );
     //      for(int i = 0; i < WriteNLeptons; i++) Muons.push_back( LeptonType() );
     //      for(int i = 0; i < WriteNLeptons; i++) Electrons.push_back( LeptonType() );
-    if (isControl){
+    if (isShort or isControl){
       tree -> Branch("TightMuons", &Muons);
       tree -> Branch("TightElectrons", &Electrons);
     }
@@ -2761,7 +2764,7 @@ Ntuplizer::beginJob()
     //for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Electron"+std::to_string(i+1)).c_str(), &(Electrons[i].pt), ObjectsFormat::ListLeptonType().c_str());
 
     tree -> Branch("VBFPair", &VBF.pt, ObjectsFormat::ListCandidateType().c_str());
-    if (isControl){
+    if (isShort or isControl){
       tree -> Branch("Z", &Z.pt, ObjectsFormat::ListCandidateType().c_str());
       tree -> Branch("W", &W.pt, ObjectsFormat::ListCandidateType().c_str());
     }
