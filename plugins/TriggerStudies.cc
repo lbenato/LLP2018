@@ -161,6 +161,13 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     nJets = nLooseJets = nTightJets = nVBFPairJets = nTriggerObjectsTripleJet50 = nTriggerObjectsTripleJet50WithDuplicates = 0;
     nTriggerObjects = nTriggerVBFPairJets = 0;
     nTriggerObjectsDoubleJet90 = nTriggerObjectsQuadJet45 = nTriggerObjectsDoubleJetC112MaxDeta1p6 = nTriggerObjectsDoubleJetC112 = nTriggerObjectsSixJet30 = nTriggerObjectsQuadPFJetMqq240 = nTriggerObjectsQuadPFJetMqq500 = 0;
+    nFilterObjectsQuadJet45_hltL1s_dRp5 = nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5 = nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5 = nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5 = 0;
+    nFilterObjectsQuadJet45_hltL1s_dRp4 = nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4 = nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4 = nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4 = 0;
+    nFilterObjectsQuadJet45_hltL1s_dRp2 = nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2 = nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2 = nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2 = 0;
+    nFilterObjectsDoubleJet90_hltL1s_dRp5 = nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5 = nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5 = nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5 = nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5 =  nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5 = 0;
+    nFilterObjectsDoubleJet90_hltL1s_dRp4 = nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4 = nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4 = nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4 = nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4 =  nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4 = 0;
+    nFilterObjectsDoubleJet90_hltL1s_dRp2 = nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2 = nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2 = nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2 = nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2 =  nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2 = 0;
+    
     //    nSelectedDisplacedJet = nSelectedVBFJets = 0;
     nCHSFatJets = nLooseCHSFatJets = nTightCHSFatJets = nGenBquarks = nGenLL = nPV = nSV = 0;
     nMatchedJets = 0;
@@ -648,23 +655,194 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //   }
 
 
+    //    nFilterObjectsDoubleJet90_hltL1s = nFilterObjectsDoubleJet90_hltDoubleCentralJet90 = nFilterObjectsDoubleJet90_hltQuadCentralJet30 = nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90 = nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30 =      nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple = 0;
+
     for(unsigned int s = 0; s<JetsVect.size(); s++){
+      bool is_hltL1;
+      bool is_hltDoubleCentralJet90;
+      bool is_hltQuadCentralJet30;
+      bool is_hltDoublePFCentralJetLooseID90;
+      bool is_hltQuadPFCentralJetLooseID30;
+      bool is_hltBTagCaloCSVp087Triple;
       float current_delta_R_DoubleJet90 = 1000.;
       for(unsigned int t1 = 0; t1 < DoubleJet90_Vec.size(); t1++){
+	is_hltL1 = false;
+	is_hltDoubleCentralJet90 = false;
+	is_hltQuadCentralJet30 = false;
+	is_hltDoublePFCentralJetLooseID90 = false;
+	is_hltQuadPFCentralJetLooseID30 = false;
+	is_hltBTagCaloCSVp087Triple = false;
 	current_delta_R_DoubleJet90 = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),DoubleJet90_Vec.at(t1).eta(),DoubleJet90_Vec.at(t1).phi()));
 	if (current_delta_R_DoubleJet90<0.5){
-	  JetsVect.at(s).addUserInt("TriggerMatched_DoubleJet90",1);
-	  break;
+	  JetsVect.at(s).addUserInt("TriggerMatched_DoubleJet90_dRp5",1);
+	  if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltL1sTripleJetVBFIorHTTIorDoubleJetCIorSingleJet")){
+	    is_hltL1 = true;
+	    JetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltL1s",1);
+	    nFilterObjectsDoubleJet90_hltL1s_dRp5 += 1;
+	  }
+	  if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltDoubleCentralJet90")){
+	    is_hltDoubleCentralJet90 = true;
+	    JetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltDoubleCentralJet90",1);
+	    nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5 += 1;
+	  }
+	  if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltQuadCentralJet30")){
+	    is_hltQuadCentralJet30 = true;
+	    JetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltQuadCentralJet30",1);
+	    nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5 += 1;
+	  }
+	  if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltDoublePFCentralJetLooseID90")){
+	    is_hltDoublePFCentralJetLooseID90 = true;
+	    JetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltDoublePFCentralJetLooseID90",1);
+	    nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5 += 1;
+	  }
+	  if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltQuadPFCentralJetLooseID30")){
+	    is_hltQuadPFCentralJetLooseID30 = true;
+	    JetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltQuadPFCentralJetLooseID30",1);
+	    nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5 += 1;
+	  }
+	  if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltBTagCaloCSVp087Triple")){
+	    is_hltBTagCaloCSVp087Triple = true;
+	    JetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltBTagCaloCSVp087Triple",1);
+	    nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5 += 1;
+	  }
+
+	  if (current_delta_R_DoubleJet90<0.4){
+	    JetsVect.at(s).addUserInt("TriggerMatched_DoubleJet90_dRp4",1);
+	    if (is_hltL1){
+	      JetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltL1s",1);
+	      nFilterObjectsDoubleJet90_hltL1s_dRp4 += 1;
+	    }
+	    if (is_hltDoubleCentralJet90){
+	      JetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltDoubleCentralJet90",1);
+	      nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4 += 1;
+	    }
+	    if (is_hltQuadCentralJet30){
+	      JetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltQuadCentralJet30",1);
+	      nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4 += 1;
+	    }
+	    if (is_hltDoublePFCentralJetLooseID90){
+	      JetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltDoublePFCentralJetLooseID90",1);
+	      nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4 += 1;
+	    }
+	    if (is_hltQuadPFCentralJetLooseID30){
+	      JetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltQuadPFCentralJetLooseID30",1);
+	      nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4 += 1;
+	    }
+	    if (is_hltBTagCaloCSVp087Triple){
+	      JetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltBTagCaloCSVp087Triple",1);
+	      nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4 += 1;
+	    }
+
+	    if (current_delta_R_DoubleJet90<0.2){
+	      JetsVect.at(s).addUserInt("TriggerMatched_DoubleJet90_dRp2",1);
+	      if (is_hltL1){
+		JetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltL1s",1);
+		nFilterObjectsDoubleJet90_hltL1s_dRp2 += 1;
+	      }
+	      if (is_hltDoubleCentralJet90){
+		JetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltDoubleCentralJet90",1);
+		nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2 += 1;
+	      }
+	      if (is_hltQuadCentralJet30){
+		JetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltQuadCentralJet30",1);
+		nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2 += 1;
+	      }
+	      if (is_hltDoublePFCentralJetLooseID90){
+		JetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltDoublePFCentralJetLoseID90",1);
+		nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2 += 1;
+	      }
+	      if (is_hltQuadPFCentralJetLooseID30){
+		JetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltQuadPFCentralJetLooseID30",1);
+		nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2 += 1;
+	      }
+	      if (is_hltBTagCaloCSVp087Triple){
+		JetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltBTagCaloCSVp087Triple",1);
+		nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2 += 1;
+	      }
+
+
+	    }
+	  }
 	}
       }
+
       float current_delta_R_QuadJet45 = 1000.;
+      bool is_hltL1s;
+      bool is_hltQuadCentralJet45;
+      bool is_hltQuadPFCentralJetLooseID45;
+      //      bool is_hltBTagCaloCSVp087Triple;
       for(unsigned int t1 = 0; t1 < QuadJet45_Vec.size(); t1++){
-	current_delta_R_QuadJet45 = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),QuadJet45_Vec.at(t1).eta(),QuadJet45_Vec.at(t1).phi()));
+      is_hltL1s = false;
+      is_hltQuadCentralJet45 = false;
+      is_hltQuadPFCentralJetLooseID45 = false;
+      is_hltBTagCaloCSVp087Triple = false;
+      current_delta_R_QuadJet45 = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),QuadJet45_Vec.at(t1).eta(),QuadJet45_Vec.at(t1).phi()));
 	if (current_delta_R_QuadJet45<0.5){
-	  JetsVect.at(s).addUserInt("TriggerMatched_QuadJet45",1);
-	  break;
+	  JetsVect.at(s).addUserInt("TriggerMatched_QuadJet45_dRp5",1);
+	  if(QuadJet45_Vec.at(t1).hasFilterLabel("hltL1sQuadJetC50IorQuadJetC60IorHTT280IorHTT300IorHTT320IorTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBF") || QuadJet45_Vec.at(t1).hasFilterLabel("hltL1sQuadJetCIorTripleJetVBFIorHTT")){
+	    is_hltL1s = true;
+	    JetsVect.at(s).addUserInt("FilterMatched_dRp5_QuadJet45_hltL1s",1);
+	    nFilterObjectsQuadJet45_hltL1s_dRp5 += 1;
+	  }
+	  if (QuadJet45_Vec.at(t1).hasFilterLabel("hltQuadCentralJet45")){
+	    is_hltQuadCentralJet45 = true;
+	    JetsVect.at(s).addUserInt("FilterMatched_dRp5_QuadJet45_hltQuadCentralJet45",1);
+	    nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5 += 1;
+	  }
+	  if (QuadJet45_Vec.at(t1).hasFilterLabel("hltQuadPFCentralJetLooseID45")){
+	    is_hltQuadPFCentralJetLooseID45 = true;
+	    JetsVect.at(s).addUserInt("FilterMatched_dRp5_QuadJet45_hltQuadPFCentralJetLooseID45",1);
+	    nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5 += 1;
+	  }
+	  if (QuadJet45_Vec.at(t1).hasFilterLabel("hltBTagCaloCSVp087Triple")){
+	    is_hltBTagCaloCSVp087Triple = true;
+	    JetsVect.at(s).addUserInt("FilterMatched_dRp5_QuadJet45_hltBTagCaloCSVp087Triple",1);
+	    nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5 += 1;
+	  }
+
+	  if (current_delta_R_QuadJet45<0.4){
+	    JetsVect.at(s).addUserInt("TriggerMatched_QuadJet45_dRp4",1);
+	    if (is_hltL1s) {
+	      JetsVect.at(s).addUserInt("FilterMatched_dRp4_QuadJet45_hltL1s",1);
+	      nFilterObjectsQuadJet45_hltL1s_dRp4 += 1;
+	    }
+	    if (is_hltQuadCentralJet45){
+	      JetsVect.at(s).addUserInt("FilterMatched_dRp4_QuadJet45_hltQuadCentralJet45",1);
+	      nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4 += 1;
+	    }
+	    if (is_hltQuadPFCentralJetLooseID45){
+	      JetsVect.at(s).addUserInt("FilterMatched_dRp4_QuadJet45_hltQuadPFCentralJetLooseID45",1);
+	      nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4 += 1;
+	    }
+	    if (is_hltBTagCaloCSVp087Triple){
+	      JetsVect.at(s).addUserInt("FilterMatched_dRp4_QuadJet45_hltBTagCaloCSVp087Triple",1);
+	      nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4 += 1;
+	    }
+
+	    if (current_delta_R_QuadJet45<0.2){
+	      JetsVect.at(s).addUserInt("TriggerMatched_QuadJet45_dRp2",1);
+	      if (is_hltL1s){
+		JetsVect.at(s).addUserInt("FilterMatched_dRp2_QuadJet45_hltL1s",1);
+		nFilterObjectsQuadJet45_hltL1s_dRp2 += 1;
+	      }
+	      if (is_hltQuadCentralJet45){
+		JetsVect.at(s).addUserInt("FilterMatched_dRp2_QuadJet45_hltQuadCentralJet45",1);
+		nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2 += 1;
+	      }
+	      if (is_hltQuadPFCentralJetLooseID45){
+		JetsVect.at(s).addUserInt("FilterMatched_dRp2_QuadJet45_hltQuadPFCentralJetLooseID45",1);
+		nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2 += 1;
+	      }
+	      if (is_hltBTagCaloCSVp087Triple){
+		JetsVect.at(s).addUserInt("FilterMatched_dRp2_QuadJet45_hltBTagCaloCSVp087Triple",1);
+		nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2 += 1;
+	      }
+	    }
+	  }
 	}
       }
+
+
       float current_delta_R_DoubleJetC112MaxDeta1p6 = 1000.;
       for(unsigned int t1 = 0; t1 < DoubleJetC112MaxDeta1p6_Vec.size(); t1++){
 	current_delta_R_DoubleJetC112MaxDeta1p6 = fabs(reco::deltaR(JetsVect.at(s).eta(),JetsVect.at(s).phi(),DoubleJetC112MaxDeta1p6_Vec.at(t1).eta(),DoubleJetC112MaxDeta1p6_Vec.at(t1).phi()));
@@ -1525,7 +1703,39 @@ TriggerStudies::beginJob()
     //    tree -> Branch("nTriggerObjectsTripleJet50" , &nTriggerObjectsTripleJet50 , "nTriggerObjectsTripleJet50/L");
     //    tree -> Branch("nTriggerObjectsTripleJet50WithDuplicates" , &nTriggerObjectsTripleJet50WithDuplicates , "nTriggerObjectsTripleJet50WithDuplicates/L");
     tree -> Branch("nTriggerObjectsDoubleJet90" , &nTriggerObjectsDoubleJet90 , "nTriggerObjectsDoubleJet90/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltL1s_dRp5" , &nFilterObjectsDoubleJet90_hltL1s_dRp5, "nFilterObjectsDoubleJet90_hltL1s_dRp5/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5" , &nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5, "nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5" , &nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5, "nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5" , &nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5, "nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5" , &nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5, "nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5" , &nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5, "nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltL1s_dRp4" , &nFilterObjectsDoubleJet90_hltL1s_dRp4, "nFilterObjectsDoubleJet90_hltL1s_dRp4/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4" , &nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4, "nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4" , &nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4, "nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4" , &nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4, "nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4" , &nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4, "nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4" , &nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4, "nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltL1s_dRp2" , &nFilterObjectsDoubleJet90_hltL1s_dRp2, "nFilterObjectsDoubleJet90_hltL1s_dRp2/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2" , &nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2, "nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2" , &nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2, "nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2" , &nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2, "nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2" , &nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2, "nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2/L");
+    tree -> Branch("nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2" , &nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2, "nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2/L");
+
     tree -> Branch("nTriggerObjectsQuadJet45" , &nTriggerObjectsQuadJet45 , "nTriggerObjectsQuadJet45/L");
+    tree -> Branch("nFilterObjectsQuadJet45_hltL1s_dRp5" , &nFilterObjectsQuadJet45_hltL1s_dRp5, "nFilterObjectsQuadJet45_hltL1s_dRp5/L");
+    tree -> Branch("nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5" , &nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5, "nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5/L");
+    tree -> Branch("nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5" , &nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5, "nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5/L");
+    tree -> Branch("nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5" , &nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5, "nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5/L");
+    tree -> Branch("nFilterObjectsQuadJet45_hltL1s_dRp4" , &nFilterObjectsQuadJet45_hltL1s_dRp4, "nFilterObjectsQuadJet45_hltL1s_dRp4/L");
+    tree -> Branch("nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4" , &nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4, "nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4/L");
+    tree -> Branch("nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4" , &nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4, "nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4/L");
+    tree -> Branch("nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4" , &nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4, "nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4/L");
+    tree -> Branch("nFilterObjectsQuadJet45_hltL1s_dRp2" , &nFilterObjectsQuadJet45_hltL1s_dRp2, "nFilterObjectsQuadJet45_hltL1s_dRp2/L");
+    tree -> Branch("nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2" , &nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2, "nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2/L");
+    tree -> Branch("nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2" , &nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2, "nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2/L");
+    tree -> Branch("nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2" , &nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2, "nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2/L");
+
     tree -> Branch("nTriggerObjectsDoubleJetC112MaxDeta1p6" , &nTriggerObjectsDoubleJetC112MaxDeta1p6 , "nTriggerObjectsDoubleJetC112MaxDeta1p6/L");
     tree -> Branch("nTriggerObjectsDoubleJetC112" , &nTriggerObjectsDoubleJetC112 , "nTriggerObjectsDoubleJetC112/L");
     tree -> Branch("nTriggerObjectsSixJet30" , &nTriggerObjectsSixJet30 , "nTriggerObjectsSixJet30/L");
