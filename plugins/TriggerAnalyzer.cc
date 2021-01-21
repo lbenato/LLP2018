@@ -164,7 +164,8 @@ void TriggerAnalyzer::FillMetFiltersMap(const edm::Event& iEvent, std::map<std::
 }
 
 ////////////////////////////////////////////////
-void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::string, bool>& Map, std::vector<pat::TriggerObjectStandAlone>& TriggerObjectVect) {
+//void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::string, bool>& Map, std::vector<pat::TriggerObjectStandAlone>& TriggerObjectVect) {
+void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::string, bool>& Map) {
 
     edm::Handle<edm::TriggerResults> hltTriggerResults;
     iEvent.getByToken(TriggerToken, hltTriggerResults);
@@ -179,14 +180,14 @@ void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::s
     for(unsigned int i = 0; i < L1FiltersList.size(); i++) {
       Map[L1FiltersList[i]] = false;
     }
-    TriggerObjectVect.clear();
+    //    TriggerObjectVect.clear();
     //	  2020_12_18: new setup works differently! Filter not broken!
     for (size_t it = 0; it < triggerObjects.size(); ++it)
       {
 	pat::TriggerObjectStandAlone obj = triggerObjects.at(it);
 	obj.unpackFilterLabels(iEvent, *hltTriggerResults);
 	obj.unpackPathNames(trigNames);
-	TriggerObjectVect.push_back(obj);
+	//	TriggerObjectVect.push_back(obj);
 	for(unsigned int i = 0; i < L1FiltersList.size(); i++) {
 	  if (obj.hasFilterLabel(L1FiltersList[i])){
 	    Map[L1FiltersList[i]] = true;

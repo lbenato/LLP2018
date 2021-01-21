@@ -261,7 +261,8 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     theTriggerAnalyzer->FillMetFiltersMap(iEvent, MetFiltersMap);
     BadPFMuonFlag = theTriggerAnalyzer->GetBadPFMuonFlag(iEvent);
     BadChCandFlag = theTriggerAnalyzer->GetBadChCandFlag(iEvent);
-    theTriggerAnalyzer->FillL1FiltersMap(iEvent, L1FiltersMap, TriggerObjectsVector);
+    //    theTriggerAnalyzer->FillL1FiltersMap(iEvent, L1FiltersMap, TriggerObjectsVector);
+    theTriggerAnalyzer->FillL1FiltersMap(iEvent, L1FiltersMap);
 
     // 27 Sep 2018: saving only events that fired at least one trigger, to reduce output size
     for(auto it = TriggerMap.begin(); it != TriggerMap.end(); it++)

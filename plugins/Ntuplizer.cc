@@ -125,8 +125,8 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     for(unsigned int i = 0; i < TriggerList.size(); i++) PrescalesTriggerMap[ TriggerList[i] ] = -1;
     std::vector<std::string> MetFiltersList(TriggerPSet.getParameter<std::vector<std::string> >("metpaths"));
     for(unsigned int i = 0; i < MetFiltersList.size(); i++) MetFiltersMap[ MetFiltersList[i] ] = false;
-    //std::vector<std::string> L1FiltersList(TriggerPSet.getParameter<std::vector<std::string> >("l1filters"));//commented
-    //for(unsigned int i = 0; i < L1FiltersList.size(); i++) L1FiltersMap[ L1FiltersList[i] ] = false;//commented
+    std::vector<std::string> L1FiltersList(TriggerPSet.getParameter<std::vector<std::string> >("l1filters"));//commented
+    for(unsigned int i = 0; i < L1FiltersList.size(); i++) L1FiltersMap[ L1FiltersList[i] ] = false;//commented
 
     //Imperial College Tagger
     edm::InputTag JetTagWP0p01 = edm::InputTag("pfXTags:0p01:ntuple");
@@ -252,6 +252,14 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     Prefired = false;
     HDiCHS = HTriCHS = HQuadCHS = HDiCHSMatched = HTriCHSMatched = HQuadCHSMatched = 0;
     nPFCandidates = nPFCandidatesTrack = nPFCandidatesHighPurityTrack = nPFCandidatesFullTrackInfo = nPFCandidatesFullTrackInfo_pt = nPFCandidatesFullTrackInfo_hasTrackDetails = 0;
+    nTriggerObjectsDoubleJet90 = nTriggerObjectsQuadJet45 = nTriggerObjectsDoubleJetC112MaxDeta1p6 = nTriggerObjectsDoubleJetC112 = nTriggerObjectsSixJet30 = nTriggerObjectsQuadPFJetMqq240 = nTriggerObjectsQuadPFJetMqq500 = 0;
+    nFilterObjectsQuadJet45_hltL1s_dRp5 = nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5 = nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5 = nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5 = 0;
+    nFilterObjectsQuadJet45_hltL1s_dRp4 = nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4 = nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4 = nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4 = 0;
+    nFilterObjectsQuadJet45_hltL1s_dRp2 = nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2 = nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2 = nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2 = 0;
+    nFilterObjectsDoubleJet90_hltL1s_dRp5 = nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5 = nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5 = nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5 = nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5 =  nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5 = 0;
+    nFilterObjectsDoubleJet90_hltL1s_dRp4 = nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4 = nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4 = nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4 = nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4 =  nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4 = 0;
+    nFilterObjectsDoubleJet90_hltL1s_dRp2 = nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2 = nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2 = nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2 = nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2 =  nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2 = 0;
+
     //HDiCalo = HTriCalo = HQuadCalo = HDiCaloMatched = HTriCaloMatched = HQuadCaloMatched = 0;
 
     //Event info
@@ -285,7 +293,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     theTriggerAnalyzer->FillMetFiltersMap(iEvent, MetFiltersMap);
     BadPFMuonFlag = theTriggerAnalyzer->GetBadPFMuonFlag(iEvent);
     BadChCandFlag = theTriggerAnalyzer->GetBadChCandFlag(iEvent);
-    //theTriggerAnalyzer->FillL1FiltersMap(iEvent, L1FiltersMap);//commented; filters are treated differently in 2016 w.r.t. 2017/2018
+    theTriggerAnalyzer->FillL1FiltersMap(iEvent, L1FiltersMap);//commented; filters are treated differently in 2016 w.r.t. 2017/2018
 
     // 27 Sep 2018: saving only events that fired at least one trigger, to reduce output size
     for(auto it = TriggerMap.begin(); it != TriggerMap.end(); it++)
@@ -1968,6 +1976,270 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     number_of_SV = SVertexVect.size();
     nSV = number_of_SV;
 
+
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // Trigger filters for short lifetime
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+
+    if (isShort){
+      std::string DoubleJet90_string = "HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v";
+      std::vector<pat::TriggerObjectStandAlone> DoubleJet90_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,DoubleJet90_string);
+      nTriggerObjectsDoubleJet90 = DoubleJet90_Vec.size();
+
+      std::string QuadJet45_string = "HLT_QuadJet45_TripleBTagCSV_p087_v";
+      std::vector<pat::TriggerObjectStandAlone> QuadJet45_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,QuadJet45_string);
+      nTriggerObjectsQuadJet45 = QuadJet45_Vec.size();
+
+      std::string DoubleJetC112MaxDeta1p6_string = "HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v";
+      std::vector<pat::TriggerObjectStandAlone> DoubleJetC112MaxDeta1p6_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,DoubleJetC112MaxDeta1p6_string);
+      nTriggerObjectsDoubleJetC112MaxDeta1p6 = DoubleJetC112MaxDeta1p6_Vec.size();
+
+      std::string DoubleJetC112_string = "HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v";
+      std::vector<pat::TriggerObjectStandAlone> DoubleJetC112_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,DoubleJetC112_string);
+      nTriggerObjectsDoubleJetC112 = DoubleJetC112_Vec.size();
+    
+      std::string SixJet30_string = "HLT_PFHT400_SixJet30_DoubleBTagCSV_p056_v";
+      std::vector<pat::TriggerObjectStandAlone> SixJet30_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,SixJet30_string);
+      nTriggerObjectsSixJet30 = SixJet30_Vec.size();
+
+      std::string QuadPFJetMqq240_string = "HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v";
+      std::vector<pat::TriggerObjectStandAlone> QuadPFJetMqq240_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,QuadPFJetMqq240_string);
+      nTriggerObjectsQuadPFJetMqq240 = QuadPFJetMqq240_Vec.size();
+
+      std::string QuadPFJetMqq500_string = "HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v";
+      std::vector<pat::TriggerObjectStandAlone> QuadPFJetMqq500_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,QuadPFJetMqq500_string);
+      nTriggerObjectsQuadPFJetMqq500 = QuadPFJetMqq500_Vec.size();
+
+
+
+      for(unsigned int s = 0; s<CHSJetsVect.size(); s++){
+	bool is_hltL1;
+	bool is_hltDoubleCentralJet90;
+	bool is_hltQuadCentralJet30;
+	bool is_hltDoublePFCentralJetLooseID90;
+	bool is_hltQuadPFCentralJetLooseID30;
+	bool is_hltBTagCaloCSVp087Triple;
+	float current_delta_R_DoubleJet90 = 1000.;
+	for(unsigned int t1 = 0; t1 < DoubleJet90_Vec.size(); t1++){
+	  is_hltL1 = false;
+	  is_hltDoubleCentralJet90 = false;
+	  is_hltQuadCentralJet30 = false;
+	  is_hltDoublePFCentralJetLooseID90 = false;
+	  is_hltQuadPFCentralJetLooseID30 = false;
+	  is_hltBTagCaloCSVp087Triple = false;
+	  current_delta_R_DoubleJet90 = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),DoubleJet90_Vec.at(t1).eta(),DoubleJet90_Vec.at(t1).phi()));
+	  if (current_delta_R_DoubleJet90<0.5){
+	    CHSJetsVect.at(s).addUserInt("TriggerMatched_DoubleJet90_dRp5",1);
+	    if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltL1sTripleJetVBFIorHTTIorDoubleJetCIorSingleJet")){
+	      is_hltL1 = true;
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltL1s",1);
+	      nFilterObjectsDoubleJet90_hltL1s_dRp5 += 1;
+	    }
+	    if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltDoubleCentralJet90")){
+	      is_hltDoubleCentralJet90 = true;
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltDoubleCentralJet90",1);
+	      nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5 += 1;
+	    }
+	    if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltQuadCentralJet30")){
+	      is_hltQuadCentralJet30 = true;
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltQuadCentralJet30",1);
+	      nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5 += 1;
+	    }
+	    if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltDoublePFCentralJetLooseID90")){
+	      is_hltDoublePFCentralJetLooseID90 = true;
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltDoublePFCentralJetLooseID90",1);
+	      nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5 += 1;
+	    }
+	    if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltQuadPFCentralJetLooseID30")){
+	      is_hltQuadPFCentralJetLooseID30 = true;
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltQuadPFCentralJetLooseID30",1);
+	      nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5 += 1;
+	    }
+	    if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltBTagCaloCSVp087Triple")){
+	      is_hltBTagCaloCSVp087Triple = true;
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltBTagCaloCSVp087Triple",1);
+	      nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5 += 1;
+	    }
+
+	    if (current_delta_R_DoubleJet90<0.4){
+	      CHSJetsVect.at(s).addUserInt("TriggerMatched_DoubleJet90_dRp4",1);
+	      if (is_hltL1){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltL1s",1);
+		nFilterObjectsDoubleJet90_hltL1s_dRp4 += 1;
+	      }
+	      if (is_hltDoubleCentralJet90){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltDoubleCentralJet90",1);
+		nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4 += 1;
+	      }
+	      if (is_hltQuadCentralJet30){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltQuadCentralJet30",1);
+		nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4 += 1;
+	      }
+	      if (is_hltDoublePFCentralJetLooseID90){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltDoublePFCentralJetLooseID90",1);
+		nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4 += 1;
+	      }
+	      if (is_hltQuadPFCentralJetLooseID30){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltQuadPFCentralJetLooseID30",1);
+		nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4 += 1;
+	      }
+	      if (is_hltBTagCaloCSVp087Triple){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltBTagCaloCSVp087Triple",1);
+		nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4 += 1;
+	      }
+
+	      if (current_delta_R_DoubleJet90<0.2){
+		CHSJetsVect.at(s).addUserInt("TriggerMatched_DoubleJet90_dRp2",1);
+		if (is_hltL1){
+		  CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltL1s",1);
+		  nFilterObjectsDoubleJet90_hltL1s_dRp2 += 1;
+		}
+		if (is_hltDoubleCentralJet90){
+		  CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltDoubleCentralJet90",1);
+		  nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2 += 1;
+		}
+		if (is_hltQuadCentralJet30){
+		  CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltQuadCentralJet30",1);
+		  nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2 += 1;
+		}
+		if (is_hltDoublePFCentralJetLooseID90){
+		  CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltDoublePFCentralJetLoseID90",1);
+		  nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2 += 1;
+		}
+		if (is_hltQuadPFCentralJetLooseID30){
+		  CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltQuadPFCentralJetLooseID30",1);
+		  nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2 += 1;
+		}
+		if (is_hltBTagCaloCSVp087Triple){
+		  CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltBTagCaloCSVp087Triple",1);
+		  nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2 += 1;
+		}
+	      }//if < 0.2
+	    }//if < 0.4
+	  }//if < 0.5
+	}//for loop DoubleJet90Vect
+
+      float current_delta_R_QuadJet45 = 1000.;
+      bool is_hltL1s;
+      bool is_hltQuadCentralJet45;
+      bool is_hltQuadPFCentralJetLooseID45;
+      //      bool is_hltBTagCaloCSVp087Triple;
+      for(unsigned int t1 = 0; t1 < QuadJet45_Vec.size(); t1++){
+	is_hltL1s = false;
+	is_hltQuadCentralJet45 = false;
+	is_hltQuadPFCentralJetLooseID45 = false;
+	is_hltBTagCaloCSVp087Triple = false;
+	current_delta_R_QuadJet45 = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),QuadJet45_Vec.at(t1).eta(),QuadJet45_Vec.at(t1).phi()));
+	if (current_delta_R_QuadJet45<0.5){
+	  CHSJetsVect.at(s).addUserInt("TriggerMatched_QuadJet45_dRp5",1);
+	  if(QuadJet45_Vec.at(t1).hasFilterLabel("hltL1sQuadJetC50IorQuadJetC60IorHTT280IorHTT300IorHTT320IorTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBF") || QuadJet45_Vec.at(t1).hasFilterLabel("hltL1sQuadJetCIorTripleJetVBFIorHTT")){
+	    is_hltL1s = true;
+	    CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_QuadJet45_hltL1s",1);
+	    nFilterObjectsQuadJet45_hltL1s_dRp5 += 1;
+	  }
+	  if (QuadJet45_Vec.at(t1).hasFilterLabel("hltQuadCentralJet45")){
+	    is_hltQuadCentralJet45 = true;
+	    CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_QuadJet45_hltQuadCentralJet45",1);
+	    nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5 += 1;
+	  }
+	  if (QuadJet45_Vec.at(t1).hasFilterLabel("hltQuadPFCentralJetLooseID45")){
+	    is_hltQuadPFCentralJetLooseID45 = true;
+	    CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_QuadJet45_hltQuadPFCentralJetLooseID45",1);
+	    nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5 += 1;
+	  }
+	  if (QuadJet45_Vec.at(t1).hasFilterLabel("hltBTagCaloCSVp087Triple")){
+	    is_hltBTagCaloCSVp087Triple = true;
+	    CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_QuadJet45_hltBTagCaloCSVp087Triple",1);
+	    nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5 += 1;
+	  }
+
+	  if (current_delta_R_QuadJet45<0.4){
+	    CHSJetsVect.at(s).addUserInt("TriggerMatched_QuadJet45_dRp4",1);
+	    if (is_hltL1s) {
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_QuadJet45_hltL1s",1);
+	      nFilterObjectsQuadJet45_hltL1s_dRp4 += 1;
+	    }
+	    if (is_hltQuadCentralJet45){
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_QuadJet45_hltQuadCentralJet45",1);
+	      nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4 += 1;
+	    }
+	    if (is_hltQuadPFCentralJetLooseID45){
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_QuadJet45_hltQuadPFCentralJetLooseID45",1);
+	      nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4 += 1;
+	    }
+	    if (is_hltBTagCaloCSVp087Triple){
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_QuadJet45_hltBTagCaloCSVp087Triple",1);
+	      nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4 += 1;
+	    }
+
+	    if (current_delta_R_QuadJet45<0.2){
+	      CHSJetsVect.at(s).addUserInt("TriggerMatched_QuadJet45_dRp2",1);
+	      if (is_hltL1s){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_QuadJet45_hltL1s",1);
+		nFilterObjectsQuadJet45_hltL1s_dRp2 += 1;
+	      }
+	      if (is_hltQuadCentralJet45){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_QuadJet45_hltQuadCentralJet45",1);
+		nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2 += 1;
+	      }
+	      if (is_hltQuadPFCentralJetLooseID45){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_QuadJet45_hltQuadPFCentralJetLooseID45",1);
+		nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2 += 1;
+	      }
+	      if (is_hltBTagCaloCSVp087Triple){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_QuadJet45_hltBTagCaloCSVp087Triple",1);
+		nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2 += 1;
+	      }
+	    }//if < 0.2
+	  }//if < 0.4
+	}//if < 0.5
+      }//for loop QuadJet45Vect
+
+      float current_delta_R_DoubleJetC112MaxDeta1p6 = 1000.;
+      for(unsigned int t1 = 0; t1 < DoubleJetC112MaxDeta1p6_Vec.size(); t1++){
+	current_delta_R_DoubleJetC112MaxDeta1p6 = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),DoubleJetC112MaxDeta1p6_Vec.at(t1).eta(),DoubleJetC112MaxDeta1p6_Vec.at(t1).phi()));
+	if (current_delta_R_DoubleJetC112MaxDeta1p6<0.5){
+	  CHSJetsVect.at(s).addUserInt("TriggerMatched_DoubleJetC112MaxDeta1p6",1);
+	  break;
+	}
+      }
+      float current_delta_R_DoubleJetC112 = 1000.;
+      for(unsigned int t1 = 0; t1 < DoubleJetC112_Vec.size(); t1++){
+	current_delta_R_DoubleJetC112 = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),DoubleJetC112_Vec.at(t1).eta(),DoubleJetC112_Vec.at(t1).phi()));
+	if (current_delta_R_DoubleJetC112<0.5){
+	  CHSJetsVect.at(s).addUserInt("TriggerMatched_DoubleJetC112",1);
+	  break;
+	}
+      }
+      float current_delta_R_SixJet30 = 1000.;
+      for(unsigned int t1 = 0; t1 < SixJet30_Vec.size(); t1++){
+	current_delta_R_SixJet30 = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),SixJet30_Vec.at(t1).eta(),SixJet30_Vec.at(t1).phi()));
+	if (current_delta_R_SixJet30<0.5){
+	  CHSJetsVect.at(s).addUserInt("TriggerMatched_SixJet30",1);
+	  break;
+	}
+      }
+      float current_delta_R_QuadPFJetMqq240 = 1000.;
+      for(unsigned int t1 = 0; t1 < QuadPFJetMqq240_Vec.size(); t1++){
+	current_delta_R_QuadPFJetMqq240 = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),QuadPFJetMqq240_Vec.at(t1).eta(),QuadPFJetMqq240_Vec.at(t1).phi()));
+	if (current_delta_R_QuadPFJetMqq240<0.5){
+	  CHSJetsVect.at(s).addUserInt("TriggerMatched_QuadPFJetMqq240",1);
+	  break;
+	}
+      }
+      float current_delta_R_QuadPFJetMqq500 = 1000.;
+      for(unsigned int t1 = 0; t1 < QuadPFJetMqq500_Vec.size(); t1++){
+	current_delta_R_QuadPFJetMqq500 = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),QuadPFJetMqq500_Vec.at(t1).eta(),QuadPFJetMqq500_Vec.at(t1).phi()));
+	if (current_delta_R_QuadPFJetMqq500<0.5){
+	  CHSJetsVect.at(s).addUserInt("TriggerMatched_QuadPFJetMqq500",1);
+	  break;
+	}
+      }
+      }//for loop jets
+    }//isShort
+
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     // PFCandidates
@@ -2538,7 +2810,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "TREE FILL!" << std::endl;
     tree -> Fill();
     if(isVerbose) std::cout << "TREE FILLED!!!!!!!!!!!! Go to next event...--->" << std::endl;
-
+ 
 }
 
 
@@ -2689,6 +2961,47 @@ Ntuplizer::beginJob()
       tree -> Branch("nPFCandidatesFullTrackInfo_pt", &nPFCandidatesFullTrackInfo_pt, "nPFCandidatesFullTrackInfo_pt/I");
       tree -> Branch("nPFCandidatesFullTrackInfo_hasTrackDetails", &nPFCandidatesFullTrackInfo_hasTrackDetails, "nPFCandidatesFullTrackInfo_hasTrackDetails/I");
     }
+    if (isShort){
+      tree -> Branch("nTriggerObjectsDoubleJet90" , &nTriggerObjectsDoubleJet90 , "nTriggerObjectsDoubleJet90/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltL1s_dRp5" , &nFilterObjectsDoubleJet90_hltL1s_dRp5, "nFilterObjectsDoubleJet90_hltL1s_dRp5/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5" , &nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5, "nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5" , &nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5, "nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5" , &nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5, "nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5" , &nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5, "nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5" , &nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5, "nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltL1s_dRp4" , &nFilterObjectsDoubleJet90_hltL1s_dRp4, "nFilterObjectsDoubleJet90_hltL1s_dRp4/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4" , &nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4, "nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4" , &nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4, "nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4" , &nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4, "nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4" , &nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4, "nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4" , &nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4, "nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltL1s_dRp2" , &nFilterObjectsDoubleJet90_hltL1s_dRp2, "nFilterObjectsDoubleJet90_hltL1s_dRp2/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2" , &nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2, "nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2" , &nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2, "nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2" , &nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2, "nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2" , &nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2, "nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2" , &nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2, "nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2/L");
+
+      tree -> Branch("nTriggerObjectsQuadJet45" , &nTriggerObjectsQuadJet45 , "nTriggerObjectsQuadJet45/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltL1s_dRp5" , &nFilterObjectsQuadJet45_hltL1s_dRp5, "nFilterObjectsQuadJet45_hltL1s_dRp5/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5" , &nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5, "nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5" , &nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5, "nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5" , &nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5, "nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltL1s_dRp4" , &nFilterObjectsQuadJet45_hltL1s_dRp4, "nFilterObjectsQuadJet45_hltL1s_dRp4/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4" , &nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4, "nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4" , &nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4, "nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4" , &nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4, "nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltL1s_dRp2" , &nFilterObjectsQuadJet45_hltL1s_dRp2, "nFilterObjectsQuadJet45_hltL1s_dRp2/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2" , &nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2, "nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2" , &nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2, "nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2" , &nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2, "nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2/L");
+
+      tree -> Branch("nTriggerObjectsDoubleJetC112MaxDeta1p6" , &nTriggerObjectsDoubleJetC112MaxDeta1p6 , "nTriggerObjectsDoubleJetC112MaxDeta1p6/L");
+      tree -> Branch("nTriggerObjectsDoubleJetC112" , &nTriggerObjectsDoubleJetC112 , "nTriggerObjectsDoubleJetC112/L");
+      tree -> Branch("nTriggerObjectsSixJet30" , &nTriggerObjectsSixJet30 , "nTriggerObjectsSixJet30/L");
+      tree -> Branch("nTriggerObjectsQuadPFJetMqq240" , &nTriggerObjectsQuadPFJetMqq240 , "nTriggerObjectsQuadPFJetMqq240/L");
+      tree -> Branch("nTriggerObjectsQuadPFJetMqq500" , &nTriggerObjectsQuadPFJetMqq500 , "nTriggerObjectsQuadPFJetMqq500/L");
+    }
     tree -> Branch("Flag_BadPFMuon", &BadPFMuonFlag, "Flag_BadPFMuon/O");
     tree -> Branch("Flag_BadChCand", &BadChCandFlag, "Flag_BadChCand/O");
     tree -> Branch("isVBF" , &isVBF, "isVBF/O");
@@ -2717,7 +3030,7 @@ Ntuplizer::beginJob()
 	    }
         }
     for(auto it = MetFiltersMap.begin(); it != MetFiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());
-    //for(auto it = L1FiltersMap.begin(); it != L1FiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());//commented, filters treated differently in 2016/2017-8
+    for(auto it = L1FiltersMap.begin(); it != L1FiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());//commented, filters treated differently in 2016/2017-8
 
     tree -> Branch("HDiCHS", &HDiCHS, "HDiCHS/F");
     tree -> Branch("HTriCHS", &HTriCHS, "HTriCHS/F");
