@@ -231,7 +231,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     nCHSJets = nLooseCHSJets = nTightCHSJets = 0;
     nVBFGenMatchedJets = 0;
     nAllBarrelJets = nAllJets = 0;
-    nCHSFatJets = nLooseCHSFatJets = nTightCHSFatJets = nGenBquarks = nGenLL = nPV = nSV = 0;
+    nCHSFatJets = nLooseCHSFatJets = nTightCHSFatJets = nGenBquarks = nGenTTbarQuarks = nGenLL = nPV = nSV = 0;
     nMatchedCHSJets = nMatchedFatJets = 0;
     //nCaloJets = nMatchedCaloJets = nMatchedCaloJetsWithGenJets = 0;
     //nCaloTagJets = nLooseCaloTagJets = 0;
@@ -382,11 +382,13 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     GenHiggs.clear();
     GenLLPs.clear();
     GenBquarks.clear();
+    GenTTbarQuarks.clear();
 
     std::vector<reco::GenParticle> GenVBFVect = theGenAnalyzer->FillVBFGenVector(iEvent);
     std::vector<reco::GenParticle> GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idHiggs,statusHiggs);
     std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idLLP,statusLLP);
     std::vector<reco::GenParticle> GenBquarksVect;
+    std::vector<reco::GenParticle> GenTTbarQuarksVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,fabs(6),22);;
 
     nGenLL = GenLongLivedVect.size();
 
@@ -400,11 +402,15 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
 
     nGenBquarks = GenBquarksVect.size();
+    nGenTTbarQuarks = GenTTbarQuarksVect.size();
 
     for(unsigned int i = 0; i < GenVBFVect.size(); i++) GenVBFquarks.push_back( GenPType() );
     for(unsigned int i = 0; i < GenHiggsVect.size(); i++) GenHiggs.push_back( GenPType() );
     for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) GenLLPs.push_back( GenPType() );
     for(unsigned int i = 0; i < GenBquarksVect.size(); i++) GenBquarks.push_back( GenPType() );
+    if (isShort) {
+      for(unsigned int i = 0; i < GenTTbarQuarksVect.size(); i++) GenTTbarQuarks.push_back( GenPType() );
+    }
 
     if(nGenBquarks>0) gen_b_radius = GenBquarksVect.at(0).mother()? sqrt(pow(GenBquarksVect.at(0).vx() - GenBquarksVect.at(0).mother()->vx(),2) + pow(GenBquarksVect.at(0).vy() - GenBquarksVect.at(0).mother()->vy(),2) + pow(GenBquarksVect.at(0).vz() - GenBquarksVect.at(0).mother()->vz(),2)) : -1.;
     if(nGenLL>0) m_pi = GenLongLivedVect.at(0).mass();
@@ -2738,6 +2744,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillGenPType(GenHiggs[i], &GenHiggsVect[i]);
     if (WriteGenLLPs) for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillGenPType(GenLLPs[i], &GenLongLivedVect[i]);
     if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillGenPType(GenBquarks[i], &GenBquarksVect[i]);
+    if (isShort) for(unsigned int i = 0; i < GenTTbarQuarksVect.size(); i++) ObjectsFormat::FillGenPType(GenTTbarQuarks[i], &GenTTbarQuarksVect[i]);
     if (isShort or isControl){
       for(unsigned int i = 0; i < Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
       for(unsigned int i = 0; i < Electrons.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
@@ -2926,6 +2933,7 @@ Ntuplizer::beginJob()
     tree -> Branch("ZewkWeight", &ZewkWeight, "ZewkWeight/F");
     tree -> Branch("WewkWeight", &WewkWeight, "WewkWeight/F");
     tree -> Branch("nGenBquarks" , &nGenBquarks , "nGenBquarks/L");
+    if (isShort) tree -> Branch("nGenTTbarQuarks" , &nGenTTbarQuarks , "nGenTTbarQuarks/L");
     tree -> Branch("nGenLL" , &nGenLL , "nGenLL/L");
     tree -> Branch("nMatchedCHSJets" , &nMatchedCHSJets , "nMatchedCHSJets/L");
     tree -> Branch("nMatchedFatJets" , &nMatchedFatJets , "nMatchedFatJets/L");
@@ -3073,6 +3081,7 @@ Ntuplizer::beginJob()
     tree -> Branch("GenHiggs", &GenHiggs);
     tree -> Branch("GenLLPs", &GenLLPs);
     tree -> Branch("GenBquarks", &GenBquarks);
+    if (isShort) tree -> Branch("GenTTbarQuarks", &GenTTbarQuarks);
     ////for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Lepton"+std::to_string(i+1)).c_str(), &(Leptons[i].pt), ObjectsFormat::ListLeptonType().c_str());
     //for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Muon"+std::to_string(i+1)).c_str(), &(Muons[i].pt), ObjectsFormat::ListLeptonType().c_str());
     //for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Electron"+std::to_string(i+1)).c_str(), &(Electrons[i].pt), ObjectsFormat::ListLeptonType().c_str());

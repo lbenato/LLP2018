@@ -190,6 +190,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //std::vector<CaloJetType> MatchedCaloJetsWithGenJets;
     std::vector<GenPType> GenVBFquarks;
     std::vector<GenPType> GenBquarks;
+    std::vector<GenPType> GenTTbarQuarks;
     std::vector<GenPType> GenLLPs;
     std::vector<GenPType> GenHiggs;
     std::vector<VertexType> PrimVertices;
@@ -226,7 +227,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     bool AtLeastOneTrigger, AtLeastOneL1Filter;
     bool isIsoMu24_OR_IsoTkMu24, isMu50_OR_TkMu50;
     long int nLooseCHSJets, nTightCHSJets, nCHSJets, nAllBarrelJets, nAllJets, nVBFGenMatchedJets;
-    long int nLooseCHSFatJets, nTightCHSFatJets, nCHSFatJets, nGenBquarks, nGenLL;
+    long int nLooseCHSFatJets, nTightCHSFatJets, nCHSFatJets, nGenBquarks, nGenTTbarQuarks, nGenLL;
     long int nMatchedCHSJets, nMatchedFatJets;
   //long int nCaloJets, nMatchedCaloJets, nMatchedCaloJetsWithGenJets;
     long int number_of_b_matched_to_CHSJets;
