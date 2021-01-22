@@ -245,6 +245,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     LeptonWeightUp = LeptonWeightDown = 0.;
     EventWeight_leptonSF = EventWeight_leptonSFUp = EventWeight_leptonSFDown = 1.;
     bTagWeight_central = bTagWeight_jesup = bTagWeight_jesdown = bTagWeight_lfup = bTagWeight_lfdown = bTagWeight_hfup = bTagWeight_hfdown = bTagWeight_hfstats1up = bTagWeight_hfstats1down = bTagWeight_hfstats2up = bTagWeight_hfstats2down = bTagWeight_lfstats1up = bTagWeight_lfstats1down = bTagWeight_lfstats2up = bTagWeight_lfstats2down = bTagWeight_cferr1up = bTagWeight_cferr1down = bTagWeight_cferr2up = bTagWeight_cferr2down = 1.0;
+    TopPtWeight = 1.0;
     HT = 0.;
     MinJetMetDPhi = MinJetMetDPhiAllJets = ggHJetMetDPhi = 10.;
     m_pi = 0.;
@@ -409,7 +410,20 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) GenLLPs.push_back( GenPType() );
     for(unsigned int i = 0; i < GenBquarksVect.size(); i++) GenBquarks.push_back( GenPType() );
     if (isShort) {
-      for(unsigned int i = 0; i < GenTTbarQuarksVect.size(); i++) GenTTbarQuarks.push_back( GenPType() );
+      float top_pt = 0.;
+      float antitop_pt = 0.;
+      for(unsigned int i = 0; i < GenTTbarQuarksVect.size(); i++) {
+	GenTTbarQuarks.push_back( GenPType() );
+	if (GenTTbarQuarksVect[i].pdgId() == 6) top_pt = GenTTbarQuarksVect[i].pt();
+	if (GenTTbarQuarksVect[i].pdgId() == -6) antitop_pt = GenTTbarQuarksVect[i].pt();
+      }
+      //Top pT re-weighting following instructions from https://twiki.cern.ch/twiki/bin/view/CMS/TopPtReweighting#TOP_PAG_corrections_based_on_dat
+      //HINT: this are the default values from the twiki. In case one would like to use it properly, it is recommended to redo the SF procedure and not use the equations below
+      if (GenTTbarQuarksVect.size()==2){
+	float SF_top = exp(0.0615-0.0005*top_pt);
+	float SF_antitop = exp(0.0615-0.0005*antitop_pt);
+	TopPtWeight = sqrt(SF_top*SF_antitop);
+      }
     }
 
     if(nGenBquarks>0) gen_b_radius = GenBquarksVect.at(0).mother()? sqrt(pow(GenBquarksVect.at(0).vx() - GenBquarksVect.at(0).mother()->vx(),2) + pow(GenBquarksVect.at(0).vy() - GenBquarksVect.at(0).mother()->vy(),2) + pow(GenBquarksVect.at(0).vz() - GenBquarksVect.at(0).mother()->vz(),2)) : -1.;
@@ -2898,6 +2912,7 @@ Ntuplizer::beginJob()
       tree -> Branch("LeptonWeight", &LeptonWeight, "LeptonWeight/F");
       tree -> Branch("LeptonWeightUp", &LeptonWeightUp, "LeptonWeightUp/F");
       tree -> Branch("LeptonWeightDown", &LeptonWeightDown, "LeptonWeightDown/F");
+      tree -> Branch("TopPtWeight", &TopPtWeight, "TopPtWeight/F");
     }
     if (isShort){
       tree -> Branch("bTagWeight_central", &bTagWeight_central, "bTagWeight_central/F");
