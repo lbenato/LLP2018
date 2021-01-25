@@ -48,7 +48,7 @@ config.JobType.allowUndistributedCMSSW = True
 
 #enable multi-threading
 #remove from being default!
-#config.JobType.maxMemoryMB = 3000#15900 #more memory
+config.JobType.maxMemoryMB = 5000#15900 #more memory
 config.JobType.numCores = 8
 
 if __name__ == '__main__':
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     # Selection of samples via python lists
     import os
 
-    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB", "Others","data_BTagCSV", "WH_MH-125_2016"]#,"data_obs"
+    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB", "Others","data_BTagCSV", "WH_MH-125_2016", "data_JetHT", "data_SingleMu"]#,"data_obs"
     print "Possible subgroups of samples:"
     for a in list_of_samples:
         print a
@@ -567,8 +567,59 @@ if __name__ == '__main__':
 #        config.Data.totalUnits = 200
         isCalo=False
         isShort = True
-        isTracking = True
+        isTracking = False
         isControl = True
+        isVBF = False
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False#True#only for heavy higgs
+        isSUSY = False
+        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples) else False
+        isMINIAOD = True
+        is2016 = True
+        is2017 = False
+        is2018 = False
+        isAOD  = False
+        config.JobType.inputFiles = ['data']
+    elif options.lists == "v3_2016miniAOD_centrallyProduced_triggerStudies":
+        from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced_short import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2016_modified import sample, samples
+        pset = "TriggerStudies.py"
+#        folder = "v3_centrallyProduced_PUCorrectionFixed_triggerStudies_fixedFilters_withTSO_signal/"#CHANGE here your crab folder name
+        folder = "v3_centrallyProduced_PUCorrectionFixed_triggerStudies_fixedFilters_withTSO_allInfos/"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/meich/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/eichm/" + folder #CHANGE here according to your username!
+#        config.Data.totalUnits = 200
+        isCalo=False
+        isShort = True
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False#True#only for heavy higgs
+        isSUSY = False
+        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples) else False
+        isMINIAOD = True
+        is2016 = True
+        is2017 = False
+        is2018 = False
+        isAOD  = False
+        config.JobType.inputFiles = ['data']
+    elif options.lists == "v4_2016miniAOD_centrallyProduced_SignalAndControl":
+        from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced_short import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2016_modified import sample, samples
+        pset = "Ntuplizer2018.py"
+        folder = "v4_production_centrallyProduced_2016_SignalAndControlRegion/"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/meich/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/eichm/" + folder #CHANGE here according to your username!
+#        config.Data.totalUnits = 200
+        isCalo=False
+        isShort = True
+        isTracking = False
+        isControl = False
         isVBF = False
         isggH = False
         isTwinHiggs = True
@@ -1149,7 +1200,8 @@ if __name__ == '__main__':
             config.General.workArea= workarea
             if isData:
                 if is2016:
-                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+#                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Legacy_2016/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt'
                 elif is2017:
                     config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
                 elif is2018:
