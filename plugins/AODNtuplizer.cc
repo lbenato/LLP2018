@@ -653,11 +653,12 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //std::cout << " Event Number: " << EventNumber << std::endl;
 
     //GenLumiInfo
-    if(isSignal){
-      edm::Handle<GenLumiInfoHeader> GenHeader;
-      iEvent.getLuminosityBlock().getByToken(genLumiInfoToken,GenHeader);
-      Model = GenHeader->configDescription();
-    }
+    //if(isSignal){
+    //edm::Handle<GenLumiInfoHeader> GenHeader;
+    //iEvent.getLuminosityBlock().getByToken(genLumiInfoToken,GenHeader);
+    //Model = GenHeader->configDescription();
+    ////std::cout << "Model TString: " << Model << std::endl;
+    //}
     //std::cout << "isSignal: " << isSignal << std::endl;
     //const char *model_ = Model.Data();
     //std::cout << "Model TString: " << model_ << std::endl;
@@ -1129,12 +1130,29 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //Fill gen objects here; needed later for jet matching
     //std::cout<< " Seg violation alert!!!" << std::endl;
     if (WriteGenVBFquarks) for(unsigned int i = 0; i < GenVBFVect.size(); i++) ObjectsFormat::FillGenPType(GenVBFquarks[i], &GenVBFVect[i]);
-    if (WriteGenLLPs)  for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenLLPs[i], &GenLongLivedVect[i], LLPInCalo[i], -9., -9., -1000.,-10000.,-10000.,-10000.);
-    if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenHiggs[i], &GenHiggsVect[i], idMotherB==25 ? DaughterOfLLPInCalo[i] : false, idMotherB==25 ? corrEtaDaughterLLP[i] : -9., idMotherB==25 ? corrPhiDaughterLLP[i] : -9., idMotherB==25 ? LLPRadius_Dau[i] : -1000., idMotherB==25 ? LLPX_Dau[i] : -10000., idMotherB==25 ? LLPY_Dau[i] : -10000., idMotherB==25 ? LLPZ_Dau[i] : -10000.);
-
-    //std::cout << GenBquarksVect.size() << std::endl;
-    //std::cout << LLPRadius_Dau.size() << std::endl;
-    //std::cout << LLPRadius_GrandDau.size() << std::endl;
+    if (WriteGenLLPs)
+      {
+	//std::cout << "write gen llps " << std::endl;
+	//std::cout << "GenLongLivedVect size " << GenLongLivedVect.size() << std::endl;
+	//std::cout << "GenLLPs size " << GenLLPs.size() << std::endl;
+	//std::cout << "LLPInCalo size " << LLPInCalo.size() << std::endl;
+	//Avoids seg fault if different signals are being used
+	if(GenLongLivedVect.size()!=LLPInCalo.size())
+	  {
+	    for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) LLPInCalo.push_back(false);
+	  }
+	//if(GenLongLivedVect.size()==1) {LLPInCalo.push_back(false);}
+	//if(GenLongLivedVect.size()==2 and LLPInCalo.size()==0) {LLPInCalo.push_back(false);LLPInCalo.push_back(false);}
+	for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenLLPs[i], &GenLongLivedVect[i], LLPInCalo[i], -9., -9., -1000.,-10000.,-10000.,-10000.);
+      }
+    if (WriteGenHiggs)
+      {
+	//std::cout << "write gen higgs " << std::endl;
+	for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenHiggs[i], &GenHiggsVect[i], idMotherB==25 ? DaughterOfLLPInCalo[i] : false, idMotherB==25 ? corrEtaDaughterLLP[i] : -9., idMotherB==25 ? corrPhiDaughterLLP[i] : -9., idMotherB==25 ? LLPRadius_Dau[i] : -1000., idMotherB==25 ? LLPX_Dau[i] : -10000., idMotherB==25 ? LLPY_Dau[i] : -10000., idMotherB==25 ? LLPZ_Dau[i] : -10000.);
+      }
+    //std::cout << "GenBquarksVect.size()" << GenBquarksVect.size() << std::endl;
+    //std::cout << "LLPRadius_Dau.size()" << LLPRadius_Dau.size() << std::endl;
+    //std::cout << "LLPRadius_GrandDau.size()" << LLPRadius_GrandDau.size() << std::endl;
     if(WriteGenBquarks && (LLPZ_GrandDau.size()==GenBquarksVect.size() || LLPZ_Dau.size()==GenBquarksVect.size()) ) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenBquarks[i], &GenBquarksVect[i],
     idMotherB==25 && GrandDaughterOfLLPInCalo.size()==GenBquarksVect.size() ? GrandDaughterOfLLPInCalo[i] : DaughterOfLLPInCalo[i],
     idMotherB==25 && corrEtaGrandDaughterLLP.size()==GenBquarksVect.size() ? corrEtaGrandDaughterLLP[i] : corrEtaDaughterLLP[i],
@@ -3778,7 +3796,7 @@ AODNtuplizer::beginJob()
   //
 
    tree = fs->make<TTree>("tree", "tree");
-   if(isSignal) tree -> Branch("Model",       &Model);
+   //if(isSignal) tree -> Branch("Model",       &Model);
    tree -> Branch("isMC" , &isMC, "isMC/O");
    tree -> Branch("EventNumber" , &EventNumber , "EventNumber/L");
    tree -> Branch("LumiNumber" , &LumiNumber , "LumiNumber/L");
