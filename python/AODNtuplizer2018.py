@@ -262,6 +262,24 @@ options.register(
     VarParsing.varType.bool,
     "SUSY parser flag"
 )
+options.register(
+    "PRPV", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "RPV parser flag"
+)
+options.register(
+    "PSplit", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "Split parser flag"
+)
+options.register(
+    "PJetJet", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "JetJet parser flag"
+)
 #FIXME Add PisCentralProd
 
 
@@ -294,7 +312,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 500
+process.MessageLogger.cerr.FwkReport.reportEvery = 250
 
 ## Input files
 if len(options.inputFiles) == 0:
@@ -302,7 +320,14 @@ if len(options.inputFiles) == 0:
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
             ## 2018 MC, signal
-            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
+            #split susy seg violation
+            '/store/mc/RunIIAutumn18DRPremix/GluinoGluinoToNeutralinoNeutralinoTo2T2B2S_M-1600_CTau-30000mm_TuneCP2_13TeV-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/80000/94D14B64-FD90-834D-BC25-E26420CCCDFC.root',
+            #'/store/mc/RunIIAutumn18DRPremix/GluinoGluinoToNeutralinoNeutralinoTo2T2B2S_M-2400_CTau-1000mm_TuneCP2_13TeV-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/20000/15DB1AED-B0BF-BB42-88A0-9F1599F0D9FE.root'
+            #JetJet seg violation
+            #'/store/mc/RunIIAutumn18DRPremix/XXTo4J_M300_CTau3000mm_TuneCP2_13TeV_pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/270000/DECC2B5D-FA98-6A4F-95D7-ECCFADE11E66.root'
+            #RPV
+            #'/store/mc/RunIIAutumn18DRPremix/GluinoGluinoToNeutralinoNeutralinoTo2T2B2S_M-2400_CTau-1000mm_TuneCP2_13TeV-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/20000/01AA08C8-76E0-8E4C-8818-DD9B24DFF988.root',
+            #'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
             #'/store/group/phys_exotica/privateProduction/DR/step2_AODSIM/RunIIFall18/TChiHH_mass400_pl1000/batch1/v1/TChiHH_mass400_pl1000/crab_PrivateProduction_Fall18_DR_step2_TChiHH_mass400_pl1000_batch1_v1/200911_133803/0004/AODSIM_4998.root',
             ## 2018 MC, background
             #'/store/mc/RunIIAutumn18DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/026915A1-D6C8-E740-974D-96E7C0BD4BA9.root',
@@ -328,9 +353,9 @@ if len(options.inputFiles) == 0:
             #'/store/mc/RunIIAutumn18DRPremix/QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/110000/8CCF1613-38C3-7949-8CB5-A2EC33CEF145.root',
             
         ),
-        ##skipEvents=cms.untracked.uint32(261),
+        #skipEvents=cms.untracked.uint32(10),
         #lumisToProcess = cms.untracked.VLuminosityBlockRange('1:11871'),
-        #eventsToProcess = cms.untracked.VEventRange('1:46697143'),
+        #eventsToProcess = cms.untracked.VEventRange('1:97'),
         #lumisToProcess = cms.untracked.VLuminosityBlockRange('1:12025'),
         #eventsToProcess = cms.untracked.VEventRange('1:1202419'),
     )
@@ -360,7 +385,7 @@ if RunLocal:
     isPromptReco      = ('PromptReco' in process.source.fileNames[0])
     noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8' or 'WW_TuneCP5_13TeV-pythia8' or 'WZ_TuneCP5_13TeV-pythia8' or 'ZZ_TuneCP5_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
-    isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0] or 'HToSSTo4b_MH-125' in process.source.fileNames[0] or 'HToSSTobbbb_WToLNu' in process.source.fileNames[0] or 'SMS-T1tbs_RPV' in process.source.fileNames[0]) else False
+    isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0] or 'HToSSTo4b_MH-125' in process.source.fileNames[0] or 'HToSSTobbbb_WToLNu' in process.source.fileNames[0] or 'H2ToSSTobbbb' in process.source.fileNames[0] or 'n3n2-n1-hbb-hbb' in process.source.fileNames[0] or 'TChiHH' in process.source.fileNames[0] or 'GluinoGluino' in process.source.fileNames[0] or 'DisplacedSUSY_StopToBL' in process.source.fileNames[0] or 'XXTo4J' in process.source.fileNames[0] ) else False
     isCentralProd     = True if ('HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
     isCalo            = True #HERE for calo analyses!!!
     isTracking        = False
@@ -370,7 +395,10 @@ if RunLocal:
     isggH             = False
     isTwinHiggs       = False
     isHeavyHiggs      = False
-    isSUSY            = True#False
+    isSUSY            = False
+    isRPV             = False
+    isSplit           = True
+    isJetJet          = False
 else:
     isData            = options.PisData
     isReHLT           = options.PisReHLT
@@ -393,6 +421,9 @@ else:
     isTwinHiggs       = options.PTwinHiggs
     isHeavyHiggs      = options.PHeavyHiggs
     isSUSY            = options.PSUSY
+    isRPV             = options.PRPV
+    isSplit           = options.PSplit
+    isJetJet          = options.PJetJet
 
 
 theRunBCD2016 = ['Run2016B','Run2016C','Run2016D']
@@ -422,7 +453,7 @@ print 'isReMiniAod',isReMiniAod
 print 'isPromptReco',isPromptReco
 print 'isSignal', isSignal
 
-if(int(isTwinHiggs) + int(isHeavyHiggs) + int(isSUSY)>1):
+if(int(isTwinHiggs) + int(isHeavyHiggs) + int(isSUSY)>1 + int(isRPV) + int(isSplit) + int(isJetJet) >1):
    print "More than one theoretical model selected! Aborting...."
    exit()
 
@@ -469,6 +500,45 @@ if isSUSY:
     #isggH = False
     #Jet pt seems higher. Do not recluster
     #isCalo = False
+
+if isRPV:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing RPV stop->bl analysis!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+    idLLP1       = 1000006
+    idLLP2       = 1000006
+    idHiggs     = 25
+    idMotherB   = 1000006
+    statusLLP   = 106
+    statusHiggs = 22
+
+if isSplit:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing split susy analysis!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+    idLLP1       = 1000022
+    idLLP2       = 1000022
+    idHiggs     = 1000021
+    idMotherB   = 1000022
+    statusLLP   = 22
+    statusHiggs = 62
+
+if isJetJet:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing XX->4J analysis!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+    idLLP1       = 35
+    idLLP2       = 36
+    idHiggs     = 0
+    idMotherB   = 36
+    statusLLP   = 62
+    statusHiggs = 0
 
 if isVBF:
     print "\n"
@@ -1892,7 +1962,7 @@ elif is2018:
     data_era = "2018"
     scenario = "2018_25ns_UltraLegacy_PoissonOOTPU"
 
-if isData:
+if isData or isSignal:
    trig_list = [
       'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',
       'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',
