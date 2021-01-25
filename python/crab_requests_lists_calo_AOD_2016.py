@@ -149,6 +149,12 @@ requests = {
 #VBF HH
 #'VBFHHTo4B_CV_1_C2V_1_C3_1_13TeV-madgraph-v1' : '',
 
+#RPV stop
+'DisplacedSUSY_StopToBL_M-800_CTau-1000_TuneCUETP8M1_13TeV_pythia8-v1' : '/DisplacedSUSY_StopToBL_M-800_CTau-1000_TuneCUETP8M1_13TeV_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
+'DisplacedSUSY_StopToBL_M-800_CTau-100_TuneCUETP8M1_13TeV_pythia8-v1' : '/DisplacedSUSY_StopToBL_M-800_CTau-100_TuneCUETP8M1_13TeV_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
+'DisplacedSUSY_StopToBL_M-800_CTau-10_TuneCUETP8M1_13TeV_pythia8-v1' : '/DisplacedSUSY_StopToBL_M-800_CTau-10_TuneCUETP8M1_13TeV_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
+#/DisplacedSUSY_StopToBL_M-800_CTau-1_TuneCUETP8M1_13TeV_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM
+
 ###############################################
 #Data
 ###!!
@@ -156,59 +162,59 @@ requests = {
 ###!!
 
 #MET
-'METRun2016B-07Aug17_ver1-v1' : '/MET/Run2016B-07Aug17_ver1-v1/AOD',
+#'METRun2016B-07Aug17_ver1-v1' : '/MET/Run2016B-07Aug17_ver1-v1/AOD',#0 jobs
 'METRun2016B-07Aug17_ver2-v1' : '/MET/Run2016B-07Aug17_ver2-v1/AOD',
 'METRun2016C-07Aug17_v1' : '/MET/Run2016C-07Aug17-v1/AOD',
-'METRun2016D-07Aug17_v1' : '/MET/Run2016D-07Aug17-v1/AOD',
+#'METRun2016D-07Aug17_v1' : '/MET/Run2016D-07Aug17-v1/AOD',
 'METRun2016E-07Aug17_v1' : '/MET/Run2016E-07Aug17-v1/AOD',
-'METRun2016F-07Aug17_v1' : '/MET/Run2016F-07Aug17-v1/AOD',
+#'METRun2016F-07Aug17_v1' : '/MET/Run2016F-07Aug17-v1/AOD',
 'METRun2016G-07Aug17_v1' : '/MET/Run2016G-07Aug17-v1/AOD',
 'METRun2016H-07Aug17_v1' : '/MET/Run2016H-07Aug17-v1/AOD',
 #SingleMuon
-'SingleMuonRun2016B-07Aug17_ver1-v1' : '/SingleMuon/Run2016B-07Aug17_ver1-v1/AOD',
+#'SingleMuonRun2016B-07Aug17_ver1-v1' : '/SingleMuon/Run2016B-07Aug17_ver1-v1/AOD',#0 jobs
 'SingleMuonRun2016B-07Aug17_ver2-v1' : '/SingleMuon/Run2016B-07Aug17_ver2-v1/AOD',
-'SingleMuonRun2016C-07Aug17-v1' : '/SingleMuon/Run2016C-07Aug17-v1/AOD',
-'SingleMuonRun2016D-07Aug17-v1' : '/SingleMuon/Run2016D-07Aug17-v1/AOD',
-'SingleMuonRun2016E-07Aug17-v1' : '/SingleMuon/Run2016E-07Aug17-v1/AOD',
-'SingleMuonRun2016F-07Aug17-v1' : '/SingleMuon/Run2016F-07Aug17-v1/AOD',
-'SingleMuonRun2016G-07Aug17-v1' : '/SingleMuon/Run2016G-07Aug17-v1/AOD',
-'SingleMuonRun2016H-07Aug17-v1' : '/SingleMuon/Run2016H-07Aug17-v1/AOD',
+#'SingleMuonRun2016C-07Aug17-v1' : '/SingleMuon/Run2016C-07Aug17-v1/AOD',
+#'SingleMuonRun2016D-07Aug17-v1' : '/SingleMuon/Run2016D-07Aug17-v1/AOD',
+#'SingleMuonRun2016E-07Aug17-v1' : '/SingleMuon/Run2016E-07Aug17-v1/AOD',
+#'SingleMuonRun2016F-07Aug17-v1' : '/SingleMuon/Run2016F-07Aug17-v1/AOD',
+#'SingleMuonRun2016G-07Aug17-v1' : '/SingleMuon/Run2016G-07Aug17-v1/AOD',
+#'SingleMuonRun2016H-07Aug17-v1' : '/SingleMuon/Run2016H-07Aug17-v1/AOD',
 #SingleElectron
-'SingleElectronRun2016B-07Aug17_ver1-v1' : '/SingleElectron/Run2016B-07Aug17_ver1-v1/AOD',
+#'SingleElectronRun2016B-07Aug17_ver1-v1' : '/SingleElectron/Run2016B-07Aug17_ver1-v1/AOD',#0 jobs
 'SingleElectronRun2016B-07Aug17_ver2-v2' : '/SingleElectron/Run2016B-07Aug17_ver2-v2/AOD',
-'SingleElectronRun2016C-07Aug17-v1' : '/SingleElectron/Run2016C-07Aug17-v1/AOD',
-'SingleElectronRun2016D-07Aug17-v1' : '/SingleElectron/Run2016D-07Aug17-v1/AOD',
-'SingleElectronRun2016E-07Aug17-v1' : '/SingleElectron/Run2016E-07Aug17-v1/AOD',
-'SingleElectronRun2016F-07Aug17-v1' : '/SingleElectron/Run2016F-07Aug17-v1/AOD',
-'SingleElectronRun2016G-07Aug17-v1' : '/SingleElectron/Run2016G-07Aug17-v1/AOD',
-'SingleElectronRun2016H-07Aug17-v1' : '/SingleElectron/Run2016H-07Aug17-v1/AOD',
+#'SingleElectronRun2016C-07Aug17-v1' : '/SingleElectron/Run2016C-07Aug17-v1/AOD',
+#'SingleElectronRun2016D-07Aug17-v1' : '/SingleElectron/Run2016D-07Aug17-v1/AOD',
+#'SingleElectronRun2016E-07Aug17-v1' : '/SingleElectron/Run2016E-07Aug17-v1/AOD',
+#'SingleElectronRun2016F-07Aug17-v1' : '/SingleElectron/Run2016F-07Aug17-v1/AOD',
+#'SingleElectronRun2016G-07Aug17-v1' : '/SingleElectron/Run2016G-07Aug17-v1/AOD',
+#'SingleElectronRun2016H-07Aug17-v1' : '/SingleElectron/Run2016H-07Aug17-v1/AOD',
 #SinglePhoton
-'SinglePhotonRun2016B-07Aug17_ver1-v1' : '/SinglePhoton/Run2016B-07Aug17_ver1-v1/AOD',
-'SinglePhotonRun2016B-07Aug17_ver2-v1' : '/SinglePhoton/Run2016B-07Aug17_ver2-v1/AOD',
-'SinglePhotonRun2016C-07Aug17-v1' : '/SinglePhoton/Run2016C-07Aug17-v1/AOD',
+#'SinglePhotonRun2016B-07Aug17_ver1-v1' : '/SinglePhoton/Run2016B-07Aug17_ver1-v1/AOD',
+#'SinglePhotonRun2016B-07Aug17_ver2-v1' : '/SinglePhoton/Run2016B-07Aug17_ver2-v1/AOD',
+#'SinglePhotonRun2016C-07Aug17-v1' : '/SinglePhoton/Run2016C-07Aug17-v1/AOD',
 'SinglePhotonRun2016D-07Aug17-v1' : '/SinglePhoton/Run2016D-07Aug17-v1/AOD',
-'SinglePhotonRun2016E-07Aug17-v1' : '/SinglePhoton/Run2016E-07Aug17-v1/AOD',
-'SinglePhotonRun2016F-07Aug17-v1' : '/SinglePhoton/Run2016F-07Aug17-v1/AOD',
-'SinglePhotonRun2016G-07Aug17-v1' : '/SinglePhoton/Run2016G-07Aug17-v1/AOD',
-'SinglePhotonRun2016H-07Aug17-v1' : '/SinglePhoton/Run2016H-07Aug17-v1/AOD',
+#'SinglePhotonRun2016E-07Aug17-v1' : '/SinglePhoton/Run2016E-07Aug17-v1/AOD',
+#'SinglePhotonRun2016F-07Aug17-v1' : '/SinglePhoton/Run2016F-07Aug17-v1/AOD',
+#'SinglePhotonRun2016G-07Aug17-v1' : '/SinglePhoton/Run2016G-07Aug17-v1/AOD',
+#'SinglePhotonRun2016H-07Aug17-v1' : '/SinglePhoton/Run2016H-07Aug17-v1/AOD',
 #JetHT
-'JetHTRun2016B-07Aug17_ver1-v1': '/JetHT/Run2016B-07Aug17_ver1-v1/AOD',
-'JetHTRun2016B-07Aug17_ver2-v1' : '/JetHT/Run2016B-07Aug17_ver2-v1/AOD',
-'JetHTRun2016C-07Aug17-v1' : '/JetHT/Run2016C-07Aug17-v1/AOD',
-'JetHTRun2016D-07Aug17-v1' : '/JetHT/Run2016D-07Aug17-v1/AOD',
-'JetHTRun2016E-07Aug17-v1' : '/JetHT/Run2016E-07Aug17-v1/AOD',
-'JetHTRun2016F-07Aug17-v1' : '/JetHT/Run2016F-07Aug17-v1/AOD',
-'JetHTRun2016G-07Aug17-v1' : '/JetHT/Run2016G-07Aug17-v1/AOD',
+#'JetHTRun2016B-07Aug17_ver1-v1': '/JetHT/Run2016B-07Aug17_ver1-v1/AOD',#0 jobs
+#'JetHTRun2016B-07Aug17_ver2-v1' : '/JetHT/Run2016B-07Aug17_ver2-v1/AOD',
+#'JetHTRun2016C-07Aug17-v1' : '/JetHT/Run2016C-07Aug17-v1/AOD',
+#'JetHTRun2016D-07Aug17-v1' : '/JetHT/Run2016D-07Aug17-v1/AOD',
+#'JetHTRun2016E-07Aug17-v1' : '/JetHT/Run2016E-07Aug17-v1/AOD',
+#'JetHTRun2016F-07Aug17-v1' : '/JetHT/Run2016F-07Aug17-v1/AOD',
+#'JetHTRun2016G-07Aug17-v1' : '/JetHT/Run2016G-07Aug17-v1/AOD',
 'JetHTRun2016H-07Aug17-v1' : '/JetHT/Run2016H-07Aug17-v1/AOD',
 #MuonEG
-'MuonEGRun2016B-07Aug17_ver1-v1' : '/MuonEG/Run2016B-07Aug17_ver1-v1/AOD',
-'MuonEGRun2016B-07Aug17_ver2-v1' : '/MuonEG/Run2016B-07Aug17_ver2-v1/AOD',
-'MuonEGRun2016C-07Aug17-v1' : '/MuonEG/Run2016C-07Aug17-v1/AOD',
-'MuonEGRun2016D-07Aug17-v1' : '/MuonEG/Run2016D-07Aug17-v1/AOD',
-'MuonEGRun2016E-07Aug17-v1' : '/MuonEG/Run2016E-07Aug17-v1/AOD',
-'MuonEGRun2016F-07Aug17-v1' : '/MuonEG/Run2016F-07Aug17-v1/AOD',
+#'MuonEGRun2016B-07Aug17_ver1-v1' : '/MuonEG/Run2016B-07Aug17_ver1-v1/AOD',#0 jobs
+#'MuonEGRun2016B-07Aug17_ver2-v1' : '/MuonEG/Run2016B-07Aug17_ver2-v1/AOD',
+#'MuonEGRun2016C-07Aug17-v1' : '/MuonEG/Run2016C-07Aug17-v1/AOD',
+#'MuonEGRun2016D-07Aug17-v1' : '/MuonEG/Run2016D-07Aug17-v1/AOD',
+#'MuonEGRun2016E-07Aug17-v1' : '/MuonEG/Run2016E-07Aug17-v1/AOD',
+#'MuonEGRun2016F-07Aug17-v1' : '/MuonEG/Run2016F-07Aug17-v1/AOD',
 'MuonEGRun2016G-07Aug17-v1' : '/MuonEG/Run2016G-07Aug17-v1/AOD',
-'MuonEGRun2016H-07Aug17-v1' : '/MuonEG/Run2016H-07Aug17-v1/AOD',
+#'MuonEGRun2016H-07Aug17-v1' : '/MuonEG/Run2016H-07Aug17-v1/AOD',
 ###############################################
 #Jiajing's
 ##'n3n2-n1-hbb-hbb_mh400_pl1000' : '/n3n2-n1-hbb-hbb_mh400_pl1000_ev100000/jmao-crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi400_pl1000_ev100000_AODSIM_CaltechT2-37ac8d442b9840be1abba4facfa67e70/USER',
