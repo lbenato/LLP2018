@@ -149,7 +149,6 @@ options.register(
     VarParsing.varType.bool,
     "SUSY parser flag"
 )
-
 options.parseArguments()
 
 ## Important: decide if keeping local options register or CRAB options register
@@ -168,8 +167,8 @@ process.options   = cms.untracked.PSet(
 )
 
 #Enable multithreading!
-process.options.numberOfThreads=cms.untracked.uint32(8)
-process.options.numberOfStreams=cms.untracked.uint32(0)
+#process.options.numberOfThreads=cms.untracked.uint32(8)
+#process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
@@ -183,8 +182,18 @@ if len(options.inputFiles) == 0:
 
     process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
-          'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_\
-Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
+          #RPV
+          #'/store/mc/RunIISummer16MiniAODv3/DisplacedSUSY_StopToBL_M-900_CTau-1000_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/270000/044FBE56-ADC7-E911-8E0C-A4BF01158AD8.root',
+          #split susy
+          #'/store/mc/RunIIAutumn18DRPremix/GluinoGluinoToNeutralinoNeutralinoTo2T2B2S_M-2400_CTau-1000mm_TuneCP2_13TeV-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/20000/01AA08C8-76E0-8E4C-8818-DD9B24DFF988.root',
+          #jet jet
+          '/store/mc/RunIIAutumn18MiniAOD/XXTo4J_M1000_CTau1000mm_TuneCP2_13TeV_pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/50000/14A803F4-C9E4-3F41-B748-D19DEC529F31.root',
+          #2HDM
+          #'/store/mc/RunIISummer16MiniAODv3/SUSYGluGluToHToAA_AToMuMu_AToTauTau_mH-750_mA-7_TuneCUETP8M1_13TeV_madgraph_pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/20000/A6629877-BCEF-E811-8F66-0CC47AC52E44.root'
+          #25?'/store/mc/RunIISummer16MiniAODv3/SUSYGluGluToHToAA_AToMuMu_AToTauTau_mH-750_mA-15_TuneCUETP8M1_13TeV_madgraph_pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/270000/602D800A-AF43-E911-B95A-0025904C641C.root',
+          #?#'/store/mc/RunIIFall17MiniAODv2/NMSSM_HToAATo4Mu_mH_125_mA_3_TuneCP5_13TeV-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/6A7763FF-E8CE-E811-A2AA-008CFAFBFB7C.root',
+          #'/store/mc/RunIIFall17MiniAODv2/NMSSM_HToAATo4Mu_mH_150_mA_0p5_TuneCP5_13TeV-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/10C5A916-63B3-E811-9797-5065F381E151.root'
+          #'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
           #'file:/afs/desy.de/user/p/penaka/public/forLisa/miniAODv3_test.root'
           #'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-1000_Summer16_MINIAODSIM_calojets/GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets/181203_140031/0000/miniaod_1.root'
 #            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_Summer16_MINIAODSIM_calojets_Tranche2/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets/181218_125055/0000/miniaod_1.root',
@@ -203,7 +212,6 @@ process.TFileService = cms.Service( "TFileService",
     fileName = cms.string('output.root' if len(options.outputFile)==0 else options.outputFile),
     closeFileFast = cms.untracked.bool(True),
 )
-
 
 #-----------------------#
 #     DATA FLAGS        #
@@ -225,8 +233,12 @@ if RunLocal:
     isVBF             = False
     isggH             = False
     isTwinHiggs       = False
-    isHeavyHiggs      = True
+    isHeavyHiggs      = False
     isSUSY            = False
+    is2HDM            = False
+    isRPV             = False
+    isSplit           = False
+    isJetJet          = True
 
 else:
     isData            = options.PisData
@@ -246,6 +258,11 @@ else:
     isTwinHiggs       = options.PTwinHiggs
     isHeavyHiggs      = options.PHeavyHiggs
     isSUSY            = options.PSUSY
+    is2HDM            = False
+    isRPV             = False
+    isSplit           = False
+    isJetJet          = False
+
 
 theRunBCD2016 = ['Run2016B','Run2016C','Run2016D']
 theRunEF2016  = ['Run2016E','Run2016F']
@@ -268,7 +285,7 @@ print 'isReMiniAod',isReMiniAod
 print 'isPromptReco',isPromptReco
 print 'isSignal', isSignal
 
-if(int(isTwinHiggs) + int(isHeavyHiggs) + int(isSUSY)>1):
+if(int(isTwinHiggs) + int(isHeavyHiggs) + int(isSUSY) + int(is2HDM)>1):
    print "More than one theoretical model selected! Aborting...."
    exit()
 
@@ -296,6 +313,18 @@ if isHeavyHiggs:
     statusLLP   = 22
     statusHiggs = 62
 
+if is2HDM:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing H->AA analysis!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+    idLLP       = 36#A
+    idHiggs     = 25
+    idMotherB   = 36#A
+    statusLLP   = 22
+    statusHiggs = 62
+
 if isSUSY:
     print "\n"
     print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -312,6 +341,42 @@ if isSUSY:
     #isggH = False
     #Jet pt seems higher. Do not recluster
     #isCalo = False
+
+if isRPV:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing RPV stop->bl analysis!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+    idLLP       = 1000006
+    idHiggs     = 25
+    idMotherB   = 1000006
+    statusLLP   = 106
+    statusHiggs = 22
+
+if isSplit:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing split susy   analysis!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+    idLLP       = 1000022
+    idHiggs     = 1000021
+    idMotherB   = 1000022
+    statusLLP   = 22
+    statusHiggs = 62
+
+if isJetJet:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing XX->4J analysis!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+    idLLP       = 36
+    idHiggs     = 35
+    idMotherB   = 36
+    statusLLP   = 62
+    statusHiggs = 62
 
 if isVBF:
     print "\n"
@@ -468,12 +533,12 @@ else:
 
 ## MET filters, not available on AOD? TODO
 process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
-process.BadPFMuonFilter.muons = cms.InputTag('muons')
-process.BadPFMuonFilter.PFCandidates = cms.InputTag('particleFlow')
+process.BadPFMuonFilter.muons = cms.InputTag('slimmedMuons' if 'MINIAOD' in process.source.fileNames[0] else 'muons')
+process.BadPFMuonFilter.PFCandidates = cms.InputTag('packedPFCandidates' if 'MINIAOD' in process.source.fileNames[0] else 'particleFlow')
 
 process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
-process.BadChargedCandidateFilter.muons = cms.InputTag('muons')
-process.BadChargedCandidateFilter.PFCandidates = cms.InputTag('particleFlow')
+process.BadChargedCandidateFilter.muons = cms.InputTag('slimmedMuons' if 'MINIAOD' in process.source.fileNames[0] else 'muons')
+process.BadChargedCandidateFilter.PFCandidates = cms.InputTag('packedPFCandidates' if 'MINIAOD' in process.source.fileNames[0] else 'particleFlow')
 
 task.add(process.BadPFMuonFilter)
 task.add(process.BadChargedCandidateFilter)
@@ -487,7 +552,7 @@ process.ntuple = cms.EDAnalyzer('TriggerGenNtuplizer',
         genProduct = cms.InputTag('generator'),
         lheProduct = cms.InputTag('externalLHEProducer'),
         genParticles = cms.InputTag('prunedGenParticles' if 'MINIAOD' in process.source.fileNames[0] else 'genParticles'),
-        pdgId = cms.vint32(5,9000006,23,24,25),#(1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 21, 23, 24, 25, 36, 39, 1000022, 9100000, 9000001, 9000002, 9100012, 9100022, 9900032, 1023),
+        pdgId = cms.vint32(5,9000006,23,24,25,1000006,1000021,1000022,36,35),#(1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 21, 23, 24, 25, 36, 39, 1000022, 9100000, 9000001, 9000002, 9100012, 9100022, 9900032, 1023),
         status = cms.vint32(22,23),
         samplesDYJetsToLL = cms.vstring(),
         samplesZJetsToNuNu = cms.vstring(),
