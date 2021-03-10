@@ -451,10 +451,6 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 	    float JERsfDown = -1.;
 
             if(isMC) {
-                //float JERresolution = resolution->getResolution(TheJetParameters);
-                //float JERsf         = resolution_sf->getScaleFactor(TheJetParameters);
-                //float JERsfUp       = resolution_sf->getScaleFactor(TheJetParameters, Variation::UP);
-                //float JERsfDown     = resolution_sf->getScaleFactor(TheJetParameters, Variation::DOWN);
 
                 JERresolution = resolution.getResolution(TheJetParameters);
                 JERsf         = resolution_sf.getScaleFactor(TheJetParameters);
