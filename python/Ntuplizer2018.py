@@ -292,7 +292,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -409,9 +409,15 @@ theRun2018D   = ['Run2018D']
 
 print "\n"
 print 'Data era: '
-if is2016: print "2016"
-if is2017: print "2017"
-if is2018: print "2018"
+if is2016:
+   print "2016"
+   dataString="2016"
+if is2017:
+   print "2017"
+   dataString="2017"
+if is2018:
+   print "2018"
+   dataString="2018"
 print "\n"
 print 'isData',isData
 print 'isReHLT',isReHLT
@@ -589,9 +595,9 @@ process.primaryVertexFilter = cms.EDFilter('GoodVertexFilter',
 )
 task.add(process.primaryVertexFilter)
 
-#-----------------------#
-#  E-MU-GAMMA MODULES   #
-#-----------------------#
+#---------------------------#
+#  E-MU-GAMMA-TAU MODULES   #
+#---------------------------#
 
 from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
 era_string = ''
@@ -612,6 +618,19 @@ process.cleanedMuons = cms.EDProducer('PATMuonCleanerBySegments',
                                       )
 
 task.add(process.cleanedMuons)
+
+#Add DeepTau IDs
+#https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuidePFTauID#Running_of_the_DeepTauIDs_ver_20
+updatedTauName = "slimmedTausNewID" #name of pat::Tau collection with new tau-Ids
+import RecoTauTag.RecoTau.tools.runTauIdMVA as tauIdConfig
+tauIdEmbedder = tauIdConfig.TauIDEmbedder(process, cms, debug = False,
+                    updatedTauName = updatedTauName,
+                    toKeep = [ "2017v2", #"dR0p32017v2", "newDM2017v2", #classic MVAIso tau-Ids
+                               "deepTau2017v2p1", #deepTau Tau-Ids
+                               #"DPFTau_2016_v0", #D[eep]PF[low] Tau-Id #this is causing exceptions
+                               ])
+tauIdEmbedder.runTauID()
+task.add(getattr(process,updatedTauName)) 
 
 #-----------------------#
 #       JEC/JER         #
@@ -1135,7 +1154,12 @@ from PhysicsTools.PatAlgos.tools.jetTools import *
 
 #Seth
 jetSource = chosen_jets
-jetCorrectionsAK4 = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None')
+if isData:
+   jetCorrectionsAK4 = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'], 'None')
+   jetCorrectionsAK8 = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'], 'None')
+else:
+   jetCorrectionsAK4 = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None')
+   jetCorrectionsAK8 = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None')
 pfCandidates = 'packedPFCandidates'
 pvSource = 'offlineSlimmedPrimaryVertices'
 svSource = 'slimmedSecondaryVertices'
@@ -1269,6 +1293,23 @@ updateJetCollection(
 for m in ['updatedPatJets'+postfix, 'updatedPatJetsTransientCorrected'+postfix]:
     setattr( getattr(process,m), 'addTagInfos', cms.bool(True) )
 
+if isData:
+   process.patJetCorrFactorsFinal.levels = ['L1FastJet',
+                                            'L2Relative',
+                                            'L3Absolute',
+                                            'L2L3Residual']
+   process.patJetCorrFactorsTransientCorrectedFinal.levels = ['L1FastJet',
+                                                              'L2Relative',
+                                                              'L3Absolute',
+                                                              'L2L3Residual']
+
+else:
+   process.patJetCorrFactorsFinal.levels = ['L1FastJet',
+                                            'L2Relative',
+                                            'L3Absolute']
+   process.patJetCorrFactorsTransientCorrectedFinal.levels = ['L1FastJet',
+                                                              'L2Relative',
+                                                              'L3Absolute']
 
 #Imperial
 process.updatedPatJetsFinal.addBTagInfo = cms.bool(True)
@@ -1360,11 +1401,12 @@ chosen_AK8 = "packedPatJetsAK8" # including SoftDrop info
 
 process.pfXTagInfos = cms.EDProducer("XTagInfoProducer",
     jets = cms.InputTag(jets_after_btag_tools),
+    muonSrc  = cms.InputTag("slimmedMuons"),
+    electronSrc = cms.InputTag("slimmedElectrons"),
     shallow_tag_infos = cms.InputTag('pfDeepCSVTagInfosFinal'),
     vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
     secondary_vertices = cms.InputTag("slimmedSecondaryVertices"),
-    muonSrc  = cms.InputTag("slimmedMuons"),
-    electronSrc = cms.InputTag("slimmedElectrons")
+    secondary_vertices_adapted = cms.InputTag("slimmedSecondaryVertices"),
 )
 
 process.pfXTags = cms.EDProducer("XTagProducer",
@@ -1632,6 +1674,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     allJetSet = cms.PSet(
         jets = cms.InputTag(jets_to_be_used),#(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
         jetid = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
+        dataEra = cms.string(dataString),
         jet1pt = cms.double(15.),
         jet2pt = cms.double(15.),
         jeteta = cms.double(5.2),
@@ -1647,29 +1690,30 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         smearJets = cms.bool(True),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
-        jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK4PFchs.txt' % (JECstring, JECstring)),#updating
-        jecUncertaintyMC = cms.string('data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_Uncertainty_AK4PFchs.txt'),#updating
-        jecCorrectorDATA = cms.vstring(#updating
-            'data/%s/%s_L1FastJet_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L2Relative_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L3Absolute_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L2L3Residual_AK4PFchs.txt' % (JECstring, JECstring),
-        ),
-        jecCorrectorMC = cms.vstring(#updating!!!
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L1FastJet_AK4PFchs.txt',
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK4PFchs.txt',
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
-        ),
-        massCorrectorDATA = cms.vstring(#updating!!!
-            'data/%s/%s_L2Relative_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L3Absolute_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L2L3Residual_AK4PFchs.txt' % (JECstring, JECstring),
-        ),
-        massCorrectorMC = cms.vstring(#updating!!!
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK4PFchs.txt',
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
-        ),
-        massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
+        jecUncertaintyName = cms.string('AK4PFchs'),
+        #jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK4PFchs.txt' % (JECstring, JECstring)),#updating
+        #jecUncertaintyMC = cms.string('data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_Uncertainty_AK4PFchs.txt'),#updating
+        #jecCorrectorDATA = cms.vstring(#updating
+        #    'data/%s/%s_L1FastJet_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L2Relative_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L3Absolute_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L2L3Residual_AK4PFchs.txt' % (JECstring, JECstring),
+        #),
+        #jecCorrectorMC = cms.vstring(#updating!!!
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L1FastJet_AK4PFchs.txt',
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK4PFchs.txt',
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
+        #),
+        #massCorrectorDATA = cms.vstring(#updating!!!
+        #    'data/%s/%s_L2Relative_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L3Absolute_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L2L3Residual_AK4PFchs.txt' % (JECstring, JECstring),
+        #),
+        #massCorrectorMC = cms.vstring(#updating!!!
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK4PFchs.txt',
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
+        #),
+        #massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
         reshapeBTag = cms.bool(isShort),
         btag = cms.string('deepJet'),
         btagDB = cms.string('data/%s.csv' % (btagSFstring)),
@@ -1686,6 +1730,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     chsJetSet = cms.PSet(
         jets = cms.InputTag(jets_to_be_used),#(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
         jetid = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
+        dataEra = cms.string(dataString),
         jet1pt = cms.double(pt_AK4),
         jet2pt = cms.double(pt_AK4),
         jeteta = cms.double(2.4),
@@ -1701,29 +1746,30 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         smearJets = cms.bool(True),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
-        jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK4PFchs.txt' % (JECstring, JECstring)),#updating
-        jecUncertaintyMC = cms.string('data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_Uncertainty_AK4PFchs.txt'),#updating
-        jecCorrectorDATA = cms.vstring(#updating
-            'data/%s/%s_L1FastJet_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L2Relative_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L3Absolute_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L2L3Residual_AK4PFchs.txt' % (JECstring, JECstring),
-        ),
-        jecCorrectorMC = cms.vstring(#updating!!!
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L1FastJet_AK4PFchs.txt',
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK4PFchs.txt',
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
-        ),
-        massCorrectorDATA = cms.vstring(#updating!!!
-            'data/%s/%s_L2Relative_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L3Absolute_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L2L3Residual_AK4PFchs.txt' % (JECstring, JECstring),
-        ),
-        massCorrectorMC = cms.vstring(#updating!!!
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK4PFchs.txt',
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
-        ),
-        massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
+        jecUncertaintyName = cms.string('AK4PFchs'),
+        #jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK4PFchs.txt' % (JECstring, JECstring)),#updating
+        #jecUncertaintyMC = cms.string('data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_Uncertainty_AK4PFchs.txt'),#updating
+        #jecCorrectorDATA = cms.vstring(#updating
+        #    'data/%s/%s_L1FastJet_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L2Relative_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L3Absolute_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L2L3Residual_AK4PFchs.txt' % (JECstring, JECstring),
+        #),
+        #jecCorrectorMC = cms.vstring(#updating!!!
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L1FastJet_AK4PFchs.txt',
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK4PFchs.txt',
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
+        #),
+        #massCorrectorDATA = cms.vstring(#updating!!!
+        #    'data/%s/%s_L2Relative_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L3Absolute_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L2L3Residual_AK4PFchs.txt' % (JECstring, JECstring),
+        #),
+        #massCorrectorMC = cms.vstring(#updating!!!
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK4PFchs.txt',
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
+        #),
+        #massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
         reshapeBTag = cms.bool(isShort),
         btag = cms.string('pfDeepFlavourJetTags:probb+pfDeepFlavourJetTags:probbb+pfDeepFlavourJetTags:problepb'),
         btagDB = cms.string('data/%s.csv' % (btagSFstring)),
@@ -1740,6 +1786,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     vbfJetSet = cms.PSet(
         jets = cms.InputTag(jets_to_be_used),#(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
         jetid = cms.int32(3), # 0: no selection, 1: loose, 2: medium, 3: tight
+        dataEra = cms.string(dataString),
         #jet1pt = cms.double(30.),#https://indico.desy.de/indico/event/20983/contribution/0/material/slides/0.pdf
         #jet2pt = cms.double(30.),#https://indico.desy.de/indico/event/20983/contribution/0/material/slides/0.pdf
         #new cut, motivated by calo-lifetimes trigger path
@@ -1759,29 +1806,30 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         smearJets = cms.bool(True),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),# if not isAOD else 'offlinePrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
-        jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK4PFchs.txt' % (JECstring, JECstring)),#updating
-        jecUncertaintyMC = cms.string('data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_Uncertainty_AK4PFchs.txt'),#updating
-        jecCorrectorDATA = cms.vstring(#updating
-            'data/%s/%s_L1FastJet_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L2Relative_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L3Absolute_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L2L3Residual_AK4PFchs.txt' % (JECstring, JECstring),
-        ),
-        jecCorrectorMC = cms.vstring(#updating!!!
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L1FastJet_AK4PFchs.txt',
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK4PFchs.txt',
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
-        ),
-        massCorrectorDATA = cms.vstring(#updating!!!
-            'data/%s/%s_L2Relative_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L3Absolute_AK4PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L2L3Residual_AK4PFchs.txt' % (JECstring, JECstring),
-        ),
-        massCorrectorMC = cms.vstring(#updating!!!
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK4PFchs.txt',
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
-        ),
-        massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
+        jecUncertaintyName = cms.string('AK4PFchs'),
+        #jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK4PFchs.txt' % (JECstring, JECstring)),#updating
+        #jecUncertaintyMC = cms.string('data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_Uncertainty_AK4PFchs.txt'),#updating
+        #jecCorrectorDATA = cms.vstring(#updating
+        #    'data/%s/%s_L1FastJet_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L2Relative_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L3Absolute_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L2L3Residual_AK4PFchs.txt' % (JECstring, JECstring),
+        #),
+        #jecCorrectorMC = cms.vstring(#updating!!!
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L1FastJet_AK4PFchs.txt',
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK4PFchs.txt',
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
+        #),
+        #massCorrectorDATA = cms.vstring(#updating!!!
+        #    'data/%s/%s_L2Relative_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L3Absolute_AK4PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L2L3Residual_AK4PFchs.txt' % (JECstring, JECstring),
+        #),
+        #massCorrectorMC = cms.vstring(#updating!!!
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK4PFchs.txt',
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
+        #),
+        #massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
         reshapeBTag = cms.bool(isShort),
         btag = cms.string('pfDeepFlavourJetTags:probb+pfDeepFlavourJetTags:probbb+pfDeepFlavourJetTags:problepb'),
         btagDB = cms.string('data/%s.csv' % (btagSFstring)),
@@ -1798,6 +1846,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     chsFatJetSet = cms.PSet(
         jets = cms.InputTag(chosen_AK8),#('slimmedJetsAK8'),
         jetid = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
+        dataEra = cms.string(dataString),
         jet1pt = cms.double(pt_AK8),
         jet2pt = cms.double(pt_AK8),
         jeteta = cms.double(2.4),
@@ -1813,29 +1862,30 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         smearJets = cms.bool(True),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
-        jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK8PFchs.txt' % (JECstring, JECstring)),#updating
-        jecUncertaintyMC = cms.string('data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_Uncertainty_AK8PFchs.txt'),#updating
-        jecCorrectorDATA = cms.vstring(#updating
-            'data/%s/%s_L1FastJet_AK8PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L2Relative_AK8PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L3Absolute_AK8PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L2L3Residual_AK8PFchs.txt' % (JECstring, JECstring),
-        ),
-        jecCorrectorMC = cms.vstring(#updating!!!
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L1FastJet_AK8PFchs.txt',
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK8PFchs.txt',
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK8PFchs.txt',
-        ),
-        massCorrectorDATA = cms.vstring(#updating!!!
-            'data/%s/%s_L2Relative_AK8PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L3Absolute_AK8PFchs.txt' % (JECstring, JECstring),
-            'data/%s/%s_L2L3Residual_AK8PFchs.txt' % (JECstring, JECstring),
-        ),
-        massCorrectorMC = cms.vstring(#updating!!!
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK8PFchs.txt',
-            'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK8PFchs.txt',
-        ),
-        massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
+        jecUncertaintyName = cms.string('AK8PFchs'),
+        #jecUncertaintyDATA = cms.string('data/%s/%s_Uncertainty_AK8PFchs.txt' % (JECstring, JECstring)),#updating
+        #jecUncertaintyMC = cms.string('data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_Uncertainty_AK8PFchs.txt'),#updating
+        #jecCorrectorDATA = cms.vstring(#updating
+        #    'data/%s/%s_L1FastJet_AK8PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L2Relative_AK8PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L3Absolute_AK8PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L2L3Residual_AK8PFchs.txt' % (JECstring, JECstring),
+        #),
+        #jecCorrectorMC = cms.vstring(#updating!!!
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L1FastJet_AK8PFchs.txt',
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK8PFchs.txt',
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK8PFchs.txt',
+        #),
+        #massCorrectorDATA = cms.vstring(#updating!!!
+        #    'data/%s/%s_L2Relative_AK8PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L3Absolute_AK8PFchs.txt' % (JECstring, JECstring),
+        #    'data/%s/%s_L2L3Residual_AK8PFchs.txt' % (JECstring, JECstring),
+        #),
+        #massCorrectorMC = cms.vstring(#updating!!!
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L2Relative_AK8PFchs.txt',
+        #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK8PFchs.txt',
+        #),
+        #massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
         reshapeBTag = cms.bool(isShort),
         btag = cms.string('pfDeepFlavourJetTags:probb+pfDeepFlavourJetTags:probbb+pfDeepFlavourJetTags:problepb'),
         btagDB = cms.string('data/%s.csv' % (btagSFstring)),
@@ -1933,7 +1983,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         doRochester = cms.bool(False),
     ),
     tauSet = cms.PSet(
-        taus = cms.InputTag('slimmedTaus'),
+        taus = cms.InputTag(updatedTauName),#('slimmedTaus'),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
         taupt = cms.double(18.),
         taueta = cms.double(2.3),
@@ -2182,6 +2232,7 @@ task.add(process.patAlgosToolsTask)
 #task.add(process.pileUpJetIDTask)
 
 process.seq = cms.Sequence(
+    process.rerunMvaIsolationSequence *#needed for taus
     process.egammaPostRecoSeq *
     #process.packedPFCandidates *
     #process.packedCandsForTkIso *

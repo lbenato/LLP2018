@@ -49,7 +49,8 @@ config.JobType.allowUndistributedCMSSW = True
 #enable multi-threading
 #remove from being default!
 #config.JobType.maxMemoryMB = 3000#15900 #more memory
-config.JobType.numCores = 8
+#deactivate
+#config.JobType.numCores = 8
 
 if __name__ == '__main__':
 
@@ -69,7 +70,7 @@ if __name__ == '__main__':
     # Selection of samples via python lists
     import os
 
-    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB", "Others","data_BTagCSV", "WH_MH-125_2016"]#,"data_obs"
+    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTbarGenMET","TTJets","QCD","signal_VBF","signal_ggH","all","data_obs","MET","SingleMuon","SingleElectron","SinglePhoton","EGamma","JetHT","MuonEG","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB", "Others","data_BTagCSV", "WH_MH-125_2016","splitSUSY","JetJet","RPVstopBL"]#,"data_obs"
     print "Possible subgroups of samples:"
     for a in list_of_samples:
         print a
@@ -98,40 +99,56 @@ if __name__ == '__main__':
     else:
        isCalo=False
 
+    isRPV = False
+    isJetJet = False
+    isSplit = False
     if options.mode=="VBF":
         isVBF = True
         isggH = False
         isTwinHiggs = True
         isHeavyHiggs = False
         isSUSY = False
+        isRPV = False
     elif options.mode=="ggH":
         isVBF = False
         isggH = True
         isTwinHiggs = True
         isHeavyHiggs = False
         isSUSY = False
+        isRPV = False
     if options.model=="TwinHiggs":
         isTwinHiggs = True
         isHeavyHiggs = False
         isSUSY = False
+        isRPV = False
     elif options.model=="HeavyHiggs":
         isVBF = False
         isggH = False
         isTwinHiggs = False
         isHeavyHiggs = True
         isSUSY = False
+        isRPV = False
     elif options.model=="SUSY":
         isVBF = False
         isggH = False
         isTwinHiggs = False
         isHeavyHiggs = False
         isSUSY = True
+        isRPV = False
     elif options.model=="gluinoGMSB":
         isVBF = False
         isggH = False
         isTwinHiggs = False
         isHeavyHiggs = False
         isSUSY = True
+        isRPV = False
+    elif options.model=="RPV":
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False
+        isSUSY = False
+        isRPV = True
 
     #DATA TIER
     if options.datatier=="MINIAOD":
@@ -165,6 +182,8 @@ if __name__ == '__main__':
         isCentralProd=True
     else:
         isCentralProd=False
+
+
 
     folder = ''
     pset = ''
@@ -241,6 +260,7 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = False
         isSUSY = True
+        isRPV = False
     elif options.lists == "v0_SUSY_calo_AOD_2018":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
         from Analyzer.LLP2018.samplesAOD2018 import samples, sample
@@ -257,6 +277,7 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = False
         isSUSY = True
+        isRPV = False
     elif options.lists == "v0_ggHeavyHiggs_calo_AOD_2018":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
         from Analyzer.LLP2018.samplesAOD2018 import samples, sample
@@ -273,6 +294,7 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = True
         isSUSY = False
+        isRPV = False
     elif options.lists == "v0_ggHeavyHiggs_calo_AOD_gen":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
         from Analyzer.LLP2018.samplesAOD2018 import samples, sample
@@ -285,11 +307,15 @@ if __name__ == '__main__':
         isMINIAOD = False
         isAOD  = True
         isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
         isVBF = False
         isggH = False
         isTwinHiggs = False
         isHeavyHiggs = True
         isSUSY = False
+        isRPV = False
     elif options.lists == "v0_SUSY_calo_AOD_gen":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
         from Analyzer.LLP2018.samplesAOD2018 import samples, sample
@@ -307,6 +333,7 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = False
         isSUSY = True
+        isRPV = False
     elif options.lists == "synch_exercise_caltech":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
         from Analyzer.LLP2018.samplesAOD2017 import samples, sample
@@ -326,6 +353,7 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = False
         isSUSY = True
+        isRPV = False
     elif options.lists == "v1_SUSY_calo_AOD_2017":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
         from Analyzer.LLP2018.samplesAOD2017 import samples, sample
@@ -345,6 +373,7 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = False
         isSUSY = True
+        isRPV = False
     elif options.lists == "synch_exercise_caltech_v2":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
         from Analyzer.LLP2018.samplesAOD2017 import samples, sample
@@ -364,6 +393,7 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = False
         isSUSY = True
+        isRPV = False
     elif options.lists == "synch_exercise_caltech_v3":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
         from Analyzer.LLP2018.samplesAOD2017 import samples, sample
@@ -383,6 +413,7 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = False
         isSUSY = True
+        isRPV = False
     elif options.lists == "synch_exercise_caltech_v4":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
         from Analyzer.LLP2018.samplesAOD2017 import samples, sample
@@ -403,6 +434,7 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = False
         isSUSY = True
+        isRPV = False
 
     elif options.lists == "test_calo_AOD_pfcand":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
@@ -422,6 +454,7 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = True
         isSUSY = False
+        isRPV = False
     elif options.lists == "v1_calo_AOD_2017":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
         from Analyzer.LLP2018.samplesAOD2017 import samples, sample
@@ -442,6 +475,7 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = False#True#only for heavy higgs
         isSUSY = True
+        isRPV = False
     elif options.lists == "v2_calo_AOD_2017":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
         from Analyzer.LLP2018.samplesAOD2017 import samples, sample
@@ -464,6 +498,7 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = False#False#only for heavy higgs
         isSUSY = True#!!!
+        isRPV = False
     elif options.lists == "v3_calo_AOD_2018":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
         from Analyzer.LLP2018.samplesAOD2018 import samples, sample
@@ -486,10 +521,12 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = False#True#False#only for heavy higgs
         isSUSY = True#False#!!!
+        isRPV = False
     elif options.lists == "v4_calo_AOD_2018":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
         from Analyzer.LLP2018.samplesAOD2018 import samples, sample
-        pset = "AODNtuplizer2018.py"
+        #pset = "AODNtuplizer2018.py"
+        pset = "V4AODNtuplizer.py"
         folder = "v4_calo_AOD_2018_18October2020"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
@@ -509,8 +546,9 @@ if __name__ == '__main__':
         isVBF = False
         isggH = False
         isTwinHiggs = False
-        isHeavyHiggs = False#True#False#only for heavy higgs
-        isSUSY = True#False#!!!
+        isHeavyHiggs = True#False#only for heavy higgs
+        isSUSY = False#!!!
+        isRPV = False
     elif options.lists == "v4_taperecall":
         from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
         from Analyzer.LLP2018.samplesAOD2018 import samples, sample
@@ -533,6 +571,7 @@ if __name__ == '__main__':
         isTwinHiggs = True#False
         isHeavyHiggs = False#True#False#only for heavy higgs
         isSUSY = False#True#!!!
+        isRPV = False
     elif options.lists == "v0_2016miniAOD_centrallyProduced":
         from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced import *
         from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
@@ -549,6 +588,7 @@ if __name__ == '__main__':
         isTwinHiggs = True
         isHeavyHiggs = False#True#only for heavy higgs
         isSUSY = False
+        isRPV = False
         isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples) else False
         isMINIAOD = True
         isAOD  = False
@@ -574,6 +614,7 @@ if __name__ == '__main__':
         isTwinHiggs = True
         isHeavyHiggs = False#True#only for heavy higgs
         isSUSY = False
+        isRPV = False
         isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples) else False
         isMINIAOD = True
         is2016 = True
@@ -597,6 +638,7 @@ if __name__ == '__main__':
         isTwinHiggs = True
         isHeavyHiggs = False#True#only for heavy higgs
         isSUSY = False
+        isRPV = False
         isCentralProd = True  if ("VBFH_MH-125_201" in options.groupofsamples) else False
         is2016 = False
         is2017 = True
@@ -620,6 +662,7 @@ if __name__ == '__main__':
         isTwinHiggs = True
         isHeavyHiggs = False#True#only for heavy higgs
         isSUSY = False
+        isRPV = False
         isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples) else False
         is2016 = False
         is2017 = False
@@ -648,6 +691,7 @@ if __name__ == '__main__':
         isTwinHiggs = False
         isHeavyHiggs = True#False#only for heavy higgs
         isSUSY = False#!!!
+        isRPV = False
     elif options.lists == "v1_central_miniAOD_2016_17Nov2020":
         from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced import *
         from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
@@ -670,6 +714,7 @@ if __name__ == '__main__':
         isggH = False
         isTwinHiggs = True
         isHeavyHiggs = False
+        isRPV = False
         isSUSY = False
         isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples or "ggH_MH-125_201" in options.groupofsamples) else False
         isMINIAOD = True
@@ -701,6 +746,7 @@ if __name__ == '__main__':
         isTwinHiggs = True
         isHeavyHiggs = False
         isSUSY = False
+        isRPV = False
         isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples or "ggH_MH-125_201" in options.groupofsamples) else False
         isMINIAOD = True
         isAOD  = False
@@ -731,6 +777,7 @@ if __name__ == '__main__':
         isTwinHiggs = True
         isHeavyHiggs = False
         isSUSY = False
+        isRPV = False
         isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples or "ggH_MH-125_201" in options.groupofsamples) else False
         isMINIAOD = True
         isAOD  = False
@@ -738,9 +785,416 @@ if __name__ == '__main__':
         is2017 = False
         is2018 = True
         config.JobType.inputFiles = ['data']
+    elif options.lists == "v5_calo_AOD_2018":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+        from Analyzer.LLP2018.samplesAOD2018 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        folder = "v5_calo_AOD_2018_31December2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['dataAOD']
+        config.JobType.maxMemoryMB = 4000#15900 #more memory
+        #config.JobType.numCores = 2
+        config.Data.ignoreLocality = True
+        config.Site.whitelist   = ['T2_DE_DESY'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
+        config.Data.splitting = 'LumiBased'
+        config.Data.unitsPerJob = 85
+        #config.Data.unitsPerJob = 2
+        #if isData:
+        #    config.Data.unitsPerJob = 30
+        #else:
+        #    config.Data.unitsPerJob = 20
+        is2016 = False
+        is2017 = False#!!!
+        is2018 = True#!!!
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = False#True#False#!!!
+        isRPV = False
+        isJetJet = False
+        isSplit = True
+
+    elif options.lists == "v5_calo_AOD_2018_resubmission_1":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+        from Analyzer.LLP2018.samplesAOD2018 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        prev_folder = "v5_calo_AOD_2018_31December2020"
+        folder = "v5_calo_AOD_2018_31December2020_resubmission_1"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['dataAOD']
+        config.JobType.maxMemoryMB = 4000#15900 #more memory
+        #config.JobType.numCores = 2
+        #config.Data.ignoreLocality = True
+        #config.Site.whitelist   = ['T2_DE_DESY'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
+        config.Data.splitting = 'LumiBased'
+        config.Data.unitsPerJob = 2
+        ##config.Data.totalUnits = 1
+        is2016 = False
+        is2017 = False#!!!
+        is2018 = True#!!!
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
+        isRPV = False
+    elif options.lists == "v5_calo_AOD_2018_resubmission_2":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+        from Analyzer.LLP2018.samplesAOD2018 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        prev_folder = "v5_calo_AOD_2018_31December2020_resubmission_1"
+        folder = "v5_calo_AOD_2018_31December2020_resubmission_2"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['dataAOD']
+        config.JobType.maxMemoryMB = 4000#15900 #more memory
+        #config.JobType.numCores = 2
+        #config.Data.ignoreLocality = True
+        #config.Site.whitelist   = ['T2_DE_DESY'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
+        config.Data.splitting = 'LumiBased'
+        config.Data.unitsPerJob = 1
+        ##config.Data.totalUnits = 1
+        is2016 = False
+        is2017 = False#!!!
+        is2018 = True#!!!
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
+        isRPV = False
+    elif options.lists == "v5_calo_AOD_2018_resubmission_3":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+        from Analyzer.LLP2018.samplesAOD2018 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        prev_folder = "v5_calo_AOD_2018_31December2020_resubmission_2"
+        folder = "v5_calo_AOD_2018_31December2020_resubmission_3"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['dataAOD']
+        config.JobType.maxMemoryMB = 4500#15900 #more memory
+        #config.JobType.numCores = 2
+        #config.Data.ignoreLocality = True
+        #config.Site.whitelist   = ['T2_DE_DESY'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
+        config.Data.splitting = 'LumiBased'
+        config.Data.unitsPerJob = 2
+        ##config.Data.totalUnits = 1
+        is2016 = False
+        is2017 = False#!!!
+        is2018 = True#!!!
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
+        isRPV = False
+    elif options.lists == "v5_calo_AOD_2017":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
+        from Analyzer.LLP2018.samplesAOD2017 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        folder = "v5_calo_AOD_2017_31December2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['dataAOD']
+        config.JobType.maxMemoryMB = 4000#15900 #more memory
+        #config.JobType.numCores = 8
+        #config.Data.splitting = 'Automatic'
+        #config.Data.ignoreLocality = True
+        #config.Site.whitelist   = ['T2_DE_DESY'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
+        config.Data.splitting = 'LumiBased'
+        config.Data.unitsPerJob = 5
+        #config.Data.unitsPerJob = 6
+        #if isData:
+        #    config.Data.unitsPerJob = 30
+        #else:
+        #    config.Data.unitsPerJob = 20
+        is2016 = False
+        is2017 = True
+        is2018 = False
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
+        isRPV = False
+        isJetJet = False
+        isSplit = False
+
+    elif options.lists == "v5_calo_AOD_2017_resubmission_1":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
+        from Analyzer.LLP2018.samplesAOD2017 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        prev_folder = "v5_calo_AOD_2017_31December2020"
+        folder = "v5_calo_AOD_2017_31December2020_resubmission_1"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['dataAOD']
+        config.JobType.maxMemoryMB = 4000#15900 #more memory
+        #config.JobType.numCores = 8
+        #config.Data.splitting = 'Automatic'
+        #config.Data.ignoreLocality = True
+        #config.Site.whitelist   = ['T2_DE_DESY'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
+        config.Data.splitting = 'LumiBased'
+        config.Data.unitsPerJob = 2
+        #config.Data.unitsPerJob = 6
+        #if isData:
+        #    config.Data.unitsPerJob = 30
+        #else:
+        #    config.Data.unitsPerJob = 20
+        is2016 = False
+        is2017 = True
+        is2018 = False
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
+        isRPV = False
+        isJetJet = False
+        isSplit = False
+
+    elif options.lists == "v5_calo_AOD_2017_resubmission_2":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
+        from Analyzer.LLP2018.samplesAOD2017 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        prev_folder = "v5_calo_AOD_2017_31December2020_resubmission_1"
+        folder = "v5_calo_AOD_2017_31December2020_resubmission_2"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['dataAOD']
+        config.JobType.maxMemoryMB = 4000#15900 #more memory
+        #config.JobType.numCores = 8
+        #config.Data.splitting = 'Automatic'
+        #config.Data.ignoreLocality = True
+        #config.Site.whitelist   = ['T2_DE_DESY'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
+        config.Data.splitting = 'LumiBased'
+        config.Data.unitsPerJob = 1
+        #config.Data.unitsPerJob = 6
+        #if isData:
+        #    config.Data.unitsPerJob = 30
+        #else:
+        #    config.Data.unitsPerJob = 20
+        is2016 = False
+        is2017 = True
+        is2018 = False
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
+        isRPV = False
+        isJetJet = False
+        isSplit = False
+
+    elif options.lists == "v5_calo_AOD_2017_resubmission_3":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2017 import *
+        from Analyzer.LLP2018.samplesAOD2017 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        prev_folder = "v5_calo_AOD_2017_31December2020_resubmission_2"
+        folder = "v5_calo_AOD_2017_31December2020_resubmission_3"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['dataAOD']
+        config.JobType.maxMemoryMB = 4000#15900 #more memory
+        #config.JobType.numCores = 8
+        #config.Data.splitting = 'Automatic'
+        #config.Data.ignoreLocality = True
+        #config.Site.whitelist   = ['T2_DE_DESY'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
+        config.Data.splitting = 'LumiBased'
+        config.Data.unitsPerJob = 1
+        #config.Data.unitsPerJob = 6
+        #if isData:
+        #    config.Data.unitsPerJob = 30
+        #else:
+        #    config.Data.unitsPerJob = 20
+        is2016 = False
+        is2017 = True
+        is2018 = False
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
+        isRPV = False
+        isJetJet = False
+        isSplit = False
+
+    elif options.lists == "v5_calo_AOD_2016":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2016 import *
+        from Analyzer.LLP2018.samplesAOD2016 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        folder = "v5_calo_AOD_2016_31December2020"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['dataAOD']
+        config.JobType.maxMemoryMB = 4000#15900 #more memory
+        #config.JobType.numCores = 8
+        #config.Data.splitting = 'Automatic'
+        #config.Data.ignoreLocality = True
+        #config.Site.whitelist   = ['T2_DE_DESY'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
+        config.Data.splitting = 'LumiBased'
+        config.Data.unitsPerJob = 5
+        #if isData:
+        #    config.Data.unitsPerJob = 30
+        #else:
+        #    config.Data.unitsPerJob = 20
+        is2016 = True
+        is2017 = False#
+        is2018 = False#
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
+        isRPV = False
+        isJetJet = False
+        isSplit = False
+    elif options.lists == "v5_calo_AOD_2016_resubmission_1":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2016 import *
+        from Analyzer.LLP2018.samplesAOD2016 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        prev_folder = "v5_calo_AOD_2016_31December2020"
+        folder = "v5_calo_AOD_2016_31December2020_resubmission_1"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['dataAOD']
+        config.JobType.maxMemoryMB = 3000#4000#15900 #more memory
+        #config.JobType.numCores = 8
+        #config.Data.splitting = 'Automatic'
+        #config.Data.ignoreLocality = True
+        #config.Site.whitelist   = ['T2_DE_DESY'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
+        config.Data.splitting = 'LumiBased'
+        config.Data.unitsPerJob = 1
+        #if isData:
+        #    config.Data.unitsPerJob = 30
+        #else:
+        #    config.Data.unitsPerJob = 20
+        is2016 = True
+        is2017 = False#
+        is2018 = False#
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
+        isRPV = False
+        isJetJet = False
+        isSplit = False
+
+    elif options.lists == "v5_calo_AOD_2016_resubmission_2":
+        from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2016 import *
+        from Analyzer.LLP2018.samplesAOD2016 import samples, sample
+        pset = "AODNtuplizer2018.py"
+        prev_folder = "v5_calo_AOD_2016_31December2020_resubmission_1"
+        folder = "v5_calo_AOD_2016_31December2020_resubmission_2"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/lbenato/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/lbenato/" + folder #CHANGE here according to your username!
+        config.JobType.inputFiles = ['dataAOD']
+        config.JobType.maxMemoryMB = 4000#15900 #more memory
+        #config.JobType.numCores = 8
+        #config.Data.splitting = 'Automatic'
+        #config.Data.ignoreLocality = True
+        #config.Site.whitelist   = ['T2_DE_DESY'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
+        config.Data.splitting = 'LumiBased'
+        config.Data.unitsPerJob = 1
+        #if isData:
+        #    config.Data.unitsPerJob = 30
+        #else:
+        #    config.Data.unitsPerJob = 20
+        is2016 = True
+        is2017 = False#
+        is2018 = False#
+        isMINIAOD = False
+        isAOD  = True
+        isCalo = True
+        isShort = False
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = False
+        isHeavyHiggs = False#True#False#only for heavy higgs
+        isSUSY = True#False#!!!
+        isRPV = False
+        isJetJet = False
+        isSplit = False
+
     else:
         print "No list indicated, aborting!"
         exit()
+
+    if options.crabaction == "dryrun":
+        config.Data.splitting = 'LumiBased'
+        #config.Data.unitsPerJob = 30
+        #if isData:
+        #    config.Data.unitsPerJob = 30
+        #else:
+        #    config.Data.unitsPerJob = 20
+        #config.Data.splitting = 'EventAwareLumiBased'
+        #config.Data.unitsPerJob = 2500#15000
 
     selected_requests = {}
     selected_lumiMasks = {}
@@ -771,6 +1225,18 @@ if __name__ == '__main__':
                 selected_requests[k] = requests[k]
         elif options.groupofsamples=="gluinoGMSB":
             if "gluinoGMSB" in k:
+                print k
+                selected_requests[k] = requests[k]
+        elif options.groupofsamples=="splitSUSY":
+            if "GluinoGluinoToNeutralinoNeutralinoTo2T2B2S" in k:
+                print k
+                selected_requests[k] = requests[k]
+        elif options.groupofsamples=="JetJet":
+            if "XXTo4J" in k:
+                print k
+                selected_requests[k] = requests[k]
+        elif options.groupofsamples=="RPVstopBL":
+            if "DisplacedSUSY_StopToBL" in k:
                 print k
                 selected_requests[k] = requests[k]
         elif "VBFH_MH-125_201" in options.groupofsamples:
@@ -857,7 +1323,7 @@ if __name__ == '__main__':
         print "***************************************"
         print "\n"
 
-    if(int(isTwinHiggs) + int(isHeavyHiggs) + int(isSUSY)>1):
+    if(int(isTwinHiggs) + int(isHeavyHiggs) + int(isSUSY) + int(isRPV) + int(isSplit) + int(isJetJet)>1):
         print "More than one theoretical model selected! Aborting...."
         exit()
 
@@ -882,6 +1348,27 @@ if __name__ == '__main__':
         print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         print "\n"
 
+    if isRPV:
+        print "\n"
+        print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        print "Performing RPV stop->bl analysis!"
+        print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        print "\n"
+
+    if isSplit:
+        print "\n"
+        print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        print "Performing split susy analysis!"
+        print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        print "\n"
+
+    if isJetJet:
+        print "\n"
+        print "~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        print "Performing XX->4J analysis!"
+        print "~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        print "\n"
+
     if isVBF:
         print "\n"
         print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -901,7 +1388,7 @@ if __name__ == '__main__':
         print "#"*65
 	print "Dataset: ", j
         # Here: determines every needed parameter as per config file
-        isData = True if ('SingleMuon' in j or 'SingleElectron' in j or 'JetHT' in j or 'BTagCSV' in j or 'DisplacedJet' in j or 'MET' in j) else False
+        isData = True if ('SingleMuon' in j or 'SingleElectron' in j or 'JetHT' in j or 'BTagCSV' in j or 'DisplacedJet' in j or 'METRun' in j or 'EGamma' in j or 'MuonEG' in j or 'SinglePhoton' in j) else False
         print "isData?", isData
         isReHLT = False
         isReReco          = True if ('23Sep2016' in j) else False
@@ -918,7 +1405,7 @@ if __name__ == '__main__':
 
         noLHEinfo = True if ('WW_TuneCUETP8M1_13TeV-pythia8' in j or 'WZ_TuneCUETP8M1_13TeV-pythia8' in j or 'ZZ_TuneCUETP8M1_13TeV-pythia8' in j or 'WW_TuneCP5_13TeV-pythia8' in j or 'WZ_TuneCP5_13TeV-pythia8' in j or 'ZZ_TuneCP5_13TeV-pythia8' in j) else False #check for PythiaLO samples
         isbbH = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in j) else False #bbH has a different label in LHEEventProduct
-        isSignal = True if ('HToSSTobbbb_MH-125' in j  or 'HToSSTo4b_MH-125' in j or 'HToSSTobbbb_WToLNu' in j) else False #FIXME: Update with other signal modes & models?
+        isSignal = True if ('HToSSTobbbb_MH-125' in j  or 'HToSSTo4b_MH-125' in j or 'HToSSTobbbb_WToLNu' in j or 'SMS-T1tbs_RPV' in j or 'H2ToSSTobbbb' in j or 'n3n2-n1-hbb-hbb' in j or 'TChiHH' in j or 'GluinoGluino' in j or 'DisplacedSUSY_StopToBL' in j or 'XXTo4J' in j) else False #FIXME: Update with other signal modes & models?
         GT = ''
 
         if isMINIAOD:
@@ -1052,14 +1539,18 @@ if __name__ == '__main__':
         # JSON filter
         jsonName = ""
         if is2016:
-            jsonName = "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON"
+            #jsonName = "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON"
+            jsonName = "Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt"
         elif is2017:
-            jsonName = "Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON"
+            jsonName = "Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt"
         elif is2018:
-            jsonName = "Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON"
+            jsonName = "Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt"
+        if "resubmission" in options.lists:
+            jsonName = prev_folder+"/"+j+"/notFinishedLumis.json"
+            print "Resubmission! JSON: ", jsonName
 
         if isCentralProd and (is2016 or is2017 or is2018):
-            jsonName = selected_lumiMasks[j]
+            jsonName = selected_lumiMasks[j]+'.txt'
 
         # Trigger filter
         triggerTag = 'HLT2' if isReHLT else 'HLT'
@@ -1119,6 +1610,10 @@ if __name__ == '__main__':
         string_TwinHiggs = 'PTwinHiggs=True' if isTwinHiggs else 'PTwinHiggs=False'
         string_HeavyHiggs = 'PHeavyHiggs=True' if isHeavyHiggs else 'PHeavyHiggs=False'
         string_SUSY = 'PSUSY=True' if isSUSY else 'PSUSY=False'
+        string_RPV = 'PRPV=True' if isRPV else 'PRPV=False'
+        string_Split = 'PSplit=True' if isSplit else 'PSplit=False'
+        string_JetJet = 'PJetJet=True' if isJetJet else 'PJetJet=False'
+        #string_outName = 'POutName=output'
 
         # Set parameters and print python config
         if options.crabaction=="submit" or options.crabaction=="dryrun" or options.crabaction=="test":
@@ -1154,6 +1649,9 @@ if __name__ == '__main__':
                     config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
                 elif is2018:
                     config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+                if "resubmission" in options.lists:
+                    config.Data.lumiMask = os.environ['CMSSW_BASE']+"/src/Analyzer/LLP2018/dataAOD/JSON/"+prev_folder+"/"+j+"/notFinishedLumis.json"
+
                 #config.Data.splitting = 'Automatic'
                 #config.Data.unitsPerJob = 100000#comment, giving errors with new crab
             elif isCentralProd:
@@ -1165,7 +1663,7 @@ if __name__ == '__main__':
             #FIXME isCentralProd is not yet implemented in AOD ntuplizer. Add!
             #FIXME Once those two parameters work similarly for AOD and miniAOD, remove the if...else below
             if isAOD:
-                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_GT, string_JECstring, string_jsonName, string_triggerTag, string_filterString, string_calo,  string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod,string_isPromptReco, string_is2016, string_is2017, string_is2018, string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_btagSFstring, string_triggerTag, string_triggerString, string_filterString, string_calo, string_tracking, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY, string_RPV, string_Split, string_JetJet]
             else:
                 config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod,string_isPromptReco, string_is2016, string_is2017, string_is2018, string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_btagSFstring, string_triggerTag, string_triggerString, string_filterString, string_calo, string_tracking, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
@@ -1187,6 +1685,10 @@ if __name__ == '__main__':
         elif options.crabaction=="status":
             os.system('echo status -d ' + workarea + '/crab_'+j+'\n')
             os.system('crab status -d ' + workarea + '/crab_'+j+'\n')
+            os.system('echo ----------------------------------------------------\n')
+        elif options.crabaction=="proceed":
+            os.system('echo proceed -d ' + workarea + '/crab_'+j+'\n')
+            os.system('crab proceed -d ' + workarea + '/crab_'+j+'\n')
             os.system('echo ----------------------------------------------------\n')
         elif options.crabaction=="resubmit":
             os.system('echo resubmit -d ' + workarea + '/crab_'+j+'\n')
@@ -1242,6 +1744,6 @@ if __name__ == '__main__':
 #            config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_is2016, string_is2017, string_is2018, string_isPromptReco,string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString, string_calo, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
 #            print config
         else:
-            print "Invalid crab action. Please type: -a submit/status/resubmit/dryrun/getoutput/kill"
+            print "Invalid crab action. Please type: -a submit/status/proceed/resubmit/dryrun/getoutput/kill"
             exit()
     os.system('echo -%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-\n')

@@ -277,6 +277,37 @@ var_template = {
       "max" : 1.,
       "log" : True,
     },
+
+    "Jets[[N]].alphaMaxOld": {
+      "title" : "jet [[N]] #alpha_{max} with packedPFCandidates",
+      "nbins" : 50,
+      "min" : -1000.,
+      "max" : 1000.,
+      "log" : True,
+    },
+    "Jets.alphaMaxOld": {
+      "title" : "jets #alpha_{max} with packedPFCandidates",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+
+    "Jets.betaMax": {
+      "title" : "jets #beta_{max}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 3.,
+      "log" : True,
+    },
+    "Jets.betaMaxOld": {
+      "title" : "jets #beta_{max} with packedPFCandidates",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 3.,
+      "log" : True,
+    },
+
     "Jets.gammaMaxET": {
       "title" : "jets gammaMaxET",
       "nbins" : 50,
@@ -284,8 +315,22 @@ var_template = {
       "max" : 2.,
       "log" : True,
     },       
+    "Jets.gammaMaxETOld": {
+      "title" : "jets gammaMaxET with packedPFCandidates",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 2.,
+      "log" : True,
+    },       
     "Jets.minDeltaRPVTracks": {
       "title" : "jets minDeltaRPVTracks",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    "Jets.minDeltaRPVTracksOld": {
+      "title" : "jets minDeltaRPVTracks with packedPFCandidates",
       "nbins" : 50,
       "min" : 0.,
       "max" : 1.,
@@ -2725,7 +2770,7 @@ var_template = {
       "title" : "gen b-quark p_{T} (GeV)",
       "nbins" : 50,#SUSY: 50,
       "min" : 0,
-      "max" : 500,#SUSY: 250,
+      "max" : 1000,#SUSY: 250,
       "log" : True,
     },
     "GenBquarks[[N]].radius": {
@@ -2748,11 +2793,18 @@ var_template = {
       "log" : True,
       "logx" : True,
     },
-    "GenLLPs[[N]].pt": {
+    "GenLLPs.pt": {
       "title" : "gen long lived particle p_{T} (GeV)",
       "nbins" : 40,
       "min" : 0,
-      "max" : 1000,
+      "max" : 2000,
+      "log" : True,
+    },
+    "GenLLPs[[N]].pt": {
+      "title" : "gen long lived particle [[N]] p_{T} (GeV)",
+      "nbins" : 40,
+      "min" : 0,
+      "max" : 2000,
       "log" : True,
     },
     "GenLLPs[[N]].dRdaughters": {
@@ -2779,6 +2831,20 @@ var_template = {
     "GenHiggs.pt": {
       "title" : "gen Higgs-like p_{T} (GeV)",
       "nbins" : 40,
+      "min" : 0,
+      "max" : 2000,
+      "log" : True,
+    },
+    "GenHiggs.mass": {
+      "title" : "gen Higgs-like mass (GeV)",
+      "nbins" : 300,
+      "min" : 0,
+      "max" : 3000,
+      "log" : True,
+    },
+    "GenLLPs.mass": {
+      "title" : "gen LLP mass (GeV)",
+      "nbins" : 300,
       "min" : 0,
       "max" : 1000,
       "log" : True,
@@ -2974,6 +3040,22 @@ var_template = {
       "max" : 6.5+4,
       "log" : True,
     },
+
+    "nTagJets_0p994_JJ": {
+      "title" : "n. of jets with DNN output > 0.994, jet cleaning",
+      "nbins" : 7+4,#3,#
+      "min" : -0.5,
+      "max" : 6.5+4,#2.5,#
+      "log" : True,
+    },
+    "nTagFatJets_0p99999": {
+      "title" : "n. of AK8 jets with DNN output > 0.99999",
+      "nbins" : 7+4,#3,#
+      "min" : -0.5,
+      "max" : 6.5+4,#2.5,#
+      "log" : True,
+    },
+
     "nTags_cHadEFrac_wp0p2": {
       "title" : "n. of jets with cHadEFrac < 0.2",
       "nbins" : 7,

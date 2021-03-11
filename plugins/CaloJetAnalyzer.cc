@@ -15,37 +15,30 @@ CaloJetAnalyzer::CaloJetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector
     Jet2Pt(PSet.getParameter<double>("jet2pt")),
     JetEta(PSet.getParameter<double>("jeteta")),
     //AddQG(PSet.getParameter<bool>("addQGdiscriminator")),
-    RecalibrateJets(PSet.getParameter<bool>("recalibrateJets")),
-    RecalibrateMass(PSet.getParameter<bool>("recalibrateMass")),
+    //RecalibrateJets(PSet.getParameter<bool>("recalibrateJets")),
+    //RecalibrateMass(PSet.getParameter<bool>("recalibrateMass")),
     //RecalibratePuppiMass(PSet.getParameter<bool>("recalibratePuppiMass")),
-    SmearJets(PSet.getParameter<bool>("smearJets")),
-    JECUncertaintyMC(PSet.getParameter<std::string>("jecUncertaintyMC")),
-    JECUncertaintyDATA(PSet.getParameter<std::string>("jecUncertaintyDATA")),
-    JetCorrectorMC(PSet.getParameter<std::vector<std::string> >("jecCorrectorMC")),
-    JetCorrectorDATA(PSet.getParameter<std::vector<std::string> >("jecCorrectorDATA")),
-    MassCorrectorMC(PSet.getParameter<std::vector<std::string> >("massCorrectorMC")),
-    MassCorrectorDATA(PSet.getParameter<std::vector<std::string> >("massCorrectorDATA")),
+    //SmearJets(PSet.getParameter<bool>("smearJets")),
+    JECUncertaintyName(PSet.getParameter<std::string>("jecUncertaintyName")),
+    //JECUncertaintyMC(PSet.getParameter<std::string>("jecUncertaintyMC")),
+    //JECUncertaintyDATA(PSet.getParameter<std::string>("jecUncertaintyDATA")),
+    //JetCorrectorMC(PSet.getParameter<std::vector<std::string> >("jecCorrectorMC")),
+    //JetCorrectorDATA(PSet.getParameter<std::vector<std::string> >("jecCorrectorDATA")),
+    //MassCorrectorMC(PSet.getParameter<std::vector<std::string> >("massCorrectorMC")),
+    //MassCorrectorDATA(PSet.getParameter<std::vector<std::string> >("massCorrectorDATA")),
     //MassCorrectorPuppi(PSet.getParameter<std::string>("massCorrectorPuppi")),
     VertexToken(CColl.consumes<reco::VertexCollection>(PSet.getParameter<edm::InputTag>("vertices"))),
     RhoToken(CColl.consumes<double>(PSet.getParameter<edm::InputTag>("rho"))),
-    //UseReshape(PSet.getParameter<bool>("reshapeBTag")),
-    //BTag(PSet.getParameter<std::string>("btag")),
-    //Jet1BTag(PSet.getParameter<int>("jet1btag")),
-    //Jet2BTag(PSet.getParameter<int>("jet2btag")),
-    //BTagDB(PSet.getParameter<std::string>("btagDB")),
-    //UseRecoil(PSet.getParameter<bool>("metRecoil")),
-    //RecoilMCFile(PSet.getParameter<std::string>("metRecoilMC")),
-    //RecoilDataFile(PSet.getParameter<std::string>("metRecoilData")),
-    //MetTriggerFileName(PSet.getParameter<std::string>("metTriggerFileName")),
     JerName_res(PSet.getParameter<std::string>("jerNameRes")),
     JerName_sf(PSet.getParameter<std::string>("jerNameSf"))
 {
   
-    jecUncMC = new JetCorrectionUncertainty(JECUncertaintyMC);
-    jecUncDATA = new JetCorrectionUncertainty(JECUncertaintyDATA);
+    //jecUncMC = new JetCorrectionUncertainty(JECUncertaintyMC);
+    //jecUncDATA = new JetCorrectionUncertainty(JECUncertaintyDATA);
 
     //isMetTriggerFile = false;
     
+    /*
     if(RecalibrateJets) {
         std::vector<JetCorrectorParameters> jetParMC;
         for ( std::vector<std::string>::const_iterator payloadBegin = JetCorrectorMC.begin(), payloadEnd = JetCorrectorMC.end(), ipayload = payloadBegin; ipayload != payloadEnd; ++ipayload ) {
@@ -75,6 +68,7 @@ CaloJetAnalyzer::CaloJetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector
         massCorrMC = boost::shared_ptr<FactorizedJetCorrector> ( new FactorizedJetCorrector(massParMC) );
         massCorrDATA = boost::shared_ptr<FactorizedJetCorrector> ( new FactorizedJetCorrector(massParDATA) );
     }
+    */
 
     // JER NEW IMPLEMENTATION
     
@@ -96,78 +90,6 @@ CaloJetAnalyzer::CaloJetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector
     }
     */
 
-    // BTag calibrator
-    /*
-    if(UseReshape) {
-        calib           = new BTagCalibration("CSVv2", BTagDB);
-	
-	// Set up readers for systematics. This code is largely thanks to Martino & Pablo in
-	// https://github.com/cms-hh-pd/alp_analysis/blob/master/interface/BTagFilterOperator.h
-	
-	// Map of flavor type
-	flavour_map = {{5, BTagEntry::FLAV_B},
-		       {4, BTagEntry::FLAV_C},
-		       {0, BTagEntry::FLAV_UDSG}};
-	// Systematics to use for each flavor type
-	syst_map = {{BTagEntry::FLAV_B, {"up_jes","down_jes",
-					 "up_lf","down_lf",
-					 "up_hfstats1", "down_hfstats1",
-					 "up_hfstats2", "down_hfstats2"}},
-                    {BTagEntry::FLAV_C, {"up_cferr1","down_cferr1",
-                                         "up_cferr2", "down_cferr2"}},
-                    {BTagEntry::FLAV_UDSG, {"up_jes","down_jes",
-                                            "up_hf","down_hf",
-                                            "up_lfstats1", "down_lfstats1",
-					    "up_lfstats2", "down_lfstats2"}}};
-	
-	sf_mode = "iterativefit";
-	
-	// Load the reader with each systematic type.
-	cr_map.emplace("central",
-		       BTagCalibrationReader{BTagEntry::OP_RESHAPING,
-			       "central", {}});
-	for (const auto & kv : flavour_map) 
-	    cr_map.at("central").load(*calib, kv.second, sf_mode);
-	// for every flavour
-	for (const auto & kv : syst_map) {
-	    auto & syst_vector = kv.second;
-	    // for every systematic relevant per flavour
-	    for (const auto & syst : syst_vector) {
-		auto it = cr_map.find(syst);
-		if (it ==cr_map.end()) {
-		    // return iterator as first pair element
-		    it = cr_map.emplace(syst,
-					BTagCalibrationReader{BTagEntry::OP_RESHAPING,
-						syst, {}})
-			.first;
-		}
-		// load calibration for this flavour and reader
-		it->second.load(*calib, kv.first, sf_mode);
-	    }
-	}
-    }
-    */
-
-    // Recoil Corrector
-    /*
-    if(UseRecoil) {
-        recoilCorr = new RecoilCorrector(RecoilMCFile);
-        recoilCorr->addDataFile(RecoilDataFile);
-        recoilCorr->addMCFile(RecoilMCFile);
-    }
-    */
-
-    /*
-    MetTriggerFile=new TFile(MetTriggerFileName.c_str(), "READ");
-    if(!MetTriggerFile->IsZombie()) {
-        MetTriggerHisto=(TH1F*)MetTriggerFile->Get("SingleMuAll_numOR");
-        isMetTriggerFile=true;
-    }
-    else {
-        throw cms::Exception("CaloJetAnalyzer", "No Met Trigger File");
-        return;
-    }
-    */
 
     std::cout << " --- CaloJetAnalyzer initialization ---" << std::endl;
     //std::cout << "  jet collection    :\t" << JetToken << std::endl;
@@ -183,13 +105,8 @@ CaloJetAnalyzer::CaloJetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector
 }
 
 CaloJetAnalyzer::~CaloJetAnalyzer() {
-  //if(RecalibratePuppiMass) PuppiCorrFile->Close();
-
-  //if(UseReshape) {
-  //delete calib;
-  //}
-    delete jecUncMC;
-    delete jecUncDATA;
+    //delete jecUncMC;
+    //delete jecUncDATA;
     //if(UseRecoil) delete recoilCorr;
     //MetTriggerFile->Close();
 }
@@ -244,18 +161,18 @@ std::vector<reco::CaloJet> CaloJetAnalyzer::FillJetVector(const edm::Event& iEve
         //jet.addUserInt("isTightLepVeto", isTightLepVetoJet(jet) ? 1 : 0);
 
 	
-        if(RecalibrateJets) CorrectJet(jet, *rho_handle, PVCollection->size(), isMC);
+        //if(RecalibrateJets) CorrectJet(jet, *rho_handle, PVCollection->size(), isMC);
 
         // JEC Uncertainty
-        if (!isMC){
-            jecUncDATA->setJetEta(jet.eta());
-            jecUncDATA->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
-            //jet.addUserFloat("JESUncertainty", jecUncDATA->getUncertainty(true));
-        } else {
-            jecUncMC->setJetEta(jet.eta());
-            jecUncMC->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
-            //jet.addUserFloat("JESUncertainty", jecUncMC->getUncertainty(true));
-        }
+        //if (!isMC){
+        //    jecUncDATA->setJetEta(jet.eta());
+        //    jecUncDATA->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
+        //    //jet.addUserFloat("JESUncertainty", jecUncDATA->getUncertainty(true));
+        //} else {
+        //    jecUncMC->setJetEta(jet.eta());
+        //    jecUncMC->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
+        //    //jet.addUserFloat("JESUncertainty", jecUncMC->getUncertainty(true));
+	//}
 
 	/*
 	//std::cout << "JES uncertainty: " << jet.userFloat("JESUncertainty") <<std::endl;
@@ -364,20 +281,7 @@ std::vector<reco::CaloJet> CaloJetAnalyzer::FillJetVector(const edm::Event& iEve
         jet.addUserFloat("ReshapedDiscriminatorDown", reshapedDiscriminator[2]);
 	*/
 
-        // CSV reshaping for soft drop subjets
 	/*
-        if(jet.hasSubjets("SoftDrop")) {
-            auto const & sdSubjets = jet.subjets("SoftDrop");
-            short nsj = 1;
-            for (auto const & it : sdSubjets) {
-                reco::CaloJet subjet = it;
-		std::vector<float> reshapedDiscriminatorSubjet = ReshapeBtagDiscriminator(subjet);
-                jet.addUserFloat(Form("ReshapedDiscriminator%d",nsj), reshapedDiscriminatorSubjet[0]);
-                jet.addUserFloat(Form("ReshapedDiscriminatorUp%d",nsj), reshapedDiscriminatorSubjet[1]);
-                jet.addUserFloat(Form("ReshapedDiscriminatorDown%d",nsj), reshapedDiscriminatorSubjet[2]);
-                ++nsj;
-            }
-        }
         
         //QG tagger for AK4 jets
         if(AddQG && jet.nSubjetCollections()<=0) {
@@ -392,6 +296,7 @@ std::vector<reco::CaloJet> CaloJetAnalyzer::FillJetVector(const edm::Event& iEve
 
 
 /////////////////////////////////////////////
+/*
 void CaloJetAnalyzer::CorrectJet(reco::CaloJet& jet, float rho, float nPV, bool isMC) {
     double corr(1.);
     reco::Candidate::LorentzVector uncorrJet = jet.p4();//pat::Jet has correctedP4(0); calo do not; see: https://github.com/cms-jet/JMEDAS/blob/master/plugins/JetCorrectionsOnTheFly.cc
@@ -418,6 +323,7 @@ void CaloJetAnalyzer::CorrectJet(reco::CaloJet& jet, float rho, float nPV, bool 
     reco::Candidate::LorentzVector corrJet(uncorrJet);
     jet.setP4(corrJet * corr);
 }
+*/
 
 /*
 void CaloJetAnalyzer::CorrectMass(reco::CaloJet& jet, float rho, float nPV, bool isMC) {
@@ -451,42 +357,6 @@ void CaloJetAnalyzer::CorrectMass(reco::CaloJet& jet, float rho, float nPV, bool
 */
 
 
-/*
-void CaloJetAnalyzer::CorrectPuppiMass(reco::CaloJet& jet, bool isMC) {
-    bool hasInfo( jet.hasUserFloat("ak8PFJetsPuppiSoftDropMass") && jet.hasUserFloat("ak8PFJetsPuppiSoftDropPt") && jet.hasUserFloat("ak8PFJetsPuppiSoftDropEta") );
-    float corr(1.), genCorr(1.), recoCorr(1.);
-    if(hasInfo && jet.userFloat("ak8PFJetsPuppiSoftDropMass") > 0.) {
-        genCorr = PuppiJECcorr_gen->Eval( jet.userFloat("ak8PFJetsPuppiSoftDropPt") );
-        if(fabs(jet.userFloat("ak8PFJetsPuppiSoftDropEta")) <= 1.3) 
-            recoCorr = PuppiJECcorr_reco_0eta1v3->Eval( jet.userFloat("ak8PFJetsPuppiSoftDropPt") );
-        else if(fabs(jet.userFloat("ak8PFJetsPuppiSoftDropEta")) > 1.3 ) 
-            recoCorr = PuppiJECcorr_reco_1v3eta2v5->Eval( jet.userFloat("ak8PFJetsPuppiSoftDropPt") );
-        corr = genCorr * recoCorr;
-    }
-    if(corr < 0.) corr = 0.;
-    jet.addUserFloat("ak8PFJetsPuppiSoftDropMassCorr", jet.userFloat("ak8PFJetsPuppiSoftDropMass") * corr);
-    jet.addUserFloat("ak8PFJetsPuppiSoftDropMassCorrNotSmeared", jet.userFloat("ak8PFJetsPuppiSoftDropMass") * corr);
-
-    if(isMC){
-      float JMSSf  = 1.;//Moriond17
-        float JMSUnc = 0.0094;//Moriond17
-        float JESUnc = jet.userFloat("JESUncertainty");    
-        jet.addUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMS", jet.userFloat("ak8PFJetsPuppiSoftDropMassCorr")       * JMSSf);
-        jet.addUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMSUp", jet.userFloat("ak8PFJetsPuppiSoftDropMassCorr")     * (JMSSf + sqrt(JMSUnc*JMSUnc + JESUnc*JESUnc) ) );
-        jet.addUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMSDown", jet.userFloat("ak8PFJetsPuppiSoftDropMassCorr")   * (JMSSf - sqrt(JMSUnc*JMSUnc + JESUnc*JESUnc) ) );
-        
-        float JMRSf   = 1.;//Moriond17
-        float JMRUnc  = 0.20;//Moriond17
-        TRandom3 rnd(0);
-        float smearJMR    = rnd.Gaus(1.,JMRSf-1.);
-        float smearJMRUp    = rnd.Gaus(1.,(JMRSf-1.)*(1. + JMRUnc/JMRSf));
-	float smearJMRDown    = rnd.Gaus(1.,(JMRSf -1.)*(1. - JMRUnc/JMRSf));
-        jet.addUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMR", jet.userFloat("ak8PFJetsPuppiSoftDropMassCorr")       * smearJMR);
-        jet.addUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMRUp", jet.userFloat("ak8PFJetsPuppiSoftDropMassCorr")     * smearJMRUp);
-        jet.addUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMRDown", jet.userFloat("ak8PFJetsPuppiSoftDropMassCorr")   * smearJMRDown);
-    }
-}
-*/
 
 void CaloJetAnalyzer::CleanJetsFromMuons(std::vector<reco::CaloJet>& Jets, std::vector<pat::Muon>& Muons, float angle) {
     for(unsigned int m = 0; m < Muons.size(); m++) {
@@ -760,48 +630,4 @@ bool CaloJetAnalyzer::isTightLepVetoJet(reco::CaloJet& jet) {
 }
 
 
-std::vector<float> CaloJetAnalyzer::ReshapeBtagDiscriminator(reco::CaloJet& jet) {
-    float pt(jet.pt()), eta(fabs(jet.eta())), discr(jet.bDiscriminator(BTag));
-    int hadronFlavour_ = std::abs(jet.hadronFlavour());
-    std::vector<float> reshapedDiscr(3, discr);
-    
-    if(UseReshape) {
-        BTagEntry::JetFlavor jf = BTagEntry::FLAV_UDSG;
-        if (hadronFlavour_ == 5) jf = BTagEntry::FLAV_B;
-	else if (hadronFlavour_ == 4) jf = BTagEntry::FLAV_C;
-	else if (hadronFlavour_ == 0) jf = BTagEntry::FLAV_UDSG;
-
-	auto central_sf = cr_map.at("central").eval_auto_bounds("central", jf, eta, pt, discr);
-	// default to 1 rather than 0 if out of bounds
-	if (central_sf == 0) central_sf = 1.0;
-	
-	// Get the systematic shifts. For the time being just add up the differences from the central
-	// value in quadrature and take that as the overall systematic.
-	float up_total2 = 0;
-	float down_total2 = 0;
-	for (const auto & syst : syst_map.at(jf)) {
-	    auto syst_sf = cr_map.at(syst).eval_auto_bounds(syst, jf, eta, pt, discr);
-	    // default to 1, as above
-	    if (syst_sf == 0) syst_sf = 1.0;
-
-	    if (syst.find("up") != std::string::npos) {
-		up_total2 += (syst_sf-central_sf)*(syst_sf-central_sf);
-	    } else if (syst.find("down") != std::string::npos) {
-		down_total2 += (syst_sf-central_sf)*(syst_sf-central_sf);
-	    } else {
-		std::cerr << "Unknown systematic " << syst << " -- don't know if this is up or down!" << std::endl;
-	    }
-	}
-	float up_sf = central_sf - sqrt(up_total2);
-	float down_sf = central_sf + sqrt(down_total2);
-
-	reshapedDiscr[0] = discr*central_sf;
-	reshapedDiscr[1] = discr*up_sf;
-	reshapedDiscr[2] = discr*down_sf;
-	  
-	//std::cout << Form("pt, eta, b-tag, flav, reshapedDiscr : %f, %f, %f, %d, %f, %f, %f\n",
-	// 		  pt, eta, discr, jf, reshapedDiscr[0], reshapedDiscr[1], reshapedDiscr[2]);
-    }
-    return reshapedDiscr;
-}
 */

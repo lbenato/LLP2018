@@ -27,6 +27,7 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "DataFormats/Common/interface/ValueMap.h"
 #include "JetMETCorrections/JetCorrector/interface/JetCorrector.h"
+#include "JetMETCorrections/Objects/interface/JetCorrectionsRecord.h"
 #include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
 #include "RecoilCorrector.h" // From: https://github.com/cms-met/MetTools/tree/master/RecoilCorrections
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
@@ -87,9 +88,9 @@ class JetAnalyzer {
         virtual std::vector<ecalRecHitType> FillEcalRecHitVector(const edm::Event&, const edm::EventSetup&, std::vector<pat::Jet> &);
         virtual std::vector<hcalRecHitType> FillHcalRecHitVector(const edm::Event&, const edm::EventSetup&, std::vector<pat::Jet> &);
 	virtual std::pair< std::pair<float,float> , float> JetSecondMoments(std::vector<double> &,std::vector<double> &,std::vector<double> &);
-        virtual void CorrectJet(pat::Jet&, float, float, bool);
-        virtual void CorrectMass(pat::Jet&, float, float, bool);
-        virtual void CorrectPuppiMass(pat::Jet&, bool);
+        //virtual void CorrectJet(pat::Jet&, float, float, bool);
+        //virtual void CorrectMass(pat::Jet&, float, float, bool);
+        //virtual void CorrectPuppiMass(pat::Jet&, bool);
         virtual void CleanJetsFromMuons(std::vector<pat::Jet>&, std::vector<pat::Muon>&, float);
         virtual void CleanJetsFromElectrons(std::vector<pat::Jet>&, std::vector<pat::Electron>&, float);
         virtual void CleanFatJetsFromAK4(std::vector<pat::Jet>&, std::vector<pat::Jet>&, float);
@@ -99,10 +100,10 @@ class JetAnalyzer {
         virtual pat::MET FillMetVector(const edm::Event&);
 	virtual float GetMetTriggerEfficiency(pat::MET&);
         virtual void ApplyRecoilCorrections(pat::MET&, const reco::Candidate::LorentzVector*, const reco::Candidate::LorentzVector*, int);
-        virtual float CalculateHT(const edm::Event&, const edm::EventSetup&, int, float, float);
-        virtual bool isLooseJet(pat::Jet&);
-        virtual bool isTightJet(pat::Jet&);
-        virtual bool isTightLepVetoJet(pat::Jet&);
+        virtual float CalculateHT(const edm::Event&, const edm::EventSetup&, int, float, float, bool);
+        virtual bool isLooseJet(pat::Jet&, std::string);
+        virtual bool isTightJet(pat::Jet&, std::string);
+        virtual bool isTightLepVetoJet(pat::Jet&, std::string);
 	//        virtual std::vector<float> ReshapeBtagDiscriminator(pat::Jet&);
 	virtual std::map<std::string, float> CalculateBtagReshapeSF(std::vector<pat::Jet>&);
       
@@ -117,18 +118,22 @@ class JetAnalyzer {
         edm::EDGetTokenT<edm::SortedCollection<HORecHit,edm::StrictWeakOrdering<HORecHit>>>       hcalRecHitsHOToken;
         edm::EDGetTokenT<edm::SortedCollection<HBHERecHit,edm::StrictWeakOrdering<HBHERecHit>>>       hcalRecHitsHBHEToken;
         int JetId;
+	std::string DataEra;
         float Jet1Pt, Jet2Pt, JetEta;
         bool IsAOD;
-        bool AddQG, RecalibrateJets, RecalibrateMass, RecalibratePuppiMass; 
+        bool AddQG;
+	//bool RecalibrateJets, RecalibrateMass, RecalibratePuppiMass; 
 	std::string SoftdropPuppiMassString;
         bool SmearJets;
-        std::string JECUncertaintyMC;
-        std::string JECUncertaintyDATA;
-        std::vector<std::string> JetCorrectorMC;
-        std::vector<std::string> JetCorrectorDATA;
-        std::vector<std::string> MassCorrectorMC;
-        std::vector<std::string> MassCorrectorDATA;
-        std::string MassCorrectorPuppi;
+        std::string JECUncertaintyName;
+	//obsolete methods
+        //std::string JECUncertaintyMC;
+        //std::string JECUncertaintyDATA;
+        //std::vector<std::string> JetCorrectorMC;
+        //std::vector<std::string> JetCorrectorDATA;
+        //std::vector<std::string> MassCorrectorMC;
+        //std::vector<std::string> MassCorrectorDATA;
+        //std::string MassCorrectorPuppi;
         edm::EDGetTokenT<reco::VertexCollection> VertexToken;        
         edm::EDGetTokenT<double> RhoToken;
         bool UseReshape;
@@ -147,23 +152,24 @@ class JetAnalyzer {
         //Ecal RecHits
         const float Rechit_cut = 0.5;
         
-        TFile* PuppiCorrFile;
-        TF1* PuppiJECcorr_gen;
-        TF1* PuppiJECcorr_reco_0eta1v3;
-        TF1* PuppiJECcorr_reco_1v3eta2v5;
+        //TFile* PuppiCorrFile;
+        //TF1* PuppiJECcorr_gen;
+        //TF1* PuppiJECcorr_reco_0eta1v3;
+        //TF1* PuppiJECcorr_reco_1v3eta2v5;
 
 	TFile* MetTriggerFile;
 	TH1F* MetTriggerHisto;
 	bool isMetTriggerFile;
 
-        // JEC Uncertainty
-        JetCorrectionUncertainty* jecUncMC;
-        JetCorrectionUncertainty* jecUncDATA;
+	//obsolete
+        //// JEC Uncertainty
+        //JetCorrectionUncertainty* jecUncMC;
+        //JetCorrectionUncertainty* jecUncDATA;
         
-        boost::shared_ptr<FactorizedJetCorrector> jetCorrMC;
-        boost::shared_ptr<FactorizedJetCorrector> jetCorrDATA;
-        boost::shared_ptr<FactorizedJetCorrector> massCorrMC;
-        boost::shared_ptr<FactorizedJetCorrector> massCorrDATA;
+        //boost::shared_ptr<FactorizedJetCorrector> jetCorrMC;
+        //boost::shared_ptr<FactorizedJetCorrector> jetCorrDATA;
+        //boost::shared_ptr<FactorizedJetCorrector> massCorrMC;
+        //boost::shared_ptr<FactorizedJetCorrector> massCorrDATA;
         
         // Btag calibrations
         BTagCalibration        * calib;
