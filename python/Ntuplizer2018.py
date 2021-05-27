@@ -292,11 +292,11 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 500
+process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
 ## Input files
 if len(options.inputFiles) == 0:
@@ -317,7 +317,7 @@ if len(options.inputFiles) == 0:
             #'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16MiniAODv3/QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/10000/00214FA3-001F-E911-AC83-0CC47A4F1CF6.root',
             #'/store/mc/RunIISummer16MiniAODv2/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/E65DC503-55C9-E611-9A11-02163E019C7F.root',
             #'/store/mc/RunIISummer16MiniAODv3/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/270000/FE8AFB84-5DEA-E811-83C4-68CC6EA5BD1A.root',
-            '/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
+####            '/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
           #'/store/mc/RunIISummer16MiniAODv3/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/100000/16099EC8-13EA-E811-9559-0CC47A4C7340.root',
           #'/store/mc/RunIISummer16MiniAODv3/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/20000/08E2D468-67EF-E811-850B-7CD30ABD295A.root',
           #'/store/mc/RunIISummer16MiniAODv3/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/100000/00A80353-4FEA-E811-9282-6CC2173CAAE0.root'
@@ -331,7 +331,8 @@ if len(options.inputFiles) == 0:
             #'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/WW_TuneCP5_13TeV-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v2/80000/7639FB10-DF53-8242-89D8-7A5E5817A3E4.root'
             #'file:/afs/desy.de/user/e/eichm/public/forLisa/VBFH_m20_ctau500.root'
 #            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_Summer16_MINIAODSIM_calojets_Tranche2/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets/181218_125055/0000/miniaod_1.root',
-            #'/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MINIAODSIM_24May2018/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_24May2018/180529_093853/0000/miniaod_15.root'
+           #'/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MINIAODSIM_24May2018/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_24May2018/180529_093853/0000/miniaod_15.root'
+           '/store/mc/RunIISummer16MiniAODv3/VBFH_HToSSTo4b_MH-125_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_rp_94X_mcRun2_asymptotic_v3-v2/00000/00A03CF9-D661-EA11-8EA1-F0D4E2E52528.root'
 
             #2018 data:
             #'file:/pnfs/desy.de/cms/tier2//store/data/Run2018C/MET/MINIAOD/17Sep2018-v1/60000/ED1603BC-E2EC-D042-8262-6FF525FA0CA5.root'
@@ -1469,8 +1470,8 @@ jets_to_be_used = "updatedJetsPUID" #Test, is this readable?
 
 #PU files
 if is2016:
-    data_era = "2016"
-    scenario = "2016_25ns_UltraLegacy_PoissonOOTPU"
+    data_era = "ReReco"#"2016"
+    scenario = "2016_25ns_Moriond17MC_PoissonOOTPU"#to be set for pre UL, afterwards use:"2016_25ns_UltraLegacy_PoissonOOTPU"
 elif is2017:
     data_era = "2017"
     scenario = "2017_25ns_UltraLegacy_PoissonOOTPU"
@@ -1629,7 +1630,9 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         badPFMuonFilter = cms.InputTag("BadPFMuonFilter"),
         badChCandFilter = cms.InputTag("BadChargedCandidateFilter"),
         l1Gt = cms.InputTag("gtStage2Digis"),
-        l1filters = cms.vstring('hltL1sTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBFIorHTT300','hltL1sDoubleJetC112','hltL1sQuadJetC50IorQuadJetC60IorHTT280IorHTT300IorHTT320IorTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBF','hltL1sTripleJetVBFIorHTTIorDoubleJetCIorSingleJet','hltL1sSingleMu22','hltL1sV0SingleMu22IorSingleMu25','hltL1sZeroBias','hltL1sSingleJet60','hltL1sSingleJet35','hltTripleJet50','hltDoubleJet65','hltSingleJet80','hltVBFFilterDisplacedJets'),
+        l1filters = cms.vstring('hltL1sTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBFIorHTT300','hltL1sDoubleJetC112','hltL1sQuadJetC50IorQuadJetC60IorHTT280IorHTT300IorHTT320IorTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBF','hltL1sTripleJetVBFIorHTTIorDoubleJetCIorSingleJet',
+                                #'hltL1sSingleMu22','hltL1sV0SingleMu22IorSingleMu25','hltL1sZeroBias','hltL1sSingleJet60','hltL1sSingleJet35','hltTripleJet50','hltDoubleJet65','hltSingleJet80','hltVBFFilterDisplacedJets'
+                             ),
     ),
     allJetSet = cms.PSet(
         jets = cms.InputTag(jets_to_be_used),#(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
@@ -2151,8 +2154,8 @@ if (isShort and is2016):
          ## -------------------------------------------------------------------------------------
           'HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v', 
           'HLT_QuadJet45_TripleBTagCSV_p087_v', 
-          'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 
-          'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v',
+#          'HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v', 
+#          'HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v',
           ])
 
 if (isShort and is2017):
