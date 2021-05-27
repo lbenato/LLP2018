@@ -39,7 +39,6 @@ TriggerAnalyzer::~TriggerAnalyzer() {
 // ---------- TRIGGER ----------
 
 void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::string, bool>& Map, std::map<std::string, int>& PrescalesMap, bool& verbosity) {
-
     edm::Handle<edm::TriggerResults> hltTriggerResults;
     iEvent.getByToken(TriggerToken, hltTriggerResults);
     const edm::TriggerNames& trigNames = iEvent.triggerNames(*hltTriggerResults);
@@ -53,19 +52,16 @@ void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::str
     edm::Handle<pat::PackedTriggerPrescales> l1MaxTriggerPrescales;
     iEvent.getByToken(L1MaxPrescalesToken, l1MaxTriggerPrescales);
 
-    //edm::Handle<std::vector<pat::TriggerObjectStandAlone> > triggerObjectCollection;
-    //iEvent.getByToken(TriggerObjectToken, triggerObjectCollection);
-
     //for(unsigned int j=0, in=trigNames.size(); j < in; j++) std::cout << trigNames.triggerName(j) << std::endl;
     
     // Get Trigger index
     for(unsigned int i = 0; i < TriggerList.size(); i++) {
         Map[TriggerList[i]] = false;
         PrescalesMap[TriggerList[i]] = -1;
-        for(unsigned int j=0, in=trigNames.size(); j < in; j++) {
+	for(unsigned int j=0, in=trigNames.size(); j < in; j++) {
             if(trigNames.triggerName(j).find(TriggerList[i]) != std::string::npos) {
                 unsigned int index = trigNames.triggerIndex(trigNames.triggerName(j));
-                if(hltTriggerResults->accept(index)) Map[TriggerList[i]] = true;
+		if(hltTriggerResults->accept(index)) Map[TriggerList[i]] = true;
                 //if(hltTriggerResults->accept(index)) PrescalesMap[TriggerList[i]] = triggerPrescales->getPrescaleForIndex(index);
 
 		//This is not necessary, can be commented because it gives errors
@@ -76,66 +72,6 @@ void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::str
             }
         }
     }
-
-    /*
-    std::cout << "\n TRIGGER OBJECTS " << std::endl;
-    for(std::vector<pat::TriggerObjectStandAlone>::const_iterator it=triggerObjectCollection->begin(); it!=triggerObjectCollection->end(); ++it)
-      {
-	pat::TriggerObjectStandAlone obj=*it;
-	obj.unpackPathNames(trigNames);
-
-	std::vector< std::string > pathNamesAll = obj.pathNames(false);
-	std::vector< std::string > pathNamesLast = obj.pathNames(true);
-	if(pathNamesAll.size()>0)
-	  {
-
-	    for(unsigned int i = 0; i < TriggerList.size(); i++)
-	      {
-		for (unsigned h = 0, n = pathNamesAll.size(); h < n; ++h)
-		  {
-		    if(pathNamesAll[h].find(TriggerList[i]) != std::string::npos)
-		      {
-			std::cout << "\tTrigger accomplished: " << TriggerList[i]  << std::endl;
-			std::cout << "\tTrigger object:  pt " << obj.pt() << ", eta " << obj.eta() << ", phi " << obj.phi() << std::endl;
-			//// Print trigger object collection and type
-			std::cout << "\t   Collection: " << obj.collection() << std::endl;
-			std::cout << "\t   Type IDs:   ";
-			for (unsigned h = 0; h < obj.filterIds().size(); ++h) std::cout << " " << obj.filterIds()[h] ;
-			std::cout << std::endl;
-			//// Print associated trigger filters
-			std::cout << "\t   Filters:    ";
-			for (unsigned h = 0; h < obj.filterLabels().size(); ++h) std::cout << " " << obj.filterLabels()[h];
-			std::cout << std::endl;
-
-			// Print all trigger paths, for each one record also if the object is associated to a 'l3' filter (always true for the
-			// definition used in the PAT trigger producer) and if it's associated to the last filter of a successfull path (which
-			// means that this object did cause this trigger to succeed; however, it doesn't work on some multi-object triggers)
-			std::cout << "\t   Paths (" << pathNamesAll.size()<<"/"<<pathNamesLast.size()<<"):    ";
-			for (unsigned h = 0, n = pathNamesAll.size(); h < n; ++h)
-			  {
-			    bool isBoth = obj.hasPathName( pathNamesAll[h], true, true );
-			    bool isL3   = obj.hasPathName( pathNamesAll[h], false, true );
-			    bool isLF   = obj.hasPathName( pathNamesAll[h], true, false );
-			    bool isNone = obj.hasPathName( pathNamesAll[h], false, false );
-			    std::cout << "   " << pathNamesAll[h];
-			    if (isBoth) std::cout << "(L,3)";
-			    if (isL3 && !isBoth) std::cout << "(*,3)";
-			    if (isLF && !isBoth) std::cout << "(L,*)";
-			    if (isNone && !isBoth && !isL3 && !isLF) std::cout << "(*,*)";
-			  }
-			std::cout << std::endl;
-			std::cout << std::endl;
-		      }
-
-		  }
-	      }
-	    
-	  }
-
-
-      }
-    
-    */
 
 }
 
@@ -150,38 +86,27 @@ std::vector<pat::TriggerObjectStandAlone> TriggerAnalyzer::FillTriggerObjectVect
 
     edm::Handle<std::vector<pat::TriggerObjectStandAlone> > triggerObjectCollection;
     iEvent.getByToken(TriggerObjectToken, triggerObjectCollection);
+    const pat::TriggerObjectStandAloneCollection& triggerObjects = (*triggerObjectCollection.product());
 
     std::vector<pat::TriggerObjectStandAlone> Vect;
 
     //std::cout << "\n TRIGGER OBJECTS " << std::endl;
-    for(std::vector<pat::TriggerObjectStandAlone>::const_iterator it=triggerObjectCollection->begin(); it!=triggerObjectCollection->end(); ++it)
+    //    for(std::vector<pat::TriggerObjectStandAlone>::const_iterator it=triggerObjectCollection->begin(); it!=triggerObjectCollection->end(); ++it)
+    for (size_t it = 0; it < triggerObjects.size(); ++it)
       {
-	pat::TriggerObjectStandAlone obj=*it;
+	//	pat::TriggerObjectStandAlone obj=*it;
+	pat::TriggerObjectStandAlone obj = triggerObjects.at(it);
+	obj.unpackFilterLabels(iEvent, *hltTriggerResults);
 	obj.unpackPathNames(trigNames);
 
 	std::vector< std::string > pathNamesAll = obj.pathNames(false);
 	std::vector< std::string > pathNamesLast = obj.pathNames(true);
 	if(pathNamesAll.size()>0)
 	  {
-
 		for (unsigned h = 0, n = pathNamesAll.size(); h < n; ++h)
 		  {
-		    //if(pathNamesAll[h].find("HLT_VBF_DisplacedJet40_VTightID_Hadronic_v") != std::string::npos)
 		    if(pathNamesAll[h].find(TrigName) != std::string::npos)
 		      {
-			/*
-			std::cout << "\tTrigger accomplished: " << pathNamesAll[h] << std::endl;
-			std::cout << "\tTrigger object:  pt " << obj.pt() << ", eta " << obj.eta() << ", phi " << obj.phi() << std::endl;
-			//// Print trigger object collection and type
-			std::cout << "\t   Collection: " << obj.collection() << std::endl;
-			std::cout << "\t   Type IDs:   ";
-			for (unsigned h = 0; h < obj.filterIds().size(); ++h) std::cout << " " << obj.filterIds()[h] ;
-			std::cout << std::endl;
-			//// Print associated trigger filters
-			std::cout << "\t   Filters:    ";
-			for (unsigned h = 0; h < obj.filterLabels().size(); ++h) std::cout << " " << obj.filterLabels()[h];
-			std::cout << std::endl;
-			*/
 			bool type = false;
 			for (unsigned l = 0; l < obj.filterIds().size(); ++l)
 			  {
@@ -210,15 +135,9 @@ std::vector<pat::TriggerObjectStandAlone> TriggerAnalyzer::FillTriggerObjectVect
 			std::cout << std::endl;
 			*/
 		      }
-
 		  }
-	      
-	    
 	  }
-	
-
       }
-    
     return Vect;
 
 }
@@ -245,87 +164,36 @@ void TriggerAnalyzer::FillMetFiltersMap(const edm::Event& iEvent, std::map<std::
 }
 
 ////////////////////////////////////////////////
+//void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::string, bool>& Map, std::vector<pat::TriggerObjectStandAlone>& TriggerObjectVect) {
 void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::string, bool>& Map) {
 
     edm::Handle<edm::TriggerResults> hltTriggerResults;
     iEvent.getByToken(TriggerToken, hltTriggerResults);
     const edm::TriggerNames& trigNames = iEvent.triggerNames(*hltTriggerResults);
-    
+
     edm::Handle<std::vector<pat::TriggerObjectStandAlone> > triggerObjectCollection;
     iEvent.getByToken(TriggerObjectToken, triggerObjectCollection);
+    const pat::TriggerObjectStandAloneCollection& triggerObjects = (*triggerObjectCollection.product());
 
-
-    //std::cout << "\n TRIGGER OBJECTS " << std::endl;
+    //    std::cout << "\n TRIGGER OBJECTS " << std::endl;
 
     for(unsigned int i = 0; i < L1FiltersList.size(); i++) {
       Map[L1FiltersList[i]] = false;
-
-      for(std::vector<pat::TriggerObjectStandAlone>::const_iterator it=triggerObjectCollection->begin(); it!=triggerObjectCollection->end(); ++it)
-	{
-	  pat::TriggerObjectStandAlone obj=*it;
-	  obj.unpackPathNames(trigNames);
-
-	  std::vector< std::string > pathNamesAll = obj.pathNames(false);
-	  std::vector< std::string > pathNamesLast = obj.pathNames(true);
-	  if(pathNamesAll.size()>0)
-	    {
-
-	      for (unsigned h = 0, n = pathNamesAll.size(); h < n; ++h)
-		{
-
-
-
-
-
-		  
-		  //if(pathNamesAll[h].find("HLT_VBF_DisplacedJet40_VTightID_Hadronic_v") != std::string::npos)//new!NO!IN THIS WAY IT SAVES THE FILTERS ONLY IF THE MAIN PATH IS FIRED! BUUUG!
-
-		    //{//new! and to be debugged....
-
-		      //bool type = false;
-
-		      for (unsigned h = 0; h < obj.filterLabels().size(); ++h)
-			{
-			  /////if(obj.filterLabels()[h]==) then.... fill the map;
-			  if(obj.filterLabels()[h].find(L1FiltersList[i]) != std::string::npos) {
-			    //std::cout << "Looping over L1 filters, this found: " << std::endl;
-			    //std::cout << obj.filterLabels()[h] << std::endl;
-			    Map[L1FiltersList[i]] = true;
-			    //unsigned int index = trigNames.triggerIndex(trigNames.triggerName(j));
-			    //if(hltTriggerResults->accept(index)) Map[MetFiltersList[i]] = true;
-			
-			  }
-		      
-			}
-
-
-
-		 //}//new!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		}
-	      
-	    
-	    }
-	
-
-	}
-
     }
-    
+    //    TriggerObjectVect.clear();
+    //	  2020_12_18: new setup works differently! Filter not broken!
+    for (size_t it = 0; it < triggerObjects.size(); ++it)
+      {
+	pat::TriggerObjectStandAlone obj = triggerObjects.at(it);
+	obj.unpackFilterLabels(iEvent, *hltTriggerResults);
+	obj.unpackPathNames(trigNames);
+	//	TriggerObjectVect.push_back(obj);
+	for(unsigned int i = 0; i < L1FiltersList.size(); i++) {
+	  if (obj.hasFilterLabel(L1FiltersList[i])){
+	    Map[L1FiltersList[i]] = true;
+	  }
+	}
+      }//loop trigger object collection
 }
 
 bool TriggerAnalyzer::GetBadPFMuonFlag(const edm::Event& iEvent) { 
@@ -398,6 +266,7 @@ void TriggerAnalyzer::Debug(const edm::Event& iEvent) {
 
     std::cout << "\n TRIGGER OBJECTS " << std::endl;
     for (pat::TriggerObjectStandAlone obj : *triggerObjectCollection) { // note: not "const &" since we want to call unpackPathNames
+      obj.unpackFilterLabels(iEvent, *hltTriggerResults);
       obj.unpackPathNames(trigNames);
       std::cout << "\tTrigger object:  pt " << obj.pt() << ", eta " << obj.eta() << ", phi " << obj.phi() << std::endl;
       // Print trigger object collection and type

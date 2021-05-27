@@ -56,68 +56,49 @@ sample = {
         'kfactor' : 1.,
         },
 
-    '': {
-        'nevents' : 1,
-        'xsec'    : 1.,
-        'matcheff': 1.,
-        'kfactor' : 1.,
-        },
-    '': {
-        'nevents' : 1,
-        'xsec'    : 1.,
-        'matcheff': 1.,
-        'kfactor' : 1.,
-        },
-    '': {
-        'nevents' : 1,
-        'xsec'    : 1.,
-        'matcheff': 1.,
-        'kfactor' : 1.,
-        },
-
-    'QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v2': {
+    'QCD_HT100to200_TuneCP5_13TeV-madgraph-pythia8-v2': {
         'nevents' : 1,
         'xsec'    : 23700000.0,
         'matcheff': 1.,
         'kfactor' : 1.,
         },
-    'QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v2': {
+    'QCD_HT200to300_TuneCP5_13TeV-madgraph-pythia8-v2': {
         'nevents' : 1,
         'xsec'    : 1547000.,
         'matcheff': 1.,
         'kfactor' : 1.,
         },
-    'QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v2': {
+    'QCD_HT300to500_TuneCP5_13TeV-madgraph-pythia8-v2': {
         'nevents' : 1,
         'xsec'    : 322600.,
         'matcheff': 1.,
         'kfactor' : 1.,
         },
-    'QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v2': {
+    'QCD_HT500to700_TuneCP5_13TeV-madgraph-pythia8-v2': {
         'nevents' : 1,
         'xsec'    : 29980.,
         'matcheff': 1.,
         'kfactor' : 1.,
         },
-    'QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v2': {
+    'QCD_HT700to1000_TuneCP5_13TeV-madgraph-pythia8-v2': {
         'nevents' : 1,
         'xsec'    : 6334.,
         'matcheff': 1.,
         'kfactor' : 1.,
         },
-    'QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v2': {
+    'QCD_HT1000to1500_TuneCP5_13TeV-madgraph-pythia8-v2': {
         'nevents' : 1,
         'xsec'    : 1088.,
         'matcheff': 1.,
         'kfactor' : 1.,
         },
-    'QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v2': {
+    'QCD_HT1500to2000_TuneCP5_13TeV-madgraph-pythia8-v2': {
         'nevents' : 1,
         'xsec'    : 99.11,
         'matcheff': 1.,
         'kfactor' : 1.,
         },
-    'QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v2': {
+    'QCD_HT2000toInf_TuneCP5_13TeV-madgraph-pythia8-v2': {
         'nevents' : 1,
         'xsec'    : 20.23,
         'matcheff': 1.,
@@ -641,7 +622,7 @@ samples = {
 
     #VBF, m15
     'VBFH_M15_ctau0' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-0_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-15_ctauS-0_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'mass' : 15,
         'ctau' : 0.001,
         'fillcolor' : 826,
@@ -654,7 +635,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M15_ctau0p05' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-0p05_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-15_ctauS-0p05_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'mass' : 15,
         'ctau' : 0.05,
         'fillcolor' : 417,
@@ -667,7 +648,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M15_ctau0p1' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-0p1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-15_ctauS-0p1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'mass' : 15,
         'ctau' : 0.1,
         'fillcolor' : 802,
@@ -680,7 +661,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M15_ctau1' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-15_ctauS-1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m15 c #tau 1',
         'mass' : 15,
         'ctau' : 1,
@@ -694,7 +675,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M15_ctau5' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-5_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-15_ctauS-5_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'mass' : 15,
         'ctau' : 5,
         'fillcolor' : 826,
@@ -707,7 +688,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M15_ctau10' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-10_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-15_ctauS-10_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m15 c #tau 10',
         'mass' : 15,
         'ctau' : 10,
@@ -721,7 +702,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M15_ctau25' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-25_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-15_ctauS-25_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'mass' : 15,
         'ctau' : 25,
         'fillcolor' : 826,
@@ -734,7 +715,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M15_ctau50' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-50_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-15_ctauS-50_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m15 c #tau 50',
         'mass' : 15,
         'ctau' : 50,
@@ -749,7 +730,7 @@ samples = {
     },
     'VBFH_M15_ctau100' : {
         'files' : [
-            'VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-100_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD',
+            'VBFH_HToSSTo4b_MH-125_MS-15_ctauS-100_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2',
             ],
         'mass' : 15,
         'ctau' : 100,
@@ -764,7 +745,7 @@ samples = {
     },
     'VBFH_M15_ctau500' : {
         'files' : [
-            'VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-500_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'
+            'VBFH_HToSSTo4b_MH-125_MS-15_ctauS-500_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'
             ],
         'mass' : 15,
         'ctau' : 500,
@@ -779,7 +760,7 @@ samples = {
     },
     'VBFH_M15_ctau1000' : {
         'files' : [
-            'VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-1000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD',
+            'VBFH_HToSSTo4b_MH-125_MS-15_ctauS-1000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2',
                 ],
         'title' : 'VBFH m15 c #tau 1000',
         'mass' : 15,
@@ -795,7 +776,7 @@ samples = {
     },
     'VBFH_M15_ctau2000' : {
         'files' : [
-            'VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-2000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD',
+            'VBFH_HToSSTo4b_MH-125_MS-15_ctauS-2000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2',
             ],
         'mass' : 15,
         'ctau' : 2000,
@@ -810,7 +791,7 @@ samples = {
     },
     'VBFH_M15_ctau5000' : {
         'files' : [
-            'VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-5000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'
+            'VBFH_HToSSTo4b_MH-125_MS-15_ctauS-5000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'
             ],
         'mass' : 15,
         'ctau' : 5000,
@@ -825,7 +806,7 @@ samples = {
     },
     'VBFH_M15_ctau10000' : {
         'files' : [
-            'VBFH_HToSSTobbbb_MH-125_MS-15_ctauS-10000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD',
+            'VBFH_HToSSTo4b_MH-125_MS-15_ctauS-10000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2',
             ],
         'title' : 'VBFH m15 c #tau 10000',
         'mass' : 15,
@@ -843,7 +824,7 @@ samples = {
 
 #VBF, m40
     'VBFH_M40_ctau0' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-40_ctauS-0_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m40 c #tau 0',
         'mass' : 40,
         'ctau' : 0.001,
@@ -857,7 +838,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M40_ctau0p05' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0p05_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-40_ctauS-0p05_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m40 c #tau 0.05',
         'mass' : 40,
         'ctau' : 0.05,
@@ -871,7 +852,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M40_ctau0p1' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0p1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-40_ctauS-0p1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m40 c #tau 0.1',
         'mass' : 40,
         'ctau' : 0.1,
@@ -885,7 +866,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M40_ctau1' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-40_ctauS-1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m40 c #tau 1',
         'mass' : 40,
         'ctau' : 1,
@@ -899,7 +880,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M40_ctau5' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-40_ctauS-5_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m40 c #tau 5',
         'mass' : 40,
         'ctau' : 5,
@@ -913,7 +894,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M40_ctau10' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-10_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-40_ctauS-10_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m40 c #tau 10',
         'mass' : 40,
         'ctau' : 10,
@@ -927,7 +908,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M40_ctau25' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-25_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-40_ctauS-25_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m40 c #tau 25',
         'mass' : 40,
         'ctau' : 25,
@@ -941,7 +922,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M40_ctau50' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-50_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-40_ctauS-50_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m40 c #tau 50',
         'mass' : 40,
         'ctau' : 50,
@@ -956,7 +937,7 @@ samples = {
     },
     'VBFH_M40_ctau100' : {
         'files' : [
-            'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-100_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD',
+            'VBFH_HToSSTo4b_MH-125_MS-40_ctauS-100_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2',
             ],
         'title' : 'VBFH m40 c #tau 100',
         'mass' : 40,
@@ -972,7 +953,7 @@ samples = {
     },
     'VBFH_M40_ctau500' : {
         'files' : [
-            'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-500_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD',
+            'VBFH_HToSSTo4b_MH-125_MS-40_ctauS-500_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2',
             ],
         'title' : 'VBFH m40 c #tau 500',
         'mass' : 40,
@@ -988,7 +969,7 @@ samples = {
     },
     'VBFH_M40_ctau1000' : {
         'files' : [
-            'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-1000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD',
+            'VBFH_HToSSTo4b_MH-125_MS-40_ctauS-1000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2',
             ],
         'title' : 'VBFH m40 c #tau 1000',
         'mass' : 40,
@@ -1004,7 +985,7 @@ samples = {
     },
     'VBFH_M40_ctau2000' : {
         'files' : [
-            'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-2000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD',
+            'VBFH_HToSSTo4b_MH-125_MS-40_ctauS-2000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2',
             ],
         'title' : 'VBFH m40 c #tau 2000',
         'mass' : 40,
@@ -1020,7 +1001,7 @@ samples = {
     },
     'VBFH_M40_ctau5000' : {
         'files' : [
-            'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD',
+            'VBFH_HToSSTo4b_MH-125_MS-40_ctauS-5000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2',
             ],
         'title' : 'VBFH m40 c #tau 5000',
         'mass' : 40,
@@ -1036,7 +1017,7 @@ samples = {
     },
     'VBFH_M40_ctau10000' : {
         'files' : [
-            'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-10000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD',
+            'VBFH_HToSSTo4b_MH-125_MS-40_ctauS-10000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2',
             ],
         'title' : 'VBFH m40 c #tau 10000',
         'mass' : 40,
@@ -1054,7 +1035,7 @@ samples = {
 
     #VBF, m55
     'VBFH_M55_ctau0' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-0_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-0_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'mass' : 55,
         'ctau' : 0.001,
         'fillcolor' : 826,
@@ -1067,7 +1048,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M55_ctau0p05' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-0p05_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-0p05_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'mass' : 55,
         'ctau' : 0.05,
         'fillcolor' : 824,
@@ -1080,7 +1061,7 @@ samples = {
         'plot': True,
     },
         'VBFH_M55_ctau0p1' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-0p1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-0p1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'mass' : 55,
         'ctau' : 0.1,
         'fillcolor' : 824,
@@ -1093,7 +1074,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M55_ctau1' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m55 c #tau 1',
         'mass' : 55,
         'ctau' : 1,
@@ -1107,7 +1088,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M55_ctau1' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-1_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m55 c #tau 1',
         'mass' : 55,
         'ctau' : 1,
@@ -1121,7 +1102,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M55_ctau5' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-5_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-5_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'mass' : 55,
         'ctau' : 5,
         'fillcolor' : 826,
@@ -1134,7 +1115,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M55_ctau10' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-10_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-10_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m55 c #tau 10',
         'mass' : 55,
         'ctau' : 10,
@@ -1148,7 +1129,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M55_ctau25' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-25_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-25_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'mass' : 55,
         'ctau' : 25,
         'fillcolor' : 826,
@@ -1161,7 +1142,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M55_ctau50' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-50_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-50_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m55 c #tau 50',
         'mass' : 55,
         'ctau' : 50,
@@ -1175,7 +1156,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M55_ctau100' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-100_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-100_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'mass' : 55,
         'ctau' : 100,
         'fillcolor' : 826,
@@ -1188,7 +1169,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M55_ctau500' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-500_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-500_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'mass' : 55,
         'ctau' : 500,
         'fillcolor' : 826,
@@ -1201,7 +1182,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M55_ctau1000' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-1000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-1000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m55 c #tau 1000',
         'mass' : 55,
         'ctau' : 1000,
@@ -1215,7 +1196,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M55_ctau2000' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-2000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-2000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'mass' : 55,
         'ctau' : 2000,
         'fillcolor' : 826,
@@ -1228,7 +1209,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M55_ctau5000' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-5000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-5000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'mass' : 55,
         'ctau' : 5000,
         'fillcolor' : 826,
@@ -1241,7 +1222,7 @@ samples = {
         'plot': True,
     },
     'VBFH_M55_ctau10000' : {
-        'files' : ['VBFH_HToSSTobbbb_MH-125_MS-55_ctauS-10000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAOD'],
+        'files' : ['VBFH_HToSSTo4b_MH-125_MS-55_ctauS-10000_TuneCP5_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
         'title' : 'VBFH m55 c #tau 10000',
         'mass' : 55,
         'ctau' : 10000,
@@ -1255,8 +1236,72 @@ samples = {
         'plot': True,
     },
 
-
-
+    'ggH_M15_ctau1': {
+        'files' : ['ggH_HToSSTobbbb_MH-125_MS-15_ctauS-1_TuneCUETP8M1_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
+        'fillcolor' : 419,
+        'fillstyle' : 0,
+        'linecolor' : 419,
+        'linewidth' : 4,
+        'linestyle' : 1,
+        'label' : "m_{#pi} = 15 GeV, c#tau_{0} = 1 mm",
+        'weight': 1.,
+        'plot': True,
+        },
+    'ggH_M15_ctau10': {
+        'files' : ['ggH_HToSSTobbbb_MH-125_MS-15_ctauS-10_TuneCUETP8M1_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
+        'fillcolor' : 414,
+        'fillstyle' : 0,
+        'linecolor' : 414,
+        'linewidth' : 4,
+        'linestyle' : 1,
+        'label' : "m_{#pi} = 15 GeV, c#tau_{0} = 10 mm",
+        'weight': 1.,
+        'plot': True,
+        },
+    'ggH_M40_ctau1': {
+        'files' : ['ggH_HToSSTobbbb_MH-125_MS-40_ctauS-1_TuneCUETP8M1_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
+        'fillcolor' : 801,
+        'fillstyle' : 0,
+        'linecolor' : 801,
+        'linewidth' : 4,
+        'linestyle' : 1,
+        'label' : "m_{#pi} = 40 GeV, c#tau_{0} = 1 mm",
+        'weight': 1.,
+        'plot': True,
+        },
+    'ggH_M40_ctau10': {
+        'files' : ['ggH_HToSSTobbbb_MH-125_MS-40_ctauS-10_TuneCUETP8M1_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
+        'fillcolor' : 804,
+        'fillstyle' : 0,
+        'linecolor' : 804,
+        'linewidth' : 4,
+        'linestyle' : 1,
+        'label' : "m_{#pi} = 40 GeV, c#tau_{0} = 10 mm",
+        'weight': 1.,
+        'plot': True,
+        },
+    'ggH_M55_ctau1': {
+        'files' : ['ggH_HToSSTobbbb_MH-125_MS-55_ctauS-1_TuneCUETP8M1_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
+        'fillcolor' : 601,
+        'fillstyle' : 0,
+        'linecolor' : 601,
+        'linewidth' : 4,
+        'linestyle' : 1,
+        'label' : "m_{#pi} = 55 GeV, c#tau_{0} = 1 mm",
+        'weight': 1.,
+        'plot': True,
+        },
+    'ggH_M55_ctau10': {
+        'files' : ['ggH_HToSSTobbbb_MH-125_MS-55_ctauS-10_TuneCUETP8M1_13TeV-powheg-pythia8_RunIIFall17MiniAODv2'],
+        'fillcolor' : 604,
+        'fillstyle' : 0,
+        'linecolor' : 604,
+        'linewidth' : 4,
+        'linestyle' : 1,
+        'label' : "m_{#pi} = 55 GeV, c#tau_{0} = 10 mm",
+        'weight': 1.,
+        'plot': True,
+        },
 
 
     }

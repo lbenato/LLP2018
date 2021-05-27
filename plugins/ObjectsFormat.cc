@@ -522,6 +522,49 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     //I.TriggerMatched_VBFJet = R->hasUserInt("TriggerMatched_VBFJet") ? R->userInt("TriggerMatched_VBFJet") : 0;
     //I.TriggerMatched_DisplacedJet = R->hasUserInt("TriggerMatched_DisplacedJet") ? R->userInt("TriggerMatched_DisplacedJet") : 0;
     //I.TriggerMatched_TripleJet50 = R->hasUserInt("TriggerMatched_TripleJet50") ? R->userInt("TriggerMatched_TripleJet50") : 0;
+    I.TriggerMatched_DoubleJet90_dRp5 = R->hasUserInt("TriggerMatched_DoubleJet90_dRp5") ? R->userInt("TriggerMatched_DoubleJet90_dRp5") : 0;
+    I.TriggerMatched_DoubleJet90_dRp4 = R->hasUserInt("TriggerMatched_DoubleJet90_dRp4") ? R->userInt("TriggerMatched_DoubleJet90_dRp4") : 0;
+    I.TriggerMatched_DoubleJet90_dRp2 = R->hasUserInt("TriggerMatched_DoubleJet90_dRp2") ? R->userInt("TriggerMatched_DoubleJet90_dRp2") : 0;
+    I.FilterMatched_dRp5_DoubleJet90_hltL1s = R->hasUserInt("FilterMatched_dRp5_DoubleJet90_hltL1s") ? R->userInt("FilterMatched_dRp5_DoubleJet90_hltL1s") : 0;
+    I.FilterMatched_dRp5_DoubleJet90_hltQuadCentralJet30 = R->hasUserInt("FilterMatched_dRp5_DoubleJet90_hltQuadCentralJet30") ? R->userInt("FilterMatched_dRp5_DoubleJet90_hltQuadCentralJet30") : 0;
+    I.FilterMatched_dRp5_DoubleJet90_hltDoubleCentralJet90 = R->hasUserInt("FilterMatched_dRp5_DoubleJet90_hltDoubleCentralJet90") ? R->userInt("FilterMatched_dRp5_DoubleJet90_hltDoubleCentralJet90") : 0;
+    I.FilterMatched_dRp5_DoubleJet90_hltBTagCaloCSVp087Triple = R->hasUserInt("FilterMatched_dRp5_DoubleJet90_hltBTagCaloCSVp087Triple") ? R->userInt("FilterMatched_dRp5_DoubleJet90_hltBTagCaloCSVp087Triple") : 0;
+    I.FilterMatched_dRp5_DoubleJet90_hltQuadPFCentralJetLooseID30 = R->hasUserInt("FilterMatched_dRp5_DoubleJet90_hltQuadPFCentralJetLooseID30") ? R->userInt("FilterMatched_dRp5_DoubleJet90_hltQuadPFCentralJetLooseID30") : 0;
+    I.FilterMatched_dRp5_DoubleJet90_hltDoublePFCentralJetLooseID90 = R->hasUserInt("FilterMatched_dRp5_DoubleJet90_hltDoublePFCentralJetLooseID90") ? R->userInt("FilterMatched_dRp5_DoubleJet90_hltDoublePFCentralJetLooseID90") : 0;
+    I.FilterMatched_dRp4_DoubleJet90_hltL1s = R->hasUserInt("FilterMatched_dRp4_DoubleJet90_hltL1s") ? R->userInt("FilterMatched_dRp4_DoubleJet90_hltL1s") : 0;
+    I.FilterMatched_dRp4_DoubleJet90_hltQuadCentralJet30 = R->hasUserInt("FilterMatched_dRp4_DoubleJet90_hltQuadCentralJet30") ? R->userInt("FilterMatched_dRp4_DoubleJet90_hltQuadCentralJet30") : 0;
+    I.FilterMatched_dRp4_DoubleJet90_hltDoubleCentralJet90 = R->hasUserInt("FilterMatched_dRp4_DoubleJet90_hltDoubleCentralJet90") ? R->userInt("FilterMatched_dRp4_DoubleJet90_hltDoubleCentralJet90") : 0;
+    I.FilterMatched_dRp4_DoubleJet90_hltBTagCaloCSVp087Triple = R->hasUserInt("FilterMatched_dRp4_DoubleJet90_hltBTagCaloCSVp087Triple") ? R->userInt("FilterMatched_dRp4_DoubleJet90_hltBTagCaloCSVp087Triple") : 0;
+    I.FilterMatched_dRp4_DoubleJet90_hltQuadPFCentralJetLooseID30 = R->hasUserInt("FilterMatched_dRp4_DoubleJet90_hltQuadPFCentralJetLooseID30") ? R->userInt("FilterMatched_dRp4_DoubleJet90_hltQuadPFCentralJetLooseID30") : 0;
+    I.FilterMatched_dRp4_DoubleJet90_hltDoublePFCentralJetLooseID90 = R->hasUserInt("FilterMatched_dRp4_DoubleJet90_hltDoublePFCentralJetLooseID90") ? R->userInt("FilterMatched_dRp4_DoubleJet90_hltDoublePFCentralJetLooseID90") : 0;
+    I.FilterMatched_dRp2_DoubleJet90_hltL1s = R->hasUserInt("FilterMatched_dRp2_DoubleJet90_hltL1s") ? R->userInt("FilterMatched_dRp2_DoubleJet90_hltL1s") : 0;
+    I.FilterMatched_dRp2_DoubleJet90_hltQuadCentralJet30 = R->hasUserInt("FilterMatched_dRp2_DoubleJet90_hltQuadCentralJet30") ? R->userInt("FilterMatched_dRp2_DoubleJet90_hltQuadCentralJet30") : 0;
+    I.FilterMatched_dRp2_DoubleJet90_hltDoubleCentralJet90 = R->hasUserInt("FilterMatched_dRp2_DoubleJet90_hltDoubleCentralJet90") ? R->userInt("FilterMatched_dRp2_DoubleJet90_hltDoubleCentralJet90") : 0;
+    I.FilterMatched_dRp2_DoubleJet90_hltBTagCaloCSVp087Triple = R->hasUserInt("FilterMatched_dRp2_DoubleJet90_hltBTagCaloCSVp087Triple") ? R->userInt("FilterMatched_dRp2_DoubleJet90_hltBTagCaloCSVp087Triple") : 0;
+    I.FilterMatched_dRp2_DoubleJet90_hltQuadPFCentralJetLooseID30 = R->hasUserInt("FilterMatched_dRp2_DoubleJet90_hltQuadPFCentralJetLooseID30") ? R->userInt("FilterMatched_dRp2_DoubleJet90_hltQuadPFCentralJetLooseID30") : 0;
+    I.FilterMatched_dRp2_DoubleJet90_hltDoublePFCentralJetLooseID90 = R->hasUserInt("FilterMatched_dRp2_DoubleJet90_hltDoublePFCentralJetLooseID90") ? R->userInt("FilterMatched_dRp2_DoubleJet90_hltDoublePFCentralJetLooseID90") : 0;
+
+    I.TriggerMatched_QuadJet45_dRp5 = R->hasUserInt("TriggerMatched_QuadJet45_dRp5") ? R->userInt("TriggerMatched_QuadJet45_dRp5") : 0;
+    I.TriggerMatched_QuadJet45_dRp4 = R->hasUserInt("TriggerMatched_QuadJet45_dRp4") ? R->userInt("TriggerMatched_QuadJet45_dRp4") : 0;
+    I.TriggerMatched_QuadJet45_dRp2 = R->hasUserInt("TriggerMatched_QuadJet45_dRp2") ? R->userInt("TriggerMatched_QuadJet45_dRp2") : 0;
+    I.FilterMatched_dRp5_QuadJet45_hltL1s = R->hasUserInt("FilterMatched_dRp5_QuadJet45_hltL1s") ? R->userInt("FilterMatched_dRp5_QuadJet45_hltL1s") : 0;
+    I.FilterMatched_dRp5_QuadJet45_hltQuadCentralJet45 = R->hasUserInt("FilterMatched_dRp5_QuadJet45_hltQuadCentralJet45") ? R->userInt("FilterMatched_dRp5_QuadJet45_hltQuadCentralJet45") : 0;
+    I.FilterMatched_dRp5_QuadJet45_hltBTagCaloCSVp087Triple = R->hasUserInt("FilterMatched_dRp5_QuadJet45_hltBTagCaloCSVp087Triple") ? R->userInt("FilterMatched_dRp5_QuadJet45_hltBTagCaloCSVp087Triple") : 0;
+    I.FilterMatched_dRp5_QuadJet45_hltQuadPFCentralJetLooseID45 = R->hasUserInt("FilterMatched_dRp5_QuadJet45_hltQuadPFCentralJetLooseID45") ? R->userInt("FilterMatched_dRp5_QuadJet45_hltQuadPFCentralJetLooseID45") : 0;
+    I.FilterMatched_dRp4_QuadJet45_hltL1s = R->hasUserInt("FilterMatched_dRp4_QuadJet45_hltL1s") ? R->userInt("FilterMatched_dRp4_QuadJet45_hltL1s") : 0;
+    I.FilterMatched_dRp4_QuadJet45_hltQuadCentralJet45 = R->hasUserInt("FilterMatched_dRp4_QuadJet45_hltQuadCentralJet45") ? R->userInt("FilterMatched_dRp4_QuadJet45_hltQuadCentralJet45") : 0;
+    I.FilterMatched_dRp4_QuadJet45_hltBTagCaloCSVp087Triple = R->hasUserInt("FilterMatched_dRp4_QuadJet45_hltBTagCaloCSVp087Triple") ? R->userInt("FilterMatched_dRp4_QuadJet45_hltBTagCaloCSVp087Triple") : 0;
+    I.FilterMatched_dRp4_QuadJet45_hltQuadPFCentralJetLooseID45 = R->hasUserInt("FilterMatched_dRp4_QuadJet45_hltQuadPFCentralJetLooseID45") ? R->userInt("FilterMatched_dRp4_QuadJet45_hltQuadPFCentralJetLooseID45") : 0;
+    I.FilterMatched_dRp2_QuadJet45_hltL1s = R->hasUserInt("FilterMatched_dRp2_QuadJet45_hltL1s") ? R->userInt("FilterMatched_dRp2_QuadJet45_hltL1s") : 0;
+    I.FilterMatched_dRp2_QuadJet45_hltQuadCentralJet45 = R->hasUserInt("FilterMatched_dRp2_QuadJet45_hltQuadCentralJet45") ? R->userInt("FilterMatched_dRp2_QuadJet45_hltQuadCentralJet45") : 0;
+    I.FilterMatched_dRp2_QuadJet45_hltBTagCaloCSVp087Triple = R->hasUserInt("FilterMatched_dRp2_QuadJet45_hltBTagCaloCSVp087Triple") ? R->userInt("FilterMatched_dRp2_QuadJet45_hltBTagCaloCSVp087Triple") : 0;
+    I.FilterMatched_dRp2_QuadJet45_hltQuadPFCentralJetLooseID45 = R->hasUserInt("FilterMatched_dRp2_QuadJet45_hltQuadPFCentralJetLooseID45") ? R->userInt("FilterMatched_dRp2_QuadJet45_hltQuadPFCentralJetLooseID45") : 0;
+
+    I.TriggerMatched_DoubleJetC112MaxDeta1p6 = R->hasUserInt("TriggerMatched_DoubleJetC112MaxDeta1p6") ? R->userInt("TriggerMatched_DoubleJetC112MaxDeta1p6") : 0;
+    I.TriggerMatched_DoubleJetC112 = R->hasUserInt("TriggerMatched_DoubleJetC112") ? R->userInt("TriggerMatched_DoubleJetC112") : 0;
+    I.TriggerMatched_SixJet30 = R->hasUserInt("TriggerMatched_SixJet30") ? R->userInt("TriggerMatched_SixJet30") : 0;
+    I.TriggerMatched_QuadPFJetMqq240 = R->hasUserInt("TriggerMatched_QuadPFJetMqq240") ? R->userInt("TriggerMatched_QuadPFJetMqq240") : 0;
+    I.TriggerMatched_QuadPFJetMqq500 = R->hasUserInt("TriggerMatched_QuadPFJetMqq500") ? R->userInt("TriggerMatched_QuadPFJetMqq500") : 0;
     I.nConstituents = R->hasUserInt("nConstituents") ? R->userInt("nConstituents") : -1;
     I.nTrackConstituents = R->hasUserInt("nTrackConstituents") ? R->userInt("nTrackConstituents") : -1;
     I.nTracks0PixelHits = R->hasUserInt("nTracks0PixelHits") ? R->userInt("nTracks0PixelHits") : -1;
@@ -817,6 +860,17 @@ void ObjectsFormat::ResetJetType(JetType& I) {
     //I.TriggerMatched_VBFJet = 0;
     //I.TriggerMatched_DisplacedJet = 0;
     //I.TriggerMatched_TripleJet50 = 0;
+    I.TriggerMatched_DoubleJet90_dRp5 = 0;
+    I.TriggerMatched_DoubleJet90_dRp4 = 0;
+    I.TriggerMatched_DoubleJet90_dRp2 = 0;
+    I.TriggerMatched_QuadJet45_dRp5 = 0;
+    I.TriggerMatched_QuadJet45_dRp4 = 0;
+    I.TriggerMatched_QuadJet45_dRp2 = 0;
+    I.TriggerMatched_DoubleJetC112MaxDeta1p6 = 0;
+    I.TriggerMatched_DoubleJetC112 = 0;
+    I.TriggerMatched_SixJet30 = 0;
+    I.TriggerMatched_QuadPFJetMqq240 = 0;
+    I.TriggerMatched_QuadPFJetMqq500 = 0;
     I.tau1 = -1.;
     I.tau2 = -1.;
     I.tau3 = -1.;
@@ -1988,6 +2042,20 @@ void ObjectsFormat::FillTriggerObjectType(TriggerObjectType& I, const pat::Trigg
     I.mass        = R->mass();
     I.energy      = R->energy();
     I.charge      = R->charge();
+    I.et          = R->et();
+    std::vector<int> types = R->triggerObjectTypes();
+    I.is_calo_jet = false;
+    I.is_calo_bjet = false;
+    I.is_l1_ht = std::find(types.begin(), types.end(), -89) != types.end();
+    I.is_l1_jet = std::find(types.begin(), types.end(), -99) != types.end();
+    I.is_pf_jet = false;
+    I.is_pf_bjet = false;
+    I.is_jet = std::find(types.begin(), types.end(), 85) != types.end() ? true : false;
+    I.is_bjet = std::find(types.begin(), types.end(), 86) != types.end() ? true : false;
+    I.is_pf_ht = false;
+    I.is_calo_ht = false;
+    I.is_hltPFCentralJetLooseIDQuad30 = R->hasFilterLabel("hltPFCentralJetLooseIDQuad30");
+    I.is_hltAK4PFJetsLooseID = R->hasFilterLabel("hltAK4PFJetsLooseID");
 }
 
 
@@ -1998,9 +2066,22 @@ void ObjectsFormat::ResetTriggerObjectType(TriggerObjectType& I) {
     I.mass        = -1.;
     I.energy      = -1.;
     I.charge      = 0;
+    I.et          = -1.;
+    I.is_calo_jet = false;
+    I.is_calo_bjet = false;
+    I.is_l1_ht = false;
+    I.is_l1_jet = false;
+    I.is_pf_jet = false;
+    I.is_pf_bjet = false;
+    I.is_jet = false;
+    I.is_bjet = false;
+    I.is_pf_ht = false;
+    I.is_calo_ht = false;
+    I.is_hltPFCentralJetLooseIDQuad30 = false;
+    I.is_hltAK4PFJetsLooseID = false;
 }
 
-std::string ObjectsFormat::ListTriggerObjectType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:charge/I";}
+std::string ObjectsFormat::ListTriggerObjectType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:charge/I:et/F:is_calo_jet/O:is_calo_bjet/O:is_l1_ht/O:is_l1_jet/O:is_pf_jet/O:is_pf_bjet/O:is_jet/O:is_bjet/O:is_pf_ht/O:is_calo_ht/O:is_hltPFCentralJetLooseIDQuad30/O:is_hltAK4PFJetsLooseID/O";}
 
 
 

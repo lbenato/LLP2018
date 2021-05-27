@@ -252,20 +252,20 @@ std::vector<reco::GenParticle> GenAnalyzer::FillVBFGenVector(const edm::Event& i
 
     }
 
-    
     std::vector<int> partidlist = {1,2,3,4,5,6,21};
     int partstatus = 23;
     //std::vector<int> motheridlist;
 
-    for(std::vector<reco::GenParticle>::const_iterator it = GenCollection->begin(); it != GenCollection->end(); ++it) {
 
 
-      for(unsigned int m = 0; m < VBFmothers.size(); m++) {
+    for(unsigned int m = 0; m < VBFmothers.size(); m++) {
+      //std::cout << "mother nr " << m << std::endl;
+      for(std::vector<reco::GenParticle>::const_iterator it = GenCollection->begin(); it != GenCollection->end(); ++it) {
 
 	for(unsigned int s = 0; s < partidlist.size(); s++) {
 	  if(abs(it->pdgId()) == partidlist.at(s) && it->status() == partstatus && it->mother()->pdgId() == VBFmothers.at(m).pdgId() && it->mother()->p() == VBFmothers.at(m).p()) 
 	    {
-	      //std::cout << "Scattered quarks/gluons due to VBF: pdgId " << it->pdgId() << " ; status " << it->status() << " ; pt " << it->pt()  << " ; eta " << it->eta()  << " ; mother pz " << it->mother()->pz() << std::endl;
+	      //std::cout << "Scattered quarks/gluons due to VBF: pdgId " << it->pdgId() << " ; status " << it->status() << " ; pt " << it->pt()  << " ; eta " << it->eta()  << " ; mother id " << it->mother()->pdgId() << " ; mother pz " << it->mother()->pz() << std::endl;
 	      Vect.push_back(*it); // Fill vector
 	    }
 	}
