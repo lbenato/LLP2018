@@ -214,7 +214,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     ////for(int i = 0; i < WriteNLeptons; i++) ObjectsFormat::ResetLeptonType(Electrons[i]);
     ////ObjectsFormat::ResetGenPType(GenHiggs);
     ObjectsFormat::ResetCandidateType(VBF);
-    if (isControl){
+    if (isShort or isControl){
       ObjectsFormat::ResetCandidateType(Z);
       ObjectsFormat::ResetCandidateType(W);
     }
@@ -638,7 +638,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 	  //SF
 
-	  if(isControl && isMC && !is2016) {
+	  if((isShort or isControl) && isMC && !is2016) {
 	    LeptonWeightUnc = 0.;
 	    LeptonWeightUp = 0.;
 	    LeptonWeightDown = 0.;
@@ -712,7 +712,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         	isZtoEE = true;
 
         	// SF
-        	if(isControl && isMC && !is2016) {
+        	if((isShort or isControl) && isMC && !is2016) {
 		  LeptonWeightUnc = 0.;
 		  LeptonWeightUp = 0.;
 		  LeptonWeightDown = 0.;
@@ -755,7 +755,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         // }
 
         // SF
-        if((isShort or isControl) && isMC && !is2016) {
+	if((isShort or isControl) && isMC && !is2016) {
           float LeptonWeightUnc = 0.;
           LeptonWeightUp = 0.;
           LeptonWeightDown = 0.;
@@ -788,7 +788,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         //   return;
         // }
 
-        if((isShort or isControl) && isMC && !is2016) {
+	if((isShort or isControl) && isMC && !is2016) {
           float LeptonWeightUnc = 0.;
           LeptonWeightUp = 0.;
           LeptonWeightDown = 0.;
@@ -1965,9 +1965,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //for(unsigned int i = 0; i < CaloJetsVect.size(); i++) CaloJets.push_back( CaloJetType() );
     //for(unsigned int i = 0; i < AllBarrelJetsVect.size(); i++) AllBarrelJets.push_back( JetType() );
     if (WriteAllJets) for(unsigned int i = 0; i < AllJetsVect.size(); i++) AllJets.push_back( JetType() );
-    for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );
     if (WriteFatJets) for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) CHSFatJets.push_back( FatJetType() );
-    for(unsigned int i = 0; i < ggHJetVect.size(); i++) ggHJet.push_back( JetType() );
+
+    //    if (!isShort){
+      for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );
+      for(unsigned int i = 0; i < ggHJetVect.size(); i++) ggHJet.push_back( JetType() );
+      //    }
     if (isShort or isControl) {
       for(unsigned int i = 0; i < TightMuonVect.size(); i++) Muons.push_back( LeptonType() );
       for(unsigned int i = 0; i < TightElecVect.size(); i++) Electrons.push_back( LeptonType() );
@@ -2258,6 +2261,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	}
       }
       }//for loop jets
+
     }//isShort
 
     //------------------------------------------------------------------------------------------
@@ -2733,11 +2737,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       ObjectsFormat::FillJetType(CHSJets[i], &CHSJetsVect[i], isMC);//Remove CHSJets.size(), testing
     }
 
-    for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++){
-      ObjectsFormat::FillJetType(VBFPairJets[i], &VBFPairJetsVect[i], isMC);//nullFloat[i], nullFloat[i], nullFloat[i]);
-    }
 
-    for(unsigned int i = 0; i < ggHJetVect.size(); i++) ObjectsFormat::FillJetType(ggHJet[i], &ggHJetVect[i], isMC);
+      for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++){
+	ObjectsFormat::FillJetType(VBFPairJets[i], &VBFPairJetsVect[i], isMC);//nullFloat[i], nullFloat[i], nullFloat[i]);
+
+      for(unsigned int i = 0; i < ggHJetVect.size(); i++) ObjectsFormat::FillJetType(ggHJet[i], &ggHJetVect[i], isMC);
+    }
 
     //for(unsigned int i = 0; i < AllBarrelJetsVect.size(); i++){
     //ObjectsFormat::FillJetType(AllBarrelJets[i], &AllBarrelJetsVect[i], isMC, 0., 0., 0.);
@@ -2772,8 +2777,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //     for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
     //   }
     // }
-    ObjectsFormat::FillCandidateType(VBF, &theVBF, isMC);
     if (isShort or isControl) {
+      ObjectsFormat::FillCandidateType(VBF, &theVBF, isMC);
         ObjectsFormat::FillCandidateType(Z, &theZ, isMC);
         ObjectsFormat::FillCandidateType(W, &theW, isMC);
     }
@@ -3101,16 +3106,16 @@ Ntuplizer::beginJob()
     //for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Muon"+std::to_string(i+1)).c_str(), &(Muons[i].pt), ObjectsFormat::ListLeptonType().c_str());
     //for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Electron"+std::to_string(i+1)).c_str(), &(Electrons[i].pt), ObjectsFormat::ListLeptonType().c_str());
 
-    tree -> Branch("VBFPair", &VBF.pt, ObjectsFormat::ListCandidateType().c_str());
     if (isShort or isControl){
-      tree -> Branch("Z", &Z.pt, ObjectsFormat::ListCandidateType().c_str());
-      tree -> Branch("W", &W.pt, ObjectsFormat::ListCandidateType().c_str());
+      tree -> Branch("VBFPair", &VBF.pt);//, ObjectsFormat::ListCandidateType().c_str());
+      tree -> Branch("VBFPairJets", &VBFPairJets);
+      tree -> Branch("ggHJet", &ggHJet);
+      tree -> Branch("Z", &Z.pt);//, ObjectsFormat::ListCandidateType().c_str());
+      tree -> Branch("W", &W.pt);//, ObjectsFormat::ListCandidateType().c_str());
     }
 
     tree -> Branch("Jets", &CHSJets);
     //tree -> Branch("CaloJets", &CaloJets);
-    tree -> Branch("VBFPairJets", &VBFPairJets);
-    tree -> Branch("ggHJet", &ggHJet);
     //tree -> Branch("AllBarrelJets", &AllBarrelJets);
     if (WriteAllJets) tree -> Branch("AllJets", &AllJets);
     if (WriteFatJets) tree -> Branch("FatJets", &CHSFatJets);
