@@ -24,11 +24,11 @@ config.Data.inputDataset =  '/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1
 config.Data.inputDBS = 'global'
 #config.Data.splitting = 'EventAwareLumiBased'
 #config.Data.unitsPerJob = 2500#15000
-#config.Data.totalUnits = 1000000#15000
+#config.Data.totalUnits = 10000000#15000
 
-config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
-#config.Data.unitsPerJob = 5
-#config.Data.splitting = 'FileBased'
+#config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
+config.Data.unitsPerJob = 5
+config.Data.splitting = 'FileBased'
 
 config.Data.outLFNDirBase = '/store/user/lbenato/choose_a_folder_name'
 config.Data.publication = False
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     # Selection of samples via python lists
     import os
 
-    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB", "Others","data_BTagCSV", "WH_MH-125_2016", "data_JetHT", "data_SingleMu"]#,"data_obs"
+    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB", "Others","data_BTagCSV", "WH_MH-125_2016", "data_JetHT", "data_SingleMu","Test"]#,"data_obs"
     print "Possible subgroups of samples:"
     for a in list_of_samples:
         print a
@@ -613,6 +613,7 @@ if __name__ == '__main__':
         from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2016_modified import sample, samples
         pset = "Ntuplizer2018.py"
         folder = "v4_production_centrallyProduced_2016_SignalAndControlRegion/"#CHANGE here your crab folder name
+#        folder = "v5_production_centrallyProduced_2016_VBFrequirementCheck/"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/meich/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/eichm/" + folder #CHANGE here according to your username!
 #        config.Data.totalUnits = 200
@@ -625,11 +626,85 @@ if __name__ == '__main__':
         isTwinHiggs = True
         isHeavyHiggs = False#True#only for heavy higgs
         isSUSY = False
-        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples) else False
+        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples or "ggH_MH-125_201" in options.groupofsamples) else False
         isMINIAOD = True
         is2016 = True
         is2017 = False
         is2018 = False
+        isAOD  = False
+        config.JobType.inputFiles = ['data']
+    elif options.lists == "v5_2016_genProduction_VBFH_ggH":
+        from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced_short import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2016_modified import sample, samples
+        pset = "GenNtuplizer.py"
+        folder = "v5_2016_genProduction_VBFH_ggH"
+        outLFNDirBase = "/store/user/meich/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/eichm/" + folder #CHANGE here according to your username!
+#        config.Data.totalUnits = 200
+        isCalo=False
+        isShort = True
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False#True#only for heavy higgs
+        isSUSY = False
+        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples or "ggH_MH-125_201" in options.groupofsamples or "Test" in options.groupofsamples) else False
+        isMINIAOD = True
+        is2016 = True
+        is2017 = False
+        is2018 = False
+        isAOD  = False
+        config.JobType.inputFiles = ['data']
+    elif options.lists == "v5_2017miniAOD_centrallyProduced_TriggerGenNtuplizer":
+        from Analyzer.LLP2018.crab_requests_lists_2017MINIAOD_centrallyProduced import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2017 import sample, samples
+        pset = "TriggerGenNtuplizer.py"
+        folder = "v5_2017miniAOD_centrallyProduced_TriggerGenNtuplizer"
+        outLFNDirBase = "/store/user/meich/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/eichm/" + folder #CHANGE here according to your username!
+        isCalo=False
+        isShort = True
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False#True#only for heavy higgs
+        isSUSY = False
+#        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples or "ggH_MH-125_201" in options.groupofsamples) else False
+        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples or "ggH_MH-125_201" in options.groupofsamples or "Test" in options.groupofsamples) else False
+        isMINIAOD = True
+        is2016 = False
+        is2017 = True
+        is2018 = False
+        isAOD  = False
+        config.JobType.inputFiles = ['data']
+    elif options.lists == "v5_2018miniAOD_centrallyProduced_TriggerGenNtuplizer":
+        from Analyzer.LLP2018.crab_requests_lists_2018MINIAOD_centrallyProduced import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2018 import sample, samples
+        pset = "TriggerGenNtuplizer.py"
+        folder = "v5_2018miniAOD_centrallyProduced_TriggerGenNtuplizer"
+        outLFNDirBase = "/store/user/meich/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/eichm/" + folder #CHANGE here according to your username!
+        isCalo=False
+        isShort = True
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False#True#only for heavy higgs
+        isSUSY = False
+        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples or "ggH_MH-125_201" in options.groupofsamples or "Test" in options.groupofsamples) else False
+        isMINIAOD = True
+        is2016 = False
+        is2017 = False
+        is2018 = True
         isAOD  = False
         config.JobType.inputFiles = ['data']
     elif options.lists == "v0_2017miniAOD_centrallyProduced":
@@ -826,6 +901,16 @@ if __name__ == '__main__':
                 selected_requests[k] = requests[k]
         elif "VBFH_MH-125_201" in options.groupofsamples:
             if "VBFH_HToSSTo4b" in k and "MS-" in k:
+                print k
+                selected_requests[k] = requests[k]
+                if k in masks.keys():
+                    selected_lumiMasks[k] = masks[k]
+                    print "lumi mask:", masks[k]
+                else:
+                    print "no mask available"
+                    exit()
+        elif "Test" in options.groupofsamples:
+            if "VBFH_HToSSTo4b" in k and "MS-40_ctauS-1_" in k:
                 print k
                 selected_requests[k] = requests[k]
                 if k in masks.keys():
