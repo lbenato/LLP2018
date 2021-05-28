@@ -248,6 +248,8 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     float EventWeight_leptonSFUp;
     float EventWeight_leptonSFDown;
     float GenEventWeight;
+    float GenEventWeight_full;
+    std::vector<double> GenEventWeight_full_vector;
     float PUWeight, PUWeightUp, PUWeightDown;
     float prefiringweight, prefiringweight_up, prefiringweight_down;
     float PDFweight_Q, PDFweight_id1, PDFweight_id2, PDFweight_x1, PDFweight_x2, PDFweight_xPDF1, PDFweight_xPDF2, PDF_originalXWGTUP;

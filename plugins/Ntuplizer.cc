@@ -246,6 +246,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     number_of_VBFGen_matched_to_AllJets = 0;
     //number_of_b_matched_to_CaloJets = number_of_b_matched_to_CaloJetsWithGenJets = 0;
     GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = LeptonWeight = ZewkWeight = WewkWeight = prefiringweight = prefiringweight_down = prefiringweight_up = 1.;
+    GenEventWeight_full = 1.;
+    GenEventWeight_full_vector.clear();
     PDFweight_Q = PDFweight_id1 = PDFweight_id2 = PDFweight_x1 = PDFweight_x2 = PDFweight_xPDF1 = PDFweight_xPDF2 = 1.;
     PDF_originalXWGTUP = 1.;
     PDF_systweights.clear();
@@ -277,10 +279,17 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     RunNumber = iEvent.id().run();
 
     //GenEventWeight
-    GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
+    //    GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
+    std::pair<float, std::vector<double>> GenWeights = theGenAnalyzer->GenEventWeights(iEvent);
+    GenEventWeight = GenWeights.first;
     EventWeight *= GenEventWeight;
 
     if (isShort and isMC){
+      for (unsigned int b = 0; b<GenWeights.second.size(); b++){
+	GenEventWeight_full *= GenWeights.second.at(b);
+      }
+      GenEventWeight_full_vector = GenWeights.second;
+
       std::map<std::string, float> PDFWeights = theGenAnalyzer->GetPDFWeight(iEvent);
       PDFweight_Q = PDFWeights["Q"];
       PDFweight_id1 = PDFWeights["id1"];
@@ -2995,6 +3004,8 @@ Ntuplizer::beginJob()
       
     }
     tree -> Branch("GenEventWeight", &GenEventWeight, "GenEventWeight/F");
+    tree -> Branch("GenEventWeight_full", &GenEventWeight_full, "GenEventWeight_full/F");
+    tree -> Branch("GenEventWeight_full_vector", &GenEventWeight_full_vector);
     tree -> Branch("model",       &model_);
     tree -> Branch("AtLeastOneTrigger" , &AtLeastOneTrigger , "AtLeastOneTrigger/O");
     tree -> Branch("AtLeastOneL1Filter" , &AtLeastOneL1Filter , "AtLeastOneL1Filter/O");

@@ -95,18 +95,36 @@ float GenAnalyzer::GenEventWeight(const edm::Event& iEvent) {
   const GenEventInfoProduct& genEventInfo = *(GenEventCollection.product());
 
   weight = genEventInfo.weights()[0];
-  std::cout<< "weight[0]:" << genEventInfo.weights()[0] << std::endl;
-  std::cout<< "weight[1]: " << genEventInfo.weights()[1] << std::endl;
-  std::cout<< "weight[2]: " << genEventInfo.weights()[2] << std::endl;
-  //std::cout<< "weight[3]: " << genEventInfo.weights()[3] << std::endl;
-  std::cout<< "weight(): " << genEventInfo.weight() << std::endl;
-  //std::cout<< "signalProcessID " << genEventInfo.signalProcessID() << std::endl;
-  //std::cout<< "qScale " << genEventInfo.qScale() << std::endl;
-  //std::cout<< "alphaQCD " << genEventInfo.alphaQCD() << std::endl;
-  //std::cout<< "alphaQED " << genEventInfo.alphaQED() << std::endl;
-  
-  
   return weight;
+}
+
+
+std::pair<float, std::vector<double>> GenAnalyzer::GenEventWeights(const edm::Event& iEvent) {
+  float weight(1.);
+  std::vector<double> all_weights;
+  //  if(iEvent.isRealData()) return weight;
+  if(iEvent.isRealData()) return std::pair<float, std::vector<double>>(weight,all_weights);
+
+  // Declare and open collection
+  edm::Handle<GenEventInfoProduct> GenEventCollection;
+  iEvent.getByToken(GenToken, GenEventCollection);
+  const GenEventInfoProduct& genEventInfo = *(GenEventCollection.product());
+
+  weight = genEventInfo.weights()[0];
+  all_weights = genEventInfo.weights();
+  // std::cout<< "weight[0]:" << genEventInfo.weights()[0] << std::endl;
+  // std::cout<< "weight[1]: " << genEventInfo.weights()[1] << std::endl;
+  // std::cout<< "weight[2]: " << genEventInfo.weights()[2] << std::endl;
+  // std::cout<< "weight[3]: " << genEventInfo.weights()[3] << std::endl;
+  // std::cout<< "weight(): " << genEventInfo.weight() << std::endl;
+  // std::cout<< "signalProcessID " << genEventInfo.signalProcessID() << std::endl;
+  // std::cout<< "qScale " << genEventInfo.qScale() << std::endl;
+  // std::cout<< "alphaQCD " << genEventInfo.alphaQCD() << std::endl;
+  // std::cout<< "alphaQED " << genEventInfo.alphaQED() << std::endl;
+  
+  
+  //  return weight;
+  return std::pair<float, std::vector<double>>(weight, all_weights);
 }
 
 
