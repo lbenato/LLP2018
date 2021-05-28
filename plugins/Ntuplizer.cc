@@ -246,6 +246,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     number_of_VBFGen_matched_to_AllJets = 0;
     //number_of_b_matched_to_CaloJets = number_of_b_matched_to_CaloJetsWithGenJets = 0;
     GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = LeptonWeight = ZewkWeight = WewkWeight = prefiringweight = prefiringweight_down = prefiringweight_up = 1.;
+    PDFweight_Q = PDFweight_id1 = PDFweight_id2 = PDFweight_x1 = PDFweight_x2 = PDFweight_xPDF1 = PDFweight_xPDF2 = 1.;
+    PDF_originalXWGTUP = 1.;
+    PDF_systweights.clear();
     LeptonWeightUp = LeptonWeightDown =  0.;
     EventWeight_leptonSF = EventWeight_leptonSFUp = EventWeight_leptonSFDown = 1.;
     bTagWeight_central = bTagWeight_jesup = bTagWeight_jesdown = bTagWeight_lfup = bTagWeight_lfdown = bTagWeight_hfup = bTagWeight_hfdown = bTagWeight_hfstats1up = bTagWeight_hfstats1down = bTagWeight_hfstats2up = bTagWeight_hfstats2down = bTagWeight_lfstats1up = bTagWeight_lfstats1down = bTagWeight_lfstats2up = bTagWeight_lfstats2down = bTagWeight_cferr1up = bTagWeight_cferr1down = bTagWeight_cferr2up = bTagWeight_cferr2down = 1.0;
@@ -277,7 +280,20 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
     EventWeight *= GenEventWeight;
 
-    if (isMC){
+    if (isShort and isMC){
+      std::map<std::string, float> PDFWeights = theGenAnalyzer->GetPDFWeight(iEvent);
+      PDFweight_Q = PDFWeights["Q"];
+      PDFweight_id1 = PDFWeights["id1"];
+      PDFweight_id2 = PDFWeights["id2"];
+      PDFweight_x1 = PDFWeights["x1"];
+      PDFweight_x2 = PDFWeights["x2"];
+      PDFweight_xPDF1 = PDFWeights["xPDF1"];
+      PDFweight_xPDF2 = PDFWeights["xPDF2"];
+
+      std::pair<float, std::vector<float>> PDFsystematics = theGenAnalyzer->GetPDFsystematics(iEvent);
+      PDF_originalXWGTUP = PDFsystematics.first;
+      PDF_systweights = PDFsystematics.second;
+
       edm::Handle< double > theprefweight;
       iEvent.getByToken(prefweight_token, theprefweight ) ;
       prefiringweight =(*theprefweight);
@@ -2967,6 +2983,16 @@ Ntuplizer::beginJob()
       tree -> Branch("prefiringweight", &prefiringweight, "prefiringweight/F");
       tree -> Branch("prefiringweight_up", &prefiringweight_up, "prefiringweight_up/F");
       tree -> Branch("prefiringweight_down", &prefiringweight_down, "prefiringweight_down/F");
+      tree -> Branch("PDFweight_Q", &PDFweight_Q, "PDFweight_Q/F");
+      tree -> Branch("PDFweight_id1", &PDFweight_id1, "PDFweight_id1/F");
+      tree -> Branch("PDFweight_id2", &PDFweight_id2, "PDFweight_id2/F");
+      tree -> Branch("PDFweight_x1", &PDFweight_x1, "PDFweight_x1/F");
+      tree -> Branch("PDFweight_x2", &PDFweight_x2, "PDFweight_x2/F");
+      tree -> Branch("PDFweight_xPDF1", &PDFweight_xPDF1, "PDFweight_xPDF1/F");
+      tree -> Branch("PDFweight_xPDF2", &PDFweight_xPDF2, "PDFweight_xPDF2/F");
+      tree -> Branch("PDF_originalXWGTUP", &PDF_originalXWGTUP, "PDF_originalXWGTUP/F");
+      tree -> Branch("PDF_systweights", &PDF_systweights);
+      
     }
     tree -> Branch("GenEventWeight", &GenEventWeight, "GenEventWeight/F");
     tree -> Branch("model",       &model_);

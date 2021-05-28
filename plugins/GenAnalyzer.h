@@ -51,6 +51,8 @@ class GenAnalyzer {
         virtual float GetTopPtWeight(float );
         virtual float GetPUWeight(const edm::Event&);
     //    virtual float GetPDFWeight(const edm::Event&);
+	virtual std::map<std::string, float> GetPDFWeight(const edm::Event&);
+	virtual std::pair<float, std::vector<float>> GetPDFsystematics(const edm::Event&);
         virtual std::pair<float, float> GetQ2Weight(const edm::Event&);
         virtual std::vector<reco::GenParticle> PartonsFromDecays(const std::vector<int> & pdgIds);
         virtual std::vector<reco::GenParticle> PartonsFromDecays(const std::vector<int> & pdgIds, std::vector<reco::GenParticle> & genDecay );
