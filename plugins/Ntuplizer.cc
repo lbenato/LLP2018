@@ -1648,7 +1648,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // B-tagging discriminant shape calibration for AK4 CHS jets
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-    if (isShort){
+    if (isShort and isMC){
       std::map<std::string, float> btagWeights = theCHSJetAnalyzer->CalculateBtagReshapeSF(CHSJetsVect);
       bTagWeight_central = btagWeights["weight_central"];
       bTagWeight_jesup = btagWeights["weight_jesup"];
