@@ -147,6 +147,10 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     edm::InputTag JetTagWP1000 = edm::InputTag("pfXTags:1000:ntuple");
     JetTagWP1000Token= consumes<reco::JetTagCollection>(JetTagWP1000);
 
+    prefweight_token = consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProb"));
+    prefweightup_token = consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProbUp"));
+    prefweightdown_token = consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProbDown"));
+
     //split up signal samples
     edm::InputTag genLumi = edm::InputTag(std::string("generator"));
     genLumiHeaderToken_             = consumes <GenLumiInfoHeader,edm::InLumi> (genLumi);
@@ -228,7 +232,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     AtLeastOneTrigger = AtLeastOneL1Filter = false;
     isIsoMu24_OR_IsoTkMu24 = isMu50_OR_TkMu50 = false;
     number_of_PV = number_of_SV = 0;//27 Sep: remember to properly initialize everything
-    nCHSJets = nLooseCHSJets = nTightCHSJets = 0;
+    nCHSJets = nLooseCHSJets = nTightCHSJets = nPrefiringJets = 0;
     nVBFGenMatchedJets = 0;
     nAllBarrelJets = nAllJets = 0;
     nCHSFatJets = nLooseCHSFatJets = nTightCHSFatJets = nGenBquarks = nGenTTbarQuarks = nGenLL = nPV = nSV = 0;
@@ -241,8 +245,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     number_of_b_matched_to_FatJets = 0;
     number_of_VBFGen_matched_to_AllJets = 0;
     //number_of_b_matched_to_CaloJets = number_of_b_matched_to_CaloJetsWithGenJets = 0;
-    GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = LeptonWeight = ZewkWeight = WewkWeight = 1.;
-    LeptonWeightUp = LeptonWeightDown = 0.;
+    GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = LeptonWeight = ZewkWeight = WewkWeight = prefiringweight = prefiringweight_down = prefiringweight_up = 1.;
+    LeptonWeightUp = LeptonWeightDown =  0.;
     EventWeight_leptonSF = EventWeight_leptonSFUp = EventWeight_leptonSFDown = 1.;
     bTagWeight_central = bTagWeight_jesup = bTagWeight_jesdown = bTagWeight_lfup = bTagWeight_lfdown = bTagWeight_hfup = bTagWeight_hfdown = bTagWeight_hfstats1up = bTagWeight_hfstats1down = bTagWeight_hfstats2up = bTagWeight_hfstats2down = bTagWeight_lfstats1up = bTagWeight_lfstats1down = bTagWeight_lfstats2up = bTagWeight_lfstats2down = bTagWeight_cferr1up = bTagWeight_cferr1down = bTagWeight_cferr2up = bTagWeight_cferr2down = 1.0;
     TopPtWeight = 1.0;
@@ -272,6 +276,20 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //GenEventWeight
     GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
     EventWeight *= GenEventWeight;
+
+    if (isMC){
+      edm::Handle< double > theprefweight;
+      iEvent.getByToken(prefweight_token, theprefweight ) ;
+      prefiringweight =(*theprefweight);
+
+      edm::Handle< double > theprefweightup;
+      iEvent.getByToken(prefweightup_token, theprefweightup ) ;
+      prefiringweight_up =(*theprefweightup);
+
+      edm::Handle< double > theprefweightdown;
+      iEvent.getByToken(prefweightdown_token, theprefweightdown ) ;
+      prefiringweight_down =(*theprefweightdown);
+    }
 
     //split up signal samples
     if(isCentralProd){
@@ -1340,6 +1358,13 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     nCHSJets = CHSJetsVect.size();
 
+    if (isShort){
+      for(unsigned int r = 0; r<CHSJetsVect.size(); r++){
+	if (fabs(CHSJetsVect[r].eta()) > 2.0 and fabs(CHSJetsVect[r].eta()) < 3.0){
+	  nPrefiringJets += 1;  
+	}
+      }
+    }
 
     //QCD killer cut
     for(unsigned int i = 0; i < CHSJetsVect.size(); i++) if(fabs(reco::deltaPhi(CHSJetsVect[i].phi(), MET.phi())) < MinJetMetDPhi) MinJetMetDPhi = fabs(reco::deltaPhi(CHSJetsVect[i].phi(), MET.phi()));
@@ -2939,6 +2964,9 @@ Ntuplizer::beginJob()
       tree -> Branch("bTagWeight_cferr1down", &bTagWeight_cferr1down, "bTagWeight_cferr1down/F");
       tree -> Branch("bTagWeight_cferr2up", &bTagWeight_cferr2up, "bTagWeight_cferr2up/F");
       tree -> Branch("bTagWeight_cferr2down", &bTagWeight_cferr2down, "bTagWeight_cferr2down/F");
+      tree -> Branch("prefiringweight", &prefiringweight, "prefiringweight/F");
+      tree -> Branch("prefiringweight_up", &prefiringweight_up, "prefiringweight_up/F");
+      tree -> Branch("prefiringweight_down", &prefiringweight_down, "prefiringweight_down/F");
     }
     tree -> Branch("GenEventWeight", &GenEventWeight, "GenEventWeight/F");
     tree -> Branch("model",       &model_);
@@ -2965,6 +2993,7 @@ Ntuplizer::beginJob()
     tree -> Branch("nCHSJets" , &nCHSJets , "nCHSJets/L");
     tree -> Branch("nLooseCHSJets" , &nLooseCHSJets , "nLooseCHSJets/L");
     tree -> Branch("nTightCHSJets" , &nTightCHSJets , "nTightCHSJets/L");
+    tree -> Branch("nPrefiringJets" , &nPrefiringJets , "nPrefiringJets/L");
     tree -> Branch("nCHSFatJets" , &nCHSFatJets , "nCHSFatJets/L");
     tree -> Branch("nLooseCHSFatJets" , &nLooseCHSFatJets , "nLooseCHSFatJets/L");
     tree -> Branch("nTightCHSFatJets" , &nTightCHSFatJets , "nTightCHSFatJets/L");

@@ -156,6 +156,10 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP100Token;
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP1000Token;
 
+    edm::EDGetTokenT< double > prefweight_token;
+    edm::EDGetTokenT< double > prefweightup_token;
+    edm::EDGetTokenT< double > prefweightdown_token;
+
     int idLLP, idHiggs, idMotherB, statusLLP, statusHiggs;
     double MinGenBpt, MaxGenBeta;
     double InvmassVBF, DetaVBF;//VBF tagging
@@ -226,7 +230,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     long int EventNumber, LumiNumber, RunNumber, nPV, nSV;
     bool AtLeastOneTrigger, AtLeastOneL1Filter;
     bool isIsoMu24_OR_IsoTkMu24, isMu50_OR_TkMu50;
-    long int nLooseCHSJets, nTightCHSJets, nCHSJets, nAllBarrelJets, nAllJets, nVBFGenMatchedJets;
+    long int nLooseCHSJets, nTightCHSJets, nCHSJets, nAllBarrelJets, nAllJets, nVBFGenMatchedJets, nPrefiringJets;
     long int nLooseCHSFatJets, nTightCHSFatJets, nCHSFatJets, nGenBquarks, nGenTTbarQuarks, nGenLL;
     long int nMatchedCHSJets, nMatchedFatJets;
   //long int nCaloJets, nMatchedCaloJets, nMatchedCaloJetsWithGenJets;
@@ -245,6 +249,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     float EventWeight_leptonSFDown;
     float GenEventWeight;
     float PUWeight, PUWeightUp, PUWeightDown;
+    float prefiringweight, prefiringweight_up, prefiringweight_down;
     float FacWeightUp, FacWeightDown, RenWeightUp, RenWeightDown, CorrWeightUp, CorrWeightDown;
     float PdfWeight;
     float LeptonWeight, LeptonWeightUp, LeptonWeightDown;
