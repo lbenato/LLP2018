@@ -250,6 +250,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     GenEventWeight_full_vector.clear();
     PDFweight_Q = PDFweight_id1 = PDFweight_id2 = PDFweight_x1 = PDFweight_x2 = PDFweight_xPDF1 = PDFweight_xPDF2 = 1.;
     PDF_originalXWGTUP = 1.;
+    murmuf_weight_upup = murmuf_weight_upnone = murmuf_weight_noneup = murmuf_weight_downdown = murmuf_weight_downnone = murmuf_weight_nonedown = murmuf_weight_updown = murmuf_weight_downup = 1.;
     PDF_systweights.clear();
     LeptonWeightUp = LeptonWeightDown =  0.;
     EventWeight_leptonSF = EventWeight_leptonSFUp = EventWeight_leptonSFDown = 1.;
@@ -284,6 +285,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     GenEventWeight = GenWeights.first;
     EventWeight *= GenEventWeight;
 
+    PDF_systweights.clear();
+    GenEventWeight_full_vector.clear();
+
     if (isShort and isMC){
       for (unsigned int b = 0; b<GenWeights.second.size(); b++){
 	GenEventWeight_full *= GenWeights.second.at(b);
@@ -302,6 +306,17 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       std::pair<float, std::vector<float>> PDFsystematics = theGenAnalyzer->GetPDFsystematics(iEvent);
       PDF_originalXWGTUP = PDFsystematics.first;
       PDF_systweights = PDFsystematics.second;
+
+      if (PDF_systweights.size() > 9){
+	murmuf_weight_upup = PDF_systweights.at(4)/PDF_originalXWGTUP;
+	murmuf_weight_upnone = PDF_systweights.at(3)/PDF_originalXWGTUP;
+	murmuf_weight_noneup = PDF_systweights.at(1)/PDF_originalXWGTUP;
+	murmuf_weight_downdown = PDF_systweights.at(8)/PDF_originalXWGTUP;
+	murmuf_weight_downnone = PDF_systweights.at(6)/PDF_originalXWGTUP;
+	murmuf_weight_nonedown = PDF_systweights.at(2)/PDF_originalXWGTUP;
+	murmuf_weight_updown = PDF_systweights.at(5)/PDF_originalXWGTUP;
+	murmuf_weight_downup = PDF_systweights.at(7)/PDF_originalXWGTUP;
+      }
 
       edm::Handle< double > theprefweight;
       iEvent.getByToken(prefweight_token, theprefweight ) ;
@@ -3001,6 +3016,14 @@ Ntuplizer::beginJob()
       tree -> Branch("PDFweight_xPDF2", &PDFweight_xPDF2, "PDFweight_xPDF2/F");
       tree -> Branch("PDF_originalXWGTUP", &PDF_originalXWGTUP, "PDF_originalXWGTUP/F");
       tree -> Branch("PDF_systweights", &PDF_systweights);
+      tree -> Branch("murmuf_weight_upup", &murmuf_weight_upup, "murmuf_weight_upup/F");
+      tree -> Branch("murmuf_weight_upnone", &murmuf_weight_upnone, "murmuf_weight_upnone/F");
+      tree -> Branch("murmuf_weight_noneup", &murmuf_weight_noneup, "murmuf_weight_noneup/F");
+      tree -> Branch("murmuf_weight_downdown", &murmuf_weight_downdown, "murmuf_weight_downdown/F");
+      tree -> Branch("murmuf_weight_downnone", &murmuf_weight_downnone, "murmuf_weight_downnone/F");
+      tree -> Branch("murmuf_weight_nonedown", &murmuf_weight_nonedown, "murmuf_weight_nonedown/F");
+      tree -> Branch("murmuf_weight_updown", &murmuf_weight_updown, "murmuf_weight_updown/F");
+      tree -> Branch("murmuf_weight_downup", &murmuf_weight_downup, "murmuf_weight_downup/F");
       
     }
     tree -> Branch("GenEventWeight", &GenEventWeight, "GenEventWeight/F");

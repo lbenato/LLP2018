@@ -253,6 +253,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     float PUWeight, PUWeightUp, PUWeightDown;
     float prefiringweight, prefiringweight_up, prefiringweight_down;
     float PDFweight_Q, PDFweight_id1, PDFweight_id2, PDFweight_x1, PDFweight_x2, PDFweight_xPDF1, PDFweight_xPDF2, PDF_originalXWGTUP;
+    float murmuf_weight_upup, murmuf_weight_upnone, murmuf_weight_noneup, murmuf_weight_downdown, murmuf_weight_downnone, murmuf_weight_nonedown, murmuf_weight_updown, murmuf_weight_downup;
     std::vector<float> PDF_systweights;
     float FacWeightUp, FacWeightDown, RenWeightUp, RenWeightDown, CorrWeightUp, CorrWeightDown;
     float PdfWeight;
