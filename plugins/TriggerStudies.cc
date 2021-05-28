@@ -436,7 +436,7 @@ TriggerStudies::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //pat::MET Neutrino(MET);
     // HT
     //if(isVerbose) std::cout << "HT" << std::endl;
-    HT = theJetAnalyzer->CalculateHT(iEvent,iSetup,3,15,3.);
+    HT = theJetAnalyzer->CalculateHT(iEvent,iSetup,3,15,3.,true);
 
     // Electrons
     //if(isVerbose) std::cout << "Electrons" << std::endl;
