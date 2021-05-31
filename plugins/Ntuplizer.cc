@@ -1148,6 +1148,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //	  {
     //	    if(TriggerVBFPairJetsVect.at(s).pt()==PotentialTriggerDisplacedJets.at(r).pt() && isTriggerVBF)//if not tagged as VBF trigger pair, don't remove them
     //	      {
+    // !!!FIXME!!! If the following line needs to be used, it needs to be adjusted!
     //		PotentialTriggerDisplacedJets.erase(PotentialTriggerDisplacedJets.begin()+r);
     //	      }
     //	  }
@@ -1261,9 +1262,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //Remove duplicates from Matched CHSJets Vector
     for(unsigned int r = 0; r<MatchedCHSJetsVect.size(); r++)
       {
-	for(unsigned int s = 0; s<MatchedCHSJetsVect.size(); s++)
+	for(unsigned int s = 0; s<MatchedCHSJetsVect.size();)
 	  {
 	    if(r!=s && MatchedCHSJetsVect[s].pt()==MatchedCHSJetsVect[r].pt()) MatchedCHSJetsVect.erase(MatchedCHSJetsVect.begin()+s);
+	    else s++;
 	  }//duplicates removed
       }
     nMatchedCHSJets = MatchedCHSJetsVect.size();
@@ -1365,13 +1367,13 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
 
-    if(PerformVBF)
+    if(PerformVBF  && isVBF)
       {
-        for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+        for(unsigned int r = CHSJetsVect.size()-1; r <= 0; r--)
           {
             for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
               {
-                if(VBFPairJetsVect[s].pt()==CHSJetsVect[r].pt() && isVBF) //if jets aren't tagged as VBF jets, don't remove them
+                if(VBFPairJetsVect[s].pt()==CHSJetsVect[r].pt()) //if jets aren't tagged as VBF jets, don't remove them
                   {
                     CHSJetsVect.erase(CHSJetsVect.begin()+r);
                   }
@@ -1380,14 +1382,14 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       }
 
-    else if(PerformggH)
+    else if(PerformggH && isggH)
       {
 
-        for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+        for(unsigned int r = CHSJetsVect.size(); r <= 0; r--)
           {
             for(unsigned int s = 0; s<ggHJetVect.size(); s++)
               {
-                if(ggHJetVect[s].pt()==CHSJetsVect[r].pt() && isggH) //if jets aren't tagged as ggH jets, don't remove them
+                if(ggHJetVect[s].pt()==CHSJetsVect[r].pt() ) //if jets aren't tagged as ggH jets, don't remove them
 
                   {
                     CHSJetsVect.erase(CHSJetsVect.begin()+r);
@@ -1746,6 +1748,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	      {
 	      delta_R_CaloJets_asVBF = min(delta_R_CaloJets_asVBF,current_delta_R_CaloJets_asVBF);
               if(isVerbose) std::cout << "This calo jet removed because overlaps VBF pair: pt " << CaloJetsVect[r].pt() << " ; eta: " << CaloJetsVect[r].eta() << " ; phi: " << CaloJetsVect[r].phi() << std::endl;
+	      // !!!FIXME!!! If the following line needs to be used, it needs to be adjusted!
               CaloJetsVect.erase(CaloJetsVect.begin()+r);
 	      }
 
@@ -1794,6 +1797,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       {
 	for(unsigned int s = 0; s<MatchedCaloJetsVect.size(); s++)
 	  {
+	  // !!!FIXME!!! If the following line needs to be used, it needs to be adjusted!
 	    if(r!=s && MatchedCaloJetsVect[s].pt()==MatchedCaloJetsVect[r].pt()) MatchedCaloJetsVect.erase(MatchedCaloJetsVect.begin()+s);
 	  }//duplicates removed
       }
@@ -1929,9 +1933,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	//Remove duplicates from Matched CHSJets Vector
 	for(unsigned int r = 0; r<MatchedCHSAK8JetsVect.size(); r++)
 	  {
-	    for(unsigned int s = 0; s<MatchedCHSAK8JetsVect.size(); s++)
+	    for(unsigned int s = 0; s<MatchedCHSAK8JetsVect.size();)
 	      {
 		if(r!=s && MatchedCHSAK8JetsVect[s].pt()==MatchedCHSAK8JetsVect[r].pt()) MatchedCHSAK8JetsVect.erase(MatchedCHSAK8JetsVect.begin()+s);
+		else s++;
 	      }//duplicates removed
 	  }
 	nMatchedFatJets = MatchedCHSAK8JetsVect.size();
