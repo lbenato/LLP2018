@@ -1734,7 +1734,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
         #),
         #massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
-        reshapeBTag = cms.bool(isShort),
+        reshapeBTag = cms.bool(isShort),#This variable is now also used to set JER corrected jets as 'standard' one! Otherwise Jets.* accesses non-JER corrected jets!
         btag = cms.string('deepJet'),
         btagDB = cms.string('data/%s.csv' % (btagSFstring)),
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
@@ -1790,7 +1790,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
         #),
         #massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
-        reshapeBTag = cms.bool(isShort),
+        reshapeBTag = cms.bool(isShort),#This variable is now also used to set JER corrected jets as 'standard' one! Otherwise Jets.* accesses non-JER corrected jets!
         btag = cms.string('pfDeepFlavourJetTags:probb+pfDeepFlavourJetTags:probbb+pfDeepFlavourJetTags:problepb'),
         btagDB = cms.string('data/%s.csv' % (btagSFstring)),
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
@@ -1850,7 +1850,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt',
         #),
         #massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
-        reshapeBTag = cms.bool(isShort),
+        reshapeBTag = cms.bool(isShort),#This variable is now also used to set JER corrected jets as 'standard' one! Otherwise Jets.* accesses non-JER corrected jets!
         btag = cms.string('pfDeepFlavourJetTags:probb+pfDeepFlavourJetTags:probbb+pfDeepFlavourJetTags:problepb'),
         btagDB = cms.string('data/%s.csv' % (btagSFstring)),
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
@@ -1906,7 +1906,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         #    'data/Summer16_23Sep2016V3_MC/Summer16_23Sep2016V3_MC_L3Absolute_AK8PFchs.txt',
         #),
         #massCorrectorPuppi = cms.string('data/puppiCorrSummer16.root'),#updating
-        reshapeBTag = cms.bool(isShort),
+        reshapeBTag = cms.bool(isShort),#This variable is now also used to set JER corrected jets as 'standard' one! Otherwise Jets.* accesses non-JER corrected jets!
         btag = cms.string('pfDeepFlavourJetTags:probb+pfDeepFlavourJetTags:probbb+pfDeepFlavourJetTags:problepb'),
         btagDB = cms.string('data/%s.csv' % (btagSFstring)),
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight

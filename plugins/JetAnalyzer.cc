@@ -497,6 +497,10 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             jetJERUp.setP4(smearedJet * smearFactorUp);
             jetJERDown.setP4(smearedJet * smearFactorDown);
 
+	    if (UseReshape){//This is implemented as the 'isShort' boolean currently in the ntuple config. This means JER corrected jets are stored as standard jets!
+	      jet.setP4(smearedJet * smearFactor);
+	    }
+
             jet.addUserFloat("ptJER", jetJER.pt());
             jet.addUserFloat("etaJER", jetJER.eta());
             jet.addUserFloat("phiJER", jetJER.phi());
