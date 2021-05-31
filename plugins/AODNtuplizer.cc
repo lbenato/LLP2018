@@ -1616,7 +1616,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(PerformVBF)
       {
 
-	for(unsigned int r = CHSJetsVect.size(); r >= 0; r--)
+	for(unsigned int r = CHSJetsVect.size(); r = 0; r--)
 	  {
 	    for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
 	      {
@@ -1632,7 +1632,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     else if(PerformggH)
       {
 
-	for(unsigned int r = CHSJetsVect.size(); r >= 0; r--)
+	for(unsigned int r = CHSJetsVect.size(); r = 0; r--)
 	  {
 	    for(unsigned int s = 0; s<ggHJetVect.size(); s++)
 	      {
@@ -1838,7 +1838,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //We must perform a DR matching, since pT might be different
       //int matching_index_CaloJets_asVBF;//local variable
       {
-	for(unsigned int r = CaloJetsVect.size()-1; r >= 0 ; r--)
+	for(unsigned int r = CaloJetsVect.size()-1; r = 0 ; r--)
 	  {
 	    delta_R_CaloJets_asVBF = 1000.;
 	    current_delta_R_CaloJets_asVBF = 1000.;
@@ -1861,7 +1861,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       {
 	//Remove calo jets overlapped with ggH candidate
 	//We must perform a DR matching, since pT might be different
-	for(unsigned int r = CHSJetsVect.size()-1; r >= 0; r--)
+	for(unsigned int r = CHSJetsVect.size()-1; r = 0; r--)
 	  {
 	    delta_R_CaloJets_asggH = 1000.;
 	    current_delta_R_CaloJets_asggH = 1000.;

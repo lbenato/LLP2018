@@ -1369,7 +1369,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     if(PerformVBF  && isVBF)
       {
-        for(unsigned int r = CHSJetsVect.size()-1; r >= 0; r--)
+        for(unsigned int r = CHSJetsVect.size()-1; r = 0; r--)
           {
             for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
               {
@@ -1385,7 +1385,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     else if(PerformggH && isggH)
       {
 
-        for(unsigned int r = CHSJetsVect.size()-1; r >= 0; r--)
+        for(unsigned int r = CHSJetsVect.size()-1; r = 0; r--)
           {
             for(unsigned int s = 0; s<ggHJetVect.size(); s++)
               {
