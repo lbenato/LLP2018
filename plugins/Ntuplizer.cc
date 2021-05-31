@@ -372,7 +372,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
 
     ////if(!AtLeastOneTrigger && WriteOnlyTriggerEvents) std::cout << "This event can be rejected" << std::endl;
+    All_histo->Fill(1., EventWeight);
     if(!AtLeastOneTrigger && WriteOnlyTriggerEvents) return;
+    Trigger_pass->Fill(1., EventWeight);
 
     // 10 Dec 2018: saving only events that fired at least one L1 seed
     // 11 Feb 2020: commented, filters treated differently in 2016 w.r.t. 2017-2018
@@ -385,6 +387,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //}
 
     if(!AtLeastOneL1Filter && WriteOnlyL1FilterEvents) return;
+    AtLeastOneL1Filter_pass->Fill(1., EventWeight);
 
     //Trigger-dependent standalone objects
     //They will be used for trigger matching
@@ -611,7 +614,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     //if(EventNumber!=44169) return;
-    if(HT<100) return;//Avoid events with low HT//WAIT!!
+    if(isCalo && HT<100) return;//Avoid events with low HT//WAIT!!
     if(isCalo && MET.pt()<120) return;//Avoid events with very low MET for calo analysis
     if(isCalo && nMuons>0) return;//Veto leptons and photons!
     if(isCalo && nTaus>0) return;//Veto leptons and photons!
@@ -1013,7 +1016,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       {
 	if(!isVBF) return;
       }
-
+    isVBF_pass->Fill(1., EventWeight);
 
     //This trigger not used anymore
     ////Find the VBF pair among trigger standalone objects
@@ -3221,6 +3224,10 @@ Ntuplizer::beginJob()
 
     //Histograms
     //Matching_to_b_AK4Jets = fs->make<TH1F>("Matching_to_b_AK4Jets", "Matching_to_b_AK4Jets", 10,0,10);
+    All_histo = fs->make<TH1F>("nEvents_All", "nEvents_All", 10,0,10);
+    Trigger_pass = fs->make<TH1F>("nEvents_Trigger_pass", "nEvents_Trigger_pass", 10,0,10);
+    AtLeastOneL1Filter_pass = fs->make<TH1F>("AtLeastOneL1Filter_pass", "AtLeastOneL1Filter_pass", 10,0,10);
+    isVBF_pass = fs->make<TH1F>("nEvents_isVBF_pass", "nEvents_isVBF_pass", 10,0,10);
 
 }
 

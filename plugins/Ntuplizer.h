@@ -306,7 +306,10 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 
     //Example to define an histogram:
     //TH1F* Matching_to_b_AK4Jets;
-
+    TH1F* All_histo;
+    TH1F* Trigger_pass;
+    TH1F* AtLeastOneL1Filter_pass;
+    TH1F* isVBF_pass;
 };
 
 #endif
