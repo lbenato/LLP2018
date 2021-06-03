@@ -26,9 +26,9 @@ config.Data.inputDBS = 'global'
 #config.Data.unitsPerJob = 2500#15000
 #config.Data.totalUnits = 10000000#15000
 
-#config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
-config.Data.unitsPerJob = 5
-config.Data.splitting = 'FileBased'
+config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
+#config.Data.unitsPerJob = 5
+#config.Data.splitting = 'FileBased'
 
 config.Data.outLFNDirBase = '/store/user/lbenato/choose_a_folder_name'
 config.Data.publication = False
@@ -49,7 +49,7 @@ config.JobType.allowUndistributedCMSSW = True
 #enable multi-threading
 #remove from being default!
 
-config.JobType.maxMemoryMB = 5000#15900 #more memory
+config.JobType.maxMemoryMB = 11000#15900 #more memory
 #deactivate
 config.JobType.numCores = 8
 
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     # Selection of samples via python lists
     import os
 
-    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTbarGenMET","TTJets","QCD","signal_VBF","signal_ggH","all","data_obs","MET","SingleMuon","SingleElectron","SinglePhoton","EGamma","JetHT","MuonEG",,"ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB", "Others","data_BTagCSV", "WH_MH-125_2016", "splitSUSY","JetJet","RPVstopBL", "data_JetHT", "data_SingleMu","Test"]#,"data_obs"
+    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTbarGenMET","TTJets","QCD","QCD_HT2000toInf","signal_VBF","signal_ggH","all","data_obs","MET","SingleMuon","SingleElectron","SinglePhoton","EGamma","JetHT","MuonEG","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB", "Others","data_BTagCSV", "WH_MH-125_2016", "splitSUSY","JetJet","RPVstopBL", "data_JetHT", "data_SingleMu","ttH","Test"]#,"data_obs"
     print "Possible subgroups of samples:"
     for a in list_of_samples:
         print a
@@ -669,6 +669,58 @@ if __name__ == '__main__':
         isHeavyHiggs = False#True#only for heavy higgs
         isSUSY = False
         isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples or "ggH_MH-125_201" in options.groupofsamples) else False
+        isMINIAOD = True
+        is2016 = True
+        is2017 = False
+        is2018 = False
+        isAOD  = False
+        config.JobType.inputFiles = ['data']
+    elif options.lists == "v5_2016miniAOD_centrallyProduced_SignalAndControl":
+        from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced_short import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2016_modified import sample, samples
+        pset = "Ntuplizer2018.py"
+        folder = "v5_production_centrallyProduced_2016_SignalAndControlRegion_JER_Unc_samples/"#CHANGE here your crab folder name
+#        folder = "v5_production_centrallyProduced_2016_VBFrequirementCheck/"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/meich/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/eichm/" + folder #CHANGE here according to your username!
+#        config.Data.totalUnits = 200
+        isCalo=False
+        isShort = True
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False#True#only for heavy higgs
+        isSUSY = False
+        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples or "ggH_MH-125_201" in options.groupofsamples or "Test" in options.groupofsamples) else False
+        isMINIAOD = True
+        is2016 = True
+        is2017 = False
+        is2018 = False
+        isAOD  = False
+        config.JobType.inputFiles = ['data']
+    elif options.lists == "v6_2016miniAOD_centrallyProduced_SignalAndControl":
+        from Analyzer.LLP2018.crab_requests_lists_2016MINIAOD_centrallyProduced_short import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2016_modified import sample, samples
+        pset = "Ntuplizer2018_deepJetDefault.py"
+        folder = "v6_production_centrallyProduced_2016_SignalAndControlRegion_JER_Unc_samples_defaultDeepJet/"#CHANGE here your crab folder name
+#        folder = "v5_production_centrallyProduced_2016_VBFrequirementCheck/"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/meich/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/eichm/" + folder #CHANGE here according to your username!
+#        config.Data.totalUnits = 200
+        isCalo=False
+        isShort = True
+        isTracking = False
+        isControl = False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False#True#only for heavy higgs
+        isSUSY = False
+        isCentralProd = True if ("VBFH_MH-125_201" in options.groupofsamples or "ggH_MH-125_201" in options.groupofsamples or "Test" in options.groupofsamples) else False
         isMINIAOD = True
         is2016 = True
         is2017 = False
@@ -1782,11 +1834,14 @@ if __name__ == '__main__':
             if isData:
                 if is2016:
 #                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
-                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Legacy_2016/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt'
+#                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/Legacy_2016/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt'
+                    config.Data.lumiMask = 'https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions16/13TeV/Legacy_2016/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt'
                 elif is2017:
-                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
+#                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
+                    config.Data.lumiMask = 'https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
                 elif is2018:
-                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+ #                   config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+                    config.Data.lumiMask = 'https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
                 if "resubmission" in options.lists:
                     config.Data.lumiMask = os.environ['CMSSW_BASE']+"/src/Analyzer/LLP2018/dataAOD/JSON/"+prev_folder+"/"+j+"/notFinishedLumis.json"
 
