@@ -6,6 +6,7 @@
 JetAnalyzer::JetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl):
     JetToken(CColl.consumes<std::vector<pat::Jet> >(PSet.getParameter<edm::InputTag>("jets"))),
     MetToken(CColl.consumes<std::vector<pat::MET> >(PSet.getParameter<edm::InputTag>("met"))),
+    //GenMetToken(CColl.consumes<std::vector<reco::GenMET> >(PSet.getParameter<edm::InputTag>("genmet"))),
     QGToken(CColl.consumes<edm::ValueMap<float>>(edm::InputTag("QGTagger", "qgLikelihood"))),
     ebRecHitsToken(CColl.consumes<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > >(PSet.getParameter<edm::InputTag>("ebRecHits"))),
     eeRecHitsToken(CColl.consumes<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > >(PSet.getParameter<edm::InputTag>("eeRecHits"))),
@@ -451,10 +452,6 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 	    float JERsfDown = -1.;
 
             if(isMC) {
-                //float JERresolution = resolution->getResolution(TheJetParameters);
-                //float JERsf         = resolution_sf->getScaleFactor(TheJetParameters);
-                //float JERsfUp       = resolution_sf->getScaleFactor(TheJetParameters, Variation::UP);
-                //float JERsfDown     = resolution_sf->getScaleFactor(TheJetParameters, Variation::DOWN);
 
                 JERresolution = resolution.getResolution(TheJetParameters);
                 JERsf         = resolution_sf.getScaleFactor(TheJetParameters);
@@ -704,7 +701,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             }
             
           }//loop over ebRecHits
-          
+
                    
           //Loop on EE rec hits
           for(unsigned int q=0; q<eeRecHitsCollection->size(); q++){
@@ -743,7 +740,8 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             }
             
           }//loop over eeRecHits	  
-	      
+	  
+
 	  //loop over hcal hits
 	  for (unsigned int iHit = 0; iHit < hcalRecHitsHBHECollection->size(); iHit ++){
 	    const HBHERecHit *recHit = &(*hcalRecHitsHBHECollection)[iHit];
@@ -793,6 +791,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 		  }
             
 	      }
+	  
 	    /*
 	    else if (recHit->detid().subdetId() == HcalEndcap)
 	      {
@@ -826,10 +825,9 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 	      }
 	      */
             
-
+	  
 	  }//loop over hcal hbhe hits          
           
-                   
           
           
         }//IsAOD condition
@@ -1119,6 +1117,14 @@ pat::MET JetAnalyzer::FillMetVector(const edm::Event& iEvent) {
     return MEt;
 }
 
+//reco::GenMET JetAnalyzer::FillGenMetVector(const edm::Event& iEvent) {
+//    
+//    edm::Handle<std::vector<reco::GenMET> > GenMetCollection;
+//    iEvent.getByToken(GenMetToken, GenMetCollection);
+//    reco::GenMET GenMEt = GenMetCollection->front();
+//    return GenMEt;
+//}
+
 
 void JetAnalyzer::ApplyRecoilCorrections(pat::MET& MET, const reco::Candidate::LorentzVector* GenV, const reco::Candidate::LorentzVector* RecoV, int nJets) {
     double MetPt(MET.pt()), MetPhi(MET.phi()), MetPtScaleUp(MET.pt()), MetPhiScaleUp(MET.phi()), MetPtScaleDown(MET.pt()), MetPhiScaleDown(MET.phi()), MetPtResUp(MET.pt()), MetPhiResUp(MET.phi()), MetPtResDown(MET.pt()), MetPhiResDown(MET.phi());
@@ -1329,7 +1335,7 @@ std::vector<ecalRecHitType> JetAnalyzer::FillEcalRecHitVector(const edm::Event& 
 	      }//loop on jets
 	  }//loop on rec hits
       }//if AOD
-    
+
     return Vect;
 
 }
@@ -1394,7 +1400,7 @@ std::vector<hcalRecHitType> JetAnalyzer::FillHcalRecHitVector(const edm::Event& 
 
 	  }//loop on hcal rec hits
       }//isAOD
-
+    
     return Vect;
 
 }
