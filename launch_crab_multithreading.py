@@ -17,19 +17,22 @@ config.JobType.psetName = 'python/Ntuplizer2018.py'
 config.JobType.inputFiles = ['data']
 config.JobType.allowUndistributedCMSSW = True # To use CMSSW_10_2_18 with SL7 (might not be available at some sites)
 #config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod, string_isPromptReco,string_noLHEinfo, string_isbbH, string_GT, string_JECstring, string_JERstring, string_jsonName, string_triggerTag, string_filterString]
+# config.JobType.priority = 1
 
 config.General.requestName = 'VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MINIAOD'
 
 config.Data.inputDataset =  '/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/lbenato-RunIISummer16-PU_standard_mixing-Moriond17_80X_mcRun2_2016_MINIAOD-28028af67189b3de7224b79195bd0e1d/USER'
 config.Data.inputDBS = 'global'
 
-#config.Data.splitting = 'EventAwareLumiBased'
-#config.Data.unitsPerJob = 2500#15000
-#config.Data.totalUnits = 1000000#15000
+config.Data.splitting = 'EventAwareLumiBased'
+# config.Data.unitsPerJob = 20000#15000
+# config.Data.totalUnits = 10000000#15000
 
-config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
-#config.Data.unitsPerJob = 5
-#config.Data.splitting = 'FileBased'
+#config.Data.splitting = 'Automatic'#Note: Not working with submit --dryrun. Use e.g. 'EventAwareLumiBased'
+# config.Data.splitting = 'FileBased'
+# config.Data.unitsPerJob = 1
+#config.Data.totalUnits = 20
+
 
 config.Data.outLFNDirBase = '/store/user/lbenato/choose_a_folder_name'
 config.Data.publication = False
@@ -37,9 +40,9 @@ config.Data.publication = False
 config.Site.storageSite = 'T2_DE_DESY'
 
 #Workaround when crab complains that this release+arch isn't supported; running on SL7 machines
-#config.JobType.allowUndistributedCMSSW = True
+config.JobType.allowUndistributedCMSSW = True
 
-#config.Site.ignoreGlobalBlacklist   = True #Set to true if e.g. your dataset is in a blacklisted site. Make sure you add
+#config.Site.ignoreGlobalBlacklist   = True #Set to true if e.g. your dataset is in a blacklisted site
 #config.Site.whitelist   = ['T1_US_FNAL'] #Add your preferred site here if setting ignoreGlobalBlacklist to True
 
 #config.Site.blacklist   = ['T2_FR_IPHC']
@@ -49,7 +52,7 @@ config.Site.storageSite = 'T2_DE_DESY'
 
 #enable multi-threading
 #remove from being default!
-#config.JobType.maxMemoryMB = 3000#15900 #more memory
+config.JobType.maxMemoryMB = 3000#15900 #more memory
 config.JobType.numCores = 8
 
 if __name__ == '__main__':
@@ -70,7 +73,7 @@ if __name__ == '__main__':
     # Selection of samples via python lists
     import os
 
-    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017", "ggH_MH-125_2018", "gluinoGMSB", "Others","data_BTagCSV", "WH_MH-125_2016"]#,"data_obs"
+    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","QCD_HT","QCD_MuEnriched","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017","ggH_MH-125_2018","gluinoGMSB","Others","data_BTagCSV","WH_MH-125_2016","WH_MH-125_2018","ZH_MH-125_2018","data_ParkingBPH"]
     print "Possible subgroups of samples:"
     for a in list_of_samples:
         print a
@@ -706,18 +709,20 @@ if __name__ == '__main__':
         is2017 = True
         is2018 = False
         config.JobType.inputFiles = ['data']
-    elif options.lists == "v1_central_miniAOD_2018_17Nov2020":
+    elif options.lists == "v5_central_miniAOD_2018_12Mar2021":
+        os.system('tput bold && tput setab 1') #Print bold text in red background. Format is reset in the next line
+        os.system('echo "     REMINDER: Make sure PU weight file is updated for this production\'s ParkingBPH data!     $(tput sgr0)"')
         from Analyzer.LLP2018.crab_requests_lists_2018MINIAOD_centrallyProduced import *
         from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
         from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2018 import sample, samples
         if ("H_MH-125_2016" in options.groupofsamples or "H_MH-125_2017" in options.groupofsamples):
             print("Error: Using wrong group of samples for 2018 list")
             exit()
-        if ("2016" in options.runera or "2018" in options.runera):
+        if ("2016" in options.runera or "2017" in options.runera):
             print("Error: Using wrong run era for 2018 list")
             exit()
         pset = "Ntuplizer2018.py"
-        folder = "v0_central_miniAOD_2018_17Nov2020/"#CHANGE here your crab folder name
+        folder = "v5_central_miniAOD_2018_12Mar2021/"#CHANGE here your crab folder name
         outLFNDirBase = "/store/user/kjpena/"+folder #CHANGE here according to your username!
         workarea = "/nfs/dust/cms/user/penaka/crabProjects/" + folder #CHANGE here according to your username!
         isCalo = False
@@ -736,6 +741,42 @@ if __name__ == '__main__':
         is2017 = False
         is2018 = True
         config.JobType.inputFiles = ['data']
+    elif options.lists == "v6_central_miniAOD_2018_14Mar2022" or options.lists == "v6_central_miniAOD_2018_28Mar2022":
+        os.system('tput bold && tput setab 1') #Print bold text in red background. Format is reset in the next line
+        os.system('echo "     REMINDER: Make sure PU weight file is updated for this production\'s ParkingBPH data!     $(tput sgr0)"')
+        from Analyzer.LLP2018.crab_requests_lists_2018MINIAOD_centrallyProduced import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2018 import sample, samples
+        if ("H_MH-125_2016" in options.groupofsamples or "H_MH-125_2017" in options.groupofsamples):
+            print("Error: Using wrong group of samples for 2018 list")
+            exit()
+        if ("2016" in options.runera or "2017" in options.runera):
+            print("Error: Using wrong run era for 2018 list")
+            exit()
+        pset = "Ntuplizer2018.py"
+        folder = options.lists + "/"#CHANGE here your crab folder name
+        outLFNDirBase = "/store/user/kjpena/"+folder #CHANGE here according to your username!
+        workarea = "/nfs/dust/cms/user/penaka/crabProjects/" + folder #CHANGE here according to your username!
+        isCalo = False
+        isTracking = True
+        isShort = False
+        isControl = True if ("14Mar" in options.lists) else False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False
+        isSUSY = False
+        isCentralProd = True if ("H_MH-125_201" in options.groupofsamples) else False
+        isMINIAOD = True
+        isAOD  = False
+        is2016 = False
+        is2017 = False
+        is2018 = True
+        config.JobType.inputFiles = ['data',os.environ['CMSSW_BASE']+'/src/HiggsLongLived/DeepSets/data/']
+        # config.Data.splitting = 'Automatic'
+        # config.Data.splitting = 'FileBased'
+        # config.Data.unitsPerJob = 1
+        # if "ParkingBPH" in options.groupofsamples: config.Data.totalUnits = 5000 #Use w/ FileBased splitting for data
     else:
         print "No list indicated, aborting!"
         exit()
@@ -781,10 +822,32 @@ if __name__ == '__main__':
                 else:
                     print "no mask available"
                     exit()
+        # Separate datasets for centrally-produced 2016 WH signal
         elif "WH_MH-125_2016" in options.groupofsamples:
             if "WminusH_HToSSTobbbb_" in k or "WplusH_HToSSTobbbb_" in k:
                 print k
                 selected_requests[k] = requests[k]
+        # Randomized-parameter dataset for centrally-produced 2018 WH signal
+        elif "WH_MH-125_2018" in options.groupofsamples:
+            if "WminusH_HToSSTobbbb_" in k or "WplusH_HToSSTobbbb_" in k:
+                print k
+                selected_requests[k] = requests[k]
+                if k in masks.keys():
+                    selected_lumiMasks[k] = masks[k]
+                    print "lumi mask:", masks[k]
+                else:
+                    print "no mask available"
+                    exit()
+        elif "ZH_MH-125_2018" in options.groupofsamples:
+            if "ZH_HToSSTobbbb_" in k:
+                print k
+                selected_requests[k] = requests[k]
+                if k in masks.keys():
+                    selected_lumiMasks[k] = masks[k]
+                    print "lumi mask:", masks[k]
+                else:
+                    print "no mask available"
+                    exit()
         elif "ggH_MH-125_201" in options.groupofsamples:
             if "ggH_HToSSTobbbb" in k and "MS-" in k:
                 print k
@@ -899,7 +962,7 @@ if __name__ == '__main__':
         print "#"*65
 	print "Dataset: ", j
         # Here: determines every needed parameter as per config file
-        isData = True if ('SingleMuon' in j or 'SingleElectron' in j or 'JetHT' in j or 'BTagCSV' in j or 'DisplacedJet' in j or 'MET' in j) else False
+        isData = True if ('SingleMuon' in j or 'SingleElectron' in j or 'JetHT' in j or 'BTagCSV' in j or 'DisplacedJet' in j or 'MET' in j or 'ParkingBPH' in j) else False
         print "isData?", isData
         isReHLT = False
         isReReco          = True if ('23Sep2016' in j) else False
@@ -916,18 +979,18 @@ if __name__ == '__main__':
 
         noLHEinfo = True if ('WW_TuneCUETP8M1_13TeV-pythia8' in j or 'WZ_TuneCUETP8M1_13TeV-pythia8' in j or 'ZZ_TuneCUETP8M1_13TeV-pythia8' in j or 'WW_TuneCP5_13TeV-pythia8' in j or 'WZ_TuneCP5_13TeV-pythia8' in j or 'ZZ_TuneCP5_13TeV-pythia8' in j) else False #check for PythiaLO samples
         isbbH = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in j) else False #bbH has a different label in LHEEventProduct
-        isSignal = True if ('HToSSTobbbb_MH-125' in j  or 'HToSSTo4b_MH-125' in j or 'HToSSTobbbb_WToLNu' in j) else False #FIXME: Update with other signal modes & models?
+        isSignal = True if ('HToSSTobbbb_MH-125' in j or 'HToSSTo4b_MH-125' in j or 'HToSSTobbbb_WToLNu' in j or 'HToSSTobbbb_ZToLL' in j) else False #FIXME: Update with other signal modes & models?
         GT = ''
 
         if isMINIAOD:
         #from https://indico.cern.ch/event/920726/contributions/3868370/attachments/2055396/3446379/20-06-11_News_PPD.pdf
             if isData:
                 if is2016:
-                    GT = '102X_dataRun2_v13'
+                    GT = '102X_dataRun2_v14'
                 elif is2017:
-                    GT = '102X_dataRun2_v13'
+                    GT = '102X_dataRun2_v14'
                 elif is2018:
-                    if any(s in j for s in theRun2018ABC): GT = '102X_dataRun2_v13'
+                    if any(s in j for s in theRun2018ABC): GT = '102X_dataRun2_v14'
                     if any(s in j for s in theRun2018D):   GT = '102X_dataRun2_Prompt_v16'
             elif not(isData):
                 if is2016:
@@ -1030,8 +1093,8 @@ if __name__ == '__main__':
             JERstring = 'Autumn18_V7b_MC'
             MuonSFTriggerstring = 'MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate'
             print "WARNING! There is another SF root file for single muon triggers for Run A: run < 316361 it is called: MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_BeforeMuonHLTUpdate. TO BE IMPLEMENTED SOMEHOW!"
-            print "To ignore this warning, add the option 'isControl = False' to your list"
-            if isControl: exit()
+            # print "To ignore this warning, add the option 'isControl = False' to your list"
+            # if isControl: exit()
             MuonSFISOstring = 'MuonISO_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ISO'
             MuonSFIDstring = 'MuonID_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID'
             eleVetoIDstring = '2018_ElectronWPVeto_Fall17V2'
@@ -1117,7 +1180,7 @@ if __name__ == '__main__':
         string_SUSY = 'PSUSY=True' if isSUSY else 'PSUSY=False'
 
         # Set parameters and print python config
-        if options.crabaction=="submit" or options.crabaction=="dryrun" or options.crabaction=="test":
+        if options.crabaction=="submit" or options.crabaction=="dryrun" or options.crabaction=="recover" or options.crabaction=="test":
             if "VBFH_HToSS" in j and not isCentralProd:
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
@@ -1136,26 +1199,62 @@ if __name__ == '__main__':
             else:
                 config.Data.inputDBS = "global"
 
+            # Some sample-specific settings:
+            if isTracking and is2018 and isData:
+                config.Data.splitting = 'FileBased'
+                config.Data.unitsPerJob = 1
+
+            elif isTracking and is2018 and isSignal:
+                config.Data.splitting = 'EventAwareLumiBased'
+                config.Data.unitsPerJob = 150000
+
+            elif isTracking and is2018 and "ST_t-channel_top" in j:
+                config.Data.splitting = 'FileBased'
+                config.Data.unitsPerJob = 10
+
+            elif isTracking and is2018 and "DYJetsToLL_M-50" in j and "ext2-v1" in j:
+                config.Data.splitting = 'FileBased'
+                config.Data.unitsPerJob = 10
+
+            elif isTracking and is2018:
+                config.Data.splitting = 'EventAwareLumiBased'
+                config.Data.unitsPerJob = 250000
+
             os.system('echo submitting this config...\n')
             #modify parameters here
-            config.General.requestName = j
+            config.General.requestName = j + "_01Jun2022"
             config.Data.inputDataset = selected_requests[j]
             config.JobType.psetName = "python/" + pset
             config.Data.outLFNDirBase = outLFNDirBase
             config.General.workArea= workarea
+            config.Data.lumiMask = ""
             if isData:
                 if is2016:
                     config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
                 elif is2017:
                     config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
                 elif is2018:
-                    config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+                    # config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+                    config.Data.lumiMask = 'https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+                    # config.Data.lumiMask = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
                 #config.Data.splitting = 'Automatic'
                 #config.Data.unitsPerJob = 100000#comment, giving errors with new crab
             elif isCentralProd:
-                if isSignal:
+                if isSignal and selected_lumiMasks[j] != '':
                     config.Data.lumiMask = os.environ['CMSSW_BASE']+'/src/Analyzer/LLP2018/data_gen/JSON/'+selected_lumiMasks[j]+'.txt'
                     print "Use lumiMask: "+os.environ['CMSSW_BASE']+"/src/Analyzer/LLP2018/data_gen/JSON/"+selected_lumiMasks[j]+".txt"
+            if options.crabaction=="recover":
+                # JSON file with "not processed" lumis, obtained with 'crab report' (default is notFinished)
+                recoveryJSON = workarea + '/crab_'+j+"/results/notFinishedLumis.json"
+                print "Using recovery lumiMask: " + recoveryJSON
+                # recoveryJSON = workarea + '/crab_'+j+"/report/results/notPublishedLumis.json"
+                # recoveryJSON = workarea + '/crab_'+j+"/report/results/failedLumis.json"
+                if not (os.path.exists(recoveryJSON)):
+                    print "Recovery JSON file does not exist. Please check!"
+                    print "Use 'crab report' to get the list of non-processed lumis"
+                    exit()
+                config.General.requestName = j + "_recoveryTask"
+                config.Data.lumiMask = recoveryJSON
             #config.JobType.pyCfgParams = ['runLocal=False']
             #FIXME JERstring should not be needed anymore. Test miniAOD ntuplizer without this parameter!
             #FIXME isCentralProd is not yet implemented in AOD ntuplizer. Add!
@@ -1166,7 +1265,7 @@ if __name__ == '__main__':
                 config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod,string_isPromptReco, string_is2016, string_is2017, string_is2018, string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_btagSFstring, string_triggerTag, string_triggerString, string_filterString, string_calo, string_tracking, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
             # Submit config file
-            if options.crabaction=="submit":
+            if options.crabaction=="submit" or options.crabaction=="recover":
                 if not isCentralProd or not isSignal:
                     submit(config)
                 else:
