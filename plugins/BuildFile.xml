@@ -25,6 +25,7 @@
 <use name="PhysicsTools/CandUtils"/>
 <use name="PhysicsTools/Utilities"/>
 <use name="PhysicsTools/KinFitter"/>
+<use name="PhysicsTools/TensorFlow"/>
 <use name="CommonTools/CandUtils"/>
 <use name="CommonTools/UtilAlgos"/>
 <use name="CommonTools/Utils"/>
@@ -39,7 +40,9 @@
 <use name="fastjet"/>
 <use name="fastjet-contrib"/>
 <use name="HiggsLongLived/TreeMaker"/>
+<use name="HiggsLongLived/AnalysisCommon"/>
 <!--<use name="lhapdf"/>-->
+
 
 <flags CXXFLAGS="-Wno-delete-non-virtual-dtor"/>
 <use name="self"/>

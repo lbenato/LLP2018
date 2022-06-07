@@ -143,6 +143,10 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
   //CaloJetAnalyzer* theCaloJetAnalyzer;
     GenAnalyzer* theGenAnalyzer;
     PileupAnalyzer* thePileupAnalyzer;
+    PileupAnalyzer* thePileupAnalyzer_HLT_Mu7_IP4;
+    PileupAnalyzer* thePileupAnalyzer_HLT_Mu9_IP6;
+    PileupAnalyzer* thePileupAnalyzer_HLT_Mu12_IP6;
+    PileupAnalyzer* thePileupAnalyzer_HLT_Mu9_IP6_v6;
     TriggerAnalyzer* theTriggerAnalyzer;
     ElectronAnalyzer* theElectronAnalyzer;
     MuonAnalyzer* theMuonAnalyzer;
@@ -161,11 +165,12 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 
     int idLLP, idHiggs, idMotherB, statusLLP, statusHiggs;
     double MinGenBpt, MaxGenBeta;
+    double MinHT;
     double InvmassVBF, DetaVBF;//VBF tagging
     //int WriteNJets, WriteNFatJets;//unused, we have vectors now
     int WriteNFatJets;
     //int WriteNGenBquarks, WriteNGenLongLiveds;//unused, we have vectors now
-    bool WriteGenVBFquarks, WriteGenHiggs, WriteGenBquarks, WriteGenLLPs;
+    bool WriteGenVBFquarks, WriteGenHiggs, WriteGenLLPs, WriteGenBquarks, WriteGenMuons;
     int  WriteNMatchedJets;
     int  WriteNLeptons;
     bool WriteOnlyTriggerEvents, WriteOnlyL1FilterEvents, WriteOnlyisVBFEvents;
@@ -176,7 +181,8 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     bool WriteLostTracks;
     bool WriteVertices;
     bool WriteBtagInfos;
-    bool WriteROIs;
+    bool WriteROITaggerScore;
+    bool WriteROITaggerInputs;
     bool CalculateNsubjettiness;
     bool PerformPreFiringStudies;
     bool PerformVBF;
@@ -193,26 +199,50 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //std::vector<CaloJetType> MatchedCaloJets;
     //std::vector<CaloJetType> MatchedCaloJetsWithGenJets;
     std::vector<GenPType> GenVBFquarks;
-    std::vector<GenPType> GenBquarks;
-    std::vector<GenPType> GenLLPs;
     std::vector<GenPType> GenHiggs;
+    std::vector<GenPType> GenLLPs;
+    std::vector<GenPType> GenBquarks;
+    std::vector<GenPType> GenMuons;
     std::vector<VertexType> PrimVertices;
     std::vector<VertexType> SecVertices;
     std::vector<VertexType> SecVerticesVert;
     //std::vector<LeptonType> Leptons;
     std::vector<LeptonType> Muons;
+    std::vector<LeptonType> TightMuons;
+    std::vector<LeptonType> LooseMuons;
     std::vector<LeptonType> Electrons;
+    std::vector<LeptonType> LooseElectrons;
     //Jet const vector
     std::vector<PFCandidateType> PFCandidates;
     std::vector<PFCandidateType> LostTracks;
     std::vector<VertexType> BTagVertices;
-    // Objects for ROI tagger:
+    // Input objects for ROI tagger:
+    std::vector<Vertex> VerticesROI;
     std::vector<LostTrack> LostTracksROI;
     std::vector<PackedPFCandidate> PFCandidatesROI;
     std::vector<TrackCluster> TrackClusters;
     std::vector<RegionOfInterest> RegionsOfInterest;
+    // ROI object for ntuples
+    std::vector<ROIType> ROIs;
+    std::vector<float> ROIScores;
+    std::vector<float> ROIDeltaR;
+    std::vector<float> ROIDeltaPhi;
+    std::vector<int> ROITrackClusterMultiplicity;
+    std::vector<int> ROIAnnulusTrackMultiplicity;
+    std::vector<float> ROIDistanceToLeadingLLP;
+    std::vector<float> ROIDistanceToSubleadingLLP;
 
 
+
+    // --------------------------------
+    // TODO: Add the following (below):
+    // --------------------------------
+    // int nROIs; // Defined already above
+    // int nROIsMatchedToLeadingLLP;
+    // int nROIsMatchedToSubleadingLLP;
+
+    int LeadingLLP, LeadingROI, SubleadingROI_dPhi2p0, MaxDisplacedJet;
+    float LeadingROIScore, SubleadingROIScore_dPhi2p0;
 
     MEtType MEt;
     CandidateType VBF;//VBF tagging
@@ -233,11 +263,13 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     bool isVerbose, isVerboseTrigger, isSignal, isCalo, isTracking, isShort, isControl, isCentralProd, is2016, is2017, is2018;
     bool isVBF, isggH;
     bool isMC;
-    long int EventNumber, LumiNumber, RunNumber, nPV, nSV;
+    long int EventNumber, LumiNumber, RunNumber;
+    long int nPV, nSV, nROIs;
+    int MeanNumInteractions;
     bool AtLeastOneTrigger, AtLeastOneL1Filter;
     bool isIsoMu24_OR_IsoTkMu24, isMu50_OR_TkMu50;
     long int nLooseCHSJets, nTightCHSJets, nCHSJets, nAllBarrelJets, nAllJets, nVBFGenMatchedJets;
-    long int nLooseCHSFatJets, nTightCHSFatJets, nCHSFatJets, nGenBquarks, nGenLL;
+    long int nLooseCHSFatJets, nTightCHSFatJets, nCHSFatJets, nGenLL, nGenBquarks, nGenMuons;
     long int nMatchedCHSJets, nMatchedFatJets;
   //long int nCaloJets, nMatchedCaloJets, nMatchedCaloJetsWithGenJets;
     long int number_of_b_matched_to_CHSJets;
@@ -246,6 +278,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
   //long int number_of_b_matched_to_CaloJets, number_of_b_matched_to_CaloJetsWithGenJets;
     long int nElectrons, nMuons, nTaus, nPhotons;
     long int nTightElectrons, nTightMuons;
+    long int nLooseElectrons, nLooseMuons, nTriggerMuons;
     long int number_of_PV;
     long int number_of_SV;
     long int nPFCandidates, nPFCandidatesTrack, nPFCandidatesHighPurityTrack, nPFCandidatesFullTrackInfo, nPFCandidatesFullTrackInfo_pt, nPFCandidatesFullTrackInfo_hasTrackDetails;
@@ -255,6 +288,10 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     float EventWeight_leptonSFDown;
     float GenEventWeight;
     float PUWeight, PUWeightUp, PUWeightDown;
+    float PUWeight_HLT_Mu7_IP4, PUWeightUp_HLT_Mu7_IP4, PUWeightDown_HLT_Mu7_IP4;
+    float PUWeight_HLT_Mu9_IP6, PUWeightUp_HLT_Mu9_IP6, PUWeightDown_HLT_Mu9_IP6;
+    float PUWeight_HLT_Mu12_IP6, PUWeightUp_HLT_Mu12_IP6, PUWeightDown_HLT_Mu12_IP6;
+    float PUWeight_HLT_Mu9_IP6_v6, PUWeightUp_HLT_Mu9_IP6_v6, PUWeightDown_HLT_Mu9_IP6_v6;
     float FacWeightUp, FacWeightDown, RenWeightUp, RenWeightDown, CorrWeightUp, CorrWeightDown;
     float PdfWeight;
     float LeptonWeight, LeptonWeightUp, LeptonWeightDown;
@@ -273,6 +310,8 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //bool isVBF;
     bool isTriggerVBF;
     //Z-W-T CR
+    bool isTightMM, isTightEE, isTightM, isTightE, isTightEM, isLooseEM;
+    bool isOppositeSignTightMM, isOppositeSignTightEE;
     bool isZtoMM, isZtoEE, isWtoMN, isWtoEN, isTtoEM;
     AddFourMomenta addP4;
     //Displaced calo tagging

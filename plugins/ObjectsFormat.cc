@@ -32,7 +32,6 @@ void ObjectsFormat::FillElectronType(LeptonType& I, const pat::Electron* R, bool
     I.isMedium    = R->hasUserInt("isMedium") ? R->userInt("isMedium") : false;
     I.isTight     = R->hasUserInt("isTight") ? R->userInt("isTight") : false;
     I.isHighPt    = R->hasUserInt("isHEEP") ? R->userInt("isHEEP") : false;
-
     I.SSscale               = R->hasUserFloat("SSscale") ? R->userFloat("SSscale") : -1.;
     I.SSsigma               = R->hasUserFloat("SSsigma") ? R->userFloat("SSsigma") : -1.;
     I.SSscaleUnc            = R->hasUserFloat("SSscaleUnc") ? R->userFloat("SSscaleUnc") : -1.;
@@ -46,7 +45,7 @@ void ObjectsFormat::FillElectronType(LeptonType& I, const pat::Electron* R, bool
     I.ptSScorrUncUp         = R->hasUserFloat("ptSScorrUncUp") ? R->userFloat("ptSScorrUncUp") : -1.;
     I.ptSScorrUncDown       = R->hasUserFloat("ptSScorrUncDown") ? R->userFloat("ptSScorrUncDown") : -1.;
 
-    if(isMC && R->genLepton()) I.isMatched = false;//(Utilities::FindMotherId(dynamic_cast<const reco::Candidate*>(R->genLepton()))==23);
+    if(isMC && R->genLepton()) I.isGenMatched = false;//(Utilities::FindMotherId(dynamic_cast<const reco::Candidate*>(R->genLepton()))==23);
 //    I.isMVANonTrigMedium      = R->hasUserInt("isMVANonTrigMedium") ? R->userInt("isMVANonTrigMedium") : false;
 //    I.isMVANonTrigTight      = R->hasUserInt("isMVANonTrigTight") ? R->userInt("isMVANonTrigTight") : false;
 //    I.isMVATrigMedium      = R->hasUserInt("isMVATrigMedium") ? R->userInt("isMVATrigMedium") : false;
@@ -67,10 +66,29 @@ void ObjectsFormat::FillMuonType(LeptonType& I, const pat::Muon* R, bool isMC) {
     I.miniIso     = R->hasUserFloat("miniIso") ? R->userFloat("miniIso") : -1.;
     I.dxy         = R->hasUserFloat("dxy") ? R->userFloat("dxy") : R->dB();
     I.dz          = R->hasUserFloat("dz") ? R->userFloat("dz") : 0.;
+    I.dxyErr      = R->hasUserFloat("dxyErr") ? R->userFloat("dxyErr") : -1.;
+    I.dxySig      = R->hasUserFloat("dxySig") ? R->userFloat("dxySig") : -999.;
+    I.triggered_HLT_Mu12_IP6 = R->hasUserInt("triggered_HLT_Mu12_IP6") ? R->userInt("triggered_HLT_Mu12_IP6") : false;
+    I.triggered_HLT_Mu10p5_IP3p5  = R->hasUserInt("triggered_HLT_Mu10p5_IP3p5") ? R->userInt("triggered_HLT_Mu10p5_IP3p5") : false;
+    I.triggered_HLT_Mu9_IP6  = R->hasUserInt("triggered_HLT_Mu9_IP6") ? R->userInt("triggered_HLT_Mu9_IP6") : false;
+    I.triggered_HLT_Mu9_IP5  = R->hasUserInt("triggered_HLT_Mu9_IP5") ? R->userInt("triggered_HLT_Mu9_IP5") : false;
+    I.triggered_HLT_Mu9_IP4  = R->hasUserInt("triggered_HLT_Mu9_IP4") ? R->userInt("triggered_HLT_Mu9_IP4") : false;
+    I.triggered_HLT_Mu8p5_IP3p5  = R->hasUserInt("triggered_HLT_Mu8p5_IP3p5") ? R->userInt("triggered_HLT_Mu8p5_IP3p5") : false;
+    I.triggered_HLT_Mu8_IP6  = R->hasUserInt("triggered_HLT_Mu8_IP6") ? R->userInt("triggered_HLT_Mu8_IP6") : false;
+    I.triggered_HLT_Mu8_IP5  = R->hasUserInt("triggered_HLT_Mu8_IP5") ? R->userInt("triggered_HLT_Mu8_IP5") : false;
+    I.triggered_HLT_Mu8_IP3  = R->hasUserInt("triggered_HLT_Mu8_IP3") ? R->userInt("triggered_HLT_Mu8_IP3") : false;
+    I.triggered_HLT_Mu7_IP4  = R->hasUserInt("triggered_HLT_Mu7_IP4") ? R->userInt("triggered_HLT_Mu7_IP4") : false;
     I.ip3d        = R->dB(pat::Muon::PV3D);//not working
     I.sip3d       = R->dB(pat::Muon::PV3D)/R->edB(pat::Muon::PV3D);//not working
     I.nPixelHits  = -1.;//R->innerTrack()->hitPattern().numberOfValidPixelHits();
     I.dPhi_met    = R->hasUserFloat("dPhi_met") ? R->userFloat("dPhi_met") : -99.;
+    I.isInnerTrackerMuon  = R->hasUserInt("isInnerTrackerMuon") ? R->userInt("isInnerTrackerMuon") : false;
+    I.isTMOneStationTight = R->hasUserInt("isTMOneStationTight") ? R->userInt("isTMOneStationTight") : false;
+    I.nTrackerLayers      = R->hasUserInt("nTrackerLayers") ? R->userInt("nTrackerLayers") : -1;
+    I.nPixelLayers        = R->hasUserInt("nPixelLayers") ? R->userInt("nPixelLayers") : -1;
+    I.isHighPurityTrack   = R->hasUserInt("isHighPurityTrack") ? R->userInt("isHighPurityTrack") : false;
+    I.dxyTrack            = R->hasUserFloat("dxyTrack") ? R->userFloat("dxyTrack") : -999.;
+    I.dzTrack             = R->hasUserFloat("dzTrack") ? R->userFloat("dzTrack") : -999.;
     I.charge      = R->charge();
     I.pdgId       = R->pdgId();
     I.isElectron  = false;
@@ -82,8 +100,12 @@ void ObjectsFormat::FillMuonType(LeptonType& I, const pat::Muon* R, bool isMC) {
     I.isHighPt    = R->hasUserInt("isHighPt") ? R->userInt("isHighPt") : false;
     //I.isTrackerHighPt = R->hasUserInt("isTrackerHighPt") ? R->userInt("isTrackerHighPt") : false;
     I.isPFMuon    = R->hasUserInt("isPFMuon") ? R->userInt("isPFMuon") : false;
+    I.isSoftMuon  = R->hasUserInt("isSoftMuon") ? R->userInt("isSoftMuon") : false;
+    I.isSoftMuonFromCuts = R->hasUserInt("isSoftMuonFromCuts") ? R->userInt("isSoftMuonFromCuts") : false;
+    I.isGenMatched = R->hasUserInt("isGenMatched") ? R->userInt("isGenMatched") : false;
+    I.MatchedGenMuonIndex = R->hasUserInt("MatchedGenMuonIndex") ? R->userInt("MatchedGenMuonIndex") : -1;
 
-    if(isMC && R->genLepton()) I.isMatched = false;//(Utilities::FindMotherId(dynamic_cast<const reco::Candidate*>(R->genLepton()))==23);
+    // if(isMC && R->genLepton()) I.isMatched = false;//(Utilities::FindMotherId(dynamic_cast<const reco::Candidate*>(R->genLepton()))==23);
 }
 
 void ObjectsFormat::ResetLeptonType(LeptonType& I) {
@@ -132,7 +154,7 @@ void ObjectsFormat::ResetLeptonType(LeptonType& I) {
     I.ptSScorrUncUp         = -1.;
     I.ptSScorrUncDown       = -1.;
 
-    I.isMatched   = false;
+    I.isGenMatched   = false;
 }
 
 std::string ObjectsFormat::ListLeptonType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:inTrkPt/F:pfIso03/F:pfIso04/F:trkIso/F:miniIso/F:dxy/F:dz/F:ip3d/F:sip3d/F:nPixelHits/F:dPhi_met/F:charge/I:pdgId/I:isElectron/O:isMuon/O:isVeto/O:isLoose/O:isMedium/O:isTight/O:isHighPt/O:isPFMuon/O:SSscale/F:SSsigma/F:SSscaleUnc/F:SSsigmaUncUp/F:SSsigmaUncDown/F:SScorr/F:energySScorr/F:energySScorrUncUp/F:energySScorrUncDown/F:ptSScorr/F:ptSScorrUncUp/F:ptSScorrUncDown/F:isMatched/O";} // isHEEP/O:isMVANonTrigMedium/O:isMVANonTrigTight/O:isMVATrigMedium/O:isMVATrigTight/O:
@@ -387,8 +409,9 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     //I.minDeltaRAllTracks = R->hasUserFloat("minDeltaRAllTracks") ? R->userFloat("minDeltaRAllTracks") : 999.;
     //I.minDeltaRPVTracks  = R->hasUserFloat("minDeltaRPVTracks") ? R->userFloat("minDeltaRPVTracks") : 999.;
     //I.minDeltaRAllTracksInJet = R->hasUserFloat("minDeltaRAllTracksInJet") ? R->userFloat("minDeltaRAllTracksInJet") : 999.;
-    //I.minDeltaRPVTracksInJet  = R->hasUserFloat("minDeltaRPVTracksInJet") ? R->userFloat("minDeltaRPVTracksInJet") : 999.;    
+    //I.minDeltaRPVTracksInJet  = R->hasUserFloat("minDeltaRPVTracksInJet") ? R->userFloat("minDeltaRPVTracksInJet") : 999.;
     I.sigIP2DMedianOld = R->hasUserFloat("sigIP2DMedianOld") ? R->userFloat("sigIP2DMedianOld") : -10000;
+    I.log10AbsSigIP2DMedianOld = R->hasUserFloat("sigIP2DMedianOld") ? TMath::Log10(TMath::Abs(R->userFloat("sigIP2DMedianOld"))) : 5;
     I.theta2DMedianOld = R->hasUserFloat("theta2DMedianOld") ? R->userFloat("theta2DMedianOld") : -100;
     I.POCA_theta2DMedianOld = R->hasUserFloat("POCA_theta2DMedianOld") ? R->userFloat("POCA_theta2DMedianOld") : -100;
     I.nPixelHitsMedianOld = R->hasUserFloat("nPixelHitsMedianOld") ? R->userFloat("nPixelHitsMedianOld") : -1.0;
@@ -414,7 +437,7 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     I.nHitsMedian    = R->hasUserFloat("nHitsMedian") ? R->userFloat("nHitsMedian") : -1.;
     I.nPixelHitsMedian    = R->hasUserFloat("nPixelHitsMedian") ? R->userFloat("nPixelHitsMedian") : -1.;
     I.dzMedian       = R->hasUserFloat("dzMedian") ? R->userFloat("dzMedian") : -9999.;
-    I.dxyMedian      = R->hasUserFloat("dxyMedian") ? R->userFloat("dxyMedian") : -9999.;  
+    I.dxyMedian      = R->hasUserFloat("dxyMedian") ? R->userFloat("dxyMedian") : -9999.;
     I.hcalE       = R->chargedHadronEnergy() + R->neutralHadronEnergy();
     I.ecalE       = R->chargedEmEnergy() + R->neutralEmEnergy();
     I.FracCal     = (R->chargedEmEnergy() + R->neutralEmEnergy())/(R->chargedHadronEnergy() + R->neutralHadronEnergy());
@@ -558,12 +581,13 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     I.ptDPF  = R->hasUserFloat("ptDPF") ? R->userFloat("ptDPF")  : -1.;
 
     I.sigprob     = R->hasUserFloat("sigprob") ? R->userFloat("sigprob") : -1.;
-    I.pfXWP0p01   = R->hasUserFloat("pfXWP0p01") ? R->userFloat("pfXWP0p01") : -1.; 
+    I.pfXWP0p01   = R->hasUserFloat("pfXWP0p01") ? R->userFloat("pfXWP0p01") : -1.;
     I.pfXWP0p1    = R->hasUserFloat("pfXWP0p1") ? R->userFloat("pfXWP0p1") : -1.;
-    I.pfXWP1      = R->hasUserFloat("pfXWP1") ? R->userFloat("pfXWP1") : -1.; 
-    I.pfXWP10     = R->hasUserFloat("pfXWP10") ? R->userFloat("pfXWP10") : -1.; 
-    I.pfXWP100    = R->hasUserFloat("pfXWP100") ? R->userFloat("pfXWP100") : -1.; 
-    I.pfXWP1000   = R->hasUserFloat("pfXWP1000") ? R->userFloat("pfXWP1000") : -1.; 
+    I.pfXWP1      = R->hasUserFloat("pfXWP1") ? R->userFloat("pfXWP1") : -1.;
+    I.pfXWP10     = R->hasUserFloat("pfXWP10") ? R->userFloat("pfXWP10") : -1.;
+    I.pfXWP100    = R->hasUserFloat("pfXWP100") ? R->userFloat("pfXWP100") : -1.;
+    I.pfXWP1000   = R->hasUserFloat("pfXWP1000") ? R->userFloat("pfXWP1000") : -1.;
+
     I.deepCSV_probc_probudsg = R->bDiscriminator("pfDeepCSVJetTags:probc") + R->bDiscriminator("pfDeepCSVJetTags:probudsg");
     I.deepCSV_probb_probbb = R->bDiscriminator("pfDeepCSVJetTags:probb") + R->bDiscriminator("pfDeepCSVJetTags:probbb");
     I.deepCSV_probudsg = R->bDiscriminator("pfDeepCSVJetTags:probudsg");
@@ -578,6 +602,14 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     I.deepJet_probb = R->bDiscriminator("pfDeepFlavourJetTags:probb");
     I.deepJet_probc = R->bDiscriminator("pfDeepFlavourJetTags:probc");
     I.deepJet_probbb = R->bDiscriminator("pfDeepFlavourJetTags:probbb");
+
+    I.absDeltaPhiToLeadingROI = R->hasUserFloat("absDeltaPhiToLeadingROI") ? R->userFloat("absDeltaPhiToLeadingROI") : -1.0;
+    I.absDeltaPhiToSubleadingROI = R->hasUserFloat("absDeltaPhiToSubleadingROI") ? R->userFloat("absDeltaPhiToSubleadingROI") : -1.0;
+    I.absDeltaPhiToNearestTaggedROI = (I.absDeltaPhiToSubleadingROI > 0 && I.absDeltaPhiToSubleadingROI < I.absDeltaPhiToLeadingROI) ? I.absDeltaPhiToSubleadingROI : I.absDeltaPhiToLeadingROI;
+    I.absDeltaPhiToFarthestTaggedROI = (I.absDeltaPhiToSubleadingROI > 0 && I.absDeltaPhiToSubleadingROI < I.absDeltaPhiToLeadingROI) ? I.absDeltaPhiToLeadingROI : I.absDeltaPhiToSubleadingROI;
+    I.matchedToLeadingROI = R->hasUserFloat("absDeltaPhiToLeadingROI") ? ((R->userFloat("absDeltaPhiToLeadingROI") >= 0) && (R->userFloat("absDeltaPhiToLeadingROI") < 0.4)) : false;
+    I.matchedToSubleadingROI = R->hasUserFloat("absDeltaPhiToSubleadingROI") ? ((R->userFloat("absDeltaPhiToSubleadingROI") >= 0) && (R->userFloat("absDeltaPhiToSubleadingROI") < 0.4)) : false;
+    I.matchedToTaggedROI = (I.matchedToLeadingROI || I.matchedToSubleadingROI);
 }
 
 void ObjectsFormat::ResetJetType(JetType& I) {
@@ -809,11 +841,11 @@ void ObjectsFormat::ResetJetType(JetType& I) {
     I.eFracRecHitsHB = -1.;
     I.eFracRecHitsHE = -1.;
     I.sigprob     = -1.;
-    I.pfXWP0p01   = -1.; 
+    I.pfXWP0p01   = -1.;
     I.pfXWP0p1    = -1.;
-    I.pfXWP1      = -1.; 
-    I.pfXWP10      = -1.; 
-    I.pfXWP100      = -1.; 
+    I.pfXWP1      = -1.;
+    I.pfXWP10      = -1.;
+    I.pfXWP100      = -1.;
     I.pfXWP1000   = -1.;
     I.deepCSV_probc_probudsg  = -99.;
     I.deepCSV_probb_probbb= -99.;
@@ -1068,7 +1100,7 @@ void ObjectsFormat::FillFatJetType(FatJetType& I, const pat::Jet* R, std::string
     //L//I.nTracks0LostInnerHits = R->hasUserInt("nTracks0LostInnerHits") ? R->userInt("nTracks0LostInnerHits") : -1;
     //L//I.nTracks1LostInnerHit = R->hasUserInt("nTracks1LostInnerHit") ? R->userInt("nTracks1LostInnerHit") : -1;
     //L//I.nTracksAtLeast2LostInnerHits = R->hasUserInt("nTracksAtLeast2LostInnerHits") ? R->userInt("nTracksAtLeast2LostInnerHits") : -1;
-    
+
     I.nRecHitsEB = R->hasUserInt("nRecHitsEB") ? R->userInt("nRecHitsEB") : -1;
     I.timeRecHitsEB = R->hasUserFloat("timeRecHitsEB") ? R->userFloat("timeRecHitsEB") : -100.;
     I.timeRMSRecHitsEB = R->hasUserFloat("timeRMSRecHitsEB") ? R->userFloat("timeRMSRecHitsEB") : -1.;
@@ -1137,7 +1169,7 @@ void ObjectsFormat::FillFatJetType(FatJetType& I, const pat::Jet* R, std::string
 
     //track, new implementation
     I.nConstituents = R->hasUserInt("nConstituents") ? R->userInt("nConstituents") : -1;
-    I.nTrackConstituents = R->hasUserInt("nTrackConstituents") ? R->userInt("nTrackConstituents") : -1;    
+    I.nTrackConstituents = R->hasUserInt("nTrackConstituents") ? R->userInt("nTrackConstituents") : -1;
     if (R->tagInfoLabels().size() > 0){
       if(R->hasTagInfo("pfSecondaryVertex")){
 	I.nSelectedTracks = R->tagInfoCandSecondaryVertex("pfSecondaryVertex")->nSelectedTracks();
@@ -1161,8 +1193,8 @@ void ObjectsFormat::FillFatJetType(FatJetType& I, const pat::Jet* R, std::string
     I.nHitsMedian    = R->hasUserFloat("nHitsMedian") ? R->userFloat("nHitsMedian") : -1.;
     I.nPixelHitsMedian    = R->hasUserFloat("nPixelHitsMedian") ? R->userFloat("nPixelHitsMedian") : -1.;
     I.dzMedian       = R->hasUserFloat("dzMedian") ? R->userFloat("dzMedian") : -9999.;
-    I.dxyMedian      = R->hasUserFloat("dxyMedian") ? R->userFloat("dxyMedian") : -9999.;     
-    
+    I.dxyMedian      = R->hasUserFloat("dxyMedian") ? R->userFloat("dxyMedian") : -9999.;
+
     I.sigprob      = R->hasUserFloat("sigprob") ? R->userFloat("sigprob") : -1.;
 
     I.nMatchedGenBquarks = R->hasUserInt("nMatchedGenBquarks") ? R->userInt("nMatchedGenBquarks") : -1;
@@ -1761,12 +1793,12 @@ void ObjectsFormat::FillCandidateType(CandidateType& I, pat::CompositeCandidate*
   if(!R) return;
   if(R->numberOfDaughters() == 0) return;
   I.pt          = R->pt();
-  I.eta         = R->eta();
+  I.eta         = !(R->hasUserFloat("isW") && R->userFloat("isW")) ? R->eta() : -9.;
   I.phi         = R->phi();
-  I.mass        = R->mass();
+  I.mass        = !(R->hasUserFloat("isW") && R->userFloat("isW")) ? R->mass() : -1.;
 //  I.tmass       = R->numberOfDaughters()>1 ? sqrt( 2.*R->daughter(0)->pt()*R->daughter(1)->pt()*(1.-cos(deltaPhi(R->daughter(0)->phi(), R->daughter(1)->phi())) ) ) : -1.;
 //Lisa
-  I.tmass       = R->numberOfDaughters()>1 ? sqrt( 2.*R->daughter(0)->pt()*R->daughter(1)->pt()*(1.-cos(deltaPhi(R->daughter(0)->phi(), R->daughter(1)->phi())) ) ) : (R->numberOfDaughters()==1 ? R->mt() : -1.);
+  I.tmass       = R->hasUserFloat("mt") ? R->userFloat("mt") : -1.;//numberOfDaughters()>1 ? sqrt( 2.*R->daughter(0)->pt()*R->daughter(1)->pt()*(1.-cos(deltaPhi(R->daughter(0)->phi(), R->daughter(1)->phi())) ) ) : (R->numberOfDaughters()==1 ? R->mt() : -1.);
 //  I.softdropMass= R->hasUserFloat("softdropMass") ? R->userFloat("softdropMass") : -1.;
   I.dR          = R->numberOfDaughters()>1 ? deltaR(*R->daughter(0), *R->daughter(1)) : -1.;
   I.dEta        = R->numberOfDaughters()>1 ? fabs( R->daughter(0)->eta() - R->daughter(1)->eta() ) : -1.;
@@ -1898,6 +1930,7 @@ void ObjectsFormat::FillGenPType(GenPType& I, const reco::GenParticle* R) {
     I.motherid    = R->mother()? R->mother()->pdgId() : 0;
     I.vx          = R->vx();
     I.vy          = R->vy();
+    I.vxy         = sqrt( pow(R->vx(),2) + pow(R->vy(),2) );
     I.vz          = R->vz();
     I.travelTime  = R->numberOfDaughters()>1 ? sqrt( pow(R->daughter(0)->vx()-R->vx(),2)+ pow(R->daughter(0)->vy()-R->vy(),2) + pow(R->daughter(0)->vz()-R->vz(),2) )/30*sqrt(pow(R->px(),2) + pow(R->py(),2) + pow(R->pz(),2))/R->energy(): -1.;
     I.travelRadius = R->numberOfDaughters()>1 ? sqrt( pow(R->daughter(0)->vx(),2)+ pow(R->daughter(0)->vy(),2) ) : -1000.;
@@ -2367,9 +2400,8 @@ std::string ObjectsFormat::ListSimplifiedJetType() {return "pt/F:eta/F:phi/F:mas
 
 
 //*****************************//
-////        DT4DSegments         //
-////*****************************//
-
+//        DT4DSegments         //
+//*****************************//
 
 void ObjectsFormat::FillDT4DSegmentType(DT4DSegmentType& I, const DTRecSegment4D* R, const GlobalPoint* P) {
     if(!R) return;
@@ -2378,8 +2410,6 @@ void ObjectsFormat::FillDT4DSegmentType(DT4DSegmentType& I, const DTRecSegment4D
     I.sector      = R->chamberId().sector();
     I.station      = R->chamberId().station();
     I.wheel      = R->chamberId().wheel();
-
-
 }
 
 void ObjectsFormat::ResetDT4DSegmentType(DT4DSegmentType& I) {
@@ -2388,11 +2418,9 @@ void ObjectsFormat::ResetDT4DSegmentType(DT4DSegmentType& I) {
     I.sector      = -9;
     I.station      = -9;
     I.wheel      = -9;
-
 }
 
 std::string ObjectsFormat::ListDT4DSegmentType() {return "eta/F:phi/F:sector/I:station/I:wheel/I";}
-
 
 
 void ObjectsFormat::FillCSCSegmentType(CSCSegmentType& I, const CSCSegment* R, const GlobalPoint* P) {
@@ -2403,8 +2431,7 @@ void ObjectsFormat::FillCSCSegmentType(CSCSegmentType& I, const CSCSegment* R, c
     I.layer       = R->cscDetId().layer();
     I.ring        = R->cscDetId().ring();
     I.station     = R->cscDetId().station();
-    I.endcap       = R->cscDetId().endcap();
-
+    I.endcap      = R->cscDetId().endcap();
 }
 
 void ObjectsFormat::ResetCSCSegmentType(CSCSegmentType& I) {
@@ -2415,7 +2442,27 @@ void ObjectsFormat::ResetCSCSegmentType(CSCSegmentType& I) {
     I.ring        = -9;
     I.station     = -9;
     I.endcap      = -9;
-
 }
 
 std::string ObjectsFormat::ListCSCSegmentType() {return "eta/F:phi/F:time/F:layer/I:ring/I:station/I:endcap/I";}
+
+void ObjectsFormat::FillROIType(ROIType& I, const RegionOfInterest* R, const float score, const float dR, const float dPhi, const int nClusters, const int nTracks, const float dLeadingLLP, const float dSubleadingLLP) {
+  I.x                                = R->vx();
+  I.y                                = R->vy();
+  I.z                                = R->vz();
+  I.R                                = TMath::Sqrt((R->vx() * R->vx()) + (R->vy() * R->vy()));
+  I.phi                              = TMath::ATan2(R->vy(), R->vx());
+  I.backgroundScore                  = score;
+  I.log10BackgroundScore             = TMath::Log10(score);
+  I.deltaRToLeadingROI               = dR;
+  I.deltaPhiToLeadingROI             = dPhi;
+  I.absDeltaPhiToLeadingROI          = TMath::Abs(dPhi);
+  I.trackClusterMultiplicity         = nClusters;
+  I.annulusTrackMultiplicity         = nTracks;
+  I.distanceToLeadingLLP             = dLeadingLLP;
+  I.distanceToSubleadingLLP          = dSubleadingLLP;
+  I.distanceToNearestLLP             = dLeadingLLP < dSubleadingLLP ? dLeadingLLP : dSubleadingLLP;
+  I.matchedToLeadingLLP              = (dLeadingLLP > 0 && dLeadingLLP < 0.4) ? true : false;
+  I.matchedToSubleadingLLP           = (dSubleadingLLP > 0 && dSubleadingLLP < 0.4) ? true : false;
+  I.matchedToLLP                     = ((dLeadingLLP > 0 && dLeadingLLP < 0.4) || (dSubleadingLLP > 0 && dSubleadingLLP < 0.4)) ? true : false;
+}

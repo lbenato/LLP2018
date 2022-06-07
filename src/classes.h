@@ -2,7 +2,7 @@
 #include "Analyzer/LLP2018/plugins/Objects.h"
 #include "Analyzer/LLP2018/plugins/RecoObjects.h"
 
-namespace { 
+namespace {
   struct dictionary {
 
     //Structures
@@ -22,6 +22,7 @@ namespace {
     MEtType dummy13;
     ecalRecHitType dummy14;
     hcalRecHitType dummy15;
+    ROIType dummy16;
 
     //Vector of structures
     std::vector<JetType> dummyVector0;
@@ -40,6 +41,7 @@ namespace {
     std::vector<MEtType> dummyVector13;
     std::vector<ecalRecHitType> dummyVector14;
     std::vector<hcalRecHitType> dummyVector15;
+    std::vector<ROIType> dummyVector16;
 
   };
 }

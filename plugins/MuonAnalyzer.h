@@ -33,6 +33,7 @@ class MuonAnalyzer {
         virtual std::vector<pat::Muon> FillMuonVector(const edm::Event&);
         virtual void AddVariables(std::vector<pat::Muon>&, pat::MET&);
         virtual bool IsTrackerHighPtMuon(pat::Muon&, const reco::Vertex*);
+        virtual bool IsSoftMuon(pat::Muon&, const reco::Vertex*);
         virtual std::vector<float> FixTrackerIsolation(pat::Muon&, pat::Muon&);
         virtual std::string GetMuon1Id(pat::Muon&);
         virtual float GetMuonTrkSF(pat::Muon&);
@@ -48,9 +49,9 @@ class MuonAnalyzer {
         virtual float GetMuonTriggerSFMu50(pat::Muon&);
         virtual float GetMuonTriggerSFErrorMu50(pat::Muon&);
         virtual TH1F* ConvertTGraph(TGraphAsymmErrors*);
-      
+
     private:
-      
+
         edm::EDGetTokenT<std::vector<pat::Muon> > MuonToken;
         edm::EDGetTokenT<reco::VertexCollection> VertexToken;
         std::string MuonTrkFileName;
@@ -60,27 +61,27 @@ class MuonAnalyzer {
         std::string MuonTriggerFileName;
         std::string DoubleMuonTriggerFileName;
         int Muon1Id, Muon2Id, Muon1Iso, Muon2Iso;
-        float Muon1Pt, Muon2Pt;
+        float Muon1Pt, Muon2Pt, Muon1Eta, Muon2Eta;
         float MuonPtMax, MuonPtMin;
         bool UseTuneP, DoRochester;
-        
+
         rochcor2016 *rmcor;
-        
+
         bool isMuonTriggerFile, isDoubleMuonTriggerFile, isMuonTrkFile, isMuonIdFile, isMuonIsoFile, isMuonTrkHighptFile;
 	bool isFile2016, isFile2017, isFile2018;
-        
+
         TFile* MuonTriggerFile;
         TFile* DoubleMuonTriggerFile;
         TFile* MuonTrkFile;
         TFile* MuonIdFile;
         TFile* MuonTrkHighptFile;
         TFile* MuonIsoFile;
-        
+
         TH2F* MuonTriggerLt20;
         TH2F* MuonTriggerGt20;
         TH2F* MuonTriggerIsoMu24;
         TH2F* MuonTriggerMu50;
-        
+
         TGraphAsymmErrors* MuonTrkGraph;
         TH1F* MuonTrk;
         TH2F* MuonIdLoose;
@@ -91,7 +92,7 @@ class MuonAnalyzer {
         TH2F* MuonIsoLoose;
         TH2F* MuonIsoTight;
         TH2F* MuonIsoHighpt;
-}; 
+};
 
 
 #endif

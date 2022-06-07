@@ -55,6 +55,7 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     statusHiggs(iConfig.getParameter<int>("statusHiggs")),
     MinGenBpt(iConfig.getParameter<double>("minGenBpt")),
     MaxGenBeta(iConfig.getParameter<double>("maxGenBeta")),
+    MinHT(iConfig.getParameter<double>("minHT")),
     InvmassVBF(iConfig.getParameter<double>("invmassVBF")),
     DetaVBF(iConfig.getParameter<double>("detaVBF")),
     //WriteNJets(iConfig.getParameter<int>("writeNJets")),//unused, we have vectors now
@@ -63,8 +64,9 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     //WriteNGenLongLiveds(iConfig.getParameter<int>("writeNGenLongLiveds")),
     WriteGenVBFquarks(iConfig.getParameter<bool>("writeGenVBFquarks")),
     WriteGenHiggs(iConfig.getParameter<bool>("writeGenHiggs")),
-    WriteGenBquarks(iConfig.getParameter<bool>("writeGenBquarks")),
     WriteGenLLPs(iConfig.getParameter<bool>("writeGenLLPs")),
+    WriteGenBquarks(iConfig.getParameter<bool>("writeGenBquarks")),
+    WriteGenMuons(iConfig.getParameter<bool>("writeGenMuons")),
     WriteNMatchedJets(iConfig.getParameter<int>("writeNMatchedJets")),
     WriteNLeptons(iConfig.getParameter<int>("writeNLeptons")),
     WriteOnlyTriggerEvents(iConfig.getParameter<bool>("writeOnlyTriggerEvents")),
@@ -79,7 +81,8 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     WriteLostTracks(iConfig.getParameter<bool>("writeLostTracks")),
     WriteVertices(iConfig.getParameter<bool>("writeVertices")),
     WriteBtagInfos(iConfig.getParameter<bool>("writeBtagInfos")),
-    WriteROIs(iConfig.getParameter<bool>("writeROIs")),
+    WriteROITaggerScore(iConfig.getParameter<bool>("writeROITaggerScore")),
+    WriteROITaggerInputs(iConfig.getParameter<bool>("writeROITaggerInputs")),
     CalculateNsubjettiness(iConfig.getParameter<bool>("calculateNsubjettiness")),
     PerformPreFiringStudies(iConfig.getParameter<bool>("performPreFiringStudies")),
     PerformVBF(iConfig.getParameter<bool>("performVBF")),
@@ -130,6 +133,24 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     for(unsigned int i = 0; i < MetFiltersList.size(); i++) MetFiltersMap[ MetFiltersList[i] ] = false;
     //std::vector<std::string> L1FiltersList(TriggerPSet.getParameter<std::vector<std::string> >("l1filters"));//commented
     //for(unsigned int i = 0; i < L1FiltersList.size(); i++) L1FiltersMap[ L1FiltersList[i] ] = false;//commented
+
+    if (isTracking && is2018) {
+      // Initialize additional PileupAnalyzers for B-parking triggers
+      PileupPSet = iConfig.getParameter<edm::ParameterSet>("pileupSet_HLT_Mu7_IP4");
+      thePileupAnalyzer_HLT_Mu7_IP4   = new PileupAnalyzer(PileupPSet, consumesCollector());
+
+      PileupPSet = iConfig.getParameter<edm::ParameterSet>("pileupSet_HLT_Mu9_IP6");
+      thePileupAnalyzer_HLT_Mu9_IP6    = new PileupAnalyzer(PileupPSet, consumesCollector());
+
+      PileupPSet = iConfig.getParameter<edm::ParameterSet>("pileupSet_HLT_Mu9_IP6_v6");
+      thePileupAnalyzer_HLT_Mu9_IP6_v6 = new PileupAnalyzer(PileupPSet, consumesCollector());
+
+      PileupPSet = iConfig.getParameter<edm::ParameterSet>("pileupSet_HLT_Mu12_IP6");
+      thePileupAnalyzer_HLT_Mu12_IP6  = new PileupAnalyzer(PileupPSet, consumesCollector());
+
+      // Set back to usual value
+      PileupPSet = iConfig.getParameter<edm::ParameterSet>("pileupSet");
+    }
 
     //Imperial College Tagger
     edm::InputTag JetTagWP0p01 = edm::InputTag("pfXTags:0p01:ntuple");
@@ -227,27 +248,34 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     isMC = false;
     isVBF = isTriggerVBF = false;
     isggH = false;
+    isTightMM = isTightEE = isTightE = isTightM = isTightEM = isLooseEM = false;
+    isOppositeSignTightMM = isOppositeSignTightEE = false;
     isZtoMM = isZtoEE = isWtoMN = isWtoEN = isTtoEM = false;
     EventNumber = LumiNumber = RunNumber = nPV = 0;
     model_="NotSignal";
     AtLeastOneTrigger = AtLeastOneL1Filter = false;
     isIsoMu24_OR_IsoTkMu24 = isMu50_OR_TkMu50 = false;
     number_of_PV = number_of_SV = 0;//27 Sep: remember to properly initialize everything
+    MeanNumInteractions = 0;
     nCHSJets = nLooseCHSJets = nTightCHSJets = 0;
     nVBFGenMatchedJets = 0;
     nAllBarrelJets = nAllJets = 0;
-    nCHSFatJets = nLooseCHSFatJets = nTightCHSFatJets = nGenBquarks = nGenLL = nPV = nSV = 0;
+    nCHSFatJets = nLooseCHSFatJets = nTightCHSFatJets = nGenLL = nGenBquarks = nGenMuons = nPV = nSV = nROIs = 0;
     nMatchedCHSJets = nMatchedFatJets = 0;
     //nCaloJets = nMatchedCaloJets = nMatchedCaloJetsWithGenJets = 0;
     //nCaloTagJets = nLooseCaloTagJets = 0;
     nElectrons = nMuons = nTaus = nPhotons = 999;//We want to veto them for QCD control regions! Best offset is a large number!
     nTightElectrons = nTightMuons = 0;//This time we want a W, Z control region. Let's count them from zero
+    nLooseElectrons = nLooseMuons = nTriggerMuons = 0;
     number_of_b_matched_to_CHSJets = 0;
     number_of_b_matched_to_FatJets = 0;
     number_of_VBFGen_matched_to_AllJets = 0;
     //number_of_b_matched_to_CaloJets = number_of_b_matched_to_CaloJetsWithGenJets = 0;
     GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = LeptonWeight = ZewkWeight = WewkWeight = 1.;
-    LeptonWeightUp = LeptonWeightDown = 0.;
+    PUWeight_HLT_Mu7_IP4 = PUWeightUp_HLT_Mu7_IP4 = PUWeightDown_HLT_Mu7_IP4 = 1.;
+    PUWeight_HLT_Mu9_IP6 = PUWeightUp_HLT_Mu9_IP6 = PUWeightDown_HLT_Mu9_IP6 = 1.;
+    PUWeight_HLT_Mu12_IP6 = PUWeightUp_HLT_Mu12_IP6 = PUWeightDown_HLT_Mu12_IP6 = 1.;
+    LeptonWeightUp = LeptonWeightDown = 1.;
     EventWeight_leptonSF = EventWeight_leptonSFUp = EventWeight_leptonSFDown = 1.;
     bTagWeight_central = bTagWeight_jesup = bTagWeight_jesdown = bTagWeight_lfup = bTagWeight_lfdown = bTagWeight_hfup = bTagWeight_hfdown = bTagWeight_hfstats1up = bTagWeight_hfstats1down = bTagWeight_hfstats2up = bTagWeight_hfstats2down = bTagWeight_lfstats1up = bTagWeight_lfstats1down = bTagWeight_lfstats2up = bTagWeight_lfstats2down = bTagWeight_cferr1up = bTagWeight_cferr1down = bTagWeight_cferr2up = bTagWeight_cferr2down = 1.0;
     HT = 0.;
@@ -258,6 +286,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     HDiCHS = HTriCHS = HQuadCHS = HDiCHSMatched = HTriCHSMatched = HQuadCHSMatched = 0;
     nPFCandidates = nPFCandidatesTrack = nPFCandidatesHighPurityTrack = nPFCandidatesFullTrackInfo = nPFCandidatesFullTrackInfo_pt = nPFCandidatesFullTrackInfo_hasTrackDetails = 0;
     //HDiCalo = HTriCalo = HQuadCalo = HDiCaloMatched = HTriCaloMatched = HQuadCaloMatched = 0;
+    LeadingROI = SubleadingROI_dPhi2p0 = LeadingLLP = -1;
+    LeadingROIScore = SubleadingROIScore_dPhi2p0 = -1.0;
 
     //Event info
     isMC = !iEvent.isRealData();
@@ -379,13 +409,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     GenHiggs.clear();
     GenLLPs.clear();
     GenBquarks.clear();
+    GenMuons.clear();
 
     std::vector<reco::GenParticle> GenVBFVect = theGenAnalyzer->FillVBFGenVector(iEvent);
     std::vector<reco::GenParticle> GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idHiggs,statusHiggs);
     std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idLLP,statusLLP);
     std::vector<reco::GenParticle> GenBquarksVect;
-
-    nGenLL = GenLongLivedVect.size();
 
     if(nGenLL>0)
       {
@@ -396,12 +425,17 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	GenBquarksVect = theGenAnalyzer->FillGenVectorByIdAndStatusAndKin(iEvent,5,23,float(MinGenBpt),float(MaxGenBeta));
       }
 
+    std::vector<reco::GenParticle> GenMuonsVect = theGenAnalyzer->FillGenVectorByIdAndAncestor(iEvent,13,idLLP);
+
+    nGenLL = GenLongLivedVect.size();
     nGenBquarks = GenBquarksVect.size();
+    nGenMuons = GenMuonsVect.size();
 
     for(unsigned int i = 0; i < GenVBFVect.size(); i++) GenVBFquarks.push_back( GenPType() );
     for(unsigned int i = 0; i < GenHiggsVect.size(); i++) GenHiggs.push_back( GenPType() );
     for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) GenLLPs.push_back( GenPType() );
     for(unsigned int i = 0; i < GenBquarksVect.size(); i++) GenBquarks.push_back( GenPType() );
+    for(unsigned int i = 0; i < GenMuonsVect.size(); i++) GenMuons.push_back( GenPType() );
 
     if(nGenBquarks>0) gen_b_radius = GenBquarksVect.at(0).mother()? sqrt(pow(GenBquarksVect.at(0).vx() - GenBquarksVect.at(0).mother()->vx(),2) + pow(GenBquarksVect.at(0).vy() - GenBquarksVect.at(0).mother()->vy(),2) + pow(GenBquarksVect.at(0).vz() - GenBquarksVect.at(0).mother()->vz(),2)) : -1.;
     if(nGenLL>0) m_pi = GenLongLivedVect.at(0).mass();
@@ -444,9 +478,30 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     PUWeight     = thePileupAnalyzer->GetPUWeight(iEvent);//calculates pileup weights
     PUWeightUp   = thePileupAnalyzer->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
     PUWeightDown = thePileupAnalyzer->GetPUWeightDown(iEvent);//syst uncertainties due to pileup
+
     nPV = thePileupAnalyzer->GetPV(iEvent);//calculates number of vertices
+    MeanNumInteractions = thePileupAnalyzer->GetMeanNumInteractions(iEvent);
 
     EventWeight *= PUWeight;
+
+    // Additional PU weights for B-parking triggers
+    if (isTracking && is2018) {
+      // PUWeight_HLT_Mu7_IP4      = thePileupAnalyzer_HLT_Mu7_IP4->GetPUWeight(iEvent);//calculates pileup weights
+      // PUWeightUp_HLT_Mu7_IP4    = thePileupAnalyzer_HLT_Mu7_IP4->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
+      // PUWeightDown_HLT_Mu7_IP4  = thePileupAnalyzer_HLT_Mu7_IP4->GetPUWeightDown(iEvent);//syst uncertainties due to pileup
+
+      PUWeight_HLT_Mu9_IP6        = thePileupAnalyzer_HLT_Mu9_IP6->GetPUWeight(iEvent);//calculates pileup weights
+      PUWeightUp_HLT_Mu9_IP6      = thePileupAnalyzer_HLT_Mu9_IP6->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
+      PUWeightDown_HLT_Mu9_IP6    = thePileupAnalyzer_HLT_Mu9_IP6->GetPUWeightDown(iEvent);//syst uncertainties due to pileup
+
+      PUWeight_HLT_Mu9_IP6_v6     = thePileupAnalyzer_HLT_Mu9_IP6_v6->GetPUWeight(iEvent);//calculates pileup weights
+      PUWeightUp_HLT_Mu9_IP6_v6   = thePileupAnalyzer_HLT_Mu9_IP6_v6->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
+      PUWeightDown_HLT_Mu9_IP6_v6 = thePileupAnalyzer_HLT_Mu9_IP6_v6->GetPUWeightDown(iEvent);//syst uncertainties due to pileup
+
+      // PUWeight_HLT_Mu12_IP6     = thePileupAnalyzer_HLT_Mu12_IP6->GetPUWeight(iEvent);//calculates pileup weights
+      // PUWeightUp_HLT_Mu12_IP6   = thePileupAnalyzer_HLT_Mu12_IP6->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
+      // PUWeightDown_HLT_Mu12_IP6 = thePileupAnalyzer_HLT_Mu12_IP6->GetPUWeightDown(iEvent);//syst uncertainties due to pileup
+    }
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -473,16 +528,20 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "Electrons" << std::endl;
     std::vector<pat::Electron> ElecVect = theElectronAnalyzer->FillElectronVector(iEvent);
     std::vector<pat::Electron> TightElecVect;
-    if (isControl) Electrons.clear();
+    std::vector<pat::Electron> LooseElecVect;
+    Electrons.clear();
+    if (isTracking) LooseElectrons.clear();
 
-    for(unsigned int a = 0; a<ElecVect.size(); a++)
-      {
-	if(ElecVect.at(a).hasUserInt("isTight") && ElecVect.at(a).userInt("isTight")>0)
-	  {
-	    TightElecVect.push_back(ElecVect.at(a));
-	    nTightElectrons++;
-	  }
-      }
+    for(unsigned int a = 0; a<ElecVect.size(); a++) {
+      if(ElecVect.at(a).pt() > 15.0 && ElecVect.at(a).hasUserInt("isTight") && ElecVect.at(a).userInt("isTight")>0) {
+        TightElecVect.push_back(ElecVect.at(a));
+        nTightElectrons++;
+  	  }
+      else if(ElecVect.at(a).hasUserInt("isLoose") && ElecVect.at(a).userInt("isLoose")>0) {
+        LooseElecVect.push_back(ElecVect.at(a));
+        nLooseElectrons++;
+  	  }
+    }
     nElectrons = ElecVect.size();
 
     //------------------------------------------------------------------------------------------
@@ -493,15 +552,62 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "Muons" << std::endl;
     std::vector<pat::Muon> MuonVect = theMuonAnalyzer->FillMuonVector(iEvent);
     std::vector<pat::Muon> TightMuonVect;
-    if (isControl) Muons.clear();
-    for(unsigned int a = 0; a<MuonVect.size(); a++)
-      {
-	if(MuonVect.at(a).hasUserInt("isTight") && MuonVect.at(a).userInt("isTight")>0 && MuonVect.at(a).hasUserFloat("pfIso04") && MuonVect.at(a).userFloat("pfIso04")<0.15)//tight iso for muons
-	  {
-	    TightMuonVect.push_back(MuonVect.at(a));
-	    nTightMuons++;
-	  }
+    std::vector<pat::Muon> LooseMuonVect; // Only used for tracking lifetimes
+    std::vector<pat::Muon> TriggerMuonVect; // Only used for tracking lifetimes
+    Muons.clear(); // Tight muons for short lifetimes, trigger muons for tracking
+    if (isTracking) {
+      TightMuons.clear();
+      LooseMuons.clear();
+    }
+
+    if (isTracking) { // Tracking lifetimes
+      for(unsigned int a = 0; a<MuonVect.size(); a++) {
+
+        // All muons: Gen-matching to muons from LLP decay
+        if(MuonVect.at(a).genLepton() != nullptr) {
+          for (unsigned int thisGenMu = 0; thisGenMu < GenMuonsVect.size(); thisGenMu++) {
+            if ( (*MuonVect.at(a).genLepton()).pt() == GenMuonsVect.at(thisGenMu).pt() ) {
+              MuonVect.at(a).addUserInt("isGenMatched",1);
+              MuonVect.at(a).addUserInt("MatchedGenMuonIndex",thisGenMu);
+            }
+          }
+        }
+
+        // Trigger muons: All requirements as in muonPSet (For v6: loose ID, no isolation, pT > 0.1 GeV, |eta| < 2.4)
+        if (MuonVect.at(a).hasUserInt("triggered_HLT_Mu9_IP6") && MuonVect.at(a).userInt("triggered_HLT_Mu9_IP6")>0) {
+            TriggerMuonVect.push_back(MuonVect.at(a));
+            nTriggerMuons++;
+        }
+
+        else {
+          // Tight (and did not fire trigger path)
+          if(MuonVect.at(a).pt() > 15.0 &&
+             MuonVect.at(a).hasUserInt("isTight") && MuonVect.at(a).userInt("isTight") > 0 &&
+             MuonVect.at(a).hasUserFloat("pfIso04") && MuonVect.at(a).userFloat("pfIso04") < 0.15 ) { //tight iso for muons
+            TightMuonVect.push_back(MuonVect.at(a));
+            nTightMuons++;
+          }
+
+          // Loose (and did not fire trigger path)
+          else if (MuonVect.at(a).pt() > 10.0 &&
+                   MuonVect.at(a).hasUserInt("isLoose") && MuonVect.at(a).userInt("isLoose") > 0 &&
+                   MuonVect.at(a).hasUserFloat("pfIso04") && MuonVect.at(a).userFloat("pfIso04") < 0.25 ) {
+            LooseMuonVect.push_back(MuonVect.at(a));
+            nLooseMuons++;
+          }
+        }
+      } // End of loop over muons
+    } // Tracking
+
+    else { // Short and calo lifetimes
+      for(unsigned int a = 0; a<MuonVect.size(); a++) {
+        if(MuonVect.at(a).hasUserInt("isTight") && MuonVect.at(a).userInt("isTight")>0 && MuonVect.at(a).hasUserFloat("pfIso04") && MuonVect.at(a).userFloat("pfIso04")<0.15) { //tight iso for muons
+          TightMuonVect.push_back(MuonVect.at(a));
+          nTightMuons++;
+        }
       }
+    }
+
     nMuons = MuonVect.size();
 
     //------------------------------------------------------------------------------------------
@@ -530,7 +636,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     //if(EventNumber!=44169) return;
-    if(HT<100) return;//Avoid events with low HT//WAIT!!
+    if(HT<MinHT) return;//Avoid events with low HT//WAIT!!
     if(isCalo && MET.pt()<120) return;//Avoid events with very low MET for calo analysis
     if(isCalo && nMuons>0) return;//Veto leptons and photons!
     if(isCalo && nTaus>0) return;//Veto leptons and photons!
@@ -550,6 +656,17 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //      if(nPhotons<1) return;//Veto photons!
     }
 
+    if(isTracking) {
+      if (isControl) {
+        // if (nTightMuons < 1 && nTightElectrons < 1) return;
+        if (nTightMuons < 1 && nTightElectrons < 1 && !(nLooseMuons == 1 && nLooseElectrons == 1)) return;
+      }
+      else {
+        if (nTightMuons > 0) return; // Potentially tighten preselection to nTightMuons + nLooseMuons > 0
+        if (nTightElectrons > 0) return;
+      }
+    }
+
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -561,63 +678,74 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "Count leptons for Z and W" << std::endl;
     pat::CompositeCandidate theZ;
     pat::CompositeCandidate theW;
-    float LeptonWeightUnc;
-    float LeptonWeightUp = 1.;
-    float LeptonWeightDown = 1.;
 
-    if (isShort && isControl) {
+    if ( (isShort || isTracking) && isControl) {
+      float LeptonWeightUnc;
+      // float LeptonWeightUp = 1.; // Defined in Ntuplizer.h and default value set above
+      // float LeptonWeightDown = 1.; // Defined in Ntuplizer.h and default value set above
 
       //// ---------- Z TO LEPTONS ----------
       if(TightMuonVect.size()>=2 || TightElecVect.size()>=2) {
         if(TightMuonVect.size()>=2 && TightElecVect.size()>=2) {
-        	if(TightMuonVect.at(0).pt() > TightElecVect.at(0).pt()) isZtoMM=true;
-        	else isZtoEE=true;
+        	if(TightMuonVect.at(0).pt() > TightElecVect.at(0).pt()) isTightMM=true;
+        	else isTightEE=true;
         }
-        else if(TightElecVect.size()>=2) isZtoEE=true;
-        else if(TightMuonVect.size()>=2) isZtoMM=true;
+        else if(TightMuonVect.size()>=2) isTightMM=true;
+        else if(TightElecVect.size()>=2) isTightEE=true;
       }
-
 
       ////    ---------- W TO LEPTON and NEUTRINO ----------
       else if(TightMuonVect.size()==1 || TightElecVect.size()==1) {
-        if(TightMuonVect.size()==1 && TightElecVect.size()==1 && (TightElecVect.at(0).charge() != TightMuonVect.at(0).charge()) ) isTtoEM = true;
-        else if(TightElecVect.size()==1) isWtoEN=true;
-        else if(TightMuonVect.size()==1) isWtoMN=true;
+        if(TightMuonVect.size()==1 && TightElecVect.size()==1) isTightEM = true;
+        else if(TightElecVect.size()==1) isTightE=true;
+        else if(TightMuonVect.size()==1) isTightM=true;
       }
 
+      else if(LooseMuonVect.size()==1 && LooseElecVect.size()==1) isLooseEM = true;
 
-      if(isZtoMM) {
+      if(isTightMM) {
         if(isVerbose) std::cout << "Do the Z->mu mu" << std::endl;
         int m1(-1), m2(-1);
         for(unsigned int i = 0; i < TightMuonVect.size(); i++) {
         	for(unsigned int j = i+1; j < TightMuonVect.size(); j++) {
         	  if(TightMuonVect[i].charge() == TightMuonVect[j].charge())
         	    {
-        	      isZtoMM = false;
+        	      // isZtoMM = false;
         	      continue;
         	    }
         	  float Zmass = (TightMuonVect[i].p4() + TightMuonVect[j].p4()).mass();
-        	  if(Zmass > 50. && Zmass < 130.)
-        	    {
-        	      m1 = i;
-        	      m2 = j;
-        	      isZtoMM = true;
-        	    }
+            // Not needed: Find muon pair with invariant mass inside Z mass window
+        	  // if(Zmass > 50. && Zmass < 130.)
+        	  //   {
+        	  //     m1 = i;
+        	  //     m2 = j;
+            //     isOppositeSignTightMM = isZtoMM = true;
+        	  //   }
+
+            // Instead: Reject events where any electron pair has invariant mass inside Z mass window
+            if (TMath::Abs(Zmass - 91.1876) < 20.) return;
         	}
         }
-        //    Build candidate
+
+        // For CR events (outside Z window), take leading two muons
+        if (!isZtoMM) {
+          m1 = 0;
+          m2 = 1;
+          if (TightMuonVect.at(m1).charge() != TightMuonVect.at(m2).charge()) isOppositeSignTightMM = true;
+        }
+
+        // Build candidate
         if(m1 >= 0 && m2 >= 0) {
-        	theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m1) : TightMuonVect.at(m2));
-        	theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m2) : TightMuonVect.at(m1));
-        	addP4.set(theZ);
-        	isZtoMM = true;
+          theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m1) : TightMuonVect.at(m2));
+          theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m2) : TightMuonVect.at(m1));
+          addP4.set(theZ);
+          isZtoMM = true;
 
         	//SF
-
-        	if(isControl && isMC && !is2016) {
-        	  float LeptonWeightUnc = 0.;
-            LeptonWeightUp = 0.;
-            LeptonWeightDown = 0.;
+        	if(isMC && !is2016) {
+        	  LeptonWeightUnc = 0.;
+            LeptonWeightUp = 1.;
+            LeptonWeightDown = 1.;
         	  /// FIXED -> APPLYING THE SF FOR IsoMu24 NOT ANYLONGER HADRCODED <- FIXED ///
             if (isIsoMu24_OR_IsoTkMu24) {
               if (TightMuonVect.at(m1).pt() > TightMuonVect.at(m2).pt() ) {
@@ -660,24 +788,35 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     	      LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
         	}
         }
-      }
+      } // isTightMM
 
-      else if(isZtoEE) {
+      else if(isTightEE) {
         if(isVerbose) std::cout << "Do the Z->e e" << std::endl;
         int e1(-1), e2(-1);
         for(unsigned int i = 0; i < TightElecVect.size(); i++) {
           for(unsigned int j = i+1; j < TightElecVect.size(); j++) {
             if(TightElecVect[i].charge() == TightElecVect[j].charge()) {
-              isZtoEE = false;
+              // isZtoEE = false;
       	      continue;
       	    }
             float Zmass = (TightElecVect[i].p4() + TightElecVect[j].p4()).mass();
-            if(Zmass > 50. && Zmass < 130.) {
-              e1 = i;
-              e2 = j;
-              isZtoEE =true; // Note: This had already been set to true. Set to false if not within mass window?
-            }
+            // Not needed: Find electron pair with invariant mass inside Z mass window
+            // if(Zmass > 50. && Zmass < 130.) {
+            //   e1 = i;
+            //   e2 = j;
+            //   isOppositeSignTightEE = isZtoEE = true;
+            // }
+
+            // Instead: Reject events where any electron pair has invariant mass inside Z mass window
+            if (TMath::Abs(Zmass - 91.1876) < 20.) return;
           }
+        }
+
+        // For CR events (outside Z window), take leading two electrons
+        if (!isZtoEE) {
+          e1 = 0;
+          e2 = 1;
+          if (TightElecVect.at(e1).charge() != TightElecVect.at(e2).charge()) isOppositeSignTightEE = true;
         }
 
         // Build candidate
@@ -688,10 +827,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         	isZtoEE = true;
 
         	// SF
-        	if(isControl && isMC && !is2016) {
-            float LeptonWeightUnc = 0.;
-            LeptonWeightUp = 0.;
-            LeptonWeightDown = 0.;
+        	if(isMC && !is2016) {
+            LeptonWeightUnc = 0.;
+            LeptonWeightUp = 1.;
+            LeptonWeightDown = 1.;
         	  /// FIXME -> APPLYING THE SF FOR Ele27Tight HADRCODED <- FIXME ///
         	  // if (TightElecVect.at(e1).pt() > TightElecVect.at(e2).pt() ){
         	  //   LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e1));
@@ -715,30 +854,52 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
         	}
         }
-      }
+      } // isTightEE
 
-      else if(isWtoMN) {
+      else if(isTightM) {
+        if(isVerbose) std::cout << "Do the W->mu nu" << std::endl;
+
         //// W kinematic reconstruction
-        //     float pz = Utilities::RecoverNeutrinoPz(&TightMuonVect.at(0).p4(), &MET.p4());
-        //     Neutrino.setP4(reco::Particle::LorentzVector(MET.px(), MET.py(), pz, sqrt(MET.pt()*MET.pt() + pz*pz) ));
+        // float pz = Utilities::RecoverNeutrinoPz(&TightMuonVect.at(0).p4(), &MET.p4());
+        // Neutrino.setP4(reco::Particle::LorentzVector(MET.px(), MET.py(), pz, sqrt(MET.pt()*MET.pt() + pz*pz) ));
         theW.addDaughter(TightMuonVect.at(0));
         theW.addDaughter(MET);
         addP4.set(theW);
+        isWtoMN = true;
 
-        if (theW.mt()<100. && isControl){
+        // Debugging:
+        // std::cout << "E  = " << MET.energy() << " + " << TightMuonVect.at(0).energy() << " = " << theW.energy()  << std::endl;
+        // std::cout << "px = " << MET.px()     << " + " << TightMuonVect.at(0).px()     << " = " << theW.px()      << std::endl;
+        // std::cout << "py = " << MET.py()     << " + " << TightMuonVect.at(0).py()     << " = " << theW.py()      << std::endl;
+        // std::cout << "pz = " << MET.pz()     << " + " << TightMuonVect.at(0).pz()     << " = " << theW.pz()      << std::endl;
+        // std::cout << "m  = " << theW.mass()       << std::endl;
+        // std::cout << "mT = " << theW.mt()         << " =? " << TMath::Sqrt(theW.mass()*theW.mass() + theW.pt()*theW.pt()) << std::endl;
+        // std::cout << "mT'= " << TMath::Sqrt(2.*Neutrino.pt()*TightMuonVect.at(0).pt()*(1.-TMath::Cos(reco::deltaPhi(Neutrino.phi(),TightMuonVect.at(0).phi())))) << std::endl;
+
+        double mt = TMath::Sqrt(2. * MET.pt() * TightMuonVect.at(0).pt() * (1.-TMath::Cos(reco::deltaPhi(MET,TightMuonVect.at(0)))) );
+
+        if (mt < 100. && isControl){
+          // isWtoMN = true;
           return;
         }
 
+        theW.addUserInt("isW", true);
+        theW.addUserFloat("mt", mt);
+
         // SF
-        if(isControl && isMC && !is2016) {
-          float LeptonWeightUnc = 0.;
-          LeptonWeightUp = 0.;
-          LeptonWeightDown = 0.;
+        if(isMC && !is2016) {
+          // if(isVerbose) std::cout << "Muon ID SF" << std::endl;
+
+          LeptonWeightUnc = 0.;
+          LeptonWeightUp = 1.;
+          LeptonWeightDown = 1.;
           // LeptonWeight    *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(0));
           // LeptonWeight    *= theMuonAnalyzer->GetMuonTrkSF(TightMuonVect.at(0));
           LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 3);
+          // if(isVerbose) std::cout << "Muon Iso SF" << std::endl;
           LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 3);
 
+          // if(isVerbose) std::cout << "Muon SF Errors" << std::endl;
           // LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTriggerSFErrorMu50(TightMuonVect.at(0)),2);
           // LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(TightMuonVect.at(0))        ,2);
           LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(0), 3)      ,2);
@@ -749,7 +910,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         }
       }
 
-      else if(isWtoEN) {
+      else if(isTightE) {
+        if(isVerbose) std::cout << "Do the W->e nu" << std::endl;
 
         // W kinematic reconstruction
         // float pz = Utilities::RecoverNeutrinoPz(&TightElecVect.at(0).p4(), &MET.p4());
@@ -757,49 +919,105 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         theW.addDaughter(TightElecVect.at(0));
         theW.addDaughter(MET);
         addP4.set(theW);
+        isWtoEN = true;
 
-        if (theW.mt()<100. && isControl){
+        double mt = TMath::Sqrt(2. * MET.pt() * TightElecVect.at(0).pt() * (1.-TMath::Cos(reco::deltaPhi(MET,TightElecVect.at(0)))) );
+
+        if (mt < 100. && isControl){
+          // isWtoEN = true;
           return;
         }
 
-        if(isControl && isMC && !is2016) {
-          float LeptonWeightUnc = 0.;
-          LeptonWeightUp = 0.;
-          LeptonWeightDown = 0.;
+        theW.addUserInt("isW", true);
+        theW.addUserFloat("mt", mt);
+
+        if(isMC && !is2016) {
+          // if(isVerbose) std::cout << "Electron SF" << std::endl;
+
+          LeptonWeightUnc = 0.;
+          LeptonWeightUp = 1.;
+          LeptonWeightDown = 1.;
           // LeptonWeight    *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(0));
           LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
-          LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
-          LeptonWeightUnc += theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(0), 0);
+          LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 3);
+
+          // if(isVerbose) std::cout << "Electron SF Error" << std::endl;
+          LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(TightElecVect.at(0))   ,2);
+          LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(0), 3)     ,2);
 
           LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
           LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
         }
       }
 
-      // else if(isTtoEM) {
-      //      //std::cout << "isTtoEM, muon 1 pt: " << TightMuonVect.at(0).pt() << std::endl;
-      // 	  if(isMC) {
-      // 	    //Trigger is non trivial; we need non-isolated triggers!
-      // 	    //if (TightElecVect.at(e).pt() > TightMuonVect.at(m).pt() ){
-      // 	    //LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e1));
-      // 	    //  //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e1)),2);
-      // 	    //}
-      // 	    //else{
-      // 	    //  LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e2));
-      // 	    //  //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e2)),2);
-      // 	    //  }
-      // 	    LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
-      // 	    LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 0);
-      // 	    LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 0);
-      // 	    LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 0);
-      // 	}
-      // }
+      else if(isTightEM) {
+        // Top event if opposite-sign EM pair. Not attempting to reconstruct candidate
+        if(TightElecVect.at(0).charge() != TightMuonVect.at(0).charge()) isTtoEM = true;
+        //std::cout << "isTtoEM, muon 1 pt: " << TightMuonVect.at(0).pt() << std::endl;
 
+    	  if(isMC && !is2016) {
+
+          LeptonWeightUnc = 0.;
+          LeptonWeightUp = 1.;
+          LeptonWeightDown = 1.;
+
+    	    //Trigger is non trivial; we need non-isolated triggers!
+    	    //if (TightElecVect.at(e).pt() > TightMuonVect.at(m).pt() ){
+    	    //LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e1));
+    	    //  //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e1)),2);
+    	    //}
+    	    //else{
+    	    //  LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e2));
+    	    //  //LeptonWeightUnc  += pow(theElectronAnalyzer->GetElectronTriggerSFErrorEle27Tight(ElecVect.at(e2)),2);
+    	    //  }
+          LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(0), 3);
+          LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(0), 3);
+    	    LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(TightElecVect.at(0));
+    	    LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(TightElecVect.at(0), 3);
+
+          LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(0), 3)      ,2);
+          LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(0), 3)     ,2);
+          LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(TightElecVect.at(0))   ,2);
+          LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(0), 3)     ,2);
+
+          LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
+          LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
+      	}
+      }
+
+      else if(isLooseEM) {
+        // Top event if opposite-sign EM pair. Not attempting to reconstruct candidate
+        if(LooseElecVect.at(0).charge() != LooseMuonVect.at(0).charge()) isTtoEM = true;
+
+    	  if(isMC && !is2016) {
+          LeptonWeightUnc = 0.;
+          LeptonWeightUp = 1.;
+          LeptonWeightDown = 1.;
+
+          LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(LooseMuonVect.at(0), 3);
+          LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(LooseMuonVect.at(0), 3);
+    	    LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(LooseElecVect.at(0));
+    	    LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(LooseElecVect.at(0), 3);
+
+          LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(LooseMuonVect.at(0), 3)      ,2);
+          LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(LooseMuonVect.at(0), 3)     ,2);
+          LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(LooseElecVect.at(0))   ,2);
+          LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(LooseElecVect.at(0), 3)     ,2);
+
+          LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
+          LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
+      	}
+      }
+
+      // Used for short lifetimes?
       EventWeight_leptonSF = EventWeight * LeptonWeight;
-      EventWeight_leptonSFUp = EventWeight_leptonSF * LeptonWeightUp;
-      EventWeight_leptonSFDown = EventWeight_leptonSF * LeptonWeightDown;
+      EventWeight_leptonSFUp = EventWeight * LeptonWeightUp;
+      EventWeight_leptonSFDown = EventWeight * LeptonWeightDown;
 
-    }
+      // For tracking lifetimes, include in EventWeight to be consistent with all other weights
+      if (isTracking) EventWeight *= LeptonWeight;
+
+    } // isControl
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -1033,6 +1251,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //AllBarrelJets.clear();
     CHSJets.clear();
     VBFPairJets.clear();
+    ggHJet.clear();
     if(WriteFatJets) CHSFatJets.clear();
     //CaloJets.clear();
 
@@ -1941,11 +2160,19 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );
     if (WriteFatJets) for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) CHSFatJets.push_back( FatJetType() );
     for(unsigned int i = 0; i < ggHJetVect.size(); i++) ggHJet.push_back( JetType() );
-    if (isControl) {
+    if (isShort && isControl) {
       for(unsigned int i = 0; i < TightMuonVect.size(); i++) Muons.push_back( LeptonType() );
       for(unsigned int i = 0; i < TightElecVect.size(); i++) Electrons.push_back( LeptonType() );
     }
+    if (isTracking) {
+      // for(unsigned int i = 0; i < MuonVect.size(); i++) Muons.push_back( LeptonType() );
+      for(unsigned int i = 0; i < TightMuonVect.size(); i++) TightMuons.push_back( LeptonType() );
+      for(unsigned int i = 0; i < LooseMuonVect.size(); i++) LooseMuons.push_back( LeptonType() );
+      for(unsigned int i = 0; i < TriggerMuonVect.size(); i++) Muons.push_back( LeptonType() );
+      for(unsigned int i = 0; i < TightElecVect.size(); i++) Electrons.push_back( LeptonType() );
+      for(unsigned int i = 0; i < LooseElecVect.size(); i++) LooseElectrons.push_back( LeptonType() );
 
+    }
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     // Vertices
@@ -2095,7 +2322,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       std::vector<float> nHits;
 
       float alphaMax = -100.;
-      float sigIP2DMedian = -10000.;
+      float sigIP2DMedian = -100000.;
       float theta2DMedian = -100.;
       float POCA_theta2DMedian = -100.;
       float nPixelHitsMedian = -1.;
@@ -2423,20 +2650,189 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-    // Objects for ROI-based Tagger
+    // ROI Tagger
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
 
-    if (isTracking && WriteROIs) {
-      LostTracksROI.clear();
-      PFCandidatesROI.clear();
-      TrackClusters.clear();
+    if(isVerbose) std::cout << "ROI's" << std::endl;
+
+    // TODO: Add this somewhere
+    // vector<Float_t> ROIScores;
+    // vector<Float_t> ROIDeltaR;
+    // vector<Float_t> ROIDeltaPhi;
+    // vector<Float_t> ROITrackClusterMultiplicity;
+    // vector<Float_t> ROIAnnulusTrackMultiplicity;
+    // vector<Float_t> ROIDistanceToLeadingLLP;
+    // vector<Float_t> ROIDistanceToSubleadingLLP;
+
+    // vector<Float_t> ROIAbsDeltaPhi; // Directly in ObjectsFormat
+    // vector<Float_t> ROIDistanceToNearestLLP; // Directly in ObjectsFormat
+    // vector<Bool_t> ROIMatchedToLeadingLLP; // Directly in ObjectsFormat
+    // vector<Bool_t> ROIMatchedToSubleadingLLP; // Directly in ObjectsFormat
+
+    if (isTracking && (WriteROITaggerScore || WriteROITaggerInputs)) {
+      // Set tagger inputs in ROI analyzer
+      theROIAnalyzer->SetAllTaggerInputVectors(iEvent);
+
+      // Get ROIs
       RegionsOfInterest.clear();
+      RegionsOfInterest = theROIAnalyzer->GetROIVector();
+      nROIs = RegionsOfInterest.size();
 
-      LostTracksROI =  theROIAnalyzer->FillLostTrackVector(iEvent, PVertexVect.size());
-      PFCandidatesROI = theROIAnalyzer->FillPFCandidateVector(iEvent, PVertexVect.size());
-      TrackClusters = theROIAnalyzer->FillTrackClusterVector(iEvent);
-      RegionsOfInterest = theROIAnalyzer->FillROIVector(iEvent);
+      if(isVerbose) std::cout << "...inputs" << std::endl;
+
+      // Get lower-level input objects for ntuple if needed
+      if (WriteROITaggerInputs) {
+        VerticesROI.clear();
+        LostTracksROI.clear();
+        PFCandidatesROI.clear();
+        TrackClusters.clear();
+
+        VerticesROI = theROIAnalyzer->GetVertexVector();
+        LostTracksROI =  theROIAnalyzer->GetLostTrackVector();
+        PFCandidatesROI = theROIAnalyzer->GetPFCandidateVector();
+        TrackClusters = theROIAnalyzer->GetTrackClusterVector();
+      }
+
+      if(isVerbose) std::cout << "...outputs" << std::endl;
+
+      // Get tagger score (now background instead of signal score)
+      if (WriteROITaggerScore) {
+        ROIs.clear();
+
+        // if (!WriteROITaggerInputs) RegionsOfInterest.clear();
+        ROIScores.clear();
+        ROIDeltaR.clear();
+        ROIDeltaPhi.clear();
+        ROITrackClusterMultiplicity.clear();
+        ROIAnnulusTrackMultiplicity.clear();
+        ROIDistanceToLeadingLLP.clear();
+        ROIDistanceToSubleadingLLP.clear();
+
+        // theROIAnalyzer->SetTaggerScores(iEvent); //Done in SetAnalysisInfo (below)
+        // theROIAnalyzer->SetOverlapRemovalInfo(); //Done in SetAnalysisInfo (below)
+
+        if(isVerbose) std::cout << "...signal matching" << std::endl;
+
+        // GenLLP positions
+        math::XYZPoint leadingLLPPosition, subleadingLLPPosition;
+
+        if (isSignal){
+
+          if (GenLongLivedVect.at(0).pt() > GenLongLivedVect.at(1).pt()) {
+            LeadingLLP = 0;
+            leadingLLPPosition.SetXYZ(GenBquarksVect.at(0).vx(), GenBquarksVect.at(0).vy(), GenBquarksVect.at(0).vz());
+            subleadingLLPPosition.SetXYZ(GenBquarksVect.at(2).vx(), GenBquarksVect.at(2).vy(), GenBquarksVect.at(2).vz());
+          }
+
+          else {
+            LeadingLLP = 1;
+            leadingLLPPosition.SetXYZ(GenBquarksVect.at(2).vx(), GenBquarksVect.at(2).vy(), GenBquarksVect.at(2).vz());
+            subleadingLLPPosition.SetXYZ(GenBquarksVect.at(0).vx(), GenBquarksVect.at(0).vy(), GenBquarksVect.at(0).vz());
+          }
+
+          // theROIAnalyzer->SetGenMatchingInfo(isSignal, leadingLLPPosition, subleadingLLPPosition); //Done in SetAnalysisInfo (below)
+
+        }
+
+        if(isVerbose) std::cout << "...tagger score and analysis variables" << std::endl;
+
+        theROIAnalyzer->SetAnalysisInfo(iEvent, isSignal, leadingLLPPosition, subleadingLLPPosition);
+
+        // Get objects
+        // if (!WriteROITaggerInputs) RegionsOfInterest = theROIAnalyzer->GetROIVector();
+        ROIScores = theROIAnalyzer->GetTaggerScores();
+        ROIDeltaR = theROIAnalyzer->GetDeltaRVector();
+        ROIDeltaPhi = theROIAnalyzer->GetDeltaPhiVector();
+        ROITrackClusterMultiplicity = theROIAnalyzer->GetTrackClusterMultiplicityVector();
+        ROIAnnulusTrackMultiplicity = theROIAnalyzer->GetAnnulusTrackMultiplicityVector();
+        ROIDistanceToLeadingLLP = theROIAnalyzer->GetDistanceToLeadingLLPVector();
+        ROIDistanceToSubleadingLLP = theROIAnalyzer->GetDistanceToSubleadingLLPVector();
+
+        LeadingROI = theROIAnalyzer->GetLeadingROIIndex();
+        if (LeadingROI > -1) LeadingROIScore = TMath::Log10(ROIScores.at(LeadingROI));
+
+        if(isVerbose) std::cout << "nROIs                = " << nROIs << std::endl;
+        if(isVerbose) std::cout << "Leading ROI          = " << LeadingROI << std::endl;
+        if(isVerbose) std::cout << "Leading ROI score    = " << LeadingROIScore << std::endl;
+
+        SubleadingROI_dPhi2p0 = theROIAnalyzer->GetSubleadingROIIndex();
+        (SubleadingROI_dPhi2p0 != -1) ? SubleadingROIScore_dPhi2p0 = TMath::Log10(ROIScores.at(SubleadingROI_dPhi2p0)) : 1.0;
+
+        if(isVerbose) std::cout << "Subleading ROI       = " << SubleadingROI_dPhi2p0 << std::endl;
+        if(isVerbose) std::cout << "Subleading ROI score = " << SubleadingROI_dPhi2p0 << std::endl;
+
+        // Find most displaced jet
+        MaxDisplacedJet = -1;
+        float MaxDisplacement = 0;
+
+        float thisJetPhi;
+        float thisJetAbsDeltaPhiToLeadingROI;
+        float thisJetAbsDeltaPhiToSubleadingROI;
+
+        // Match jets to (sub)leading ROI
+        for(uint thisJet = 0; thisJet < CHSJetsVect.size(); thisJet++) {
+          thisJetPhi = CHSJetsVect.at(thisJet).phi();
+          thisJetAbsDeltaPhiToLeadingROI = theROIAnalyzer->GetAbsDeltaPhiToLeadingROI(thisJetPhi);
+          thisJetAbsDeltaPhiToSubleadingROI = theROIAnalyzer->GetAbsDeltaPhiToSubleadingROI(thisJetPhi);
+
+          // Not needed (keep for future reference)
+          // if ( thisJetDeltaPhiToLeadingROI < LeadingROI_dPhiNearestJet ) {
+          //   LeadingROI_dPhiNearestJet = thisJetDeltaPhiToLeadingROI;
+          //   LeadingROI_NearestJet = thisJet;
+          // }
+
+          // if ( thisJetDeltaPhiToSubleadingROI < SubleadingROI_dPhi2p0_dPhiNearestJet ) {
+          //   SubleadingROI_dPhi2p0_dPhiNearestJet = thisJetDeltaPhiToSubleadingROI;
+          //   SubleadingROI_dPhi2p0_NearestJet = thisJet;
+          // }
+
+          CHSJetsVect.at(thisJet).addUserFloat("absDeltaPhiToLeadingROI",thisJetAbsDeltaPhiToLeadingROI);
+          CHSJetsVect.at(thisJet).addUserFloat("absDeltaPhiToSubleadingROI",thisJetAbsDeltaPhiToSubleadingROI);
+
+          // For jets with valid 2D IP sig (i.e. with at least one PF candidate with track details)
+          if ( CHSJetsVect.at(thisJet).hasUserFloat("sigIP2DMedianOld") && CHSJetsVect.at(thisJet).userFloat("sigIP2DMedianOld") != -10000 ) {
+            // Find jet with the maximum |2D IP sig|
+            if ( TMath::Abs(CHSJetsVect.at(thisJet).userFloat("sigIP2DMedianOld")) > MaxDisplacement) {
+              MaxDisplacedJet = thisJet;
+              MaxDisplacement =  TMath::Abs(CHSJetsVect.at(thisJet).userFloat("sigIP2DMedianOld"));
+            }
+          }
+        }
+
+        // // Displaced jet matching to leading ROI and non-overlapping subleading ROI
+        // if (MaxDisplacedJet > -1) {
+        //   if (nROIs > 0) {
+        //     MaxDisplacedJet_dPhiLeadingROI = TMath::Abs(reco::deltaPhi(Jets->at(MaxDisplacedJet).phi, leadingROIPosition.phi()));
+        //     if ( MaxDisplacedJet_dPhiLeadingROI < 0.4 ) MaxDisplacedJet_MatchedLeadingROI = 1;
+        //   }
+        //   if (SubleadingROI_dPhi2p0 != -1) {
+        //     MaxDisplacedJet_dPhiSubleadingROI_dPhi2p0 = TMath::Abs(reco::deltaPhi(Jets->at(MaxDisplacedJet).phi, subleadingROIPosition.phi()));
+        //     if ( MaxDisplacedJet_dPhiSubleadingROI_dPhi2p0 < 0.4 ) MaxDisplacedJet_MatchedSubleadingROI_dPhi2p0 = 1;
+        //   }
+        //   if ( MaxDisplacedJet_dPhiLeadingROI < MaxDisplacedJet_dPhiSubleadingROI_dPhi2p0 ) {
+        //     MaxDisplacedJet_dPhiNearestTaggedROI = MaxDisplacedJet_dPhiLeadingROI;
+        //     MaxDisplacedJet_dPhiUnmatchedTaggedROI = MaxDisplacedJet_dPhiSubleadingROI_dPhi2p0;
+        //   }
+        //   else {
+        //     MaxDisplacedJet_dPhiNearestTaggedROI = MaxDisplacedJet_dPhiSubleadingROI_dPhi2p0;
+        //     MaxDisplacedJet_dPhiUnmatchedTaggedROI = MaxDisplacedJet_dPhiLeadingROI;
+        //   }
+        //   MaxDisplacedJet_MatchedTaggedROI = MaxDisplacedJet_MatchedLeadingROI || MaxDisplacedJet_MatchedSubleadingROI_dPhi2p0;
+        // }
+
+        if (isVerbose) std::cout << "Vector sizes: " << RegionsOfInterest.size() << ", "
+                                                     << ROIScores.size() << ", "
+                                                     << ROIDeltaR.size() << ", " //FIXME!
+                                                     << ROIDeltaPhi.size() << ", "//FIXME!
+                                                     << ROITrackClusterMultiplicity.size() << ", "
+                                                     << ROIAnnulusTrackMultiplicity.size() << ", "
+                                                     << ROIDistanceToLeadingLLP.size() << ", "//FIXME!
+                                                     << ROIDistanceToSubleadingLLP.size() << std::endl;//FIXME!
+
+        for(unsigned int i = 0; i < RegionsOfInterest.size(); i++) ROIs.push_back( ROIType() );
+
+      }
     }
 
     // ---------- Fill objects ----------
@@ -2484,9 +2880,19 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillGenPType(GenHiggs[i], &GenHiggsVect[i]);
     if (WriteGenLLPs) for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillGenPType(GenLLPs[i], &GenLongLivedVect[i]);
     if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillGenPType(GenBquarks[i], &GenBquarksVect[i]);
-    if (isControl){
+    if (WriteGenMuons) for(unsigned int i = 0; i < GenMuonsVect.size(); i++) ObjectsFormat::FillGenPType(GenMuons[i], &GenMuonsVect[i]);
+    if (isShort && isControl){
       for(unsigned int i = 0; i < Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
       for(unsigned int i = 0; i < Electrons.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
+    }
+    if (isTracking) {
+      // for(unsigned int i = 0; i < Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &MuonVect[i], isMC);
+      for(unsigned int i = 0; i < TightMuons.size(); i++) ObjectsFormat::FillMuonType(TightMuons[i], &TightMuonVect[i], isMC);
+      for(unsigned int i = 0; i < LooseMuons.size(); i++) ObjectsFormat::FillMuonType(LooseMuons[i], &LooseMuonVect[i], isMC);
+      for(unsigned int i = 0; i < Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TriggerMuonVect[i], isMC);
+      for(unsigned int i = 0; i < Electrons.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
+      for(unsigned int i = 0; i < LooseElectrons.size(); i++) ObjectsFormat::FillElectronType(LooseElectrons[i], &LooseElecVect[i], isMC);
+
     }
     // else{
     //   if(isZtoMM || isWtoMN) for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
@@ -2499,9 +2905,16 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // }
     ObjectsFormat::FillCandidateType(VBF, &theVBF, isMC);
     if (isControl) {
+      if (isTracking) {
+        if (isZtoMM || isZtoEE) ObjectsFormat::FillCandidateType(Z, &theZ, isMC);
+        if (isWtoMN || isWtoEN) ObjectsFormat::FillCandidateType(W, &theW, isMC);
+      }
+      else {
         ObjectsFormat::FillCandidateType(Z, &theZ, isMC);
         ObjectsFormat::FillCandidateType(W, &theW, isMC);
+      }
     }
+
     HDiCHS = theHDiCHS.mass();
     HTriCHS = theHTriCHS.mass();
     HQuadCHS = theHQuadCHS.mass();
@@ -2550,6 +2963,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	    float dRSVJet = reco::deltaR(bTagInfoVect.at(i)->secondaryVertex(idx).eta(),bTagInfoVect.at(i)->secondaryVertex(idx).phi(),CHSJetsVect[indexSVJet.at(i)].eta(), CHSJetsVect[indexSVJet.at(i)].phi());
 	    ObjectsFormat::FillBtagSecVertexType(BTagVertices[i], bTagInfoVect.at(i), bTagIPInfoVect.at(i), idx, dRSVJet, indexSVJet.at(i));
 	}
+      }
+    }
+
+    if (isTracking && WriteROITaggerScore) {
+      for(unsigned int i = 0; i < ROIScores.size(); i++){
+        ObjectsFormat::FillROIType(ROIs[i], &RegionsOfInterest[i], ROIScores[i], ROIDeltaR[i], ROIDeltaPhi[i], ROITrackClusterMultiplicity[i], ROIAnnulusTrackMultiplicity[i], ROIDistanceToLeadingLLP[i], ROIDistanceToSubleadingLLP[i]);
       }
     }
 
@@ -2630,10 +3049,30 @@ Ntuplizer::beginJob()
     tree -> Branch("LumiNumber" , &LumiNumber , "LumiNumber/L");
     tree -> Branch("RunNumber" , &RunNumber , "RunNumber/L");
     tree -> Branch("EventWeight", &EventWeight, "EventWeight/F");
+    tree -> Branch("GenEventWeight", &GenEventWeight, "GenEventWeight/F");
+    tree -> Branch("PUWeight", &PUWeight, "PUWeight/F");
+    tree -> Branch("PUWeightUp", &PUWeightUp, "PUWeightUp/F");
+    tree -> Branch("PUWeightDown", &PUWeightDown, "PUWeightDown/F");
+    if (isTracking && is2018) {
+      tree -> Branch("PUWeight_HLT_Mu7_IP4", &PUWeight_HLT_Mu7_IP4, "PUWeight_HLT_Mu7_IP4/F");
+      tree -> Branch("PUWeightUp_HLT_Mu7_IP4", &PUWeightUp_HLT_Mu7_IP4, "PUWeightUp_HLT_Mu7_IP4/F");
+      tree -> Branch("PUWeightDown_HLT_Mu7_IP4", &PUWeightDown_HLT_Mu7_IP4, "PUWeightDown_HLT_Mu7_IP4/F");
+      tree -> Branch("PUWeight_HLT_Mu9_IP6", &PUWeight_HLT_Mu9_IP6, "PUWeight_HLT_Mu9_IP6/F");
+      tree -> Branch("PUWeightUp_HLT_Mu9_IP6", &PUWeightUp_HLT_Mu9_IP6, "PUWeightUp_HLT_Mu9_IP6/F");
+      tree -> Branch("PUWeightDown_HLT_Mu9_IP6", &PUWeightDown_HLT_Mu9_IP6, "PUWeightDown_HLT_Mu9_IP6/F");
+      tree -> Branch("PUWeight_HLT_Mu12_IP6", &PUWeight_HLT_Mu12_IP6, "PUWeight_HLT_Mu12_IP6/F");
+      tree -> Branch("PUWeightUp_HLT_Mu12_IP6", &PUWeightUp_HLT_Mu12_IP6, "PUWeightUp_HLT_Mu12_IP6/F");
+      tree -> Branch("PUWeightDown_HLT_Mu12_IP6", &PUWeightDown_HLT_Mu12_IP6, "PUWeightDown_HLT_Mu12_IP6/F");
+      tree -> Branch("PUWeight_HLT_Mu9_IP6_v6", &PUWeight_HLT_Mu9_IP6_v6, "PUWeight_HLT_Mu9_IP6_v6/F");
+      tree -> Branch("PUWeightUp_HLT_Mu9_IP6_v6", &PUWeightUp_HLT_Mu9_IP6_v6, "PUWeightUp_HLT_Mu9_IP6_v6/F");
+      tree -> Branch("PUWeightDown_HLT_Mu9_IP6_v6", &PUWeightDown_HLT_Mu9_IP6_v6, "PUWeightDown_HLT_Mu9_IP6_v6/F");
+    }
     if (isControl){
-      tree -> Branch("EventWeight_leptonSF", &EventWeight_leptonSF, "EventWeight_leptonSF/F");
-      tree -> Branch("EventWeight_leptonSFUp", &EventWeight_leptonSFUp, "EventWeight_leptonSFUp/F");
-      tree -> Branch("EventWeight_leptonSFDown", &EventWeight_leptonSFDown, "EventWeight_leptonSFDown/F");
+      if (isShort) {
+        tree -> Branch("EventWeight_leptonSF", &EventWeight_leptonSF, "EventWeight_leptonSF/F");
+        tree -> Branch("EventWeight_leptonSFUp", &EventWeight_leptonSFUp, "EventWeight_leptonSFUp/F");
+        tree -> Branch("EventWeight_leptonSFDown", &EventWeight_leptonSFDown, "EventWeight_leptonSFDown/F");
+      }
       tree -> Branch("LeptonWeight", &LeptonWeight, "LeptonWeight/F");
       tree -> Branch("LeptonWeightUp", &LeptonWeightUp, "LeptonWeightUp/F");
       tree -> Branch("LeptonWeightDown", &LeptonWeightDown, "LeptonWeightDown/F");
@@ -2659,20 +3098,19 @@ Ntuplizer::beginJob()
       tree -> Branch("bTagWeight_cferr2up", &bTagWeight_cferr2up, "bTagWeight_cferr2up/F");
       tree -> Branch("bTagWeight_cferr2down", &bTagWeight_cferr2down, "bTagWeight_cferr2down/F");
     }
-    tree -> Branch("GenEventWeight", &GenEventWeight, "GenEventWeight/F");
+
+    tree -> Branch("ZewkWeight", &ZewkWeight, "ZewkWeight/F");
+    tree -> Branch("WewkWeight", &WewkWeight, "WewkWeight/F");
     tree -> Branch("model",       &model_);
     tree -> Branch("AtLeastOneTrigger" , &AtLeastOneTrigger , "AtLeastOneTrigger/O");
     tree -> Branch("AtLeastOneL1Filter" , &AtLeastOneL1Filter , "AtLeastOneL1Filter/O");
     tree -> Branch("Prefired" , &Prefired , "Prefired/O");
     tree -> Branch("nPV" , &nPV , "nPV/L");
     tree -> Branch("nSV" , &nSV , "nSV/L");
-    tree -> Branch("PUWeight", &PUWeight, "PUWeight/F");
-    tree -> Branch("PUWeightUp", &PUWeightUp, "PUWeightUp/F");
-    tree -> Branch("PUWeightDown", &PUWeightDown, "PUWeightDown/F");
-    tree -> Branch("ZewkWeight", &ZewkWeight, "ZewkWeight/F");
-    tree -> Branch("WewkWeight", &WewkWeight, "WewkWeight/F");
-    tree -> Branch("nGenBquarks" , &nGenBquarks , "nGenBquarks/L");
+    tree -> Branch("MeanNumInteractions" , &MeanNumInteractions , "MeanNumInteractions/I");
     tree -> Branch("nGenLL" , &nGenLL , "nGenLL/L");
+    tree -> Branch("nGenBquarks" , &nGenBquarks , "nGenBquarks/L");
+    tree -> Branch("nGenMuons" , &nGenMuons , "nGenMuons/L");
     tree -> Branch("nMatchedCHSJets" , &nMatchedCHSJets , "nMatchedCHSJets/L");
     tree -> Branch("nMatchedFatJets" , &nMatchedFatJets , "nMatchedFatJets/L");
     tree -> Branch("number_of_b_matched_to_CHSJets", &number_of_b_matched_to_CHSJets, "number_of_b_matched_to_CHSJets/L");
@@ -2699,6 +3137,11 @@ Ntuplizer::beginJob()
     tree -> Branch("nPhotons", &nPhotons, "nPhotons/I");
     tree -> Branch("nTightElectrons", &nTightElectrons, "nTightElectrons/I");
     tree -> Branch("nTightMuons", &nTightMuons, "nTightMuons/I");
+    if (isTracking) {
+      tree -> Branch("nLooseNotTightElectrons", &nLooseElectrons, "nLooseElectrons/I");
+      tree -> Branch("nLooseNotTightMuons", &nLooseMuons, "nLooseMuons/I");
+      tree -> Branch("nTriggerMuons", &nTriggerMuons, "nTriggerMuons/I");
+    }
     if (!isShort){
       tree -> Branch("nPFCandidates" , &nPFCandidates, "nPFCandidates/I");
       tree -> Branch("nPFCandidatesTrack", &nPFCandidatesTrack, "nPFCandidatesTrack/I");
@@ -2713,11 +3156,23 @@ Ntuplizer::beginJob()
     tree -> Branch("isggH" , &isggH, "isggH/O");
     tree -> Branch("isTriggerVBF" , &isTriggerVBF, "isTriggerVBF/O");
     if (isControl) {
-        tree -> Branch("isZtoEE" , &isZtoEE, "isZtoEE/O");
-        tree -> Branch("isZtoMM" , &isZtoMM, "isZtoMM/O");
-        tree -> Branch("isWtoEN" , &isWtoEN, "isWtoEN/O");
-        tree -> Branch("isWtoMN" , &isWtoMN, "isWtoMN/O");
-        tree -> Branch("isTtoEM" , &isTtoEM, "isTtoEM/O");
+      tree -> Branch("isTightMM" , &isTightMM, "isTightMM/O");
+      tree -> Branch("isOppositeSignTightMM" , &isOppositeSignTightMM, "isOppositeSignTightMM/O");
+      tree -> Branch("isZtoMM" , &isZtoMM, "isZtoMM/O");
+
+      tree -> Branch("isTightEE" , &isTightEE, "isTightEE/O");
+      tree -> Branch("isOppositeSignTightEE" , &isOppositeSignTightEE, "isOppositeSignTightEE/O");
+      tree -> Branch("isZtoEE" , &isZtoEE, "isZtoEE/O");
+
+      tree -> Branch("isTightM" , &isTightM, "isTightM/O");
+      tree -> Branch("isWtoMN" , &isWtoMN, "isWtoMN/O");
+
+      tree -> Branch("isTightE" , &isTightE, "isTightE/O");
+      tree -> Branch("isWtoEN" , &isWtoEN, "isWtoEN/O");
+
+      tree -> Branch("isTightEM" , &isTightEM, "isTightEM/O");
+      tree -> Branch("isLooseEM" , &isLooseEM, "isLooseEM/O");
+      tree -> Branch("isTtoEM" , &isTtoEM, "isTtoEM/O");
     }
     tree -> Branch("HT" , &HT , "HT/F");
     tree -> Branch("MinJetMetDPhi", &MinJetMetDPhi, "MinJetMetDPhi/F");
@@ -2744,6 +3199,22 @@ Ntuplizer::beginJob()
     tree -> Branch("HTriCHSMatched", &HTriCHSMatched, "HTriCHSMatched/F");
     tree -> Branch("HQuadCHSMatched", &HQuadCHSMatched, "HQuadCHSMatched/F");
 
+    tree -> Branch("LeadingLLP", &LeadingLLP);
+
+    if (isTracking) {
+      tree -> Branch("nROIs", &nROIs, "nROIs/I");
+    }
+    if (isTracking && WriteROITaggerScore){
+      tree -> Branch("LeadingROI", &LeadingROI);
+      // tree -> Branch("SubleadingROI", &SubleadingROI);
+      tree -> Branch("SubleadingROI_dPhi2p0", &SubleadingROI_dPhi2p0);
+      tree -> Branch("LeadingROILog10BackgroundScore", &LeadingROIScore);
+      // tree -> Branch("SubleadingROIScore", &SubleadingROIScore);
+      tree -> Branch("SubleadingROILog10BackgroundScore_dPhi2p0", &SubleadingROIScore_dPhi2p0);
+      tree -> Branch("MaxDisplacedJet", &MaxDisplacedJet);
+    }
+
+
     //tree -> Branch("HDiCalo", &HDiCalo, "HDiCalo/F");
     //tree -> Branch("HTriCalo", &HTriCalo, "HTriCalo/F");
     //tree -> Branch("HQuadCalo", &HQuadCalo, "HQuadCalo/F");
@@ -2762,10 +3233,11 @@ Ntuplizer::beginJob()
     ////for(int i = 0; i < WriteNLeptons; i++) Leptons.push_back( LeptonType() );
     //      for(int i = 0; i < WriteNLeptons; i++) Muons.push_back( LeptonType() );
     //      for(int i = 0; i < WriteNLeptons; i++) Electrons.push_back( LeptonType() );
-    if (isControl){
+    if (isShort && isControl){
       tree -> Branch("TightMuons", &Muons);
       tree -> Branch("TightElectrons", &Electrons);
     }
+
     //Set branches for objects
     //!! We save only MatchedJets for cross-checks with vectors
     ////for(int i = 0; i < WriteNJets; i++) tree->Branch(("CHSJet"+std::to_string(i+1)).c_str(), &(CHSJets[i].pt), ObjectsFormat::ListJetType().c_str());
@@ -2778,6 +3250,7 @@ Ntuplizer::beginJob()
     tree -> Branch("GenHiggs", &GenHiggs);
     tree -> Branch("GenLLPs", &GenLLPs);
     tree -> Branch("GenBquarks", &GenBquarks);
+    if (isTracking && WriteGenMuons) tree -> Branch("GenMuons", &GenMuons);
     ////for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Lepton"+std::to_string(i+1)).c_str(), &(Leptons[i].pt), ObjectsFormat::ListLeptonType().c_str());
     //for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Muon"+std::to_string(i+1)).c_str(), &(Muons[i].pt), ObjectsFormat::ListLeptonType().c_str());
     //for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Electron"+std::to_string(i+1)).c_str(), &(Electrons[i].pt), ObjectsFormat::ListLeptonType().c_str());
@@ -2790,15 +3263,30 @@ Ntuplizer::beginJob()
 
     tree -> Branch("Jets", &CHSJets);
     //tree -> Branch("CaloJets", &CaloJets);
-    tree -> Branch("VBFPairJets", &VBFPairJets);
-    tree -> Branch("ggHJet", &ggHJet);
-    //tree -> Branch("AllBarrelJets", &AllBarrelJets);
-    if (isTracking && WriteROIs) {
-       tree -> Branch("LostTracks", &LostTracksROI);
-       tree -> Branch("PFCandidates", &PFCandidatesROI);
-       tree -> Branch("TrackClusters", &TrackClusters);
-       tree -> Branch("RegionsOfInterest", &RegionsOfInterest);
+    if (!isTracking) {
+      tree -> Branch("VBFPairJets", &VBFPairJets);
+      tree -> Branch("ggHJet", &ggHJet);
     }
+    //tree -> Branch("AllBarrelJets", &AllBarrelJets);
+
+    if (isTracking) {
+      tree -> Branch("TriggerMuons", &Muons);
+      if (isControl) tree -> Branch("TightMuons", &TightMuons);
+      tree -> Branch("LooseNotTightMuons", &LooseMuons);
+      if (isControl) tree -> Branch("TightElectrons", &Electrons);
+      tree -> Branch("LooseNotTightElectrons", &LooseElectrons);
+
+      if (WriteROITaggerInputs) {
+        tree -> Branch("Vertices", &VerticesROI);
+        tree -> Branch("LostTracks", &LostTracksROI);
+        tree -> Branch("PFCandidates", &PFCandidatesROI);
+        tree -> Branch("TrackClusters", &TrackClusters);
+        tree -> Branch("RegionsOfInterest", &RegionsOfInterest);
+      }
+
+      if (WriteROITaggerScore) tree -> Branch("ROIs", &ROIs);
+    }
+
     if (WriteAllJets) tree -> Branch("AllJets", &AllJets);
     if (WriteFatJets) tree -> Branch("FatJets", &CHSFatJets);
     if (WriteVertices) tree -> Branch("PrimaryVertices", &PrimVertices);

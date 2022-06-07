@@ -14,6 +14,7 @@
   <class name="PhotonType"/>
   <class name="TauType"/>
   <class name="MEtType"/>
+  <class name="ROIType"/>
   <class name="ecalRecHitType"/>
   <class name="hcalRecHitType"/>
   <class name="std::vector<JetType>"/>
@@ -32,4 +33,5 @@
   <class name="std::vector<MEtType>"/>
   <class name="std::vector<ecalRecHitType>"/>
   <class name="std::vector<hcalRecHitType>"/>
+  <class name="std::vector<ROIType>"/>
 </lcgdict>

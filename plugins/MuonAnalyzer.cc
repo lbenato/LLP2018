@@ -1,5 +1,5 @@
 #include "MuonAnalyzer.h"
-  
+
 MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl):
     MuonToken(CColl.consumes<std::vector<pat::Muon> >(PSet.getParameter<edm::InputTag>("muons"))),
     VertexToken(CColl.consumes<reco::VertexCollection>(PSet.getParameter<edm::InputTag>("vertices"))),
@@ -15,6 +15,8 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
     Muon2Iso(PSet.getParameter<int>("muon2iso")),
     Muon1Pt(PSet.getParameter<double>("muon1pt")),
     Muon2Pt(PSet.getParameter<double>("muon2pt")),
+    Muon1Eta(PSet.getParameter<double>("muon1eta")),
+    Muon2Eta(PSet.getParameter<double>("muon2eta")),
     UseTuneP(PSet.getParameter<bool>("useTuneP")),
     DoRochester(PSet.getParameter<bool>("doRochester"))
 {
@@ -57,7 +59,7 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
         throw cms::Exception("MuonAnalyzer", "No Muon Trigger Weight File");
         return;
     }
-    
+
     // //removed obsolete things for now
     // //Muon tracker eff
     // // FIXME -> STILL ICHEP-2016 -> TO BE UPDATED ? --> todo: super old stuff! Is there something to exchange?
@@ -77,21 +79,21 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
     //NOTE -> SF APPLIED AS PER-EVENT WEIGHTS
     MuonIdFile=new TFile(MuonIdFileName.c_str(), "READ");
     if(!MuonIdFile->IsZombie()) {
-      if(MuonIdFileName.find("2016")){
+      if(MuonIdFileName.find("2016") != std::string::npos){
         MuonIdLoose =(TH2F*)MuonIdFile->Get("NUM_LooseID_DEN_genTracks_eta_pt");
         MuonIdMedium=(TH2F*)MuonIdFile->Get("NUM_MediumID_DEN_genTracks_eta_pt");
         MuonIdTight =(TH2F*)MuonIdFile->Get("NUM_TightID_DEN_genTracks_eta_pt");
         MuonIdHighpt=(TH2F*)MuonIdFile->Get("NUM_HighPtID_DEN_genTracks_eta_pair_newTuneP_probe_pt"); // done wrt tune-p pt
 	isFile2016 = true;
       }
-      else if(MuonIdFileName.find("2017")){
+      else if(MuonIdFileName.find("2017") != std::string::npos){
 	MuonIdLoose =(TH2F*)MuonIdFile->Get("NUM_LooseID_DEN_genTracks_pt_abseta");
         MuonIdMedium=(TH2F*)MuonIdFile->Get("NUM_MediumID_DEN_genTracks_pt_abseta");
         MuonIdTight =(TH2F*)MuonIdFile->Get("NUM_TightID_DEN_genTracks_pt_abseta");
         MuonIdHighpt=(TH2F*)MuonIdFile->Get("NUM_HighPtID_DEN_genTracks_pair_newTuneP_probe_pt_abseta");
         isFile2017 = true;
       }
-      else if(MuonIdFileName.find("2018")){
+      else if(MuonIdFileName.find("2018") != std::string::npos){
 	MuonIdLoose =(TH2F*)MuonIdFile->Get("NUM_LooseID_DEN_TrackerMuons_pt_abseta");
         MuonIdMedium=(TH2F*)MuonIdFile->Get("NUM_MediumID_DEN_TrackerMuons_pt_abseta");
         MuonIdTight =(TH2F*)MuonIdFile->Get("NUM_TightID_DEN_TrackerMuons_pt_abseta");
@@ -110,25 +112,25 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
     //NOTE -> SF APPLIED AS PER-EVENT WEIGHTS
     MuonIsoFile=new TFile(MuonIsoFileName.c_str(), "READ");
     if(!MuonIsoFile->IsZombie()) {
-      if(MuonIsoFileName.find("2016")){
+      if(MuonIsoFileName.find("2016") != std::string::npos){
 	MuonIsoHighpt=(TH2F*)MuonIsoFile->Get("NUM_LooseRelTkIso_DEN_HighPtIDandIPCut_eta_pair_newTuneP_probe_pt");
 	MuonIsoLoose=(TH2F*)MuonIsoFile->Get("NUM_LooseRelIso_DEN_LooseID_eta_pt");
 	MuonIsoTight=(TH2F*)MuonIsoFile->Get("NUM_TightRelIso_DEN_TightID_eta_pt");
         isFile2016 = true;
       }
-      else if(MuonIsoFileName.find("2017") || MuonIsoFileName.find("2018")){
+      else if(MuonIsoFileName.find("2017") != std::string::npos || MuonIsoFileName.find("2018") != std::string::npos){
 	MuonIsoHighpt=(TH2F*)MuonIsoFile->Get("NUM_LooseRelTkIso_DEN_HighPtIDandIPCut_pair_newTuneP_probe_pt_abseta");
 	MuonIsoLoose=(TH2F*)MuonIsoFile->Get("NUM_LooseRelIso_DEN_LooseID_pt_abseta");
 	MuonIsoTight=(TH2F*)MuonIsoFile->Get("NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta");
-        isFile2017 = MuonIsoFileName.find("2017");
-        isFile2018 = MuonIsoFileName.find("2018");
+        isFile2017 = MuonIsoFileName.find("2017") != std::string::npos;
+        isFile2018 = MuonIsoFileName.find("2018") != std::string::npos;
       }
       else throw cms::Exception("MuonAnalyzer", "Run era not in Muon ISO Weight File Name");
       isMuonIsoFile=true;
     }
     else {
         throw cms::Exception("MuonAnalyzer", "No MuonIso Weight File");
-         return;
+        return;
     }
 
     // //Muon custom TrackerHighPt id, 2016
@@ -149,7 +151,13 @@ MuonAnalyzer::MuonAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CCo
     std::cout << "  mu Id  [1, 2]     :\t" << Muon1Id << "\t" << Muon2Id << std::endl;
     std::cout << "  mu Iso [1, 2]     :\t" << Muon1Iso << "\t" << Muon2Iso << std::endl;
     std::cout << "  mu pT  [1, 2]     :\t" << Muon1Pt << "\t" << Muon2Pt << std::endl;
+    std::cout << "  mu eta [1, 2]     :\t" << Muon1Eta << "\t" << Muon2Eta << std::endl;
     std::cout << "  DoRochester       :\t" << DoRochester << std::endl;
+    std::cout << "  ID SF file        :\t" << MuonIdFile->GetName() << std::endl;
+    // std::cout << "  ID SF hist (Tight):\t" << MuonIdTight->GetName() << std::endl;
+    std::cout << "  Iso SF file       :\t" << MuonIsoFile->GetName() << std::endl;
+    // std::cout << "  Iso SF hist (Tight):\t" << MuonIsoTight->GetName() << std::endl;
+
     std::cout << std::endl;
 
 }
@@ -171,23 +179,24 @@ MuonAnalyzer::~MuonAnalyzer() {
 std::vector<pat::Muon> MuonAnalyzer::FillMuonVector(const edm::Event& iEvent) {
     bool isMC(!iEvent.isRealData());
     int IdTh(Muon1Id), IsoTh(Muon1Iso);
-    float PtTh(Muon1Pt);
+    float PtTh(Muon1Pt), EtaTh(Muon1Eta);
     std::vector<pat::Muon> Vect;
     // Declare and open collections
     edm::Handle<std::vector<pat::Muon> > MuonCollection;
     iEvent.getByToken(MuonToken, MuonCollection);
-    
+
     edm::Handle<reco::VertexCollection> PVCollection;
     iEvent.getByToken(VertexToken, PVCollection);
     const reco::Vertex* vertex=&PVCollection->front();
-    
-    
+
+
     // Loop on Muon collection
     for(std::vector<pat::Muon>::const_iterator it=MuonCollection->begin(); it!=MuonCollection->end(); ++it) {
         if(Vect.size()>0) {
             IdTh=Muon2Id;
             IsoTh=Muon2Iso;
             PtTh=Muon2Pt;
+            EtaTh=Muon2Eta;
         }
         pat::Muon mu=*it;
         // Pt and eta
@@ -195,16 +204,16 @@ std::vector<pat::Muon> MuonAnalyzer::FillMuonVector(const edm::Event& iEvent) {
             mu.setP4(reco::Candidate::PolarLorentzVector(mu.tunePMuonBestTrack()->pt(), mu.eta(), mu.phi(), mu.mass()));
         // Apply Rochester corrections
         if (DoRochester){
-            TLorentzVector * mup4 = new TLorentzVector ();        
+            TLorentzVector * mup4 = new TLorentzVector ();
             mup4->SetPtEtaPhiM(mu.pt(), mu.eta(), mu.phi(), mu.mass());
             if(!isMC)
                 rmcor->momcor_mc(*mup4, float(mu.charge()), mu.innerTrack()->hitPattern().trackerLayersWithMeasurement(), float(1.0));
             else
-                rmcor->momcor_data(*mup4, float(mu.charge()), 0, float(1.0));      
+                rmcor->momcor_data(*mup4, float(mu.charge()), 0, float(1.0));
             mu.setP4(reco::Candidate::PolarLorentzVector(mup4->Pt(), mu.eta(), mu.phi(), mu.mass()));
             delete mup4;
         }
-        if(mu.pt()<PtTh || fabs(mu.eta())>2.4) continue;
+        if(mu.pt()<PtTh || fabs(mu.eta())>EtaTh) continue;
         // Muon Quality ID 2015-2016: see https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonIdRun2
         //if(IdTh==0 && !IsTrackerHighPtMuon(mu, vertex)) continue;//not very useful for displacement
         if(IdTh==0 && !mu.isPFMuon()) continue;
@@ -212,7 +221,7 @@ std::vector<pat::Muon> MuonAnalyzer::FillMuonVector(const edm::Event& iEvent) {
         if(IdTh==2 && !mu.isMediumMuon()) continue;
         if(IdTh==3 && !mu.isTightMuon(*vertex)) continue;
         if(IdTh==4 && !mu.isHighPtMuon(*vertex)) continue;
-        // Isolation 
+        // Isolation
         float pfIso03 = (mu.pfIsolationR03().sumChargedHadronPt + std::max(mu.pfIsolationR03().sumNeutralHadronEt + mu.pfIsolationR03().sumPhotonEt - 0.5*mu.pfIsolationR03().sumPUPt, 0.) ) / mu.pt(); // PF-based pt for PFIso
         float pfIso04 = (mu.pfIsolationR04().sumChargedHadronPt + std::max(mu.pfIsolationR04().sumNeutralHadronEt + mu.pfIsolationR04().sumPhotonEt - 0.5*mu.pfIsolationR04().sumPUPt, 0.) ) / mu.pt(); // PF-based pt for PFIso
 	      // Tracker iso corrected with by-hand subtraction
@@ -234,12 +243,35 @@ std::vector<pat::Muon> MuonAnalyzer::FillMuonVector(const edm::Event& iEvent) {
         mu.addUserFloat("pfIso04", pfIso04);
         mu.addUserFloat("dxy", mu.track().isNonnull() ? mu.muonBestTrack()->dxy(vertex->position()) : -999.);
         mu.addUserFloat("dz", mu.track().isNonnull() ? mu.muonBestTrack()->dz(vertex->position()) : -999.);
+        mu.addUserFloat("dxyErr", mu.track().isNonnull() ? mu.muonBestTrack()->dxyError() : -999.);
+        mu.addUserFloat("dxySig", (mu.track().isNonnull() && mu.muonBestTrack()->dxyError() > 0) ?  mu.muonBestTrack()->dxy(vertex->position()) / mu.muonBestTrack()->dxyError() : -999.);
         //mu.addUserInt("isTrackerHighPt", IsTrackerHighPtMuon(mu, vertex) ? 1 : 0);
         mu.addUserInt("isPFMuon", mu.isPFMuon() ? 1 : 0);
         mu.addUserInt("isLoose", mu.isLooseMuon() ? 1 : 0);
         mu.addUserInt("isMedium", mu.isMediumMuon() ? 1 : 0);
         mu.addUserInt("isTight", mu.isTightMuon(*vertex) ? 1 : 0);
         mu.addUserInt("isHighPt", mu.isHighPtMuon(*vertex) ? 1 : 0);
+        // Trigger flags:
+        mu.addUserInt("triggered_HLT_Mu12_IP6", mu.triggered("HLT_Mu12_IP6_part*_v*") ? 1 : 0 );
+        mu.addUserInt("triggered_HLT_Mu10p5_IP3p5", mu.triggered("HLT_Mu10p5_IP3p5_part*_v*") ? 1 : 0 );
+        mu.addUserInt("triggered_HLT_Mu9_IP6", mu.triggered("HLT_Mu9_IP6_part*_v*") ? 1 : 0 );
+        mu.addUserInt("triggered_HLT_Mu9_IP5", mu.triggered("HLT_Mu9_IP5_part*_v*") ? 1 : 0 );
+        mu.addUserInt("triggered_HLT_Mu9_IP4", mu.triggered("HLT_Mu9_IP4_part*_v*") ? 1 : 0 );
+        mu.addUserInt("triggered_HLT_Mu8p5_IP3p5", mu.triggered("HLT_Mu8p5_IP3p5_part*_v*") ? 1 : 0 );
+        mu.addUserInt("triggered_HLT_Mu8_IP6", mu.triggered("HLT_Mu8_IP6_part*_v*") ? 1 : 0 );
+        mu.addUserInt("triggered_HLT_Mu8_IP5", mu.triggered("HLT_Mu8_IP5_part*_v*") ? 1 : 0 );
+        mu.addUserInt("triggered_HLT_Mu8_IP3", mu.triggered("HLT_Mu8_IP3_part*_v*") ? 1 : 0 );
+        mu.addUserInt("triggered_HLT_Mu7_IP4", mu.triggered("HLT_Mu7_IP4_part*_v*") ? 1 : 0 );
+        mu.addUserInt("triggered_BParking", mu.triggered("HLT_Mu*_IP*_part*_v*") ? 1 : 0 );
+        mu.addUserInt("isSoftMuon", mu.isSoftMuon(*vertex) ? 1 : 0);
+        mu.addUserInt("isSoftMuonFromCuts", IsSoftMuon(mu, vertex) ? 1 : 0);
+        mu.addUserInt("isInnerTrackerMuon", mu.innerTrack().isNonnull() ? 1 : 0);
+        mu.addUserInt("isTMOneStationTight", muon::isGoodMuon(mu, muon::TMOneStationTight) ? 1 : 0 );
+        mu.addUserInt("nTrackerLayers", mu.innerTrack().isNonnull() ? mu.innerTrack()->hitPattern().trackerLayersWithMeasurement() : -1);
+        mu.addUserInt("nPixelLayers", mu.innerTrack().isNonnull() ? mu.innerTrack()->hitPattern().pixelLayersWithMeasurement() : -1);
+        mu.addUserInt("isHighPurityTrack", mu.innerTrack().isNonnull() ? mu.innerTrack()->quality(reco::TrackBase::highPurity) : false);
+        mu.addUserFloat("dxyTrack", mu.innerTrack().isNonnull() ? mu.innerTrack()->dxy(vertex->position()) : -999.);
+        mu.addUserFloat("dzTrack", mu.innerTrack().isNonnull() ? mu.innerTrack()->dz(vertex->position()) : -999.);
         // Fill vector
         Vect.push_back(mu);
     }
@@ -254,7 +286,7 @@ void MuonAnalyzer::AddVariables(std::vector<pat::Muon>& Vect, pat::MET& MET) {
 
 
 bool MuonAnalyzer::IsTrackerHighPtMuon(pat::Muon& mu, const reco::Vertex* vertex) {
-    
+
     if (! (mu.isMuon()) ) return false;
     if (! (mu.isTrackerMuon()) ) return false;
     if (! (mu.tunePMuonBestTrack().isNonnull()) ) return false;
@@ -266,7 +298,18 @@ bool MuonAnalyzer::IsTrackerHighPtMuon(pat::Muon& mu, const reco::Vertex* vertex
     if (! (fabs(mu.tunePMuonBestTrack()->dz(vertex->position()) ) < 0.5) ) return false;
 
     return true;
-    
+
+}
+
+bool MuonAnalyzer::IsSoftMuon(pat::Muon& mu, const reco::Vertex* vertex) {
+// From: https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#Soft_Muon
+    if (! (muon::isGoodMuon(mu, muon::TMOneStationTight)) ) return false;
+    if (! (mu.innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5) ) return false;
+    if (! (mu.innerTrack()->hitPattern().pixelLayersWithMeasurement() > 0) ) return false;
+    if (! (mu.innerTrack()->quality(reco::TrackBase::highPurity) ) ) return false;
+    if (! (fabs(mu.innerTrack()->dxy(vertex->position()) ) < 0.3) ) return false;
+    if (! (fabs(mu.innerTrack()->dz(vertex->position()) ) < 20) ) return false;
+    return true;
 }
 
 std::vector<float> MuonAnalyzer::FixTrackerIsolation(pat::Muon& mu1, pat::Muon& mu2){
@@ -303,9 +346,9 @@ std::string MuonAnalyzer::GetMuon1Id(pat::Muon& mu){
 
 //ID
 float MuonAnalyzer::GetMuonIdSF(pat::Muon& mu, int id) {
-  if (id != Muon1Id || id != Muon2Id){
-    throw cms::Exception("MuonAnalyzer", "Muon ID set in Ntuplizer not equal to Muon ID set in config file!");
-  }
+  // if (id != Muon1Id || id != Muon2Id){
+  //   throw cms::Exception("MuonAnalyzer", "Muon ID set in Ntuplizer not equal to Muon ID set in config file!");
+  // }
     if(id==0 && isMuonTrkHighptFile){
 // //removed obsolete things for now
 //         double pt = std::min( std::max( MuonIdTrkHighpt->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdTrkHighpt->GetYaxis()->GetXmax() - 0.000001 );
@@ -360,15 +403,15 @@ float MuonAnalyzer::GetMuonIdSF(pat::Muon& mu, int id) {
         double pt = std::min( std::max( MuonIdHighpt->GetXaxis()->GetXmin(), mu.pt() ) , MuonIdHighpt->GetXaxis()->GetXmax() - 0.000001 );
         double abseta = std::min( MuonIdHighpt->GetYaxis()->GetXmax() - 0.000001 , fabs(mu.eta()) );
         return MuonIdHighpt->GetBinContent( MuonIdHighpt->FindBin(pt,abseta) );
-      } 
+      }
     }
     return 1.;
 }
 
 float MuonAnalyzer::GetMuonIdSFError(pat::Muon& mu, int id) {
-  if (id != Muon1Id || id != Muon2Id){
-    throw cms::Exception("MuonAnalyzer", "Muon ID set in Ntuplizer not equal to Muon ID set in config file!");
-  }
+  // if (id != Muon1Id || id != Muon2Id){
+  //   throw cms::Exception("MuonAnalyzer", "Muon ID set in Ntuplizer not equal to Muon ID set in config file!");
+  // }
   if(id==0 && isMuonTrkHighptFile){
 // //removed obsolete things for now
 //         double pt = std::min( std::max( MuonIdTrkHighpt->GetYaxis()->GetXmin(), mu.pt() ) , MuonIdTrkHighpt->GetYaxis()->GetXmax() - 0.000001 );
@@ -431,7 +474,7 @@ float MuonAnalyzer::GetMuonIdSFError(pat::Muon& mu, int id) {
 //TRK
 float MuonAnalyzer::GetMuonTrkSF(pat::Muon& mu) {
     if(isMuonTrkFile){
-        double eta = 0.;       
+        double eta = 0.;
         if (mu.eta() > 0)
             eta = std::min( MuonTrk->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
         else
@@ -479,7 +522,9 @@ float MuonAnalyzer::GetMuonIsoSF(pat::Muon& mu, int id) {
       return MuonIsoLoose->GetBinContent( MuonIsoLoose->FindBin(pt,abseta) );
     }
   }
-  if(id==2 && isMuonIsoFile){
+  if(id==2 && isMuonIsoFile) throw cms::Exception("MuonAnalyzer", "Muon medium iso (id=2) not supported. Use id=3 for tight isolation");
+
+  if(id==3 && isMuonIsoFile){
     if (isFile2016){
       double pt = std::min( std::max( MuonIsoTight->GetYaxis()->GetXmin(), mu.pt() ) , MuonIsoTight->GetYaxis()->GetXmax() - 0.000001 );
       double eta = std::min( MuonIsoTight->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
@@ -520,7 +565,7 @@ float MuonAnalyzer::GetMuonIsoSFError(pat::Muon& mu, int id) {
       return MuonIsoLoose->GetBinError( MuonIsoLoose->FindBin(pt,abseta) );
     }
   }
-  if(id==2){
+  if(id==3){
     if (isFile2016){
       double pt = std::min( std::max( MuonIsoTight->GetYaxis()->GetXmin(), mu.pt() ) , MuonIsoTight->GetYaxis()->GetXmax() - 0.000001 );
       double eta = std::min( MuonIsoTight->GetXaxis()->GetXmax() - 0.000001 , mu.eta() );
@@ -592,7 +637,7 @@ TH1F* MuonAnalyzer::ConvertTGraph(TGraphAsymmErrors* g) {
     float x[n+1];
     for(int i=0; i<n; i++) x[i]=g->GetX()[i]-g->GetEXlow()[i];
     x[n]=g->GetX()[n-1]+g->GetEXhigh()[n-1];
-    
+
     TH1F* h=new TH1F(g->GetName(), g->GetTitle(), n, x); h->Sumw2();
     for(int i=0; i<n; i++) {
       h->SetBinContent(i+1, g->GetY()[i]);

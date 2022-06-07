@@ -37,6 +37,7 @@ class GenAnalyzer {
 
         virtual std::vector<reco::GenParticle> FillGenVectorByIdAndStatusAndKin(const edm::Event&, int, int, float, float);
         virtual std::vector<reco::GenParticle> FillGenVectorByIdStatusAndMotherAndKin(const edm::Event&, int, int, int, float, float);
+        virtual std::vector<reco::GenParticle> FillGenVectorByIdAndAncestor(const edm::Event&, int, int);
 
         virtual reco::Candidate* FindGenParticle(std::vector<reco::GenParticle>&, int);
         virtual reco::Candidate* FindLastDaughter(reco::Candidate*);
@@ -45,6 +46,7 @@ class GenAnalyzer {
         virtual const reco::GenParticle* FindLastDaughterGen(const reco::GenParticle*);
         virtual const reco::Candidate* FindMother(reco::GenParticle*);
         virtual reco::Candidate* FindGenParticleByIdAndStatus(std::vector<reco::GenParticle>&, int, int);
+        virtual bool HasAncestor(const reco::GenParticle*, int);
         virtual float GetStitchWeight(std::map<std::string, float>);
         virtual float GetZewkWeight(float);
         virtual float GetWewkWeight(float);
@@ -54,9 +56,9 @@ class GenAnalyzer {
         virtual std::pair<float, float> GetQ2Weight(const edm::Event&);
         virtual std::vector<reco::GenParticle> PartonsFromDecays(const std::vector<int> & pdgIds);
         virtual std::vector<reco::GenParticle> PartonsFromDecays(const std::vector<int> & pdgIds, std::vector<reco::GenParticle> & genDecay );
-        virtual std::vector<reco::GenParticle> FirstNGenParticles(const std::vector<int> & pdgIds, std::size_t n); 
+        virtual std::vector<reco::GenParticle> FirstNGenParticles(const std::vector<int> & pdgIds, std::size_t n);
 
-      
+
     private:
         edm::EDGetTokenT<GenEventInfoProduct> GenToken;
         edm::EDGetTokenT<LHEEventProduct> LheToken;
@@ -68,24 +70,24 @@ class GenAnalyzer {
         std::vector<std::string> SampleWJetsToLNu;
         std::string SampleDir;
         std::string Sample;
-        
+
         std::map<std::string, TFile*> Files;
         std::map<std::string, TH1F*> hPartons;
         std::map<std::string, TH1F*> hBPartons;
         std::map<std::string, TH1F*> hHT;
         std::map<std::string, TH1F*> hPtV;
-        
+
         std::string EWKFileName;
         bool ApplyEWK;
         bool ApplyTopPtReweigth;
         bool PythiaLOSample;
         bool isRealData;
 
-        
+
         TFile* EWKFile;
         TF1* fZEWK;
         TF1* fWEWK;
-        
+
         edm::LumiReWeighting* LumiWeights;
 
         // new member to hold GenCollection and about copy overheads

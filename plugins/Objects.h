@@ -2,7 +2,7 @@
 #define OBJECTS_H
 
 struct LeptonType {
-LeptonType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), inTrkPt(-1.), pfIso03(-1.), pfIso04(-1.), trkIso(-1.), miniIso(-1.), dxy(-99.), dz(-99.), ip3d(-99.), sip3d(-99.), nPixelHits(-1.), dPhi_met(-99.), charge(0), pdgId(0), isElectron(false), isMuon(false), isVeto(false), isLoose(false), isMedium(false), isTight(false), isHighPt(false), isPFMuon(false), SSscale(-1.), SSsigma(-1.), SSscaleUnc(-1.), SSsigmaUncUp(-1.), SSsigmaUncDown(-1.), SScorr(-1.), energySScorr(-1.), energySScorrUncUp(-1.), energySScorrUncDown(-1.), ptSScorr(-1.), ptSScorrUncUp(-1.), ptSScorrUncDown(-1.), isMatched(false) {} // isHEEP(false), isMVANonTrigMedium(false), isMVANonTrigTight(false), isMVATrigMedium(false), isMVATrigTight(false)
+LeptonType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), inTrkPt(-1.), pfIso03(-1.), pfIso04(-1.), trkIso(-1.), miniIso(-1.), dxy(-99.), dz(-99.), dxyErr(-99.), dxySig(-99.), ip3d(-99.), sip3d(-99.), nPixelHits(-1.), dPhi_met(-99.), charge(0), pdgId(0), isElectron(false), isMuon(false), isVeto(false), isLoose(false), isMedium(false), isTight(false), isHighPt(false), isPFMuon(false), isSoftMuon(false), isSoftMuonFromCuts(false), triggered_HLT_Mu12_IP6(false), triggered_HLT_Mu10p5_IP3p5(false), triggered_HLT_Mu9_IP6(false), triggered_HLT_Mu9_IP5(false), triggered_HLT_Mu9_IP4(false), triggered_HLT_Mu8p5_IP3p5(false), triggered_HLT_Mu8_IP6(false),triggered_HLT_Mu8_IP5(false),triggered_HLT_Mu8_IP3(false),triggered_HLT_Mu7_IP4(false), isInnerTrackerMuon(false), isTMOneStationTight(false), isHighPurityTrack(false), nTrackerLayers(-1), nPixelLayers(-1), dxyTrack(-99.), dzTrack(-99.), SSscale(-1.), SSsigma(-1.), SSscaleUnc(-1.), SSsigmaUncUp(-1.), SSsigmaUncDown(-1.), SScorr(-1.), energySScorr(-1.), energySScorrUncUp(-1.), energySScorrUncDown(-1.), ptSScorr(-1.), ptSScorrUncUp(-1.), ptSScorrUncDown(-1.), isGenMatched(false), MatchedGenMuonIndex(-1) {} // isHEEP(false), isMVANonTrigMedium(false), isMVANonTrigTight(false), isMVATrigMedium(false), isMVATrigTight(false)
     float pt;
     float eta;
     float phi;
@@ -15,6 +15,8 @@ LeptonType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), inTrkPt(-1.),
     float miniIso;
     float dxy;
     float dz;
+    float dxyErr;
+    float dxySig;
     float ip3d;
     float sip3d;
     float nPixelHits;
@@ -34,6 +36,25 @@ LeptonType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), inTrkPt(-1.),
 //    bool isMVATrigTight;
     bool isHighPt;
     bool isPFMuon;
+    bool isSoftMuon;
+    bool isSoftMuonFromCuts;
+    bool triggered_HLT_Mu12_IP6;
+    bool triggered_HLT_Mu10p5_IP3p5;
+    bool triggered_HLT_Mu9_IP6;
+    bool triggered_HLT_Mu9_IP5;
+    bool triggered_HLT_Mu9_IP4;
+    bool triggered_HLT_Mu8p5_IP3p5;
+    bool triggered_HLT_Mu8_IP6;
+    bool triggered_HLT_Mu8_IP5;
+    bool triggered_HLT_Mu8_IP3;
+    bool triggered_HLT_Mu7_IP4;
+    bool isInnerTrackerMuon;
+    bool isTMOneStationTight;
+    bool isHighPurityTrack;
+    int nTrackerLayers;
+    int nPixelLayers;
+    float dxyTrack;
+    float dzTrack;
 
     float SSscale;
     float SSsigma;
@@ -48,7 +69,8 @@ LeptonType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), inTrkPt(-1.),
     float ptSScorrUncUp;
     float ptSScorrUncDown;
 
-    bool isMatched;
+    bool isGenMatched;
+    int MatchedGenMuonIndex;
 };
 
 struct PhotonType {
@@ -109,12 +131,12 @@ matchBquark(-1), matchLL(-1),
 //original_jet_index(-1),
 isGenMatched(0), isGenMatchedCaloCorr(0), isGenMatchedLLPAccept(0), isGenMatchedCaloCorrLLPAccept(0), radiusLLP(-1000.), xLLP(-10000.), yLLP(-10000.), zLLP(-10000.), radiusLLPCaloCorr(-1000.), xLLPCaloCorr(-10000.), yLLPCaloCorr(-10000.), zLLPCaloCorr(-10000.), xGenb(-10000.), yGenb(-10000.), zGenb(-10000.), xGenbCaloCorr(-10000.), yGenbCaloCorr(-10000.), zGenbCaloCorr(-10000.), isVBFGenMatched(0),
 //track variables, old implementation
-alphaMaxOld(-100.), sumPtJetOld(-1.), betaMaxOld(-100.), gammaMaxOld(-100.), gammaMaxEMOld(-100.), gammaMaxHadronicOld(-100.), gammaMaxETOld(-100.), sigIP2DMedianOld(-10000.), theta2DMedianOld(-100.), POCA_theta2DMedianOld(-100.), nPixelHitsMedianOld(-1.0), nHitsMedianOld(-1.0), dxyMedianOld(-9999.), dzMedianOld(-9999.),//minDeltaRAllTracksOld(999.), minDeltaRPVTracksOld(999.), minDeltaRAllTracksInJetOld(999.), minDeltaRPVTracksInJetOld(999.),
+alphaMaxOld(-100.), sumPtJetOld(-1.), betaMaxOld(-100.), gammaMaxOld(-100.), gammaMaxEMOld(-100.), gammaMaxHadronicOld(-100.), gammaMaxETOld(-100.), sigIP2DMedianOld(-10000.), log10AbsSigIP2DMedianOld(5.), theta2DMedianOld(-100.), POCA_theta2DMedianOld(-100.), nPixelHitsMedianOld(-1.0), nHitsMedianOld(-1.0), dxyMedianOld(-9999.), dzMedianOld(-9999.),//minDeltaRAllTracksOld(999.), minDeltaRPVTracksOld(999.), minDeltaRAllTracksInJetOld(999.), minDeltaRPVTracksInJetOld(999.),
 //track variables, new implementation
 ptAllTracks(-1.), ptAllPVTracks(-1.), ptPVTracksMax(-1.), nTracksAll(-1), nTracksPVMax(-1), medianIP2D(-10000.), medianTheta2D(-100.), alphaMax(-100.), betaMax(-100.), gammaMax(-100.), gammaMaxEM(-100.), gammaMaxHadronic(-100.), gammaMaxET(-100.), minDeltaRAllTracks(999.), minDeltaRPVTracks(999.), nPixelHitsMedian(-1.0), nHitsMedian(-1.0), dzMedian(-9999.), dxyMedian(-9999.),
 hcalE(-100.), ecalE(-100.), FracCal(-100.), flightDist2d(-100.), flightDist2dError(-100.), flightDist3d(-100.), flightDist3dError(-100.), nSV(-1), nSVCand(-1), nVertexTracks(-1), nSelectedTracks(-1), dRSVJet(-100.), SV_x(-1000.), SV_y(-1000.), SV_z(-1000.), SV_dx(-100.), SV_dy(-100.), SV_dz(-100.), nTracksSV(-1), SV_mass(-100.),  isCaloTag(0),
 //VBF_DisplacedJet40_VTightID_Hadronic_match(0), VBF_DisplacedJet40_VVTightID_Hadronic_match(0),
-ptJESUp (-1.), ptJESDown (-1.), ptJER(-1.), ptJERUp (-1.), ptJERDown (-1.), tau1(-1.), tau2(-1.), tau3(-1.), nSubJets(-1), tau21(-1.), tau31(-1.), tau32(-1.), tau1_neutral(-1.), tau2_neutral(-1.), tau21_neutral(-1.), tau1_charged(-1.), tau2_charged(-1.), tau21_charged(-1.), 
+ptJESUp (-1.), ptJESDown (-1.), ptJER(-1.), ptJERUp (-1.), ptJERDown (-1.), tau1(-1.), tau2(-1.), tau3(-1.), nSubJets(-1), tau21(-1.), tau31(-1.), tau32(-1.), tau1_neutral(-1.), tau2_neutral(-1.), tau21_neutral(-1.), tau1_charged(-1.), tau2_charged(-1.), tau21_charged(-1.),
 //TriggerMatched_VBFJet(0), TriggerMatched_DisplacedJet(0), TriggerMatched_TripleJet50(0),//currently not used
 nConstituents (-1), nTrackConstituents (-1), nTracks0PixelHits(-1), nTracks1PixelHit(-1),nTracks2PixelHits(-1),nTracks3PixelHits(-1),nTracks4PixelHits(-1),nTracks5PixelHits(-1),nTracksAtLeast6PixelHits(-1),
 nTracksValidHitInBPix1(-1),nTracks0LostInnerHits(-1), nTracks1LostInnerHit(-1), nTracksAtLeast2LostInnerHits(-1), nTrackConstituentsWithPtLarger0p95(-1), nTrackConstituentsWithTrackDetails(-1), nTrackConstituentsWithTrackDetailsPtLarger0p95(-1), nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1),
@@ -131,7 +153,8 @@ sig1PF(-1.), sig2PF(-1.), sigAvPF(-1.),tan2thetaPF(-99999999.),ptDPF(-1.),
 //LLP calo tagger
 sigprob(-1.),
 //Imperial College tagger
-pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP1000(-1.), deepCSV_probb_probbb(-99.), deepCSV_probc_probudsg(-99.), deepCSV_probudsg(-99.), deepCSV_probb(-99.), deepCSV_probc(-99.), deepCSV_probbb(-99.), deepJet_probc_probg_probuds(-99.), deepJet_probb_probbb_problepb(-99.), deepJet_probuds(-99.),deepJet_probg(-99.), deepJet_problepb(-99.), deepJet_probb(-99.), deepJet_probc(-99.), deepJet_probbb(-99.){}
+pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP1000(-1.), deepCSV_probb_probbb(-99.), deepCSV_probc_probudsg(-99.), deepCSV_probudsg(-99.), deepCSV_probb(-99.), deepCSV_probc(-99.), deepCSV_probbb(-99.), deepJet_probc_probg_probuds(-99.), deepJet_probb_probbb_problepb(-99.), deepJet_probuds(-99.),deepJet_probg(-99.), deepJet_problepb(-99.), deepJet_probb(-99.), deepJet_probc(-99.), deepJet_probbb(-99.),
+absDeltaPhiToLeadingROI(-1.), absDeltaPhiToSubleadingROI(-1.), absDeltaPhiToNearestTaggedROI(-1), absDeltaPhiToFarthestTaggedROI(-1), matchedToLeadingROI(0), matchedToSubleadingROI(0), matchedToTaggedROI(0) {}
     float pt;
     float eta;
     float phi;
@@ -236,7 +259,7 @@ pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP10
     int matchBquark;
     int matchLL;
   //int original_jet_index;
-    int isGenMatched;    
+    int isGenMatched;
     int isGenMatchedCaloCorr;
     int isGenMatchedLLPAccept;
     int isGenMatchedCaloCorrLLPAccept;
@@ -268,6 +291,7 @@ pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP10
     //float minDeltaRAllTracksInJetOld;
     //float minDeltaRPVTracksInJetOld;
     float sigIP2DMedianOld;
+    float log10AbsSigIP2DMedianOld;
     float theta2DMedianOld;
     float POCA_theta2DMedianOld;
     float nPixelHitsMedianOld;
@@ -422,11 +446,11 @@ pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP10
     float ptDPF;
 
     float sigprob;
-    float pfXWP0p01; 
+    float pfXWP0p01;
     float pfXWP0p1;
-    float pfXWP1; 
-    float pfXWP10; 
-    float pfXWP100; 
+    float pfXWP1;
+    float pfXWP10;
+    float pfXWP100;
     float pfXWP1000;
     float deepCSV_probb_probbb;
     float deepCSV_probc_probudsg;
@@ -442,16 +466,23 @@ pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP10
     float deepJet_probb;
     float deepJet_probc;
     float deepJet_probbb;
+    float absDeltaPhiToLeadingROI;
+    float absDeltaPhiToSubleadingROI;
+    float absDeltaPhiToNearestTaggedROI;
+    float absDeltaPhiToFarthestTaggedROI;
+    bool matchedToLeadingROI;
+    bool matchedToSubleadingROI;
+    bool matchedToTaggedROI;
 };
 
 
 
 struct FatJetType {
-FatJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), energyRaw(-1.), ptRaw(-1.), ptUnc(-1.), 
-dPhi_met(-99.), //L//dPhi_Jet1(-1.), 
-puId(-1.), CSV(-99.), CSVR(-99.),//L//CSVRUp(-99.), CSVRDown(-99.), 
-pfBoostedDoubleSVAK8(-1.), CHSprunedMass(-1.), CHSsoftdropMass(-1.), softdropPuppiMass(-1.), 
-//L//CHSprunedMassCorr(-1.), CHSsoftdropMassCorr(-1.), softdropPuppiMassCorr(-1.), softdropPuppiMassCorrNotSmeared(-1.), 
+FatJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), energyRaw(-1.), ptRaw(-1.), ptUnc(-1.),
+dPhi_met(-99.), //L//dPhi_Jet1(-1.),
+puId(-1.), CSV(-99.), CSVR(-99.),//L//CSVRUp(-99.), CSVRDown(-99.),
+pfBoostedDoubleSVAK8(-1.), CHSprunedMass(-1.), CHSsoftdropMass(-1.), softdropPuppiMass(-1.),
+//L//CHSprunedMassCorr(-1.), CHSsoftdropMassCorr(-1.), softdropPuppiMassCorr(-1.), softdropPuppiMassCorrNotSmeared(-1.),
 nSoftDropSubJets(-1), pt1(-1.), eta1(-9.), phi1(-9.), mass1(-1.), CSV1(-99.), //CSVR1(-99.), CSVR1Up(-99.), CSVR1Down(-99.),
 CMVA1(-99.), //CMVAR1(-99.), CMVAR1Up(-99.), CMVAR1Down(-99.),
 flavour1(-1.), nSV1(-1), nVertexTracks1(-1), pt2(-1.), eta2(-9.), phi2(-9.), mass2(-1.), CSV2(-99.), //CSVR2(-99.), CSVR2Up(-99.), CSVR2Down(-99.),
@@ -466,9 +497,9 @@ cHadMulti(-1.), nHadMulti(-1.), eleMulti(-1.), photonMulti(-1.), muMulti(-1.), c
 //multiplicity fractions
 cHadMultiFrac(-1.), nHadMultiFrac(-1.), eleMultiFrac(-1.), photonMultiFrac(-1.), muMultiFrac(-1.), cMultiFrac(-1.), nMultiFrac(-1.),
 hcalE(-100.), ecalE(-100.), FracCal(-100.),
-partonFlavour(0), hadronFlavour(0), mother(0), isLoose(false), isMedium(false), isTight(false), isTightLepVeto(false), isMatched(false), 
+partonFlavour(0), hadronFlavour(0), mother(0), isLoose(false), isMedium(false), isTight(false), isTightLepVeto(false), isMatched(false),
 ptJESUp (-1.), ptJESDown (-1.), ptJER(-1.), ptJERUp (-1.), ptJERDown (-1.),
-//L//JESUnc(-1.), ptJERUp(-1.), etaJERUp(-1.), phiJERUp(-9.), energyJERUp(-1.), ptJERDown(-1.), etaJERDown(-1.), phiJERDown(-9.), energyJERDown(-1.), smearFact(-1.), smearFactUp(-1.), smearFactDown(-1.), softdropPuppiMassCorrJMS(-1.), softdropPuppiMassCorrJMSUp(-1.), softdropPuppiMassCorrJMSDown(-1.), softdropPuppiMassCorrJMR(-1.), softdropPuppiMassCorrJMRUp(-1.), softdropPuppiMassCorrJMRDown(-1.), dR_q1(1000), dR_q2(1000), dR_q3(1000), dR_q4(1000), m_q1(false), m_q2(false), m_q3(false), m_q4(false), dR_pi1(1000), dR_pi2(1000), matchBquark(-1), matchLL(-1), 
+//L//JESUnc(-1.), ptJERUp(-1.), etaJERUp(-1.), phiJERUp(-9.), energyJERUp(-1.), ptJERDown(-1.), etaJERDown(-1.), phiJERDown(-9.), energyJERDown(-1.), smearFact(-1.), smearFactUp(-1.), smearFactDown(-1.), softdropPuppiMassCorrJMS(-1.), softdropPuppiMassCorrJMSUp(-1.), softdropPuppiMassCorrJMSDown(-1.), softdropPuppiMassCorrJMR(-1.), softdropPuppiMassCorrJMRUp(-1.), softdropPuppiMassCorrJMRDown(-1.), dR_q1(1000), dR_q2(1000), dR_q3(1000), dR_q4(1000), m_q1(false), m_q2(false), m_q3(false), m_q4(false), dR_pi1(1000), dR_pi2(1000), matchBquark(-1), matchLL(-1),
 isGenMatched(0), isGenMatchedCaloCorr(0), isGenMatchedLLPAccept(0), isGenMatchedCaloCorrLLPAccept(0), radiusLLP(-1000.), xLLP(-10000.), yLLP(-10000.), zLLP(-10000.), radiusLLPCaloCorr(-1000.), xLLPCaloCorr(-10000.), yLLPCaloCorr(-10000.), zLLPCaloCorr(-10000.), xGenb(-10000.), yGenb(-10000.), zGenb(-10000.), xGenbCaloCorr(-10000.), yGenbCaloCorr(-10000.), zGenbCaloCorr(-10000.),
 //recHits
 nRecHitsEB(-1), timeRecHitsEB(-100.), timeRMSRecHitsEB(-1.), energyRecHitsEB(-1.), energyErrorRecHitsEB(-1.), xRecHitsEB(-1000.), yRecHitsEB(-1000.), zRecHitsEB(-1000.), radiusRecHitsEB(-1000.),
@@ -627,7 +658,7 @@ nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1) {}
     //L//float dR_pi2;
     //L//int matchBquark;
     //L//int matchLL;
-    int isGenMatched;    
+    int isGenMatched;
     int isGenMatchedCaloCorr;
     int isGenMatchedLLPAccept;
     int isGenMatchedCaloCorrLLPAccept;
@@ -729,9 +760,9 @@ nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1) {}
     float sigAvPF;
     float tan2thetaPF;
     float ptDPF;
-    
+
     int   nConstituents;
-    int   nTrackConstituents; 
+    int   nTrackConstituents;
     int   nSelectedTracks;
 
     float ptAllTracks;
@@ -877,7 +908,7 @@ struct EventType {
 };
 
 struct GenPType {
-GenPType(): pt(-1.), eta(-9.), rapidity(-99999.), phi(-9.), mass(-1.), energy(-1.), charge(0), pdgId(0), status(0), radius(-1), radius2D(-1), motherid(0), vx(-10000.), vy(-10000.), vz(-10000.), px(-10000.), py(-10000.), pz(-10000.), cos2D(-2.), cos3D(-2.), cos2Dmother(-2.), cos3Dmother(-2.), travelTime(-1.), travelRadius(-1000.), travelX(-10000.), travelY(-10000.), travelZ(-10000.), beta(-1.), corrCaloEta(-9.), corrCaloPhi(-9.), isLLPInCaloAcceptance(false), travelRadiusLLP(-1000.), travelXLLP(-10000.), travelYLLP(-10000.), travelZLLP(-10000.), dRdaughters(-1.) {}
+GenPType(): pt(-1.), eta(-9.), rapidity(-99999.), phi(-9.), mass(-1.), energy(-1.), charge(0), pdgId(0), status(0), radius(-1), radius2D(-1), motherid(0), vx(-10000.), vy(-10000.), vxy(-1.), vz(-10000.), px(-10000.), py(-10000.), pz(-10000.), cos2D(-2.), cos3D(-2.), cos2Dmother(-2.), cos3Dmother(-2.), travelTime(-1.), travelRadius(-1000.), travelX(-10000.), travelY(-10000.), travelZ(-10000.), beta(-1.), corrCaloEta(-9.), corrCaloPhi(-9.), isLLPInCaloAcceptance(false), travelRadiusLLP(-1000.), travelXLLP(-10000.), travelYLLP(-10000.), travelZLLP(-10000.), dRdaughters(-1.) {}
     float pt;
     float eta;
     float rapidity;
@@ -892,6 +923,7 @@ GenPType(): pt(-1.), eta(-9.), rapidity(-99999.), phi(-9.), mass(-1.), energy(-1
     int motherid;
     float vx;
     float vy;
+    float vxy;
     float vz;
     float px;
     float py;
@@ -904,7 +936,7 @@ GenPType(): pt(-1.), eta(-9.), rapidity(-99999.), phi(-9.), mass(-1.), energy(-1
     float travelRadius;
     float travelX;
     float travelY;
-    float travelZ;    
+    float travelZ;
     float beta;
     float corrCaloEta;
     float corrCaloPhi;
@@ -1343,5 +1375,26 @@ hcalRecHitType(): eta(-9.), phi(-9.), x(-1000.), y(-1000.), z(-1000.), energy(-1
     float jetDR;
 };
 
+struct ROIType {
+ROIType(): x(-9999.), y(-9999.), z(-9999.), R(-1.), phi(-99.), backgroundScore(-1.), log10BackgroundScore(1.), deltaRToLeadingROI(-99.), deltaPhiToLeadingROI(-99.), absDeltaPhiToLeadingROI(-99.), trackClusterMultiplicity(-1), annulusTrackMultiplicity(-1), distanceToNearestLLP(-1.), distanceToLeadingLLP(-1.), distanceToSubleadingLLP(-1.), matchedToLLP(0), matchedToLeadingLLP(0), matchedToSubleadingLLP(0) {}
+    float x;
+    float y;
+    float z;
+    float R;
+    float phi;
+    float backgroundScore;
+    float log10BackgroundScore;
+    float deltaRToLeadingROI;
+    float deltaPhiToLeadingROI;
+    float absDeltaPhiToLeadingROI;
+    int trackClusterMultiplicity;
+    int annulusTrackMultiplicity;
+    float distanceToNearestLLP;
+    float distanceToLeadingLLP;
+    float distanceToSubleadingLLP;
+    bool matchedToLLP;
+    bool matchedToLeadingLLP;
+    bool matchedToSubleadingLLP;
+};
 
 #endif
