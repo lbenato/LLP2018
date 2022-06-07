@@ -132,18 +132,23 @@ elif options.lists == "v4_calo_AOD_2018":
     #LUMI = 11.816443876*1000.
     #LUMI = 13.906390984*1000.# METRun2018A-17Sep2018-v1 all done, 28 Jul 2020
     LUMI = 59690#2018 lumi with normtag, from pdvm2018 twiki
-elif options.lists == "v1_central_miniAOD_2018_17Nov2020":
+elif options.lists == "v1_central_miniAOD_2017_17Nov2020":
     from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2017 import sample, samples
     from Analyzer.LLP2018.crab_requests_lists_2017MINIAOD_centrallyProduced import *
-    #LUMI = 6.815605990*1000.# METRun2018A-17Sep2018-v1 partial # 59690 #2018 from ppd
-    #LUMI = 11.816443876*1000.
-    #LUMI = 13.906390984*1000.# METRun2018A-17Sep2018-v1 all done, 28 Jul 2020
     LUMI = 41557#2017 lumi with normtag, from pdvm2017 twiki
+elif options.lists == "v5_central_miniAOD_2018_12Mar2021":
+    from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2018 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_2018MINIAOD_centrallyProduced import *
+    LUMI = 59690#2018 lumi with normtag, from pdvm2018 twiki
+elif options.lists == "v6_central_miniAOD_2018_14Mar2022" or options.lists == "v6_central_miniAOD_2018_28Mar2022":
+    from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2018 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_2018MINIAOD_centrallyProduced import *
+    LUMI = 59690#2018 lumi with normtag, from pdvm2018 twiki
 else:
     print "No sample list indicated, aborting!"
     exit()
 
-list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","signal_VBF","signal_ggH", "centralSignal_VBF", "centralSignal_ggH", "all","data_obs","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","SUSY","TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT"]
+list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","QCD_HT","QCD_MuEnriched","signal_VBF","signal_ggH", "centralSignal_VBF", "centralSignal_ggH", "centralSignal_ZH", "centralSignal_WH", "all","data_obs","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","SUSY","TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT","data_DisplacedJet2018"]
 print "Possible subgroups of samples:"
 for a in list_of_samples:
     print a
@@ -166,14 +171,22 @@ for b, k in enumerate(requests.keys()):
             if "VBFH_HToSSTo4b" in k:
                 print k
                 selected_requests[k] = requests[k]
-    elif options.groupofsamples=="centralSignal_ggH":
-            if "ggH_HToSSTobbbb" in k:
-                print k
-                selected_requests[k] = requests[k]
     elif options.groupofsamples=="signal_ggH":
         if "GluGluH_HToSSTobb" in k:
             print k
             selected_requests[k] = requests[k]
+    elif options.groupofsamples=="centralSignal_ggH":
+            if "ggH_HToSSTobbbb" in k:
+                print k
+                selected_requests[k] = requests[k]
+    elif options.groupofsamples=="centralSignal_ZH":
+            if "ZH_HToSSTobbbb" in k:
+                print k
+                selected_requests[k] = requests[k]
+    elif options.groupofsamples=="centralSignal_WH":
+            if "WplusH_HToSSTobbbb" in k or "WminusH_HToSSTobbbb" in k:
+                print k
+                selected_requests[k] = requests[k]
     elif options.groupofsamples=="signal_ZH":
         if "ZH_HToSSTobb" in k:
             print k
@@ -230,8 +243,10 @@ def hadd_outputs(fold,name):
 ######################This blocks naf machines
     #print name
     #os.system('hadd -k -f '+DEST+name+'.root '+fold+'/*/*/*/output_2*.root')# + ' ' +name+'/*/*/*/*_1.root')
-    #print('hadd -fk207 '+DEST+name+'.root ' + fold + "/*/*/*/*.root")
-    os.system('hadd -fk207 '+DEST+name+'.root ' + fold + "/crab_" + name+"/*/*/*.root")#timestamp for calo_signal!
+    # os.system('hadd -fk207 '+DEST+name+'_0.root ' + fold + "/crab_" + name+"/*/*/*00.root " + fold + "/crab_" + name+"/*/*/*20.root " + fold + "/crab_" + name+"/*/*/*40.root "+ fold + "/crab_" + name+"/*/*/*60.root " + fold + "/crab_" + name+"/*/*/*80.root")##For tracking lifetimes & central production
+    # os.system('hadd -fk207 '+DEST+name+'_0p1.root ' + fold + "/crab_" + name+"/*/*/*0.root")##For tracking lifetimes & central production
+    # os.system('hadd -fk207 '+DEST+name+'.root ' + fold + "/crab_" + name+"/*/*/*.root")##For tracking lifetimes & central production
+    # os.system('hadd -fk207 '+DEST+name+'.root ' + fold + "/*/*/*/*.root")#timestamp for calo_signal!
 pass
 
 def weight(name):
@@ -243,17 +258,29 @@ def weight(name):
     #elif ('TT_TuneCUETP8M2T4_13TeV') in name:
     ###
     else:
+        print "********************************"
         nevents = filename.Get("counter/c_nEvents").GetBinContent(1)
 #        nevents = filename.Get("counter/c_nEvents").GetEntries()#try?!
-        if ('VBFH_HToSSTobbbb') in name or ('VBFH_HToSSTo4b') in name in name:
+        # print "File: ", filename.GetName()
+        # print "nevents_sample", nevents
+        if name in sample and 'ext' in sample[name]:
+            filename = TFile(DEST+sample[name]['ext']+'.root', "UPDATE")
+            nevents += filename.Get("counter/c_nEvents").GetBinContent(1)
+            # print filename.GetName()
+            # print "nevents_ext", filename.Get("counter/c_nEvents").GetBinContent(1)
+        if 'VBFH_HToSSTobbbb' in name or 'VBFH_HToSSTo4b' in name:
             #We take into account VBF Higgs production x-sec
             xs = 3.782
-        elif('GluGluH_HToSSTobbbb') in name or ('ggH_HToSSTobbbb') in name:
+        elif 'GluGluH_HToSSTobbbb' in name or 'ggH_HToSSTobbbb' in name:
             #We take into account ggH Higgs production x-sec
             xs = 48.58
-        elif('ZH_HToSSTobbbb') in name:
+        elif 'ZH_HToSSTobbbb' in name:
             #We take into account ZH Higgs production x-sec times branching fraction into leptons
-            xs = 0.8839*(3.3658/100.)
+            xs = 0.8839*(3*3.3658/100.)
+        elif 'WplusH_HToSSTobbbb' in name:
+            xs = 0.8400*(3*10.86/100.)
+        elif 'WminusH_HToSSTobbbb' in name:
+            xs = 0.5328*(3*10.86/100.)
         #elif('n3n2-n1-hbb-hbb') in name:
         #    #Don't know this x-sec actually...
         #    print "This is susy name: ", name
@@ -262,7 +289,10 @@ def weight(name):
             #We do not take into account ggH Higgs production x-sec! Absolute x-sec needed!
             xs = 1.#48.58
         else:
-            xs = sample[name]['xsec'] * sample[name]['kfactor']#to correct MET phase-space
+            if 'filtereff' in sample[name]:
+                xs = sample[name]['xsec'] * sample[name]['kfactor'] * sample[name]['filtereff']
+            else:
+                xs = sample[name]['xsec'] * sample[name]['kfactor']#to correct MET phase-space
         weight = LUMI * xs / nevents
         tree = filename.Get("ntuple/tree")
         #tree = filename.Get("trigger/tree")
@@ -298,16 +328,16 @@ for l in subdirs:
     fold = ""
     name = ""
     for a in crab_subdirs:
-        #print l, a
         #if l in a:
-        if os.path.exists(os.path.join(l, "crab_"+a)) and a in selected_requests.keys():
+        #if (l in a or a in l) and a in selected_requests.keys():
+        if os.path.exists(os.path.join(l, "crab_"+a)) and a in selected_requests.keys(): #For tracking lifetimes & central production
             fold = l
             name = a
             #print fold
-            print "Being added...."
-            print fold, name
-            #print "Not being added...."
-            # hadd_outputs(fold,name)
+            # print "Being added...."
+            print name
+            print "not being added...."
+            hadd_outputs(fold,name)
             print "##################################"
         #if a=="WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v2" and l=="WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8":
         #    print "NAMING MISTAKE!!!"
@@ -343,14 +373,16 @@ if options.lists=="synch_exercise_caltech_v3":
 if options.lists=="synch_exercise_caltech_v4":
     exit()
 
+#exit()
+
 onlyfiles = [f for f in os.listdir(DEST) if (os.path.isfile(os.path.join(DEST, f)))]
 os.chdir(DEST)
 
 for b in onlyfiles:
     #print b
     if b[:-5] in selected_requests.keys():
-        print "I am going to weight:"
-        #print b
+        # print "I am going to weight:"
+        # print b
         weight(b[:-5])
         ##q = multiprocessing.Process(target=weight, args=(b[:-5],))
         ##jobs.append(q)
