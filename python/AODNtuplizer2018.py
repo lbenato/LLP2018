@@ -17,6 +17,12 @@ options.register(
     "isData parser flag"
 )
 options.register(
+    "PisCosmics", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "isCosmics parser flag"
+)
+options.register(
     "PisReHLT", False,
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
@@ -81,6 +87,12 @@ options.register(
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
     "isCentralProd parser flag"
+)
+options.register(
+    "PisSUSYCentral", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "isSUSYCentral parser flag"
 )
 options.register(
     "PGT", "",
@@ -263,6 +275,26 @@ options.register(
     "SUSY parser flag"
 )
 options.register(
+    "PSUSYHH", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "SUSYHH parser flag"
+)
+options.register(
+    "PSUSYHZ", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "SUSYHZ parser flag"
+)
+options.register(
+    "PSUSYZZ", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "SUSYZZ parser flag"
+)
+
+
+options.register(
     "PRPV", False,
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
@@ -321,7 +353,8 @@ if len(options.inputFiles) == 0:
         fileNames = cms.untracked.vstring(
             ## 2018 MC, signal
             #split susy seg violation
-            '/store/mc/RunIIAutumn18DRPremix/GluinoGluinoToNeutralinoNeutralinoTo2T2B2S_M-1600_CTau-30000mm_TuneCP2_13TeV-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/80000/94D14B64-FD90-834D-BC25-E26420CCCDFC.root',
+            #'/store/data/Run2018C/MET/RAW-RECO/HighMET-17Sep2018-v1/00000/660EBDC3-918B-8145-9A57-FCD7EE9EAEB0.root',
+            #'/store/mc/RunIIAutumn18DRPremix/GluinoGluinoToNeutralinoNeutralinoTo2T2B2S_M-1600_CTau-30000mm_TuneCP2_13TeV-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/80000/94D14B64-FD90-834D-BC25-E26420CCCDFC.root',
             #'/store/mc/RunIIAutumn18DRPremix/GluinoGluinoToNeutralinoNeutralinoTo2T2B2S_M-2400_CTau-1000mm_TuneCP2_13TeV-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/20000/15DB1AED-B0BF-BB42-88A0-9F1599F0D9FE.root'
             #JetJet seg violation
             #'/store/mc/RunIIAutumn18DRPremix/XXTo4J_M300_CTau3000mm_TuneCP2_13TeV_pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/270000/DECC2B5D-FA98-6A4F-95D7-ECCFADE11E66.root'
@@ -329,6 +362,38 @@ if len(options.inputFiles) == 0:
             #'/store/mc/RunIIAutumn18DRPremix/GluinoGluinoToNeutralinoNeutralinoTo2T2B2S_M-2400_CTau-1000mm_TuneCP2_13TeV-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/20000/01AA08C8-76E0-8E4C-8818-DD9B24DFF988.root',
             #'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
             #'/store/group/phys_exotica/privateProduction/DR/step2_AODSIM/RunIIFall18/TChiHH_mass400_pl1000/batch1/v1/TChiHH_mass400_pl1000/crab_PrivateProduction_Fall18_DR_step2_TChiHH_mass400_pl1000_batch1_v1/200911_133803/0004/AODSIM_4998.root',
+            #JJ
+            #'/store/group/phys_exotica/jmao/aodsim/RunIISummer16/AODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh400_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi400_pl1000_ev100000_AODSIM_CaltechT2/200213_001111/0000/SUS-RunIIFall17DRPremix-00183_67.root'
+            #'/store/data/Run2018D/Cosmics/RAW-RECO/CosmicSP-PromptReco-v2/000/320/479/00000/AC189117-E694-E811-9B2A-FA163EFD04C9.root',
+            #'/store/data/Run2018A/Cosmics/AOD/06Jun2018-v1/80000/0462F5D7-D773-E811-A4EC-38EAA78D8F94.root',
+            #central prod
+            #'/store/mc/RunIISummer16DR80Premix/SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_mC2-127to1800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/AODSIM/PUMoriond17_GridpackScan_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/250000/0051D858-A10D-EB11-8D31-FE6832CB0669.root'
+            #'/store/mc/RunIIAutumn18DRPremix/SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_mC2-127to1800_TuneCP2_13TeV-madgraphMLM-pythia8/AODSIM/GridpackScan_102X_upgrade2018_realistic_v15-v1/250000/000DFEB2-4A78-264D-A2C7-C2DDD773B36F.root',
+            '/store/mc/RunIIFall17DRPremix/SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_mC2-127to1800_TuneCP2_13TeV-madgraphMLM-pythia8/AODSIM/PU2017_GridpackScan_94X_mc2017_realistic_v11-v1/250000/6CEA6024-A60E-EB11-93A0-20CF3027A5A7.root',
+            #Tangential events
+            #'/store/data/Run2018C/MET/RAW-RECO/HighMET-17Sep2018-v1/270000/31E13B0B-7571-1B45-8C5D-902A6DA693B3.root',
+            #'root://cms-xrd-global.cern.ch//store/group/phys_susy/razor/run2/SkimRAWRECO/tracklessJets/pickevents_275309_875415530.root'#s
+            #'root://cms-xrd-global.cern.ch//store/group/phys_susy/razor/run2/SkimRAWRECO/tracklessJets/pickevents_276811_244034371.root',#s
+            #'root://cms-xrd-global.cern.ch//store/group/phys_susy/razor/run2/SkimRAWRECO/tracklessJets/pickevents_277096_153555117.root',#s
+            #'root://cms-xrd-global.cern.ch//store/group/phys_susy/razor/run2/SkimRAWRECO/tracklessJets/pickevents_279029_387083289.root',#s
+            #'root://cms-xrd-global.cern.ch//store/group/phys_susy/razor/run2/SkimRAWRECO/tracklessJets/pickevents_279931_4073593513.root',#s
+            #'root://cms-xrd-global.cern.ch//store/group/phys_susy/razor/run2/SkimRAWRECO/tracklessJets/pickevents_302485_987393715.root',#2017#s
+            #'root://cms-xrd-global.cern.ch//store/group/phys_susy/razor/run2/SkimRAWRECO/tracklessJets/pickevents_319910_457404349.root',#2018
+            #local
+            #'file:/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/Analyzer/LLP2018/all_eta/raw/pickevents_276775_686255481.root',
+            #'file:/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/Analyzer/LLP2018/all_eta/raw/pickevents_297050_122060825.root',
+            #'file:/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/Analyzer/LLP2018/all_eta/raw/pickevents_299061_17473623.root',
+            #'file:/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/Analyzer/LLP2018/all_eta/raw/pickevents_300636_1745799131.root',
+            #'file:/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/Analyzer/LLP2018/all_eta/raw/pickevents_301959_739086198.root',
+            #'file:/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/Analyzer/LLP2018/all_eta/raw/pickevents_303948_12029612.root',
+            #'file:/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/Analyzer/LLP2018/all_eta/raw/pickevents_304506_197159168.root',
+            #'file:/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/Analyzer/LLP2018/all_eta/raw/pickevents_305365_908806478.root',
+            #'file:/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/Analyzer/LLP2018/all_eta/raw/pickevents_305862_706695236.root',
+            #'file:/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/Analyzer/LLP2018/all_eta/raw/pickevents_315705_434537655.root',
+            #'file:/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/Analyzer/LLP2018/all_eta/raw/pickevents_322492_2209685676.root',
+            #'file:/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/Analyzer/LLP2018/all_eta/raw/pickevents_323470_161827808.root',
+            #'file:/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/Analyzer/LLP2018/all_eta/raw/pickevents_324841_2446831291.root',
+           
             ## 2018 MC, background
             #'/store/mc/RunIIAutumn18DRPremix/ZJetsToNuNu_HT-200To400_13TeV-madgraph/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/026915A1-D6C8-E740-974D-96E7C0BD4BA9.root',
             ## 2018 data
@@ -351,7 +416,9 @@ if len(options.inputFiles) == 0:
            
             #Causing exceptions
             #'/store/mc/RunIIAutumn18DRPremix/QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/110000/8CCF1613-38C3-7949-8CB5-A2EC33CEF145.root',
-            
+            #'/store/mc/RunIISummer16DR80Premix/TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8/AODSIM/PUMoriond17_backup_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/38BEDAAE-4CC3-E611-B28D-3417EBE6495A.root',
+            #MC cosmic
+            #'/store/mc/RunIIAutumn18DR/TKCosmic_38T_p20-3000/AODSIM/NoPU_102X_upgrade2018_realistic_v15-v8/70000/6EB17CE5-CFD9-C94F-803A-42B945FCDA3D.root'
         ),
         #skipEvents=cms.untracked.uint32(10),
         #lumisToProcess = cms.untracked.VLuminosityBlockRange('1:11871'),
@@ -361,9 +428,11 @@ if len(options.inputFiles) == 0:
     )
 
 if RunLocal:
-    isData = ('/store/data/' in process.source.fileNames[0])
+    isData = ('/store/data/' in process.source.fileNames[0] or 'SkimRAWRECO' in process.source.fileNames[0] or 'pickevent' in process.source.fileNames[0])
+    isCosmics = 'Cosmics' in process.source.fileNames[0]
 else:
     isData = options.PisData
+    isCosmics = options.PisCosmics
 
 process.TFileService = cms.Service( "TFileService",
     fileName = cms.string('output.root' if len(options.outputFile)==0 else options.outputFile),
@@ -375,18 +444,22 @@ process.TFileService = cms.Service( "TFileService",
 #-----------------------#
 
 if RunLocal:
-    isData            = ('/store/data/' in process.source.fileNames[0])
+    isData            = ('/store/data/' in process.source.fileNames[0]) or ('SkimRAWRECO' in process.source.fileNames[0]) or ('pickevents' in process.source.fileNames[0])
+    isCosmics = 'Cosmics' in process.source.fileNames[0]
     isReHLT           = ('_reHLT_' in process.source.fileNames[0])
     isReReco          = ('23Sep2016' in process.source.fileNames[0])
     isReMiniAod       = ('03Feb2017' in process.source.fileNames[0])
-    is2016            = ('RunIISummer16' in process.source.fileNames[0]) or ('Run2016' in process.source.fileNames[0])
-    is2017            = ('RunIIFall17' in process.source.fileNames[0]) or ('Run2017' in process.source.fileNames[0])
-    is2018            = ('RunIIAutumn18' in process.source.fileNames[0]) or ('n3n2-n1-hbb-hbb' in process.source.fileNames[0]) or ('TChiHH' in process.source.fileNames[0]) or ('Run2018' in process.source.fileNames[0]) or ('pickevents' in process.source.fileNames[0])
+    is2016            = ('RunIISummer16' in process.source.fileNames[0]) or ('Run2016' in process.source.fileNames[0]) or ('pickevents_27' in process.source.fileNames[0])
+    is2017            = ('RunIIFall17' in process.source.fileNames[0]) or ('Run2017' in process.source.fileNames[0]) or ('pickevents_302485' in process.source.fileNames[0]) or ('pickevents_29' in process.source.fileNames[0]) or ('pickevents_30' in process.source.fileNames[0])
+    is2018            = ('RunIIAutumn18' in process.source.fileNames[0]) or ('n3n2-n1-hbb-hbb' in process.source.fileNames[0]) or ('TChiH' in process.source.fileNames[0]) or ('Run2018' in process.source.fileNames[0]) or ('pickevents_319910' in process.source.fileNames[0]) or ('pickevents_31' in process.source.fileNames[0]) or ('pickevents_32' in process.source.fileNames[0])
     isPromptReco      = ('PromptReco' in process.source.fileNames[0])
     noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8' or 'WW_TuneCP5_13TeV-pythia8' or 'WZ_TuneCP5_13TeV-pythia8' or 'ZZ_TuneCP5_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
-    isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0] or 'HToSSTo4b_MH-125' in process.source.fileNames[0] or 'HToSSTobbbb_WToLNu' in process.source.fileNames[0] or 'H2ToSSTobbbb' in process.source.fileNames[0] or 'n3n2-n1-hbb-hbb' in process.source.fileNames[0] or 'TChiHH' in process.source.fileNames[0] or 'GluinoGluino' in process.source.fileNames[0] or 'DisplacedSUSY_StopToBL' in process.source.fileNames[0] or 'XXTo4J' in process.source.fileNames[0] ) else False
+    isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0] or 'HToSSTo4b_MH-125' in process.source.fileNames[0] or 'HToSSTobbbb_WToLNu' in process.source.fileNames[0] or 'H2ToSSTobbbb' in process.source.fileNames[0] or 'n3n2-n1-hbb-hbb' in process.source.fileNames[0] or 'TChiH' in process.source.fileNames[0] or 'GluinoGluino' in process.source.fileNames[0] or 'DisplacedSUSY_StopToBL' in process.source.fileNames[0] or 'XXTo4J' in process.source.fileNames[0] ) else False
+    ##isSignalCentral    = True if ('TChiHZ' in process.source.fileNames[0]) else False
+    #isCentralProd     = True if ('HToSSTo4b_MH-125' in process.source.fileNames[0] or 'TChiHZ' in process.source.fileNames[0]) else False
     isCentralProd     = True if ('HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
+    isSUSYCentral     = True if ('TChiHZ' in process.source.fileNames[0]) else False
     isCalo            = True #HERE for calo analyses!!!
     isTracking        = False
     isShort           = False
@@ -396,11 +469,15 @@ if RunLocal:
     isTwinHiggs       = False
     isHeavyHiggs      = False
     isSUSY            = False
+    isSUSYHH          = False
+    isSUSYHZ          = False##
+    isSUSYZZ          = True
     isRPV             = False
-    isSplit           = True
+    isSplit           = False
     isJetJet          = False
 else:
     isData            = options.PisData
+    isCosmics = options.PisCosmics
     isReHLT           = options.PisReHLT
     isReReco          = options.PisReReco
     isReMiniAod       = options.PisReMiniAod
@@ -411,7 +488,9 @@ else:
     noLHEinfo         = options.PnoLHEinfo
     isbbH             = options.PisbbH
     isSignal          = options.PisSignal
+    ##isSignalCentral   = options.PisSignalCentral
     isCentralProd     = options.PisCentralProd
+    isSUSYCentral     = options.PisSUSYCentral
     isCalo            = options.Pcalo
     isTracking        = options.Ptracking
     isShort           = options.Pshort
@@ -421,6 +500,9 @@ else:
     isTwinHiggs       = options.PTwinHiggs
     isHeavyHiggs      = options.PHeavyHiggs
     isSUSY            = options.PSUSY
+    isSUSYHH          = options.PSUSYHH
+    isSUSYHZ          = options.PSUSYHZ
+    isSUSYZZ          = options.PSUSYZZ
     isRPV             = options.PRPV
     isSplit           = options.PSplit
     isJetJet          = options.PJetJet
@@ -432,6 +514,8 @@ theRunG2016   = ['Run2016G']
 theRunH2016   = ['Run2016H']
 
 theRun2018ABC = ['Run2018A','Run2018B','Run2018C']
+if RunLocal:
+   theRun2018ABC +=['pickevents_319910_457404349']
 theRun2018D   = ['Run2018D']
 
 print "\n"
@@ -452,8 +536,10 @@ print 'isReReco',isReReco
 print 'isReMiniAod',isReMiniAod
 print 'isPromptReco',isPromptReco
 print 'isSignal', isSignal
+print 'isCentralProd', isCentralProd
+print 'isSUSYCentral', isSUSYCentral
 
-if(int(isTwinHiggs) + int(isHeavyHiggs) + int(isSUSY)>1 + int(isRPV) + int(isSplit) + int(isJetJet) >1):
+if(int(isTwinHiggs) + int(isHeavyHiggs) + int(isSUSY) + int(isSUSYHH) + int(isSUSYHZ) + int(isSUSYZZ) + int(isRPV) + int(isSplit) + int(isJetJet) >1):
    print "More than one theoretical model selected! Aborting...."
    exit()
 
@@ -465,8 +551,10 @@ if isTwinHiggs:
     print "\n"
     idLLP1      = 9000006
     idLLP2      = 9000006
-    idHiggs     = 25
-    idMotherB   = 9000006
+    idHiggs1     = 25
+    idHiggs2     = 25
+    idMotherB1   = 9000006
+    idMotherB2   = 9000006
     statusLLP   = 22
     statusHiggs = 62
 
@@ -478,8 +566,10 @@ if isHeavyHiggs:
     print "\n"
     idLLP1      = 6000113
     idLLP2      = 6000113
-    idHiggs     = 35
-    idMotherB   = 6000113
+    idHiggs1     = 35
+    idHiggs2     = 35
+    idMotherB1   = 6000113
+    idMotherB2   = 6000113
     statusLLP   = 22
     statusHiggs = 62
 
@@ -492,8 +582,74 @@ if isSUSY:
     idLLP1      = 1000023
     idLLP2      = 1000025
     #Warning! There is also 1000025!!
-    idHiggs     = 25
-    idMotherB   = 25
+    #Gravitino: 1000022, status 1
+    idHiggs1     = 25
+    idHiggs2     = 25
+    idMotherB1   = 25
+    idMotherB2   = 25
+    statusLLP   = 62
+    statusHiggs = 22
+    #isVBF = False
+    #isggH = False
+    #Jet pt seems higher. Do not recluster
+    #isCalo = False
+
+if isSUSYHH:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing SUSY HH analysis!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+    idLLP1      = 1000023
+    idLLP2      = 1000025
+    #Warning! There is also 1000025!!
+    #Gravitino: 1000022, status 1
+    idHiggs1     = 25
+    idHiggs2     = 25
+    idMotherB1   = 25
+    idMotherB2   = 25
+    statusLLP   = 62
+    statusHiggs = 22
+    #isVBF = False
+    #isggH = False
+    #Jet pt seems higher. Do not recluster
+    #isCalo = False
+
+if isSUSYHZ:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing SUSY HZ analysis!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+    idLLP1      = 1000023
+    idLLP2      = 1000025
+    #Warning! There is also 1000025!!
+    #Gravitino: 1000022, status 1
+    idHiggs1     = 25
+    idHiggs2     = 23
+    idMotherB1   = 25
+    idMotherB2   = 23
+    statusLLP   = 62
+    statusHiggs = 22
+    #isVBF = False
+    #isggH = False
+    #Jet pt seems higher. Do not recluster
+    #isCalo = False
+
+if isSUSYZZ:
+    print "\n"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "Performing SUSY ZZ analysis!"
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    print "\n"
+    idLLP1      = 1000023
+    idLLP2      = 1000025
+    #Warning! There is also 1000025!!
+    #Gravitino: 1000022, status 1
+    idHiggs1     = 23
+    idHiggs2     = 23
+    idMotherB1   = 23
+    idMotherB2   = 23
     statusLLP   = 62
     statusHiggs = 22
     #isVBF = False
@@ -509,8 +665,10 @@ if isRPV:
     print "\n"
     idLLP1       = 1000006
     idLLP2       = 1000006
-    idHiggs     = 25
-    idMotherB   = 1000006
+    idHiggs1     = 25
+    idHiggs2     = 25
+    idMotherB1   = 1000006
+    idMotherB2   = 1000006
     statusLLP   = 106
     statusHiggs = 22
 
@@ -522,8 +680,10 @@ if isSplit:
     print "\n"
     idLLP1       = 1000022
     idLLP2       = 1000022
-    idHiggs     = 1000021
-    idMotherB   = 1000022
+    idHiggs1     = 1000021
+    idHiggs2     = 1000021
+    idMotherB1   = 1000022
+    idMotherB2   = 1000022
     statusLLP   = 22
     statusHiggs = 62
 
@@ -535,8 +695,10 @@ if isJetJet:
     print "\n"
     idLLP1       = 35
     idLLP2       = 36
-    idHiggs     = 0
-    idMotherB   = 36
+    idHiggs1     = 0
+    idHiggs2     = 0
+    idMotherB1   = 36
+    idMotherB2   = 36
     statusLLP   = 62
     statusHiggs = 0
 
@@ -615,7 +777,7 @@ process.dumpES = cms.EDAnalyzer("PrintEventSetupContent")
 #-----------------------#
 
 # JSON filter
-if isData:
+if isData and not isCosmics:
    import FWCore.PythonUtilities.LumiList as LumiList
    if RunLocal:
       if is2016:
@@ -629,6 +791,27 @@ if isData:
       jsonName = options.PjsonName
    process.source.lumisToProcess = LumiList.LumiList(filename = 'dataAOD/JSON/'+jsonName).getVLuminosityBlockRange()
    print "JSON file loaded: ", jsonName
+
+
+'''
+if isSUSYCentral:
+   import FWCore.PythonUtilities.LumiList as LumiList
+   if RunLocal:
+      jsonName = ""
+      if is2016:
+         jsonName += "2016/"
+      if is2017:
+         jsonName += "2017/"
+      if is2018:
+         jsonName += "2018/"
+         
+      jsonName += "SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m127_ctau3000_JSON.txt"
+      print "Mock json name: ", jsonName
+   else:
+      jsonName = options.PjsonName
+   process.source.lumisToProcess = LumiList.LumiList(filename = 'dataAOD/JSON/'+jsonName).getVLuminosityBlockRange()
+   print "JSON file loaded: ", jsonName
+'''
 
 if RunLocal:
     # Trigger filter
@@ -1231,12 +1414,23 @@ if isCalo and pt_AK4<10:
    chosen_jets = "patJets"+ chosen_label
    #pt_AK4 = 5
 else:
+   #what wew used in v5:
+   #chosen_jets = "slimmedJets"
+   #what to use in v6:
+   #JER: patSmearedJets
+   #should be the correct choice!
+   chosen_jets = "patSmearedJets"
+
+   #JER up: shiftedPatSmearedJetResUp
+   #chosen_jets = "shiftedPatSmearedJetResUp"
+   #JER down: shiftedPatSmearedJetResDown
+   #chosen_jets = "shiftedPatSmearedJetResDown"
+   #pt_AK4 = 15
    print "\n"
    print "AK4 won't be reclustered!"
    print "pt_AK4 = ", pt_AK4
+   print "AK4 collection: ", chosen_jets
    print "\n"
-   chosen_jets = "slimmedJets"
-   #pt_AK4 = 15
 
 ## packedPFCandidates with CHS are used by both AK4 and AK8
 process.pfCHS = cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedPFCandidates"), cut = cms.string("fromPV"))
@@ -2051,6 +2245,8 @@ if isData or isSignal:
       'HLT_IsoMu27_v',
       'HLT_IsoMu24_eta2p1_v',#partially prescaled in 2018
       ## Electron CR
+      'HLT_Ele27_WPLoose_Gsf_v',#2016 Run2016<H
+      'HLT_Ele27_WPTight_Gsf_v',#2016 Run2016<H
       'HLT_Ele32_WPTight_Gsf_v',
       'HLT_Ele32_eta2p1_WPLoose_Gsf_v',#not available in 2018
       'HLT_Ele35_WPTight_Gsf_v',
@@ -2143,6 +2339,8 @@ else:
       'HLT_IsoMu27_v',
       'HLT_IsoMu24_eta2p1_v',#partially prescaled in 2018
       ## Electron CR
+      'HLT_Ele27_WPLoose_Gsf_v',#2016 Run2016<H
+      'HLT_Ele27_WPTight_Gsf_v',#2016 Run2016<H
       'HLT_Ele32_WPTight_Gsf_v',
       'HLT_Ele32_eta2p1_WPLoose_Gsf_v',#not available in 2018
       'HLT_Ele35_WPTight_Gsf_v',
@@ -2204,9 +2402,10 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
 ###process.ntuple = cms.EDAnalyzer('Ntuplizer',
     genSet = cms.PSet(
         genProduct = cms.InputTag('generator'),
+        genHeader  = cms.InputTag('generator'),
         lheProduct = cms.InputTag('externalLHEProducer'),
         genParticles = cms.InputTag('prunedGenParticles'),
-        pdgId = cms.vint32(5,9000006,23,24,25),#(1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 21, 23, 24, 25, 36, 39, 1000022, 9100000, 9000001, 9000002, 9100012, 9100022, 9900032, 1023),
+        pdgId = cms.vint32(1,2,3,4,5,9000006,23,24,25),#(1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 21, 23, 24, 25, 36, 39, 1000022, 9100000, 9000001, 9000002, 9100012, 9100022, 9900032, 1023),
         status = cms.vint32(22,23),
         samplesDYJetsToLL = cms.vstring(),
         samplesZJetsToNuNu = cms.vstring(),
@@ -2248,7 +2447,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         dataEra = cms.string(dataString),
         jet1pt = cms.double(pt_AK4),
         jet2pt = cms.double(pt_AK4),
-        jeteta = cms.double(2.5),
+        jeteta = cms.double(2.5),#5.2 for HEM issue in data#2.5 as default
         isAOD = cms.bool(True),    
         addQGdiscriminator = cms.bool(False),
         ebRecHits = cms.InputTag("reducedEcalRecHitsEB", "","RECO"),
@@ -2291,6 +2490,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet2btag = cms.int32(0),
         met = cms.InputTag('slimmedMETsMuEGClean', '', '') if isReMiniAod else cms.InputTag('slimmedMETs', '', ''),# 'LLP'
+        #genmet = cms.InputTag('genMetTrue'),
         metRecoil = cms.bool(False),
         metRecoilMC = cms.string('dataAOD/recoilfit_gjetsMC_Zu1_pf_v5.root'),
         metRecoilData = cms.string('dataAOD/recoilfit_gjetsData_Zu1_pf_v5.root'),
@@ -2351,6 +2551,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet2btag = cms.int32(0),
         met = cms.InputTag('slimmedMETsMuEGClean', '', '') if isReMiniAod else cms.InputTag('slimmedMETs', '', 'LLP'),
+        #genmet = cms.InputTag('genMetTrue'),
         metRecoil = cms.bool(False),
         metRecoilMC = cms.string('dataAOD/recoilfit_gjetsMC_Zu1_pf_v5.root'),
         metRecoilData = cms.string('dataAOD/recoilfit_gjetsData_Zu1_pf_v5.root'),
@@ -2407,6 +2608,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         jet1btag = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         jet2btag = cms.int32(0),
         met = cms.InputTag('slimmedMETsMuEGClean', '', '') if isReMiniAod else cms.InputTag('slimmedMETs', '', ''),# 'LLP'
+        #genmet = cms.InputTag('genMetTrue'),
         metRecoil = cms.bool(False),
         metRecoilMC = cms.string('dataAOD/recoilfit_gjetsMC_Zu1_pf_v5.root'),
         metRecoilData = cms.string('dataAOD/recoilfit_gjetsData_Zu1_pf_v5.root'),
@@ -2531,18 +2733,24 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
         lostTracks = cms.InputTag('lostTracks'),
         pfCandMinPt = cms.double(1.),
     ),
-    #dtSet = cms.PSet(
-    #    dtsegments = cms.InputTag('dt4DSegments')
-    #),
-    #cscSet = cms.PSet(
-    #    cscsegments = cms.InputTag('cscSegments')
-    #),
-    #standaloneMuonsSet = cms.PSet(
-    #    standaloneMuons = cms.InputTag('standAloneMuons')
-    #),
-    #displacedStandaloneMuonsSet = cms.PSet(
-    #    standaloneMuons = cms.InputTag('displacedStandAloneMuons')
-    #),
+    dtSet = cms.PSet(
+        dtsegments = cms.InputTag('dt4DSegments')
+    ),
+    cscSet = cms.PSet(
+        cscsegments = cms.InputTag('cscSegments')
+    ),
+    cosmicMuonsSet = cms.PSet(
+        standaloneMuons = cms.InputTag('cosmicMuons')
+    ),
+    cosmicMuonsOneLegSet = cms.PSet(
+        standaloneMuons = cms.InputTag('cosmicMuons1Leg')
+    ),
+    standaloneMuonsSet = cms.PSet(
+        standaloneMuons = cms.InputTag('standAloneMuons')
+    ),
+    displacedStandaloneMuonsSet = cms.PSet(
+        standaloneMuons = cms.InputTag('displacedStandAloneMuons')
+    ),
     #rhoAll = cms.InputTag("fixedGridRhoAll", "", "RECO"),
     #rhoFastjetAll = cms.InputTag("fixedGridRhoFastjetAll", "", "RECO"),
     #rhoFastjetAllCalo = cms.InputTag("fixedGridRhoFastjetAllCalo", "", "RECO"),
@@ -2552,8 +2760,10 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
     #Define gen decay:
     idLLP1 = cms.int32(idLLP1),
     idLLP2 = cms.int32(idLLP2),
-    idHiggs = cms.int32(idHiggs),
-    idMotherB = cms.int32(idMotherB),
+    idHiggs1 = cms.int32(idHiggs1),
+    idHiggs2 = cms.int32(idHiggs2),
+    idMotherB1 = cms.int32(idMotherB1),
+    idMotherB2 = cms.int32(idMotherB2),
     statusLLP = cms.int32(statusLLP),
     statusHiggs = cms.int32(statusHiggs),
 
@@ -2575,14 +2785,14 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
     writeGenLLPs = cms.bool(True),
     writeNMatchedJets = cms.int32(0),#(4), #Warning: List/Reset JetType functions missing several attributes. Please check before using!
     writeNLeptons = cms.int32(0),#Framework already validated
-    writeOnlyTriggerEvents = cms.bool(True),#slims down ntuples a lot
+    writeOnlyTriggerEvents = cms.bool(False),#slims down ntuples a lot
     writeOnlyL1FilterEvents = cms.bool(False),#slims down ntuples a lot
     writeOnlyisVBFEvents = cms.bool(isVBF),#slims down ntuples a lot
     writeAllJets = cms.bool(False),#used for trigger studies
     writeFatJets = cms.bool(False),#not needed now
     ## PFCandidates:
-    writeAK4JetPFCandidates = cms.bool(True), #Matched to AK4 only!
-    writeAK8JetPFCandidates = cms.bool(True), #Matched to AK8 only!
+    writeAK4JetPFCandidates = cms.bool(False), #Matched to AK4 only!#True
+    writeAK8JetPFCandidates = cms.bool(False), #Matched to AK8 only!#True
     writeAllJetPFCandidates = cms.bool(False), #Matched to either AK4 or AK8
     writeAllPFCandidates = cms.bool(False), #All PFCandidates. Large collection: Please write only if needed!
     writeLostTracks = cms.bool(False),
@@ -2595,6 +2805,7 @@ process.ntuple = cms.EDAnalyzer('AODNtuplizer',
     verbose = cms.bool(False),#False
     verboseTrigger  = cms.bool(False),
     signal = cms.bool(isSignal),
+    #signalCentral = cms.bool(isSignalCentral),
     iscalo = cms.bool(isCalo),
     #pfCands = cms.InputTag("particleFlow","","RECO"),
 )
