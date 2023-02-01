@@ -994,15 +994,15 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
           LeptonWeightUp = 1.;
           LeptonWeightDown = 1.;
 
-          LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(LooseMuonVect.at(0), 3);
-          LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(LooseMuonVect.at(0), 3);
+          LeptonWeight    *= theMuonAnalyzer->GetMuonIdSF(LooseMuonVect.at(0), 1); // Loose ID
+          LeptonWeight    *= theMuonAnalyzer->GetMuonIsoSF(LooseMuonVect.at(0), 1); // Loose iso
     	    LeptonWeight    *= theElectronAnalyzer->GetElectronRecoEffSF(LooseElecVect.at(0));
-    	    LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(LooseElecVect.at(0), 3);
+    	    LeptonWeight    *= theElectronAnalyzer->GetElectronIdSF(LooseElecVect.at(0), 1); // Loose ID
 
-          LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(LooseMuonVect.at(0), 3)      ,2);
-          LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(LooseMuonVect.at(0), 3)     ,2);
+          LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(LooseMuonVect.at(0), 1)      ,2); // Loose ID
+          LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(LooseMuonVect.at(0), 1)     ,2); // Loose iso
           LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronRecoEffSFError(LooseElecVect.at(0))   ,2);
-          LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(LooseElecVect.at(0), 3)     ,2);
+          LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(LooseElecVect.at(0), 1)     ,2); // Loose ID
 
           LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
           LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
