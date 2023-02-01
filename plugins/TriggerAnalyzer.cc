@@ -12,6 +12,7 @@ TriggerAnalyzer::TriggerAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector
     TriggerObjectToken(CColl.consumes<std::vector<pat::TriggerObjectStandAlone> >(PSet.getParameter<edm::InputTag>("objects"))),
     BadPFMuonFilterToken(CColl.consumes<bool>(PSet.getParameter<edm::InputTag>("badPFMuonFilter"))),
     BadChCandFilterToken(CColl.consumes<bool>(PSet.getParameter<edm::InputTag>("badChCandFilter"))),
+    ECALCalibFilterToken(CColl.consumes<bool>(PSet.getParameter<edm::InputTag>("ecalCalibFilter"))),
     L1GtToken(CColl.consumes<BXVector<GlobalAlgBlk>>(PSet.getParameter<edm::InputTag>("l1Gt"))),//Pre-Firing
     L1FiltersList(PSet.getParameter<std::vector<std::string> >("l1filters"))
 {
@@ -43,7 +44,7 @@ void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::str
     edm::Handle<edm::TriggerResults> hltTriggerResults;
     iEvent.getByToken(TriggerToken, hltTriggerResults);
     const edm::TriggerNames& trigNames = iEvent.triggerNames(*hltTriggerResults);
-    
+
     edm::Handle<pat::PackedTriggerPrescales> triggerPrescales;
     iEvent.getByToken(PrescalesToken, triggerPrescales);
 
@@ -57,7 +58,7 @@ void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::str
     //iEvent.getByToken(TriggerObjectToken, triggerObjectCollection);
 
     //for(unsigned int j=0, in=trigNames.size(); j < in; j++) std::cout << trigNames.triggerName(j) << std::endl;
-    
+
     // Get Trigger index
     for(unsigned int i = 0; i < TriggerList.size(); i++) {
         Map[TriggerList[i]] = false;
@@ -129,12 +130,12 @@ void TriggerAnalyzer::FillTriggerMap(const edm::Event& iEvent, std::map<std::str
 
 		  }
 	      }
-	    
+
 	  }
 
 
       }
-    
+
     */
 
 }
@@ -212,26 +213,26 @@ std::vector<pat::TriggerObjectStandAlone> TriggerAnalyzer::FillTriggerObjectVect
 		      }
 
 		  }
-	      
-	    
+
+
 	  }
-	
+
 
       }
-    
+
     return Vect;
 
 }
 
 
-void TriggerAnalyzer::FillMetFiltersMap(const edm::Event& iEvent, std::map<std::string, bool>& Map) { 
+void TriggerAnalyzer::FillMetFiltersMap(const edm::Event& iEvent, std::map<std::string, bool>& Map) {
 
     edm::Handle<edm::TriggerResults> hltTriggerResults;
     iEvent.getByToken(MetFiltersToken, hltTriggerResults);//(iToken, hltTriggerResults);//
     const edm::TriggerNames& trigNames = iEvent.triggerNames(*hltTriggerResults);
-    
+
     //for(unsigned int j=0, in=trigNames.size(); j < in; j++) std::cout << trigNames.triggerName(j) << std::endl;
-    
+
     // Get Trigger index
     for(unsigned int i = 0; i < MetFiltersList.size(); i++) {
         Map[MetFiltersList[i]] = false;
@@ -250,7 +251,7 @@ void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::s
     edm::Handle<edm::TriggerResults> hltTriggerResults;
     iEvent.getByToken(TriggerToken, hltTriggerResults);
     const edm::TriggerNames& trigNames = iEvent.triggerNames(*hltTriggerResults);
-    
+
     edm::Handle<std::vector<pat::TriggerObjectStandAlone> > triggerObjectCollection;
     iEvent.getByToken(TriggerObjectToken, triggerObjectCollection);
 
@@ -277,7 +278,7 @@ void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::s
 
 
 
-		  
+
 		  //if(pathNamesAll[h].find("HLT_VBF_DisplacedJet40_VTightID_Hadronic_v") != std::string::npos)//new!NO!IN THIS WAY IT SAVES THE FILTERS ONLY IF THE MAIN PATH IS FIRED! BUUUG!
 
 		    //{//new! and to be debugged....
@@ -293,9 +294,9 @@ void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::s
 			    Map[L1FiltersList[i]] = true;
 			    //unsigned int index = trigNames.triggerIndex(trigNames.triggerName(j));
 			    //if(hltTriggerResults->accept(index)) Map[MetFiltersList[i]] = true;
-			
+
 			  }
-		      
+
 			}
 
 
@@ -317,18 +318,18 @@ void TriggerAnalyzer::FillL1FiltersMap(const edm::Event& iEvent, std::map<std::s
 
 
 		}
-	      
-	    
+
+
 	    }
-	
+
 
 	}
 
     }
-    
+
 }
 
-bool TriggerAnalyzer::GetBadPFMuonFlag(const edm::Event& iEvent) { 
+bool TriggerAnalyzer::GetBadPFMuonFlag(const edm::Event& iEvent) {
 
     edm::Handle<bool> ifilterbadPFMuon;
     iEvent.getByToken(BadPFMuonFilterToken, ifilterbadPFMuon);
@@ -337,7 +338,7 @@ bool TriggerAnalyzer::GetBadPFMuonFlag(const edm::Event& iEvent) {
     return filterbadPFMuon;
 }
 
-bool TriggerAnalyzer::GetBadChCandFlag(const edm::Event& iEvent) { 
+bool TriggerAnalyzer::GetBadChCandFlag(const edm::Event& iEvent) {
 
     edm::Handle<bool> ifilterbadChCand;
     iEvent.getByToken(BadChCandFilterToken, ifilterbadChCand);
@@ -346,8 +347,17 @@ bool TriggerAnalyzer::GetBadChCandFlag(const edm::Event& iEvent) {
     return filterbadChCand;
 }
 
+bool TriggerAnalyzer::GetECALCalibFlag(const edm::Event& iEvent) {
+
+    edm::Handle<bool> ifilterECALCalib;
+    iEvent.getByToken(ECALCalibFilterToken, ifilterECALCalib);
+    bool filterECALCalib = *ifilterECALCalib;
+
+    return filterECALCalib;
+}
+
 //Pre-Firing
-bool TriggerAnalyzer::EvaluatePrefiring(const edm::Event& iEvent) { 
+bool TriggerAnalyzer::EvaluatePrefiring(const edm::Event& iEvent) {
 
     edm::Handle<BXVector<GlobalAlgBlk>> l1GtHandle;
     iEvent.getByToken(L1GtToken, l1GtHandle);

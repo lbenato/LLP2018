@@ -303,7 +303,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     float ggHJetMetDPhi;
     float m_pi, gen_b_radius;
     //MET filters
-    bool BadPFMuonFlag, BadChCandFlag;
+    bool BadPFMuonFlag, BadChCandFlag, ECALCalibFlag;
     //Pre-firing
     bool Prefired;
     //VBF tagging

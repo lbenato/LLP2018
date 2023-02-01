@@ -785,8 +785,26 @@ process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
 process.BadChargedCandidateFilter.muons = cms.InputTag('slimmedMuons')
 process.BadChargedCandidateFilter.PFCandidates = cms.InputTag('packedPFCandidates')
 
+process.load('RecoMET.METFilters.ecalBadCalibFilter_cfi')
+process.ecalBadCalibReducedMINIAODFilter = cms.EDFilter("EcalBadCalibFilter",
+    EcalRecHitSource = cms.InputTag("reducedEgamma:reducedEERecHits"),
+    ecalMinEt        = cms.double(50.),
+    baddetEcal       = cms.vuint32([872439604,872422825,872420274,872423218,
+                                    872423215,872416066,872435036,872439336,
+                                    872420273,872436907,872420147,872439731,
+                                    872436657,872420397,872439732,872439339,
+                                    872439603,872422436,872439861,872437051,
+                                    872437052,872420649,872422436,872421950,
+                                    872437185,872422564,872421566,872421695,
+                                    872421955,872421567,872437184,872421951,
+                                    872421694,872437056,872437057,872437313]),
+    taggingMode      = cms.bool(True),
+    debug            = cms.bool(False)
+)
+
 task.add(process.BadPFMuonFilter)
 task.add(process.BadChargedCandidateFilter)
+task.add(process.ecalBadCalibReducedMINIAODFilter)
 
 #-----------------------#
 #       COUNTER         #
@@ -1668,13 +1686,14 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
 ]
         ),
         metfilters = cms.InputTag('TriggerResults', '', filterString),
-        metpaths = cms.vstring('Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter','Flag_badMuons','Flag_duplicateMuons','Flag_noBadMuons') if isReMiniAod else cms.vstring('Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter'),
+        metpaths = cms.vstring('Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter','Flag_badMuons','Flag_duplicateMuons','Flag_noBadMuons') if isReMiniAod else cms.vstring('Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter', 'Flag_globalSuperTightHalo2016Filter'),
         prescales = cms.InputTag('patTrigger','',triggerString),
         l1Minprescales = cms.InputTag('patTrigger','l1min',triggerString),
         l1Maxprescales = cms.InputTag('patTrigger','l1max',triggerString),
         objects = cms.InputTag('selectedPatTrigger' if is2016 else 'slimmedPatTrigger','',triggerString),
         badPFMuonFilter = cms.InputTag("BadPFMuonFilter"),
         badChCandFilter = cms.InputTag("BadChargedCandidateFilter"),
+        ecalCalibFilter = cms.InputTag("ecalBadCalibReducedMINIAODFilter"),
         l1Gt = cms.InputTag("gtStage2Digis"),
         l1filters = cms.vstring('hltL1sTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBFIorHTT300','hltL1sDoubleJetC112','hltL1sQuadJetC50IorQuadJetC60IorHTT280IorHTT300IorHTT320IorTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBF','hltL1sTripleJetVBFIorHTTIorDoubleJetCIorSingleJet','hltL1sSingleMu22','hltL1sV0SingleMu22IorSingleMu25','hltL1sZeroBias','hltL1sSingleJet60','hltL1sSingleJet35','hltTripleJet50','hltDoubleJet65','hltSingleJet80','hltVBFFilterDisplacedJets'),
     ),
