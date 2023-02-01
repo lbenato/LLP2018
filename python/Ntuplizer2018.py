@@ -953,7 +953,7 @@ if isCalo and pt_AK4<10:
       svSource = cms.InputTag('slimmedSecondaryVertices'),
       btagDiscriminators = list(bTagDiscriminators),#btagging
       btagInfos = bTagInfos,
-      jetCorrections = (chosen_JEC, ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),#correct JEC
+      jetCorrections = (chosen_JEC, ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'] if isData else ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),#correct JEC
       genJetCollection = cms.InputTag('ak4GenJetsNoNu'),
       genParticles = cms.InputTag('prunedGenParticles'),
       algo = 'AK',
@@ -1026,7 +1026,7 @@ if pt_AK8<170:
        svSource = cms.InputTag('slimmedSecondaryVertices'),
        btagDiscriminators = list(bTagDiscriminators),
        btagInfos = bTagInfos,
-       jetCorrections = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
+       jetCorrections = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'] if isData else ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
        genJetCollection = cms.InputTag('ak8GenJetsNoNu'),
        genParticles = cms.InputTag('prunedGenParticles'),
        algo = 'AK',
@@ -1044,7 +1044,7 @@ if pt_AK8<170:
        svSource = cms.InputTag('slimmedSecondaryVertices'),
        btagDiscriminators = list(bTagDiscriminators),
        btagInfos = bTagInfos,
-       jetCorrections = ('AK8PFPuppi', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
+       jetCorrections = ('AK8PFPuppi', ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'] if isData else ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
        genJetCollection = cms.InputTag('ak8GenJetsNoNu'),
        genParticles = cms.InputTag('prunedGenParticles'),
        algo = 'AK',
@@ -1058,7 +1058,7 @@ if pt_AK8<170:
       labelName = 'AK8CHSSoftDrop',
       jetSource = cms.InputTag('ak8PFJetsCHSSoftDropReclustered'),
       btagDiscriminators = ['None'],
-      jetCorrections = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
+      jetCorrections = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'] if isData else ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
       pvSource = cms.InputTag('offlineSlimmedPrimaryVertices'),
       svSource = cms.InputTag('slimmedSecondaryVertices'),
       genJetCollection = cms.InputTag('ak8GenJetsNoNu'), # AK4 gen jets!
@@ -1080,7 +1080,7 @@ if pt_AK8<170:
       #?#pfCandidates = cms.InputTag(chosen_pfcand),#pfchs substracted
       svSource = cms.InputTag('slimmedSecondaryVertices'),
       btagDiscriminators = ['pfCombinedSecondaryVertexV2BJetTags', 'pfCombinedInclusiveSecondaryVertexV2BJetTags'],
-      jetCorrections = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
+      jetCorrections = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'] if isData else ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
       explicitJTA = True,  # needed for subjet b tagging
       svClustering = True, # needed for subjet b tagging
       genJetCollection = cms.InputTag('ak4GenJetsNoNu'), # AK4 gen jets!
@@ -1166,7 +1166,7 @@ from PhysicsTools.PatAlgos.tools.jetTools import *
 
 #Seth
 jetSource = chosen_jets
-jetCorrectionsAK4 = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None')
+jetCorrectionsAK4 = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'] if isData else ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None')
 pfCandidates = 'packedPFCandidates'
 pvSource = 'offlineSlimmedPrimaryVertices'
 svSource = 'slimmedSecondaryVertices'
@@ -1510,7 +1510,7 @@ task.add(process.pileupJetId)
 from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJetCorrFactors, updatedPatJets
 process.patJetCorrFactorsReapplyJEC = updatedPatJetCorrFactors.clone(
   src = cms.InputTag(jets_after_btag_tools),
-  levels = ['L1FastJet', 'L2Relative', 'L3Absolute']
+  levels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'] if isData else ['L1FastJet', 'L2Relative', 'L3Absolute']
   )
 task.add(process.patJetCorrFactorsReapplyJEC)
 
