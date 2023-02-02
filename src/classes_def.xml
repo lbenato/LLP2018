@@ -16,6 +16,10 @@
   <class name="MEtType"/>
   <class name="ecalRecHitType"/>
   <class name="hcalRecHitType"/>
+  <class name="RecoLeptonType"/>
+  <class name="TrackType"/>
+  <class name="LorentzType"/>
+  <class name="CaloMEtType"/>
   <class name="std::vector<JetType>"/>
   <class name="std::vector<FatJetType>"/>
   <class name="std::vector<VertexType>"/>
@@ -32,4 +36,9 @@
   <class name="std::vector<MEtType>"/>
   <class name="std::vector<ecalRecHitType>"/>
   <class name="std::vector<hcalRecHitType>"/>
+  <class name="std::vector<RecoLeptonType>"/>
+  <class name="std::vector<TrackType>"/>
+  <class name="std::vector<LorentzType>"/>
+  <class name="std::vector<CaloMEtType>"/>
+  <class name="std::vector<std::string>"/>
 </lcgdict>

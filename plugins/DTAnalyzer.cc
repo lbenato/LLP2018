@@ -21,7 +21,7 @@ DTAnalyzer::~DTAnalyzer() {
 std::vector<DTRecSegment4D> DTAnalyzer::FillDTSegment4DVector(const edm::Event& iEvent) {
     
     std::vector<DTRecSegment4D> Vect;
-    
+
     // Declare and open collections
     edm::Handle<DTRecSegment4DCollection> DT4DCollection;
     iEvent.getByToken(dtSegmentToken, DT4DCollection); 
@@ -38,15 +38,16 @@ std::vector<DTRecSegment4D> DTAnalyzer::FillDTSegment4DVector(const edm::Event& 
 }
 
 
-std::vector<GlobalPoint> DTAnalyzer::FillGlobalPointDT4DSegmentVector(const edm::Event& iEvent,const edm::EventSetup& iSetup,std::vector<DTRecSegment4D>& Segment){
+//std::vector<GlobalPoint> DTAnalyzer::FillGlobalPointDT4DSegmentVector(const edm::Event& iEvent,const edm::EventSetup& iSetup,std::vector<DTRecSegment4D>& Segment){
+std::vector<GlobalPoint> DTAnalyzer::FillGlobalPointDT4DSegmentVector(const edm::Event& iEvent,const edm::EventSetup& iSetup,std::vector<DTRecSegment4D>& Segment,edm::ESHandle<GlobalTrackingGeometry>& theTrackingGeometry){
 
     std::vector<GlobalPoint> Vect;
     
     edm::Handle<DTRecSegment4DCollection> DT4DCollection;
     iEvent.getByToken(dtSegmentToken, DT4DCollection); 
     
-    edm::ESHandle<GlobalTrackingGeometry> theTrackingGeometry;
-    iSetup.get<GlobalTrackingGeometryRecord>().get(theTrackingGeometry);
+    //edm::ESHandle<GlobalTrackingGeometry> theTrackingGeometry;
+    //iSetup.get<GlobalTrackingGeometryRecord>().get(theTrackingGeometry);
     
     for (DTRecSegment4DCollection::const_iterator DTSegment = DT4DCollection->begin(); DTSegment != DT4DCollection->end();DTSegment++) {
         const GeomDet* geomDet = theTrackingGeometry->idToDet(DTSegment->geographicalId());

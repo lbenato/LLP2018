@@ -3,13 +3,16 @@
 
 #include <iostream>
 #include <cmath>
+#include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Framework/interface/EDConsumerBase.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
+#include "FWCore/Framework/interface/LuminosityBlock.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/GenLumiInfoHeader.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHECommonBlocks.h"
@@ -27,6 +30,14 @@ class GenAnalyzer {
         ~GenAnalyzer();
         virtual float GenEventWeight(const edm::Event&);
         virtual std::map<int, float> FillWeightsMap(const edm::Event&);
+        virtual std::map<std::string, float> FillQCDWeightsMap(const edm::Event&);
+        virtual std::map<std::string, float> FillPDFWeightsMap(const edm::Event&);
+
+        virtual std::vector<float>       FillQCDWeightsVector(const edm::Event&);
+        virtual std::vector<std::string> FillQCDWeightsNamesVector(const edm::Event&);
+        virtual std::vector<float>       FillPDFWeightsVector(const edm::Event&);
+        virtual std::vector<std::string> FillPDFWeightsNamesVector(const edm::Event&);
+
         virtual std::map<std::string, float> FillLheMap(const edm::Event&);
         virtual std::vector<reco::GenParticle> FillGenVector(const edm::Event&);
         virtual std::vector<reco::GenParticle> FillGenVectorByIdAndStatus(const edm::Event&, int, int);
@@ -37,6 +48,8 @@ class GenAnalyzer {
 
         virtual std::vector<reco::GenParticle> FillGenVectorByIdAndStatusAndKin(const edm::Event&, int, int, float, float);
         virtual std::vector<reco::GenParticle> FillGenVectorByIdStatusAndMotherAndKin(const edm::Event&, int, int, int, float, float);
+        virtual std::vector<reco::GenParticle> FillGenVectorByIdStatusAndTwoMothersAndKin(const edm::Event&, int, int, int, int, float, float);
+        virtual std::vector<reco::GenParticle> FillGenVectorByIdListStatusAndTwoMothersAndKin(const edm::Event&, std::vector<int>, int, int, int, float, float);
 
         virtual reco::Candidate* FindGenParticle(std::vector<reco::GenParticle>&, int);
         virtual reco::Candidate* FindLastDaughter(reco::Candidate*);
@@ -59,6 +72,7 @@ class GenAnalyzer {
       
     private:
         edm::EDGetTokenT<GenEventInfoProduct> GenToken;
+        edm::EDGetTokenT<GenLumiInfoHeader> GenHeaderToken;
         edm::EDGetTokenT<LHEEventProduct> LheToken;
         edm::EDGetTokenT<std::vector<reco::GenParticle> > GenParticlesToken;
         std::vector<int> ParticleList;

@@ -523,6 +523,7 @@ def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75):
         "METHTVeto": "E_{T}^{miss}>200 GeV & H_{T}>200 GeV & veto #l, #gamma",
         "METHTNoVeto": "MEt.pt>200 & HT>100, no veto",
         "METPreSel": "E_{T}^{miss}>200 GeV & H_{T}>100 GeV & veto #l, #gamma",
+        "METPreSelSUSYAOD": "E_{T}^{miss}>200 GeV & H_{T}>100 GeV & veto #l, #gamma",
         "METPreSelSUSYAODAK4ECAL" : "LL decay in ECAL barr.",
         "METPreSelSUSYAODAK4HCAL" : "LL decay in HCAL barr.",
         "METPreSelSUSYAODAK8ECAL" : "LL decay in ECAL barr.",

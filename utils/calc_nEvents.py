@@ -10,16 +10,19 @@ from Analyzer.LLP2018.samplesAOD2018 import sample, samples
 import numpy as np
 
 INPUTDIR = "/nfs/dust/cms/group/cms-llp/v3_calo_AOD_2018_skimAccept_unmerged/"
+INPUTDIR = "/nfs/dust/cms/group/cms-llp/v4_calo_AOD_2018_skimAccept_unmerged_newAK8matching/"
+INPUTDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_2018_SR/"
 
 run_condor = False
 
 data = ["data_obs"]
 #back = ["VV"]
 back = ["VV","WJetsToLNu","ZJetsToNuNu","TTbar","QCD"]
+back = []
 sign = [
         #'SUSY_mh400_pl1000', 'SUSY_mh300_pl1000', 'SUSY_mh250_pl1000', 'SUSY_mh200_pl1000', 'SUSY_mh175_pl1000', 'SUSY_mh150_pl1000', 'SUSY_mh127_pl1000',
-        'ggH_MH125_MS25_ctau500',  'ggH_MH125_MS25_ctau1000',  'ggH_MH125_MS25_ctau2000',  'ggH_MH125_MS25_ctau5000',  'ggH_MH125_MS25_ctau10000', 
-        'ggH_MH125_MS55_ctau500',  'ggH_MH125_MS55_ctau1000',  'ggH_MH125_MS55_ctau2000',  'ggH_MH125_MS55_ctau5000',  'ggH_MH125_MS55_ctau10000', 
+        #'ggH_MH125_MS25_ctau500',  'ggH_MH125_MS25_ctau1000',  'ggH_MH125_MS25_ctau2000',  'ggH_MH125_MS25_ctau5000',  'ggH_MH125_MS25_ctau10000', 
+        #'ggH_MH125_MS55_ctau500',  'ggH_MH125_MS55_ctau1000',  'ggH_MH125_MS55_ctau2000',  'ggH_MH125_MS55_ctau5000',  'ggH_MH125_MS55_ctau10000', 
         #'ggH_MH200_MS50_ctau500',  'ggH_MH200_MS50_ctau1000',  'ggH_MH200_MS50_ctau2000',  'ggH_MH200_MS50_ctau5000',  'ggH_MH200_MS50_ctau10000', 
         #'ggH_MH200_MS25_ctau500',  'ggH_MH200_MS25_ctau1000',  'ggH_MH200_MS25_ctau2000',  'ggH_MH200_MS25_ctau5000',  'ggH_MH200_MS25_ctau10000', 
         #'ggH_MH400_MS100_ctau500', 'ggH_MH400_MS100_ctau1000', 'ggH_MH400_MS100_ctau2000', 'ggH_MH400_MS100_ctau5000', 'ggH_MH400_MS100_ctau10000',
@@ -34,8 +37,10 @@ sign = [
 	#'ggH_MH2000_MS600_ctau500','ggH_MH2000_MS600_ctau1000','ggH_MH2000_MS600_ctau2000','ggH_MH2000_MS600_ctau5000','ggH_MH2000_MS600_ctau10000',
         ]
 
-#sign = [
-#        'SUSY_mh400_pl1000_XL']
+sign = [
+        'SUSY_mh400_pl1000_XL']
+
+#sign = ['ggH_MH1000_MS150_ctau1000_XL']
 
 for s in (sign):
     for ss in samples[s]["files"]:

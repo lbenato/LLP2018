@@ -55,6 +55,15 @@
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
 
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "TTree.h"
+
+//#include "Objects.h"
+//#include "ObjectsFormat.h"
+#include "RecoObjects.h"
+//#include "RecoObjectsFormat.h"
+
 //
 // class declaration
 //
@@ -83,11 +92,29 @@ class LLP2018 : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       // ----------member data ---------------------------
       //edm::EDGetTokenT<TrackCollection> tracksToken_;  //used to select what tracks to read from configuration file
       edm::EDGetTokenT<std::vector<pat::Electron>> electronToken_;  //used to select what tracks to read from configuration file
+      edm::EDGetTokenT<std::vector<reco::GsfElectron>> recoElectronToken_;
       edm::EDGetTokenT< std::vector<reco::GenJet> > GenJetToken_;
       edm::EDGetTokenT< std::vector<pat::Jet> > JetToken_;
       edm::EDGetTokenT< std::vector<pat::Jet> > Jet2Token_;
       edm::EDGetTokenT< std::vector<pat::MET> > MetToken_;
+      edm::EDGetTokenT<edm::ValueMap<bool> > electron_cutbasedID_decisions_veto_Token_;
+      edm::EDGetTokenT<edm::ValueMap<bool> > electron_cutbasedID_decisions_loose_Token_;
+      edm::EDGetTokenT<edm::ValueMap<bool> > electron_cutbasedID_decisions_tight_Token_;
       std::string EleVetoIdMapToken;
+      std::string EleLooseIdMapToken;
+      std::string EleTightIdMapToken;
+
+      std::vector<RecoLeptonType> Electrons;
+      std::vector<RecoLeptonType> RecoElectrons;
+      long int RunNumber;
+      long int LumiNumber;
+      long int EventNumber;
+      long int nElectrons;
+      long int nRecoElectrons;
+
+      edm::Service<TFileService> fs;
+      TTree* tree;
+
 };
 
 //
@@ -105,14 +132,20 @@ LLP2018::LLP2018(const edm::ParameterSet& iConfig)
  :
   //tracksToken_(consumes<TrackCollection>(iConfig.getUntrackedParameter<edm::InputTag>("tracks"))),
   electronToken_(consumes< std::vector<pat::Electron> >(iConfig.getUntrackedParameter<edm::InputTag>("electrons"))),
+  recoElectronToken_(consumes< std::vector<reco::GsfElectron> >(iConfig.getUntrackedParameter<edm::InputTag>("recoElectrons"))),
   GenJetToken_(consumes<std::vector<reco::GenJet>>(iConfig.getParameter <edm::InputTag>("genjets"))),
   JetToken_(consumes<std::vector<pat::Jet>>(iConfig.getParameter <edm::InputTag>("jets"))),
   Jet2Token_(consumes<std::vector<pat::Jet>>(iConfig.getParameter <edm::InputTag>("jets2"))),
   MetToken_(consumes<std::vector<pat::MET>>(iConfig.getParameter <edm::InputTag>("met"))),
-  EleVetoIdMapToken(iConfig.getUntrackedParameter<std::string>("eleVetoIdMap"))
+  electron_cutbasedID_decisions_veto_Token_(consumes<edm::ValueMap<bool> >(iConfig.getParameter<edm::InputTag>("electron_cutbasedID_decisions_veto"))),
+  electron_cutbasedID_decisions_loose_Token_(consumes<edm::ValueMap<bool> >(iConfig.getParameter<edm::InputTag>("electron_cutbasedID_decisions_loose"))),
+  electron_cutbasedID_decisions_tight_Token_(consumes<edm::ValueMap<bool> >(iConfig.getParameter<edm::InputTag>("electron_cutbasedID_decisions_tight"))),
+  EleVetoIdMapToken(iConfig.getUntrackedParameter<std::string>("eleVetoIdMap")),
+  EleLooseIdMapToken(iConfig.getUntrackedParameter<std::string>("eleLooseIdMap")),
+  EleTightIdMapToken(iConfig.getUntrackedParameter<std::string>("eleTightIdMap"))
 {
    //now do what ever initialization is needed
-
+  usesResource("TFileService");
 }
 
 
@@ -134,6 +167,16 @@ void
 LLP2018::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    using namespace edm;
+   nElectrons = 0;
+   nRecoElectrons = 0;
+   EventNumber = LumiNumber = RunNumber = 0;
+
+   std::cout << " = = = = = = = = = = = = = = = " << std::endl; 
+   std::cout <<  "Event number: " <<iEvent.id().event() << std::endl;
+
+   EventNumber = iEvent.id().event();
+   LumiNumber = iEvent.luminosityBlock();
+   RunNumber = iEvent.id().run();
 
    /*
     Handle<TrackCollection> tracks;
@@ -145,6 +188,7 @@ LLP2018::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       // int charge = itTrack->charge();
     }
    */
+
 
     std::vector<pat::Electron> Vect;
     // Declare and open collection                                                                                                                                         
@@ -161,9 +205,58 @@ LLP2018::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //pat::ElectronRef elRef(EleCollection, elIdx);
       //bool isPassVeto = (*VetoIdDecisions)[elRef];
       //el.addUserInt("isVeto", isPassVeto ? 1 : 0);
+      std::cout<<"el pt: " << el.pt() << std::endl;
       std::cout<<"el is veto: " << el.electronID(EleVetoIdMapToken) << std::endl;
+      RecoLeptonType Ele;
+      Ele.pt = el.pt();
+      Ele.eta = el.eta();
+      Ele.phi = el.phi();
+      Ele.mass = el.mass();
+      Ele.isVeto = el.electronID(EleVetoIdMapToken);
+      Ele.isLoose = el.electronID(EleLooseIdMapToken);
+      Ele.isTight = el.electronID(EleTightIdMapToken);
+      Electrons.push_back(Ele);
     }
 
+    nElectrons = Electrons.size();
+
+
+
+    std::vector<reco::GsfElectron> RecoVect;
+    // Declare and open collection                                                                                                                                         
+    edm::Handle<std::vector<reco::GsfElectron> > RecoEleCollection;
+    iEvent.getByToken(recoElectronToken_, RecoEleCollection);
+
+    edm::Handle<edm::ValueMap<bool> > electron_cutbasedID_decisions_veto;
+    iEvent.getByToken(electron_cutbasedID_decisions_veto_Token_, electron_cutbasedID_decisions_veto);
+
+    edm::Handle<edm::ValueMap<bool> > electron_cutbasedID_decisions_loose;
+    iEvent.getByToken(electron_cutbasedID_decisions_loose_Token_, electron_cutbasedID_decisions_loose);
+
+    edm::Handle<edm::ValueMap<bool> > electron_cutbasedID_decisions_tight;
+    iEvent.getByToken(electron_cutbasedID_decisions_tight_Token_, electron_cutbasedID_decisions_tight);
+    //edm::Handle<edm::ValueMap<bool> > VetoIdDecisions;
+    //iEvent.getByToken(EleVetoIdMapToken, VetoIdDecisions);
+
+    //unsigned int elIdx = 0;
+
+    for(uint i = 0; i < RecoEleCollection->size(); ++i) {
+      const reco::GsfElectron ele = (*RecoEleCollection)[i];
+      reco::GsfElectronRef eleRef(RecoEleCollection, i);
+      //std::cout << "Reco ele pt: " << ele.pt() << std::endl;
+      //std::cout << "Reco ele veto ID: " << (*electron_cutbasedID_decisions_veto)[eleRef] << std::endl;
+      //RecoLeptonType Ele;
+      //Ele.pt = ele.pt();
+      //Ele.eta = ele.eta();
+      //Ele.phi = ele.phi();
+      //Ele.mass = ele.mass();
+      //Ele.isVeto = (*electron_cutbasedID_decisions_veto)[eleRef];
+      //Ele.isLoose = (*electron_cutbasedID_decisions_loose)[eleRef];
+      //Ele.isTight = (*electron_cutbasedID_decisions_tight)[eleRef];
+      //RecoElectrons.push_back(Ele);
+    }
+
+    nRecoElectrons = RecoElectrons.size();
 
     
     edm::Handle<std::vector<reco::GenJet> > GenJetsCollection;
@@ -175,7 +268,7 @@ LLP2018::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(std::vector<reco::GenJet>::const_iterator it=GenJetsCollection->begin(); it!=GenJetsCollection->end(); ++it) {
       reco::GenJet jet=*it;
       if(jet.pt()<8) continue;
-      std::cout << "Gen jet pt: " << jet.pt() << std::endl; 
+      //std::cout << "Gen jet pt: " << jet.pt() << std::endl; 
       GenJetsVect.push_back(jet);
     }
     //nGenJets = GenJetsVect.size();
@@ -184,14 +277,14 @@ LLP2018::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     iEvent.getByToken(JetToken_,JetsCollection);
     for(std::vector<pat::Jet>::const_iterator it=JetsCollection->begin(); it!=JetsCollection->end(); ++it) {
       pat::Jet jet=*it;
-      std::cout << "Pat jet collection 1 pt: " << jet.pt() << std::endl; 
+      //std::cout << "Pat jet collection 1 pt: " << jet.pt() << std::endl; 
     }
 
     edm::Handle<std::vector<pat::Jet> > Jets2Collection;
     iEvent.getByToken(Jet2Token_,Jets2Collection);
     for(std::vector<pat::Jet>::const_iterator it=Jets2Collection->begin(); it!=Jets2Collection->end(); ++it) {
       pat::Jet jet2=*it;
-      std::cout << "Pat jet collection 2 pt: " << jet2.pt() << std::endl; 
+      //std::cout << "Pat jet collection 2 pt: " << jet2.pt() << std::endl; 
     }
 
     //Fill Jet vector
@@ -199,7 +292,12 @@ LLP2018::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     edm::Handle<std::vector<pat::MET> > MetCollection;
     iEvent.getByToken(MetToken_, MetCollection);
     pat::MET MEt = MetCollection->front();   
-    std::cout << "MET pt: " << MEt.pt() << std::endl; 
+    //std::cout << "MET pt: " << MEt.pt() << std::endl; 
+
+    tree -> Fill();
+
+    Electrons.clear();
+    RecoElectrons.clear();
 
 
 #ifdef THIS_IS_AN_EVENT_EXAMPLE
@@ -218,6 +316,14 @@ LLP2018::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 void
 LLP2018::beginJob()
 {
+  tree = fs->make<TTree>("tree", "tree");
+  tree -> Branch("EventNumber" , &EventNumber , "EventNumber/L");
+  tree -> Branch("LumiNumber" , &LumiNumber , "LumiNumber/L");
+  tree -> Branch("RunNumber" , &RunNumber , "RunNumber/L");
+  tree -> Branch("nElectrons" , & nElectrons, "nElectrons/L");
+  tree -> Branch("nRecoElectrons" , & nRecoElectrons, "nRecoElectrons/L");
+  tree -> Branch("Electrons", &Electrons);
+  tree -> Branch("RecoElectrons", &RecoElectrons);
 }
 
 // ------------ method called once each job just after ending the event loop  ------------

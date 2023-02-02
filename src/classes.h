@@ -22,6 +22,10 @@ namespace {
     MEtType dummy13;
     ecalRecHitType dummy14;
     hcalRecHitType dummy15;
+    RecoLeptonType dummy16;
+    TrackType dummy17;
+    LorentzType dummy18;
+    CaloMEtType dummy19;
 
     //Vector of structures
     std::vector<JetType> dummyVector0;
@@ -40,6 +44,12 @@ namespace {
     std::vector<MEtType> dummyVector13;
     std::vector<ecalRecHitType> dummyVector14;
     std::vector<hcalRecHitType> dummyVector15;
+    std::vector<RecoLeptonType> dummyVector16;
+    std::vector<TrackType> dummyVector17;
+    std::vector<LorentzType> dummyVector18;
+    std::vector<CaloMEtType> dummyVector19;
+
+    std::vector<std::string> dummyString;
 
   };
 }

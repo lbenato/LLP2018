@@ -8,6 +8,11 @@
 #include "DataFormats/PatCandidates/interface/Tau.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
+#include "DataFormats/METReco/interface/SpecificGenMETData.h"
+#include "DataFormats/METReco/interface/MET.h"
+#include "DataFormats/METReco/interface/CaloMET.h"
+#include "DataFormats/METReco/interface/CaloMETFwd.h"
+
 #include "DataFormats/PatCandidates/interface/CompositeCandidate.h"
 #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
 #include "DataFormats/JetReco/interface/CaloJet.h"
@@ -15,6 +20,18 @@
 #include "DataFormats/Candidate/interface/CompositePtrCandidate.h"
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
+
+//DT and CSC
+#include "DataFormats/DTRecHit/interface/DTRecSegment4DCollection.h"
+#include "DataFormats/DTRecHit/interface/DTRecClusterCollection.h"
+#include "Geometry/DTGeometry/interface/DTGeometry.h"
+#include "Geometry/DTGeometry/interface/DTChamber.h"
+#include "Geometry/DTGeometry/interface/DTSuperLayer.h"
+#include "Geometry/DTGeometry/interface/DTLayer.h"
+#include "Geometry/DTGeometry/interface/DTTopology.h"
+#include "DataFormats/CSCRecHit/interface/CSCSegmentCollection.h"
+#include "Geometry/CSCGeometry/interface/CSCGeometry.h"
+#include "DataFormats/MuonDetId/interface/CSCDetId.h"
 
 #include "Utilities.h"
 #include "Objects.h"
@@ -30,14 +47,17 @@ class ObjectsFormat {
         static void FillPhotonType(PhotonType&, const pat::Photon*, bool);
         static void FillTauType(TauType&, const pat::Tau*, bool);
         static void FillJetType(JetType&, const pat::Jet*, bool);
-        static void FillCaloJetType(CaloJetType&, const reco::CaloJet*, bool, bool, float, float);//new
+        static void FillCaloJetType(CaloJetType&, const reco::CaloJet*, bool, bool, float, float, int, float, float, float);//new
         static void FillFatJetType(FatJetType&, const pat::Jet*, std::string, bool);
         static void FillCustomFatJetType(CustomFatJetType&, const pat::Jet*, std::string, bool);
         static void FillMEtType(MEtType&, const pat::MET*, bool);
+        static void FillCaloMEtType(CaloMEtType&, const reco::CaloMET*, bool);
 //        static void FillMEtCorType(MEtCorType&, const pat::MET*, bool);
         static void FillMEtFullType(MEtFullType&, const pat::MET*, bool);
         static void FillCandidateType(CandidateType&, pat::CompositeCandidate*, bool);
-        static void FillLorentzType(LorentzType&, const reco::Candidate::LorentzVector*);
+        //static void FillLorentzType(LorentzType&, const reco::Candidate::LorentzVector*);
+        static void FillLorentzType(LorentzType&, TLorentzVector*);
+        static void FillTrackType(TrackType&, const reco::Track*);
         static void FillGenPType(GenPType&, const reco::GenParticle*);
         static void FillCaloGenPType(GenPType&, const reco::GenParticle*, bool, float, float, float, float, float, float);
         static void FillTriggerObjectType(TriggerObjectType&, const pat::TriggerObjectStandAlone*);
@@ -46,8 +66,10 @@ class ObjectsFormat {
 	static void FillSecVertexType(VertexType&, const reco::VertexCompositePtrCandidate*);
 	static void FillBtagSecVertexType(VertexType&, const reco::CandSecondaryVertexTagInfo*, const reco::CandIPTagInfo*, unsigned int, float, int);
         static void FillSimplifiedJetType(SimplifiedJetType&, const pat::Jet*, bool);
-        static void FillDT4DSegmentType(DT4DSegmentType&, const DTRecSegment4D* R, const GlobalPoint* P);
-        static void FillCSCSegmentType(CSCSegmentType&, const CSCSegment* R, const GlobalPoint* P);
+        //static void FillDT4DSegmentType(DT4DSegmentType&, const DTRecSegment4D* R, const GlobalPoint* P, edm::ESHandle<DTGeometry>&);
+        static void FillDT4DSegmentType(DT4DSegmentType&, const DTRecSegment4D* R, edm::ESHandle<DTGeometry>&);
+        //static void FillCSCSegmentType(CSCSegmentType&, const CSCSegment* R, const GlobalPoint* P);
+        static void FillCSCSegmentType(CSCSegmentType&, const CSCSegment* R, edm::ESHandle<CSCGeometry>&);
 
         static void ResetLeptonType(LeptonType&);
         static void ResetPhotonType(PhotonType&);

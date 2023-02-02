@@ -2,7 +2,9 @@
 
 
 StandAloneMuonsAnalyzer::StandAloneMuonsAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl):
-  StandAloneMuonsToken(CColl.consumes<reco::TrackCollection>(PSet.getParameter<edm::InputTag>("standaloneMuons")))
+  StandAloneMuonsToken(CColl.consumes<reco::TrackCollection>(PSet.getParameter<edm::InputTag>("standaloneMuons"))),
+  StandAloneMuonsViewToken(CColl.consumes< edm::View<reco::Track> >(PSet.getParameter<edm::InputTag>("standaloneMuons")))
+
 {
     
     std::cout << " --- StandAloneMuonsAnalyzer initialization ---" << std::endl;
@@ -26,14 +28,51 @@ std::vector<reco::Track> StandAloneMuonsAnalyzer::FillStandAloneMuonsVector(cons
     edm::Handle<reco::TrackCollection> StandAloneMuonsCollection;
     iEvent.getByToken(StandAloneMuonsToken, StandAloneMuonsCollection); 
     
-    // Iterate over StandAloneMuonsCollection and save DT segments in vect     
+    // Iterate over StandAloneMuonsCollection and save in vect     
     for (reco::TrackCollection::const_iterator track_it = StandAloneMuonsCollection->begin(); track_it != StandAloneMuonsCollection->end();track_it++) {
         reco::Track standalonemuon = *track_it;
+	//std::cout << "Standalone muon quality: " << standalonemuon.theta() << std::endl;
         Vect.push_back(standalonemuon);
         
     }
     
     
+    return Vect;
+}
+
+std::vector<TLorentzVector> StandAloneMuonsAnalyzer::FillStandAloneMuonsPropagatedVector(const edm::Event& iEvent, const edm::EventSetup& iSetup) {    
+
+    const MagneticField* MagneticFieldTag;
+    edm::ESHandle<Propagator> PropagatorHandle;
+    edm::ESHandle<TransientTrackBuilder> BuilderHandle;
+    // Magnetic field
+    edm::ESHandle<MagneticField> MagneticField;
+    iSetup.get<IdealMagneticFieldRecord>().get(MagneticField);
+    MagneticFieldTag = &*MagneticField;
+    // Propagator
+    std::string PropagatorName = "PropagatorWithMaterial";
+    iSetup.get<TrackingComponentsRecord>().get(PropagatorName,PropagatorHandle);
+    StateOnTrackerBound stateOnTracker(PropagatorHandle.product());
+
+    // Declare and open collections
+    edm::Handle<reco::TrackCollection> StandAloneMuonsCollection;
+    iEvent.getByToken(StandAloneMuonsToken, StandAloneMuonsCollection); 
+    edm::Handle<edm::View<reco::Track> > StandAloneMuonsView;
+    iEvent.getByToken(StandAloneMuonsViewToken,StandAloneMuonsView);
+
+    std::vector<TLorentzVector> Vect;
+    // Iterate over StandAloneMuonsCollection and save in vect     
+    for (unsigned int track_it = 0; track_it < StandAloneMuonsCollection->size(); track_it ++){
+	//Track propagation
+	FreeTrajectoryState fts = trajectoryStateTransform::initialFreeState (StandAloneMuonsView->at(track_it),MagneticFieldTag);
+	TrajectoryStateOnSurface outer = stateOnTracker(fts);
+	//std::cout << "doing track propagation, check if valid : " << outer.isValid() << std::endl;
+        if(!outer.isValid()) continue;
+        GlobalPoint outerPos = outer.globalPosition();
+        TLorentzVector trackTemp;
+        trackTemp.SetPtEtaPhiM( (StandAloneMuonsCollection->at(track_it)) .pt(), outerPos.eta(), outerPos.phi(), 0);
+	Vect.push_back(trackTemp);
+    }
     return Vect;
 }
 

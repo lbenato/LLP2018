@@ -79,6 +79,13 @@ sample = {
         'kfactor' : 1.,
     },
     #TTbar
+    'TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 0.,#x-sec DB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+
     'TTJets_SingleLeptFromT_genMET-150_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
         'nevents' : 1,
         'xsec'    : 0.,#x-sec DB
@@ -271,6 +278,13 @@ sample = {
         'kfactor' : 1.,
     },
 
+    'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3' : {
+        'nevents' : 1,
+        'xsec'    : 1,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+
     'n3n2-n1-hbb-hbb_mh400_pl1000' : {
         'nevents' : 1,
         'xsec'    : 88.7325,
@@ -334,7 +348,16 @@ samples = {
     },
     'MET' : {
         'order' : 0,
-        'files' : ['METRun2016B-07Aug17_ver1-v1','METRun2016B-07Aug17_ver2-v1','METRun2016C-07Aug17_v1','METRun2016D-07Aug17_v1','METRun2016E-07Aug17_v1','METRun2016F-07Aug17_v1','METRun2016G-07Aug17_v1','METRun2016H-07Aug17_v1'],
+        'files' : [
+            #'METRun2016B-07Aug17_ver1-v1',
+            'METRun2016B-07Aug17_ver2-v1',
+            'METRun2016C-07Aug17_v1',
+            'METRun2016D-07Aug17_v1',
+            'METRun2016E-07Aug17_v1',
+            'METRun2016F-07Aug17_v1',
+            'METRun2016G-07Aug17_v1',
+            'METRun2016H-07Aug17_v1'
+        ],
         'fillcolor' : 0,
         'fillstyle' : 1,
         'linecolor' : 1,
@@ -344,6 +367,29 @@ samples = {
         'weight': 1.,
         'plot': True,
     },
+
+    'HighMET' : {
+        'order' : 0,
+        'files' : [
+            #'HighMETRun2016B-07Aug17_ver1-v1',
+            'HighMETRun2016B-07Aug17_ver2-v1',
+            'HighMETRun2016C-07Aug17_v1',
+            'HighMETRun2016D-07Aug17_v1',
+            'HighMETRun2016E-07Aug17_v1',
+            'HighMETRun2016F-07Aug17_v1',
+            'HighMETRun2016G-07Aug17_v1',
+            'HighMETRun2016H-07Aug17_v1'
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "Data",
+        'weight': 1.,
+        'plot': True,
+    },
+
     'SingleMuon' : {
         'order' : 0,
         'files' : ['SingleMuonRun2016B-07Aug17_ver1-v1','SingleMuonRun2016B-07Aug17_ver2-v1','SingleMuonRun2016C-07Aug17-v1','SingleMuonRun2016D-07Aug17-v1','SingleMuonRun2016E-07Aug17-v1','SingleMuonRun2016F-07Aug17-v1','SingleMuonRun2016G-07Aug17-v1','SingleMuonRun2016H-07Aug17-v1'],
@@ -423,15 +469,15 @@ samples = {
     #QCD
     'QCD' : {
         'files' : [
-             #'QCD_HT50to100_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
-             'QCD_HT100to200_TuneCP5_13TeV-madgraph-pythia8-v2',
-             'QCD_HT200to300_TuneCP5_13TeV-madgraph-pythia8-v1',
-             'QCD_HT300to500_TuneCP5_13TeV-madgraph-pythia8-v1', 
-             'QCD_HT500to700_TuneCP5_13TeV-madgraph-pythia8-v2', 
-             'QCD_HT700to1000_TuneCP5_13TeV-madgraph-pythia8-v1', 
-             'QCD_HT1000to1500_TuneCP5_13TeV-madgraph-pythia8-v1', 
-             'QCD_HT1500to2000_TuneCP5_13TeV-madgraph-pythia8-v2', 
-             'QCD_HT2000toInf_TuneCP5_13TeV-madgraph-pythia8-v2'],
+             'QCD_HT50to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+             'QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+             'QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+             'QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1', 
+             'QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1', 
+             'QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1', 
+             'QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1', 
+             'QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1', 
+             'QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1'],
         'fillcolor' : 920,
         'fillstyle' : 1001,
         'linecolor' : 920,
@@ -443,12 +489,30 @@ samples = {
         'plot': True,
     },
 
+    #TTbarGenMET
+    'TTbarGenMET' : {
+        'files' : [
+             'TTJets_SingleLeptFromTbar_genMET-150_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+             'TTJets_SingleLeptFromT_genMET-150_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+             'TTJets_DiLept_genMET-150_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+        ],
+        'fillcolor' : 798,
+        'fillstyle' : 1001,
+        'linecolor' : 798,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "t#bar{t}",
+        'weight': 1.,
+        'plot': True,
+    },
+
     #TTbar
     'TTbar' : {
         'files' : [
-             'TTJets_SingleLeptFromT_genMET-150_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
-             'TTJets_SingleLeptFromTbar_genMET-150_TuneCP5_13TeV-madgraphMLM-pythia8-v2',
-             'TTJets_DiLept_genMET-150_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+             'TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8-v1',
+             ##'TTJets_SingleLeptFromT_genMET-150_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+             ##'TTJets_SingleLeptFromTbar_genMET-150_TuneCP5_13TeV-madgraphMLM-pythia8-v2',
+             ##'TTJets_DiLept_genMET-150_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
         ],
         'fillcolor' : 798,
         'fillstyle' : 1001,
@@ -472,6 +536,20 @@ samples = {
         'weight': 1.,
         'plot': True,
     },
+
+    #DYJetsToLL
+    'DYJetsToLL' : {
+        'files' : ['DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia_ext1-v1'],
+        'fillcolor' : 418,
+        'fillstyle' : 1001,
+        'linecolor' : 418,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "Z/#gamma #rightarrow ll + jets",
+        'weight': 1.,
+        'plot': True,
+    },
+
 
     #ZJetsToNuNu
     'ZJetsToNuNu' : {
@@ -528,14 +606,14 @@ samples = {
     #HT binned
     'WJetsToLNu' : { 
         'files' : [
-            'WJetsToLNu_HT-70To100_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
-            'WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8-v2',
-            'WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
-            'WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
-            'WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
-            'WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
-            'WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
-            'WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8-v3',
+            'WJetsToLNu_HT-70To100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
             ],
         'fillcolor' : 881,
         'fillstyle' : 1001,
@@ -549,9 +627,9 @@ samples = {
     #Dibosons
     'VV' : {
         'files' : [
-            'WW_TuneCP5_13TeV-pythia8-v1', 
-            'WZ_TuneCP5_13TeV-pythia8-v1', 
-            'ZZ_TuneCP5_13TeV-pythia8-v1'
+            'WW_TuneCUETP8M1_13TeV-pythia8-v1', 
+            'WZ_TuneCUETP8M1_13TeV-pythia8-v1', 
+            'ZZ_TuneCUETP8M1_13TeV-pythia8-v1'
             ],  
         'fillcolor' : 602,
         'fillstyle' : 1001,
@@ -566,6 +644,20 @@ samples = {
     #SIGNAL
 ######################################
 #
+    'SUSY_central' : {
+        'files' : ['SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3'],
+        'mass' : 0,
+        'ctau' : 0,
+        'fillcolor' : 2,
+        'fillstyle' : 0,
+        'linecolor' : 2,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{#chi} = 0 GeV, c#tau_{0} = 0 m",
+        'weight': 1.,
+        'plot': True,
+    },
+
 #  JiaJing's AOD
     'SUSY_mh400_pl1000' : {
         'files' : ['n3n2-n1-hbb-hbb_mh400_pl1000'],

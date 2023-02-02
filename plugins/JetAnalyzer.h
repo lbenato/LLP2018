@@ -33,6 +33,8 @@
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 
+#include "DataFormats/METReco/interface/SpecificGenMETData.h"
+#include "DataFormats/METReco/interface/MET.h"
 
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 #include "DataFormats/Candidate/interface/Candidate.h"
@@ -98,6 +100,7 @@ class JetAnalyzer {
         virtual void GenMatcher(std::vector<pat::Jet>&, std::vector<reco::GenParticle>&, std::string);
         virtual int GetNBJets(std::vector<pat::Jet>&);
         virtual pat::MET FillMetVector(const edm::Event&);
+        //virtual reco::GenMET FillGenMetVector(const edm::Event&);
 	virtual float GetMetTriggerEfficiency(pat::MET&);
         virtual void ApplyRecoilCorrections(pat::MET&, const reco::Candidate::LorentzVector*, const reco::Candidate::LorentzVector*, int);
         virtual float CalculateHT(const edm::Event&, const edm::EventSetup&, int, float, float, bool);
@@ -111,6 +114,7 @@ class JetAnalyzer {
 
         edm::EDGetTokenT<std::vector<pat::Jet> > JetToken;
         edm::EDGetTokenT<std::vector<pat::MET> > MetToken;
+        edm::EDGetTokenT<std::vector<reco::GenMET> > GenMetToken;
         edm::EDGetTokenT<edm::ValueMap<float>> QGToken;
         edm::EDGetTokenT<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > ebRecHitsToken;
         edm::EDGetTokenT<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > eeRecHitsToken;

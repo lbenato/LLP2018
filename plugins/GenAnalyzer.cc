@@ -3,6 +3,7 @@
 
 GenAnalyzer::GenAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl):
     GenToken(CColl.consumes<GenEventInfoProduct>(PSet.getParameter<edm::InputTag>("genProduct"))),
+    GenHeaderToken(CColl.consumes<GenLumiInfoHeader,edm::InLumi>(PSet.getParameter<edm::InputTag>("genHeader"))),
     LheToken(CColl.consumes<LHEEventProduct>(PSet.getParameter<edm::InputTag>("lheProduct"))),
     GenParticlesToken(CColl.consumes<std::vector<reco::GenParticle> >(PSet.getParameter<edm::InputTag>("genParticles"))),
     ParticleList(PSet.getParameter<std::vector<int> >("pdgId")),
@@ -87,7 +88,9 @@ GenAnalyzer::~GenAnalyzer() {
 
 float GenAnalyzer::GenEventWeight(const edm::Event& iEvent) {
   float weight(1.);
+  //std::vector<double> weights;
   if(iEvent.isRealData()) return weight;
+  //if(iEvent.isRealData()) return 1.;
 
   // Declare and open collection
   edm::Handle<GenEventInfoProduct> GenEventCollection;
@@ -95,18 +98,38 @@ float GenAnalyzer::GenEventWeight(const edm::Event& iEvent) {
   const GenEventInfoProduct& genEventInfo = *(GenEventCollection.product());
 
   weight = genEventInfo.weights()[0];
+  return weight;
+
+  //weights = genEventInfo.weights();
+  //weight = 1.;
+  //std::cout << "weight size: " << genEventInfo.weight().size() << std::endl;
+  //std::cout<< "weights size:" << genEventInfo.weights().size() << std::endl;
   //std::cout<< "weight[0]:" << genEventInfo.weights()[0] << std::endl;
   //std::cout<< "weight[1]: " << genEventInfo.weights()[1] << std::endl;
   //std::cout<< "weight[2]: " << genEventInfo.weights()[2] << std::endl;
   //std::cout<< "weight[3]: " << genEventInfo.weights()[3] << std::endl;
-  //std::cout<< "weight(): " << genEventInfo.weight() << std::endl;
+  //std::cout<< "weight[4]: " << genEventInfo.weights()[4] << std::endl;
+  //std::cout<< "weight[5]: " << genEventInfo.weights()[5] << std::endl;
+  //std::cout<< "weight[6]: " << genEventInfo.weights()[6] << std::endl;
+  //std::cout<< "weight[7]: " << genEventInfo.weights()[7] << std::endl;
+  //std::cout<< "weight[8]: " << genEventInfo.weights()[8] << std::endl;
+  //std::cout<< "weight[9]: " << genEventInfo.weights()[9] << std::endl;
+  //for(unsigned int w=0;w<genEventInfo.weights().size();w++) std::cout<< "weight[" << w << "]: " << genEventInfo.weights()[w] << std::endl;
+
+  //std::cout<< "weight() method: " << genEventInfo.weight() << std::endl;
+  //std::cout<< "hasPDF? : " << genEventInfo.hasPDF() << std::endl;
+  //std::cout<< "scalePDF : " << genEventInfo.pdf()->scalePDF << std::endl;
+  //std::cout<< "id 1 : " << genEventInfo.pdf()->id.first << std::endl;
+  //std::cout<< "id 2 : " << genEventInfo.pdf()->id.second << std::endl;
+  //std::cout<< "weights() method: " << genEventInfo.weights() << std::endl;
+  //std::cout<< "weights()[1] method: " << genEventInfo.weights()[1] << std::endl;
   //std::cout<< "signalProcessID " << genEventInfo.signalProcessID() << std::endl;
   //std::cout<< "qScale " << genEventInfo.qScale() << std::endl;
   //std::cout<< "alphaQCD " << genEventInfo.alphaQCD() << std::endl;
   //std::cout<< "alphaQED " << genEventInfo.alphaQED() << std::endl;
+  //return weights[0];
   
   
-  return weight;
 }
 
 
@@ -129,6 +152,112 @@ std::map<int, float> GenAnalyzer::FillWeightsMap(const edm::Event& iEvent) {
     }
 
     return Weights;
+}
+
+
+std::map<std::string, float> GenAnalyzer::FillQCDWeightsMap(const edm::Event& iEvent) {
+    std::map<std::string, float> Weights;
+    if(iEvent.isRealData() or PythiaLOSample) return Weights;
+    // Declare and open collection
+    edm::Handle<GenEventInfoProduct> GenEventCollection;
+    iEvent.getByToken(GenToken, GenEventCollection);
+    //Declare and open Gen Header
+    edm::Handle<GenLumiInfoHeader> GenHeader;
+    iEvent.getLuminosityBlock().getByToken(GenHeaderToken,GenHeader);
+
+    for(unsigned int i = 0; i < 10 and i < GenEventCollection->weights().size(); i++)
+      {
+	Weights[GenHeader->weightNames().at(i)] = GenEventCollection->weights()[i];
+      }
+
+    return Weights;
+}
+
+std::map<std::string, float> GenAnalyzer::FillPDFWeightsMap(const edm::Event& iEvent) {
+    std::map<std::string, float> Weights;
+    if(iEvent.isRealData() or PythiaLOSample) return Weights;
+    // Declare and open collection
+    edm::Handle<GenEventInfoProduct> GenEventCollection;
+    iEvent.getByToken(GenToken, GenEventCollection);
+    //Declare and open Gen Header
+
+    //Weights[-1] = GenEventCollection->weight()/fabs(GenEventCollection->weight());
+    //for(unsigned int i = 0; i < Product->weights().size(); i++) {
+    //    Weights[ i ] = Product->weights()[i].wgt / Product->originalXWGTUP();
+    //}
+
+    return Weights;
+}
+
+
+std::vector<float> GenAnalyzer::FillQCDWeightsVector(const edm::Event& iEvent) {
+    std::vector<float> Weights;
+    if(iEvent.isRealData()) return Weights;
+    // Declare and open collection
+    edm::Handle<GenEventInfoProduct> GenEventCollection;
+    iEvent.getByToken(GenToken, GenEventCollection);
+
+    for(unsigned int i = 0; i < 10 and i < GenEventCollection->weights().size(); i++)
+      {
+	//Normalize by weight 1, corresponding to mur=1 muf=1
+	if(i==0) Weights.push_back(GenEventCollection->weights()[i]);
+	else if(i==1) Weights.push_back(GenEventCollection->weights()[i]);
+	else
+	  {
+	    Weights.push_back(GenEventCollection->weights()[i]/GenEventCollection->weights()[1]);
+	  }
+      }
+    return Weights;
+}
+
+std::vector<std::string> GenAnalyzer::FillQCDWeightsNamesVector(const edm::Event& iEvent) {
+    std::vector<std::string> Names;
+    if(iEvent.isRealData()) return Names;
+    //Declare and open Gen Header
+    edm::Handle<GenLumiInfoHeader> GenHeader;
+    iEvent.getLuminosityBlock().getByToken(GenHeaderToken,GenHeader);
+    for(unsigned int i = 0; i < 10 and i < GenHeader->weightNames().size(); i++)
+      {
+	Names.push_back(GenHeader->weightNames().at(i));
+      }
+
+    return Names;
+}
+
+std::vector<float> GenAnalyzer::FillPDFWeightsVector(const edm::Event& iEvent) {
+    std::vector<float> Weights;
+    if(iEvent.isRealData()) return Weights;
+    // Declare and open collection
+    edm::Handle<GenEventInfoProduct> GenEventCollection;
+    iEvent.getByToken(GenToken, GenEventCollection);
+
+    if(GenEventCollection->weights().size()>214)
+      {
+	for(unsigned int i = 111; i < 214; i++)
+	  {
+	    //Normalize by weight 1, corresponding to mur=1 muf=1
+	    if(i==111) Weights.push_back(GenEventCollection->weights()[i]);
+	    else Weights.push_back(GenEventCollection->weights()[i]/GenEventCollection->weights()[111]);
+	  }
+      }
+    return Weights;
+}
+
+std::vector<std::string> GenAnalyzer::FillPDFWeightsNamesVector(const edm::Event& iEvent) {
+    std::vector<std::string> Names;
+    if(iEvent.isRealData()) return Names;
+    //Declare and open Gen Header
+    edm::Handle<GenLumiInfoHeader> GenHeader;
+    iEvent.getLuminosityBlock().getByToken(GenHeaderToken,GenHeader);
+
+    if(GenHeader->weightNames().size()>214)
+      {
+	for(unsigned int i = 111; i < 214; i++)
+	  {
+	    Names.push_back(GenHeader->weightNames().at(i));
+	  }
+      }
+    return Names;
 }
 
 
@@ -327,6 +456,53 @@ std::vector<reco::GenParticle> GenAnalyzer::FillGenVectorByIdStatusAndMotherAndK
     for(std::vector<reco::GenParticle>::const_iterator it = GenCollection->begin(); it != GenCollection->end(); ++it) {
       if(abs(it->pdgId()) == partid && (it->status()) == partstatus && fabs(it->mother()->pdgId()) == motherid && (it->pt())>pt && fabs(it->eta())<fabs(eta)) Vect.push_back(*it); // Fill vector
     }
+    return Vect;
+}
+
+std::vector<reco::GenParticle> GenAnalyzer::FillGenVectorByIdStatusAndTwoMothersAndKin(const edm::Event& iEvent, int partid, int partstatus, int mother1, int mother2, float pt, float eta) {
+
+    std::vector<reco::GenParticle> Vect;
+
+    // check if is real data
+    isRealData = iEvent.isRealData();
+    if(isRealData or PythiaLOSample) return Vect;
+    // fill collection for this event 
+    iEvent.getByToken(GenParticlesToken, GenCollection);
+    // Loop on Gen Particles collection
+    for(std::vector<reco::GenParticle>::const_iterator it = GenCollection->begin(); it != GenCollection->end(); ++it) 
+      {
+	if(abs(it->pdgId()) == partid && (it->status()) == partstatus && (fabs(it->mother()->pdgId()) == mother1 || fabs(it->mother()->pdgId()) == mother2) && (it->pt())>pt && fabs(it->eta())<fabs(eta)) Vect.push_back(*it); // Fill vector
+      }
+    return Vect;
+}
+
+
+std::vector<reco::GenParticle> GenAnalyzer::FillGenVectorByIdListStatusAndTwoMothersAndKin(const edm::Event& iEvent, std::vector<int> partidlist, int partstatus, int mother1, int mother2, float pt, float eta) {
+
+    std::vector<reco::GenParticle> Vect;
+
+    // check if is real data
+    isRealData = iEvent.isRealData();
+    if(isRealData or PythiaLOSample) return Vect;
+    // fill collection for this event 
+    iEvent.getByToken(GenParticlesToken, GenCollection);
+    // Loop on Gen Particles collection
+    for(std::vector<reco::GenParticle>::const_iterator it = GenCollection->begin(); it != GenCollection->end(); ++it) 
+      {
+
+	for(unsigned int s = 0; s < partidlist.size(); s++) 
+	  {
+	    //std::cout << "partidlist check: " << partidlist.at(s) << std::endl;
+	    if(abs(it->pdgId()) == partidlist.at(s) && (it->status()) == partstatus && ( fabs(it->mother()->pdgId()) == mother1 || fabs(it->mother()->pdgId()) == mother2 ) && (it->pt())>pt && fabs(it->eta())<fabs(eta) )
+	      {
+		//std::cout << "+1 gen b: pdgId" << "\t" << "status" << "\t" << "mother" << "\t" << "pt" << "\t" << "eta" << std::endl;
+		//std::cout << it->pdgId() << "\t" << it->status() << "\t" << it->mother()->pdgId() << "\t" << it->pt() << "\t" << it->eta() << std::endl;
+		//if(abs(it->pdgId()) == partidlist.at(s) && (it->status()) == partstatus && (fabs(it->mother()->pdgId()) == mother1 || fabs(it->mother()->pdgId()) == mother2) && (it->pt())>pt && fabs(it->eta())<fabs(eta))
+		Vect.push_back(*it); // Fill vector
+	      }
+	  }
+
+      }
     return Vect;
 }
 

@@ -26,6 +26,12 @@
 // DT Segment Collection
 #include "DataFormats/DTRecHit/interface/DTRecSegment4DCollection.h"
 #include "DataFormats/DTRecHit/interface/DTRecClusterCollection.h"
+#include "Geometry/DTGeometry/interface/DTGeometry.h"
+#include "Geometry/DTGeometry/interface/DTChamber.h"
+#include "Geometry/DTGeometry/interface/DTSuperLayer.h"
+#include "Geometry/DTGeometry/interface/DTLayer.h"
+#include "Geometry/DTGeometry/interface/DTTopology.h"
+#include "DataFormats/MuonDetId/interface/CSCDetId.h"
 
 #include "FWCore/Framework/interface/EDConsumerBase.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
@@ -53,7 +59,8 @@ class DTAnalyzer {
         ~DTAnalyzer();
         virtual std::vector<DTRecSegment4D> FillDTSegment4DVector(const edm::Event&);
         virtual std::map<std::string,float> GenMatcherDTSegments4D(std::vector<GlobalPoint>&,std::vector<reco::GenParticle>&, std::string);
-        virtual std::vector<GlobalPoint> FillGlobalPointDT4DSegmentVector(const edm::Event&,const edm::EventSetup&,std::vector<DTRecSegment4D>&);
+        //virtual std::vector<GlobalPoint> FillGlobalPointDT4DSegmentVector(const edm::Event&,const edm::EventSetup&,std::vector<DTRecSegment4D>&);
+        virtual std::vector<GlobalPoint> FillGlobalPointDT4DSegmentVector(const edm::Event&,const edm::EventSetup&,std::vector<DTRecSegment4D>&, edm::ESHandle<GlobalTrackingGeometry>&);
         
     private:
         edm::EDGetTokenT<DTRecSegment4DCollection> dtSegmentToken;

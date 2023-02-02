@@ -12,6 +12,8 @@
 //#include "Analyzer/LLP2018/plugins/ObjectsFormat.h"
 //#include "Analyzer/LLP2018/plugins/ObjectsFormat.cc"
 //#include "Objects.h"
+#include "DataFormats/Math/interface/deltaPhi.h"
+#include "DataFormats/Math/interface/deltaR.h"
 
 //bool pt_sorter(PFCandidateType const& lhs, PFCandidateType const& rhs) {
 //    if (lhs.pt != rhs.pt)
@@ -49,7 +51,8 @@ double avg ( std::vector<double> & v )
 
 void skimJetsAcceptanceCaloFast(
                  std::string inFilename=
-                 "/pnfs/desy.de/cms/tier2/store/user/lbenato/v3_calo_AOD_2018_11June2020/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_ext1-v2/200623_122753/0000/output_10.root",
+                 //"/pnfs/desy.de/cms/tier2/store/user/lbenato/v3_calo_AOD_2018_11June2020/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_ext1-v2/200623_122753/0000/output_10.root",
+		 "/pnfs/desy.de/cms/tier2/store/user/lbenato/v4_calo_AOD_2018_18October2020/GluGluH2_H2ToSSTobbbb_MH-2000_MS-250_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/crab_GluGluH2_H2ToSSTobbbb_MH-2000_MS-250_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/201017_234633/0000/output_1.root",
 		 //"output.root",
 		 //"GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC.root",
                  //"GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC.root",
@@ -59,7 +62,7 @@ void skimJetsAcceptanceCaloFast(
 		 "output_4ML.root",
 		 Long64_t first_event=0,
 		 Long64_t last_event=-1,
-		 Bool_t doPFCand=true
+		 Bool_t doPFCand=false
              )
 
 {//"GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC_ML.root") {
@@ -110,12 +113,18 @@ void skimJetsAcceptanceCaloFast(
     std::vector<FatJetType>      *FatJets = 0;
     std::vector<PFCandidateType> *PFCandidates = 0;
     MEtType                      *MEt = 0;
+    std::vector<GenPType>        *GenHiggs = 0;
+    std::vector<GenPType>        *GenLLPs = 0;
+    std::vector<GenPType>        *GenBquarks = 0;
 
     // Input branches
     TBranch        *b_Jets = 0;
     TBranch        *b_FatJets = 0;
     TBranch        *b_PFCandidates = 0;
     TBranch        *b_MEt = 0;
+    TBranch        *b_GenHiggs = 0;
+    TBranch        *b_GenLLPs = 0;
+    TBranch        *b_GenBquarks = 0;
     //TBranch        *b_Jet_0_PFCandidates = 0;
     TBranch        *b_EventNumber;
     TBranch        *b_RunNumber;
@@ -152,6 +161,9 @@ void skimJetsAcceptanceCaloFast(
     inTree->SetBranchAddress("FatJets",           &FatJets,           &b_FatJets);
     inTree->SetBranchAddress("PFCandidates"   ,   &PFCandidates,      &b_PFCandidates);
     inTree->SetBranchAddress("MEt",&MEt, &b_MEt);//the branch part seems kinda useless
+    inTree->SetBranchAddress("GenHiggs",          &GenHiggs,          &b_GenHiggs);
+    inTree->SetBranchAddress("GenLLPs",           &GenLLPs,           &b_GenLLPs);
+    inTree->SetBranchAddress("GenBquarks",        &GenBquarks,        &b_GenBquarks);
     inTree->SetBranchAddress("EventNumber",       &EventNumber,       &b_EventNumber);
     inTree->SetBranchAddress("RunNumber",         &RunNumber,         &b_RunNumber);
     inTree->SetBranchAddress("LumiNumber",        &LumiNumber,        &b_LumiNumber);
@@ -269,7 +281,11 @@ void skimJetsAcceptanceCaloFast(
     if(doPFCand) outTree->Branch("Jet_8_PFCandidates", &Jet_8_PFCandidates);
     if(doPFCand) outTree->Branch("Jet_9_PFCandidates", &Jet_9_PFCandidates);
     outTree->Branch("MEt", &MEt);
-    
+    outTree->Branch("GenHiggs", &GenHiggs);
+    outTree->Branch("GenLLPs", &GenLLPs);
+    outTree->Branch("GenBquarks", &GenBquarks);
+
+
     // =================
     // Event loop
     // =================
@@ -325,6 +341,7 @@ void skimJetsAcceptanceCaloFast(
 	  {
 	    if( fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).timeRecHitsHB>-100.)
 	      {
+		Jets->at(j).eFracRecHitsEB = (Jets->at(j).energy>0 and Jets->at(j).energyRecHitsEB>0) ? Jets->at(j).energyRecHitsEB/Jets->at(j).energy : -1.;
                 nCHSJetsAcceptanceCalo++;
 		skimmedJets.push_back(Jets->at(j));
                 validJetIndex.push_back(j);
@@ -339,8 +356,30 @@ void skimJetsAcceptanceCaloFast(
 	  {
 	    if( fabs(FatJets->at(j).eta)<1.48 and FatJets->at(j).timeRecHitsEB>-100. and FatJets->at(j).timeRecHitsHB>-100.)
 	      {
+		FatJets->at(j).eFracRecHitsEB = (FatJets->at(j).energy>0 and FatJets->at(j).energyRecHitsEB>0) ? FatJets->at(j).energyRecHitsEB/FatJets->at(j).energy : -1.;
                 nCHSFatJetsAcceptanceCalo++;
+		//if(FatJets->at(j).isGenMatchedCaloCorrLLPAccept) std::cout << "AK8 jet[" << j << "]: gen matched: "<<FatJets->at(j).isGenMatchedCaloCorrLLPAccept << "; n matched b-quarks: " << FatJets->at(j).nMatchedGenBquarksCaloCorr << "; radius LLP: " << FatJets->at(j).radiusLLP << std::endl;
+		int n_g = 0;
+		for (Int_t g=0; g<GenBquarks->size(); g++)
+		  {
+		    if(GenBquarks->at(g).travelRadiusLLP==FatJets->at(j).radiusLLP and FatJets->at(j).isGenMatchedCaloCorrLLPAccept)
+		      {
+			//std::cout << "Gen b quark[" << g << "] travelRadiusLLP: " << GenBquarks->at(g).travelRadiusLLP;
+			float dr = fabs(reco::deltaR(FatJets->at(j).eta, FatJets->at(j).phi, GenBquarks->at(g).eta, GenBquarks->at(g).phi)) ;
+			if( dr<0.8 )
+			  {
+			    n_g++;
+			    //std::cout << " matched: dR " << dr << std::endl;
+			  }
+			//std::cout << "" << std::endl;
+		      }
+		  }
+		//std::cout<< "n b quakrs matched: " << n_g << std::endl;
+		FatJets->at(j).nMatchedGenBquarksCaloCorr = n_g;
 		skimmedFatJets.push_back(FatJets->at(j));
+
+		//Here redo the gen matching
+
 	      }
           }
 

@@ -1,13 +1,18 @@
 #ifndef RECOOBJECTS_H
 #define RECOOBJECTS_H
 
+
+
 struct RecoLeptonType {
-RecoLeptonType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.) {}
+RecoLeptonType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), isVeto(false), isLoose(false), isTight(false) {}
 
   float pt;
   float eta;
   float phi;
   float mass;
+  bool isVeto;
+  bool isLoose;
+  bool isTight;
 };
 
 

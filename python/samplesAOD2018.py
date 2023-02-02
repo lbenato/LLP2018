@@ -195,6 +195,12 @@ sample = {
         'kfactor' : 1.,
     },
 
+    'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3' : {
+        'nevents' : 1,
+        'xsec'    : 1,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
 
     'n3n2-n1-hbb-hbb_mh400_pl1000' : {
         'nevents' : 1,
@@ -302,6 +308,46 @@ samples = {
         'weight': 1.,
         'plot': True,
     },
+    'HighMET' : {
+        'order' : 0,
+        'files' : [
+            'HighMETRun2018A-17Sep2018-v1',
+            'HighMETRun2018B-17Sep2018-v1',
+            'HighMETRun2018C-17Sep2018-v1',
+            ##'HighMETRun2018D-PromptReco-v1',
+            'HighMETRun2018D-PromptReco-v2',
+            ##'HighMETRun2018E-PromptReco-v1'
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "Data",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'Cosmics' : {
+        'order' : 0,
+        'files' : [
+            #'CosmicsRun2018A-06Jun2018-v1',
+            'CosmicsRun2018A-CosmicSP-PromptReco-v1',
+            'CosmicsRun2018A-CosmicSP-PromptReco-v3',
+            'CosmicsRun2018C-CosmicSP-PromptReco-v3',
+            'CosmicsRun2018D-CosmicSP-PromptReco-v1',
+            'CosmicsRun2018D-CosmicSP-PromptReco-v2',
+            ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "Cosmics 2018",
+        'weight': 1.,
+        'plot': True,
+    },
+
     'SingleMuon' : {
         'order' : 0,
         'files' : ['SingleMuonRun2018A-17Sep2018-v2', 'SingleMuonRun2018B-17Sep2018-v1', 'SingleMuonRun2018C-17Sep2018-v1', 'SingleMuonRun2018D-PromptReco-v2'],
@@ -369,8 +415,7 @@ samples = {
     #QCD
     'QCD' : {
         'files' : [
-             #'QCD_HT50to100_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
-             'QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8-v1','QCD_HT200to300_TuneCP5_13TeV-madgraphMLM-pythia8-v1','QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8-v1'],
+             'QCD_HT50to100_TuneCP5_13TeV-madgraphMLM-pythia8-v1','QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8-v1','QCD_HT200to300_TuneCP5_13TeV-madgraphMLM-pythia8-v1','QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 'QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8-v1'],
         'fillcolor' : 920,
         'fillstyle' : 1001,
         'linecolor' : 920,
@@ -479,7 +524,7 @@ samples = {
     #HT binned
     'WJetsToLNu' : { 
         'files' : [
-            ##'WJetsToLNu_HT-70To100_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-70To100_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
             'WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
             'WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
             'WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
@@ -537,6 +582,19 @@ samples = {
    
     #SIGNAL
 ######################################
+    'SUSY_central' : {
+        'files' : ['SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3'],
+        'mass' : 0,
+        'ctau' : 0,
+        'fillcolor' : 2,
+        'fillstyle' : 0,
+        'linecolor' : 2,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{#chi} = 0 GeV, c#tau_{0} = 0 m",
+        'weight': 1.,
+        'plot': True,
+    },
 
 ## High stat
     'SUSY_mh400_pl1000_XL' : {
@@ -762,9 +820,9 @@ samples = {
         'files' : ['n3n2-n1-hbb-hbb_mh400_pl1000'],
         'mass' : 400,
         'ctau' : 1000,
-        'fillcolor' : 1,
+        'fillcolor' : 2,
         'fillstyle' : 0,
-        'linecolor' : 1,
+        'linecolor' : 2,
         'linewidth' : 3,
         'linestyle' : 1,
         'label' : "m_{#chi} = 400 GeV, c#tau_{0} = 1 m",
@@ -804,9 +862,9 @@ samples = {
         'files' : ['n3n2-n1-hbb-hbb_mh200_pl1000'],
         'mass' : 200,
         'ctau' : 1000,
-        'fillcolor' : 3,
+        'fillcolor' : 418,
         'fillstyle' : 0,
-        'linecolor' : 3,
+        'linecolor' : 418,
         'linewidth' : 3,
         'linestyle' : 1,
         'label' : "m_{#chi} = 200 GeV, c#tau_{0} = 1 m",

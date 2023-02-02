@@ -24,7 +24,7 @@ class RecoObjectsFormat {
   ~RecoObjectsFormat() {};
 
   static void FillRecoJetType(RecoJetType&, const reco::Jet*, bool);
-  static void FillRecoElectronType(RecoLeptonType&, const reco::GsfElectron*, bool);
+  static void FillRecoElectronType(RecoLeptonType&, const reco::GsfElectron*, bool, bool, bool, bool);
   //static void FillCaloJetType(CaloJetType&, const reco::CaloJet*, bool, bool);//new
   static void FillRecoMEtType(RecoMEtType&, const reco::PFMET*, bool);
   //static void FillCandidateType(CandidateType&, reco::CompositeCandidate*, bool);

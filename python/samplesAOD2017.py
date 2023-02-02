@@ -79,6 +79,12 @@ sample = {
         'kfactor' : 1.,
     },
     #TTbar
+    'TTJets_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 496.1,#x-sec DB
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
     'TTJets_SingleLeptFromT_genMET-150_TuneCP5_13TeV-madgraphMLM-pythia8-v1' : {
         'nevents' : 1,
         'xsec'    : 0.,#x-sec DB
@@ -213,6 +219,7 @@ sample = {
     #DYJetsToLL inclusive madgraph
 
     
+    
     #WJetsToLNu LO inclusive
     'WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8-v2' : {
         'nevents' : 1,
@@ -270,7 +277,12 @@ sample = {
         'matcheff': 1.,
         'kfactor' : 1.,
     },
-
+    'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3' : {
+        'nevents' : 1,
+        'xsec'    : 1,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
     'n3n2-n1-hbb-hbb_mh400_pl1000' : {
         'nevents' : 1,
         'xsec'    : 88.7325,
@@ -323,6 +335,24 @@ samples = {
     'data_obs' : {
         'order' : 0,
         'files' : ['METRun2016B-03Feb2017_ver2-v2'],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "Data",
+        'weight': 1.,
+        'plot': True,
+    },
+    'HighMET' : {
+        'order' : 0,
+        'files' : [
+            'HighMETRun2017B-17Nov2017-v1',
+            'HighMETRun2017C-17Nov2017-v1',
+            'HighMETRun2017D-17Nov2017-v1',
+            'HighMETRun2017E-17Nov2017-v1',
+            'HighMETRun2017F-17Nov2017-v1'
+        ],
         'fillcolor' : 0,
         'fillstyle' : 1,
         'linecolor' : 1,
@@ -423,7 +453,7 @@ samples = {
     #QCD
     'QCD' : {
         'files' : [
-             #'QCD_HT50to100_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+             'QCD_HT50to100_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
              'QCD_HT100to200_TuneCP5_13TeV-madgraph-pythia8-v2',
              'QCD_HT200to300_TuneCP5_13TeV-madgraph-pythia8-v1',
              'QCD_HT300to500_TuneCP5_13TeV-madgraph-pythia8-v1', 
@@ -445,6 +475,20 @@ samples = {
 
     #TTbar
     'TTbar' : {
+        'files' : [
+             'TTJets_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+        ],
+        'fillcolor' : 798,
+        'fillstyle' : 1001,
+        'linecolor' : 798,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "t#bar{t}",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'TTbarGenMET' : {
         'files' : [
              'TTJets_SingleLeptFromT_genMET-150_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
              'TTJets_SingleLeptFromTbar_genMET-150_TuneCP5_13TeV-madgraphMLM-pythia8-v2',
@@ -546,6 +590,27 @@ samples = {
         'weight': 1.,
         'plot': True,
     },
+    #DYJetsToLL
+    'DYJetsToLL' : {
+        'files' : [
+            'DYJetsToLL_M-50_HT-70to100_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'DYJetsToLL_M-50_HT-100to200_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'DYJetsToLL_M-50_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'DYJetsToLL_M-50_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'DYJetsToLL_M-50_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'DYJetsToLL_M-50_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'DYJetsToLL_M-50_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+            'DYJetsToLL_M-50_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+        ],
+        'fillcolor' : 418,
+        'fillstyle' : 1001,
+        'linecolor' : 418,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "Z/#gamma #rightarrow ll + jets",
+        'weight': 1.,
+        'plot': True,
+    },
     #Dibosons
     'VV' : {
         'files' : [
@@ -566,6 +631,20 @@ samples = {
     #SIGNAL
 ######################################
 #
+    'SUSY_central' : {
+        'files' : ['SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3'],
+        'mass' : 0,
+        'ctau' : 0,
+        'fillcolor' : 2,
+        'fillstyle' : 0,
+        'linecolor' : 2,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{#chi} = 0 GeV, c#tau_{0} = 0 m",
+        'weight': 1.,
+        'plot': True,
+    },
+
 #  JiaJing's AOD
     'SUSY_mh400_pl1000' : {
         'files' : ['n3n2-n1-hbb-hbb_mh400_pl1000'],

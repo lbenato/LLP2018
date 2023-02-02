@@ -37,15 +37,15 @@ std::vector<CSCSegment> CSCAnalyzer::FillCSCSegmentVector(const edm::Event& iEve
 }
 
 
-std::vector<GlobalPoint> CSCAnalyzer::FillGlobalPointCSCSegmentVector(const edm::Event& iEvent,const edm::EventSetup& iSetup,std::vector<CSCSegment>& Segment){
+std::vector<GlobalPoint> CSCAnalyzer::FillGlobalPointCSCSegmentVector(const edm::Event& iEvent,const edm::EventSetup& iSetup,std::vector<CSCSegment>& Segment,edm::ESHandle<GlobalTrackingGeometry>& theTrackingGeometry){
 
     std::vector<GlobalPoint> Vect;
     
     edm::Handle<CSCSegmentCollection> CSCCollection;
     iEvent.getByToken(CSCSegmentToken, CSCCollection); 
     
-    edm::ESHandle<GlobalTrackingGeometry> theTrackingGeometry;
-    iSetup.get<GlobalTrackingGeometryRecord>().get(theTrackingGeometry);
+    //edm::ESHandle<GlobalTrackingGeometry> theTrackingGeometry;
+    //iSetup.get<GlobalTrackingGeometryRecord>().get(theTrackingGeometry);
     
     for (CSCSegmentCollection::const_iterator CSCSegment = CSCCollection->begin(); CSCSegment != CSCCollection->end();CSCSegment++) {
         const GeomDet* geomDet = theTrackingGeometry->idToDet(CSCSegment->geographicalId());

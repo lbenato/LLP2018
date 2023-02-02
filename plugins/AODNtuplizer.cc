@@ -99,6 +99,7 @@
 #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 //GenLumiInfoHeader
+#include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenLumiInfoHeader.h"
 
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
@@ -166,18 +167,22 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::ParameterSet PhotonPSet;
     edm::ParameterSet VertexPSet;
     edm::ParameterSet PFCandidatePSet;
-    //edm::ParameterSet DTPSet;
-    //edm::ParameterSet CSCSet;
-    //edm::ParameterSet StandAloneMuonsPSet;
-    //edm::ParameterSet DisplacedStandAloneMuonsPSet;
+    edm::ParameterSet DTPSet;
+    edm::ParameterSet CSCSet;
+    edm::ParameterSet CosmicMuonsPSet;
+    edm::ParameterSet CosmicMuonsOneLegPSet;
+    edm::ParameterSet StandAloneMuonsPSet;
+    edm::ParameterSet DisplacedStandAloneMuonsPSet;
     edm::EDGetTokenT<reco::PFJetCollection> jetToken;
     //edm::EDGetTokenT<std::vector<pat::MET> > metToken;
     
     edm::EDGetTokenT<vector<reco::Track> > generalTracksToken;
     edm::EDGetTokenT<edm::View<reco::Track> > generalTracksViewToken;
 
+    edm::EDGetTokenT<GenEventInfoProduct> genEventInfoToken;
     edm::EDGetTokenT<GenLumiInfoHeader> genLumiInfoToken;
-    TString     Model;
+
+    std::string     Model;
 
     JetAnalyzer* theCHSJetAnalyzer;
     CaloJetAnalyzer* theCaloJetAnalyzer;
@@ -192,10 +197,12 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     PhotonAnalyzer* thePhotonAnalyzer;
     VertexAnalyzer* theVertexAnalyzer;
     PFCandidateAnalyzer* thePFCandidateAnalyzer;
-    //DTAnalyzer* theDTAnalyzer;
-    //CSCAnalyzer* theCSCAnalyzer;
-    //StandAloneMuonsAnalyzer* theStandAloneMuonsAnalyzer;
-    //StandAloneMuonsAnalyzer* theDisplacedStandAloneMuonsAnalyzer;
+    DTAnalyzer* theDTAnalyzer;
+    CSCAnalyzer* theCSCAnalyzer;
+    StandAloneMuonsAnalyzer* theCosmicMuonsAnalyzer;
+    StandAloneMuonsAnalyzer* theCosmicMuonsOneLegAnalyzer;
+    StandAloneMuonsAnalyzer* theStandAloneMuonsAnalyzer;
+    StandAloneMuonsAnalyzer* theDisplacedStandAloneMuonsAnalyzer;
 
     //edm::EDGetTokenT<reco::JetTagCollection> JetTagWP0p01Token;
     //edm::EDGetTokenT<reco::JetTagCollection> JetTagWP0p1Token;
@@ -206,7 +213,7 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     
 
     int idLLP1, idLLP2;
-    int idHiggs, idMotherB, statusLLP, statusHiggs;
+    int idHiggs1, idHiggs2, idMotherB1, idMotherB2, statusLLP, statusHiggs;
     double MinGenBpt, MaxGenBeta, MinGenBradius2D, MaxGenBradius2D, MinGenBetaAcc, MaxGenBetaAcc;
     double InvmassVBF, DetaVBF;//VBF tagging
     bool WriteGenVBFquarks, WriteGenHiggs, WriteGenBquarks, WriteGenLLPs;
@@ -243,10 +250,15 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     std::vector<GenPType> GenBquarks;
     std::vector<GenPType> GenLLPs;
     std::vector<GenPType> GenHiggs;
-    //std::vector<DT4DSegmentType> DTRecSegments4D;    
-    //std::vector<CSCSegmentType> CSCSegments;
-    //std::vector<TrackType> StandAloneMuons;
-    //std::vector<TrackType> DisplacedStandAloneMuons;
+    std::vector<GenPType> GenGravitinos;
+    std::vector<DT4DSegmentType> DTRecSegments4D;    
+    std::vector<CSCSegmentType> CSCSegments;
+    std::vector<TrackType> CosmicMuons;
+    std::vector<TrackType> CosmicMuonsOneLeg;
+    std::vector<TrackType> StandAloneMuons;
+    std::vector<TrackType> DisplacedStandAloneMuons;
+    std::vector<LorentzType> CosmicMuonsPropagated;
+    std::vector<LorentzType> CosmicMuonsOneLegPropagated;
 
     std::vector<PFCandidateType> PFCandidates;//old, just for debugging
     std::vector<PFCandidateType> PFCandidatesAK4;
@@ -257,9 +269,17 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     CandidateType VBF;//VBF tagging
 
     std::map<std::string, bool> TriggerMap;
-    std::map<std::string, int> PrescalesTriggerMap;
+    std::map<std::string, int>  PrescalesTriggerMap;
     std::map<std::string, bool> MetFiltersMap;
     std::map<std::string, bool> L1FiltersMap;
+
+    std::vector<float>       QCDWeights;
+    std::vector<std::string> QCDWeightsNames;
+    std::vector<float>       PDFWeights;
+    std::vector<std::string> PDFWeightsNames;
+    float QScale;
+    float AlphaQCD;
+    float AlphaQED;
 
     bool isVerbose, isVerboseTrigger, isSignal, isCalo;
     
@@ -318,14 +338,15 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //int n_segments_around_b_quark_1;
     //int n_segments_around_b_quark_2;
     //int n_segments_around_b_quark_3;
-    //long int nDTSegments, nDTSegmentsStation1, nDTSegmentsStation2, nDTSegmentsStation3, nDTSegmentsStation4;
-    //long int nCSCSegments;
+    long int nDTSegments, nDTSegmentsStation1, nDTSegmentsStation2, nDTSegmentsStation3, nDTSegmentsStation4;
+    long int nCSCSegments;
     //long int nMatchedDTsegmentstob;
     //long int nMatchedCSCsegmentstob;
     //long int nMatchedDTsegmentstoVBF;
     //long int nMatchedCSCsegmentstoVBF;
-    //long int nStandAloneMuons, nMatchedStandAloneMuons;
-    //long int nDisplacedStandAloneMuons, nMatchedDisplacedStandAloneMuons;
+    long int nCosmicMuons, nCosmicMuonsOneLeg;
+    long int nStandAloneMuons, nMatchedStandAloneMuons;
+    long int nDisplacedStandAloneMuons, nMatchedDisplacedStandAloneMuons;
     
     AddFourMomenta addP4;
     float HT;
@@ -343,7 +364,9 @@ class AODNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     bool Prefired;
     long int nGenBquarks, nGenLL;
     int nLLPInCalo;
-    
+    int m_chi;
+    int ctau;
+    bool is_central;
     
     //Geometry and propagator
     const MagneticField* MagneticFieldTag;
@@ -401,14 +424,18 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     PhotonPSet(iConfig.getParameter<edm::ParameterSet>("photonSet")),
     VertexPSet(iConfig.getParameter<edm::ParameterSet>("vertexSet")),
     PFCandidatePSet(iConfig.getParameter<edm::ParameterSet>("pfCandidateSet")),
-    //DTPSet(iConfig.getParameter<edm::ParameterSet>("dtSet")),
-    //CSCSet(iConfig.getParameter<edm::ParameterSet>("cscSet")),
-    //StandAloneMuonsPSet(iConfig.getParameter<edm::ParameterSet>("standaloneMuonsSet")),
-    //DisplacedStandAloneMuonsPSet(iConfig.getParameter<edm::ParameterSet>("displacedStandaloneMuonsSet")),
+    DTPSet(iConfig.getParameter<edm::ParameterSet>("dtSet")),
+    CSCSet(iConfig.getParameter<edm::ParameterSet>("cscSet")),
+    CosmicMuonsPSet(iConfig.getParameter<edm::ParameterSet>("cosmicMuonsSet")),
+    CosmicMuonsOneLegPSet(iConfig.getParameter<edm::ParameterSet>("cosmicMuonsOneLegSet")),
+    StandAloneMuonsPSet(iConfig.getParameter<edm::ParameterSet>("standaloneMuonsSet")),
+    DisplacedStandAloneMuonsPSet(iConfig.getParameter<edm::ParameterSet>("displacedStandaloneMuonsSet")),
     idLLP1(iConfig.getParameter<int>("idLLP1")),
     idLLP2(iConfig.getParameter<int>("idLLP2")),
-    idHiggs(iConfig.getParameter<int>("idHiggs")),
-    idMotherB(iConfig.getParameter<int>("idMotherB")),
+    idHiggs1(iConfig.getParameter<int>("idHiggs1")),
+    idHiggs2(iConfig.getParameter<int>("idHiggs2")),
+    idMotherB1(iConfig.getParameter<int>("idMotherB1")),
+    idMotherB2(iConfig.getParameter<int>("idMotherB2")),
     statusLLP(iConfig.getParameter<int>("statusLLP")),
     statusHiggs(iConfig.getParameter<int>("statusHiggs")),
     MinGenBpt(iConfig.getParameter<double>("minGenBpt")),
@@ -440,6 +467,7 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     isVerbose(iConfig.getParameter<bool> ("verbose")),
     isVerboseTrigger(iConfig.getParameter<bool> ("verboseTrigger")),
     isSignal(iConfig.getParameter<bool> ("signal")),
+    ////isSignalCentral(iConfig.getParameter<bool> ("signalCentral")),
     isCalo(iConfig.getParameter<bool> ("iscalo")),
     //PFCandsToken_(consumes<reco::PFCandidateCollection>(iConfig.getParameter<edm::InputTag>("pfCands"))),
     globalSuperTightHalo2016FilterToken_(consumes<bool>(edm::InputTag("globalSuperTightHalo2016Filter"))),
@@ -484,10 +512,12 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     thePhotonAnalyzer       = new PhotonAnalyzer(PhotonPSet, consumesCollector());
     theVertexAnalyzer       = new VertexAnalyzer(VertexPSet, consumesCollector());
     thePFCandidateAnalyzer  = new PFCandidateAnalyzer(PFCandidatePSet, consumesCollector());
-    //theDTAnalyzer           = new DTAnalyzer(DTPSet, consumesCollector());
-    //theCSCAnalyzer          = new CSCAnalyzer(CSCSet, consumesCollector());
-    //theStandAloneMuonsAnalyzer          = new StandAloneMuonsAnalyzer(StandAloneMuonsPSet,  consumesCollector());
-    //theDisplacedStandAloneMuonsAnalyzer = new StandAloneMuonsAnalyzer(DisplacedStandAloneMuonsPSet,  consumesCollector());
+    theDTAnalyzer           = new DTAnalyzer(DTPSet, consumesCollector());
+    theCSCAnalyzer          = new CSCAnalyzer(CSCSet, consumesCollector());
+    theCosmicMuonsAnalyzer          = new StandAloneMuonsAnalyzer(CosmicMuonsPSet,  consumesCollector());
+    theCosmicMuonsOneLegAnalyzer          = new StandAloneMuonsAnalyzer(CosmicMuonsOneLegPSet,  consumesCollector());
+    theStandAloneMuonsAnalyzer          = new StandAloneMuonsAnalyzer(StandAloneMuonsPSet,  consumesCollector());
+    theDisplacedStandAloneMuonsAnalyzer = new StandAloneMuonsAnalyzer(DisplacedStandAloneMuonsPSet,  consumesCollector());
 
     std::vector<std::string> TriggerList(TriggerPSet.getParameter<std::vector<std::string> >("paths"));
     for(unsigned int i = 0; i < TriggerList.size(); i++) TriggerMap[ TriggerList[i] ] = false;
@@ -525,6 +555,9 @@ AODNtuplizer::AODNtuplizer(const edm::ParameterSet& iConfig):
     generalTracksViewToken = consumes<edm::View<reco::Track>>(IT_generalTracks);
 
     //GenLumiInfo
+    edm::InputTag genInfoProduct = edm::InputTag(std::string("generator"));
+    genEventInfoToken         = consumes <GenEventInfoProduct> (genInfoProduct);
+
     edm::InputTag genLumiInfo = edm::InputTag(std::string("generator"));
     genLumiInfoToken          = consumes <GenLumiInfoHeader,edm::InLumi> (genLumiInfo);
         
@@ -561,10 +594,12 @@ AODNtuplizer::~AODNtuplizer()
     delete thePhotonAnalyzer;
     delete theVertexAnalyzer;
     delete thePFCandidateAnalyzer;
-    //delete theDTAnalyzer;
-    //delete theCSCAnalyzer;
-    //delete theStandAloneMuonsAnalyzer;
-    //delete theDisplacedStandAloneMuonsAnalyzer;
+    delete theDTAnalyzer;
+    delete theCSCAnalyzer;
+    delete theCosmicMuonsAnalyzer;
+    delete theCosmicMuonsOneLegAnalyzer;
+    delete theStandAloneMuonsAnalyzer;
+    delete theDisplacedStandAloneMuonsAnalyzer;
 }
 
 
@@ -577,7 +612,7 @@ void
 AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 
-  //if(isVerbose) std::cout << " Starting analyze..... " << std::endl;
+    if(isVerbose) std::cout << " Starting analyze..... " << std::endl;
     auto start = std::chrono::system_clock::now();//time!
     using namespace edm;
     using namespace reco;
@@ -591,9 +626,13 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     nCHSJets = nCaloJets = nCHSFatJets = 0;
     nElectrons = nMuons = nTaus = nPhotons = 0;
     nTightMuons = nTightElectrons = 0;
-    //nStandAloneMuons = nDisplacedStandAloneMuons =0;
-    //nDTSegments = nDTSegmentsStation1 = nDTSegmentsStation2 = nDTSegmentsStation3 = nDTSegmentsStation4 = nCSCSegments = 0;
+    nCosmicMuons = nCosmicMuonsOneLeg = 0;
+    nStandAloneMuons = nDisplacedStandAloneMuons =0;
+    nDTSegments = nDTSegmentsStation1 = nDTSegmentsStation2 = nDTSegmentsStation3 = nDTSegmentsStation4 = nCSCSegments = 0;
     //nMatchedStandAloneMuons = nMatchedDisplacedStandAloneMuons =0;
+    QScale = -1.;
+    AlphaQCD = -1.;
+    AlphaQED = -1.;
     isMC = false;
     isVBF = false;
     isggH = false;
@@ -624,6 +663,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     MinJetMetDPhi = MinJetMetDPhiAllJets = ggHJetMetDPhi = 10.;
     nGenBquarks = nGenLL = 0;
     nLLPInCalo = 0;
+    m_chi = 0;
+    ctau = -1;  
+    is_central = false;
     m_pi = 0.;
     gen_b_radius = -1.;
     gen_b_radius_2D = -1.;
@@ -649,19 +691,69 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     LumiNumber = iEvent.luminosityBlock();
     RunNumber = iEvent.id().run();
     //std::cout << "\n";
-    //std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
-    //std::cout << " Event Number: " << EventNumber << std::endl;
+    if(isVerbose) std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+    if(isVerbose) std::cout << " Event Number: " << EventNumber << std::endl;
+    ////if(isSignalCentral) std::cout << "signal central " << std::endl;
+
+    if(isMC)
+      {
+	//Here for alpha strong and so
+	edm::Handle<GenEventInfoProduct> GenEvent;
+	iEvent.getByToken(genEventInfoToken,GenEvent);
+	const GenEventInfoProduct& GenEventInfo = *(GenEvent.product());
+
+	QScale = GenEventInfo.qScale();
+	AlphaQCD = GenEventInfo.alphaQCD();
+	AlphaQED = GenEventInfo.alphaQED();
+
+	if(isVerbose) std::cout<< "Gen weights size " << GenEventInfo.weights().size() << std::endl;
+
+      }
 
     //GenLumiInfo
-    //if(isSignal){
-    //edm::Handle<GenLumiInfoHeader> GenHeader;
-    //iEvent.getLuminosityBlock().getByToken(genLumiInfoToken,GenHeader);
-    //Model = GenHeader->configDescription();
-    ////std::cout << "Model TString: " << Model << std::endl;
-    //}
+    if(isSignal)
+      {
+
+	edm::Handle<GenLumiInfoHeader> GenHeader;
+	iEvent.getLuminosityBlock().getByToken(genLumiInfoToken,GenHeader);
+	Model = GenHeader->configDescription();
+	//for(unsigned int nam=0;nam<GenHeader->weightNames().size();nam++) std::cout << "weight["<< nam << "] "<< GenHeader->weightNames().at(nam).c_str() << std::endl;
+	std::stringstream parser(Model);
+	std::string item;
+	getline(parser, item, '_');
+	if(getline(parser, item, '_')) 
+	  {
+	    if(getline(parser, item, '_')) 
+	      {
+		if(getline(parser, item, '_')) 
+		  {
+		    m_chi = atoi(item.c_str());
+		    if(getline(parser, item, '_')) 
+		      {
+			ctau = atoi(item.c_str());
+		      }
+		  }
+	      }
+	  }
+
+	if(ctau>-1 and m_chi>0) is_central = true;
+	//std::cout << "Model string: " << Model << std::endl;
+	//std::cout << "m_chi: " << m_chi << std::endl;
+	//std::cout << "ctau: " << ctau << std::endl;
+
+	QCDWeights      = theGenAnalyzer->FillQCDWeightsVector(iEvent);
+	QCDWeightsNames = theGenAnalyzer->FillQCDWeightsNamesVector(iEvent);
+	PDFWeights      = theGenAnalyzer->FillPDFWeightsVector(iEvent);
+	PDFWeightsNames = theGenAnalyzer->FillPDFWeightsNamesVector(iEvent);
+
+
+      }
     //std::cout << "isSignal: " << isSignal << std::endl;
     //const char *model_ = Model.Data();
     //std::cout << "Model TString: " << model_ << std::endl;
+    //string mh_substring = Model.substr(Model.find("MH-")+3);
+    //int mh = std::stoi(mh_substring.substr(0,mh_substring.find('_')));
+    //std::cout << "Extracted mh: " << mh << std::endl;
 
     //GenEventWeight
     GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
@@ -682,7 +774,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
 
     // Trigger and MET filters
-    //if(isVerbose) std::cout << "Trigger and met filters" << std::endl;
+    if(isVerbose) std::cout << "Trigger and met filters" << std::endl;
     //debug!
     theTriggerAnalyzer->FillTriggerMap(iEvent, TriggerMap, PrescalesTriggerMap, isVerboseTrigger);
     theTriggerAnalyzer->FillMetFiltersMap(iEvent, MetFiltersMap);
@@ -849,6 +941,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //if(isVerbose) std::cout << "MET" << std::endl;
     //reco::PFMET RecoMET = theCHSJetAnalyzer->FillRecoMetVector(iEvent);
     pat::MET MET = theCHSJetAnalyzer->FillMetVector(iEvent);
+    //reco::GenMET GenMET = theCHSJetAnalyzer->FillGenMetVector(iEvent);
     //For debugging:
     ////edm::Handle<std::vector<pat::MET> > MetCollection;
     ////iEvent.getByToken(metToken, MetCollection);
@@ -884,23 +977,51 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
 
 
-    //if(isVerbose) std::cout << "Gen Particles" << std::endl;
+    if(isVerbose) std::cout << "Gen Particles" << std::endl;
 
     GenVBFquarks.clear();
     GenHiggs.clear();
     GenLLPs.clear();
     GenBquarks.clear();
+    GenGravitinos.clear();
+
+    std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByTwoIdsAndStatus(iEvent,idLLP1,idLLP2,statusLLP);
+    nGenLL = GenLongLivedVect.size();
 
     std::vector<reco::GenParticle> GenVBFVect = theGenAnalyzer->FillVBFGenVector(iEvent);
-    std::vector<reco::GenParticle> GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idHiggs,statusHiggs);
-    std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByTwoIdsAndStatus(iEvent,idLLP1,idLLP2,statusLLP);
+    //Improved implementation including HZ, ZZ, HH decays 08.12.2021
+    //std::vector<reco::GenParticle> GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idHiggs,statusHiggs);
+    std::vector<reco::GenParticle> GenHiggsVect;
+    if(idHiggs1==idHiggs2)
+      {
+        GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idHiggs1,statusHiggs);
+      }
+    else
+      {
+        GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idHiggs1,statusHiggs);
+	std::vector<reco::GenParticle> GenHiggsVect2 = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idHiggs2,statusHiggs);
+        if(GenHiggsVect.size()!=1 and GenHiggsVect2.size()!=1 and nGenLL==2) return;
+        GenHiggsVect.insert(std::end(GenHiggsVect), std::begin(GenHiggsVect2), std::end(GenHiggsVect2));
+        GenHiggsVect2.clear();
+      }
+
+    std::vector<reco::GenParticle> GenGravitinosVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,1000022,1); 
     std::vector<reco::GenParticle> GenBquarksVect;
 
-    nGenLL = GenLongLivedVect.size();
+    if(isVerbose) std::cout<<"size GenLongLivedVect: " << nGenLL << std::endl;
+    if(isVerbose) std::cout<<"size GenHiggsVect: " << GenHiggsVect.size() << std::endl;
+
+    //Check if there are two Higgs bosons in the event
+    if(nGenLL>0 and GenHiggsVect.size()!=2) return;
+    std::vector<int> grand_daughters_ids = { 1, 2, 3, 4, 5 };
 
     if(nGenLL>0)
       {
-	GenBquarksVect = theGenAnalyzer->FillGenVectorByIdStatusAndMotherAndKin(iEvent,5,23,idMotherB,float(MinGenBpt),float(MaxGenBeta));
+	//GenBquarksVect = theGenAnalyzer->FillGenVectorByIdStatusAndMotherAndKin(iEvent,5,23,idMotherB,float(MinGenBpt),float(MaxGenBeta));
+	//TODO: this has to become a list of possible quarks
+	//GenBquarksVect = theGenAnalyzer->FillGenVectorByIdStatusAndTwoMothersAndKin(iEvent,5,23,idMotherB1,idMotherB2,float(MinGenBpt),float(MaxGenBeta));
+	GenBquarksVect = theGenAnalyzer->FillGenVectorByIdListStatusAndTwoMothersAndKin(iEvent,grand_daughters_ids,23,idMotherB1,idMotherB2,float(MinGenBpt),float(MaxGenBeta));
+	//std::cout << "size of gen b quarks vect: " << GenBquarksVect.size() << std::endl;
       }
     else
       {
@@ -945,145 +1066,148 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   
     
     for(unsigned int l=0; l<GenLongLivedVect.size(); l++)
-    {
-         if(GenLongLivedVect.size()>1 && GenLongLivedVect.at(l).numberOfDaughters()>1)
-         {
-         //must conver reco::GenParticles into const reco::Candidate*, otherwise daughter method does not work
-         const reco::Candidate *candLLP = &(GenLongLivedVect)[l];
+      {
+	if(GenLongLivedVect.size()>1 && GenLongLivedVect.at(l).numberOfDaughters()>1)
+	  {
+	    //must conver reco::GenParticles into const reco::Candidate*, otherwise daughter method does not work
+	    const reco::Candidate *candLLP = &(GenLongLivedVect)[l];
 
-         float travelRadius = candLLP->numberOfDaughters()>1 ? sqrt( pow(candLLP->daughter(0)->vx(),2)+ pow(candLLP->daughter(0)->vy(),2) ) : -1000.;
-         float travelX      = candLLP->numberOfDaughters()>1 ? candLLP->daughter(0)->vx() : -10000.;
-         float travelY      = candLLP->numberOfDaughters()>1 ? candLLP->daughter(0)->vy() : -10000.;
-         float travelZ      = candLLP->numberOfDaughters()>1 ? candLLP->daughter(0)->vz() : -10000.;
+	    float travelRadius = candLLP->numberOfDaughters()>1 ? sqrt( pow(candLLP->daughter(0)->vx(),2)+ pow(candLLP->daughter(0)->vy(),2) ) : -1000.;
+	    float travelX      = candLLP->numberOfDaughters()>1 ? candLLP->daughter(0)->vx() : -10000.;
+	    float travelY      = candLLP->numberOfDaughters()>1 ? candLLP->daughter(0)->vy() : -10000.;
+	    float travelZ      = candLLP->numberOfDaughters()>1 ? candLLP->daughter(0)->vz() : -10000.;
          
-         bool isLLPInCaloAcceptance = travelRadius > min_displacement_radius && travelRadius < max_calo_radius && fabs(travelZ) < max_calo_z;
+	    bool isLLPInCaloAcceptance = travelRadius > min_displacement_radius && travelRadius < max_calo_radius && fabs(travelZ) < max_calo_z;
          
-         if (isLLPInCaloAcceptance)
-         {
-             nLLPInCalo++;
-             LLPInCalo.push_back(true);
-         }
-         else
-         {
-             LLPInCalo.push_back(false);
-         }
+	    if (isLLPInCaloAcceptance)
+	      {
+		nLLPInCalo++;
+		LLPInCalo.push_back(true);
+	      }
+	    else
+	      {
+		LLPInCalo.push_back(false);
+	      }
 
-         //std::cout << " - - - - - - - - - - - - - - " << std::endl;
-         //std::cout << "LLP n. " << l << std::endl;
-         //std::cout << "in calo acceptance " << isLLPInCaloAcceptance << std::endl;
-         //std::cout << "travelRadius " << travelRadius << std::endl;
-         //std::cout << "travelZ " << travelZ << std::endl;
+	    //std::cout << " - - - - - - - - - - - - - - " << std::endl;
+	    //std::cout << "LLP n. " << l << std::endl;
+	    //std::cout << "in calo acceptance " << isLLPInCaloAcceptance << std::endl;
+	    //std::cout << "travelRadius " << travelRadius << std::endl;
+	    //std::cout << "travelZ " << travelZ << std::endl;
          
-         for (unsigned int i = 0; i < candLLP->numberOfDaughters(); i++ )
-         {
-             if(abs(candLLP->daughter(i)->pdgId())==idHiggs || abs(candLLP->daughter(i)->pdgId())==5)//consider only higgs and b quarks
-             //if(abs(candLLP->daughter(i)->pdgId())==5)//consider only higgs and b quarks
-             {
-               float decayVertex_x  = candLLP->daughter(i)->vx();//per daughter of llp
-               float decayVertex_y  = candLLP->daughter(i)->vy();
-               float decayVertex_z  = candLLP->daughter(i)->vz();            
-               TLorentzVector tmp;
-               tmp.SetPxPyPzE(candLLP->daughter(i)->px(), candLLP->daughter(i)->py(), candLLP->daughter(i)->pz(), candLLP->daughter(i)->energy());
-               float gLLP_daughter_travel_time = (1./30.)*fabs(ecal_radius-travelRadius)/(tmp.Pt()/tmp.E());//per daughter of llp
-               float x_ecal = decayVertex_x + 30. * (tmp.Px()/tmp.E())*gLLP_daughter_travel_time;
-               float y_ecal = decayVertex_y + 30. * (tmp.Py()/tmp.E())*gLLP_daughter_travel_time;
-               float z_ecal = decayVertex_z + 30. * (tmp.Pz()/tmp.E())*gLLP_daughter_travel_time;
+	    for (unsigned int i = 0; i < candLLP->numberOfDaughters(); i++ )
+	      {
+
+		//TODO: here must remove 5 and use the loop on list id
+		for(unsigned int s = 0; s < grand_daughters_ids.size(); s++)
+		  {
+		    if(abs(candLLP->daughter(i)->pdgId())==idHiggs1 || abs(candLLP->daughter(i)->pdgId())==idHiggs2 || abs(candLLP->daughter(i)->pdgId())==grand_daughters_ids.at(s))//consider only higgs and b quarks --> now removed the hardcoded 5
+		    //if(abs(candLLP->daughter(i)->pdgId())==5)//consider only higgs and b quarks
+		      {
+			float decayVertex_x  = candLLP->daughter(i)->vx();//per daughter of llp
+			float decayVertex_y  = candLLP->daughter(i)->vy();
+			float decayVertex_z  = candLLP->daughter(i)->vz();            
+			TLorentzVector tmp;
+			tmp.SetPxPyPzE(candLLP->daughter(i)->px(), candLLP->daughter(i)->py(), candLLP->daughter(i)->pz(), candLLP->daughter(i)->energy());
+			float gLLP_daughter_travel_time = (1./30.)*fabs(ecal_radius-travelRadius)/(tmp.Pt()/tmp.E());//per daughter of llp
+			float x_ecal = decayVertex_x + 30. * (tmp.Px()/tmp.E())*gLLP_daughter_travel_time;
+			float y_ecal = decayVertex_y + 30. * (tmp.Py()/tmp.E())*gLLP_daughter_travel_time;
+			float z_ecal = decayVertex_z + 30. * (tmp.Pz()/tmp.E())*gLLP_daughter_travel_time;
              
-               float phi = atan((y_ecal-decayVertex_y)/(x_ecal-decayVertex_x));
-               if  (x_ecal < 0.0){
-                  phi = TMath::Pi() + phi;
-               }
-               phi = reco::deltaPhi(phi,0.0);
-               float theta = atan(sqrt(pow(x_ecal-decayVertex_x,2)+pow(y_ecal-decayVertex_y,2))/abs(z_ecal-decayVertex_z));
-               float eta = -1.0*TMath::Sign(1.0, z_ecal-decayVertex_z)*log(tan(theta/2));
-               corrEtaDaughterLLP.push_back(eta);
-               corrPhiDaughterLLP.push_back(phi);
-               checkPtDaughterLLP.push_back(candLLP->daughter(i)->pt());
-               checkEtaDaughterLLP.push_back(candLLP->daughter(i)->eta());
-               checkPhiDaughterLLP.push_back(candLLP->daughter(i)->phi());
-               if (isLLPInCaloAcceptance)
-               {
-                  DaughterOfLLPInCalo.push_back(true);
-               }
-               else
-               {
-                  DaughterOfLLPInCalo.push_back(false);
-               }
-               LLPRadius_Dau.push_back(travelRadius);
-               LLPX_Dau.push_back(travelX);
-               LLPY_Dau.push_back(travelY);
-               LLPZ_Dau.push_back(travelZ);
-               //std::cout << "\n" << std::endl;
-               //std::cout << "LLP n. " << l << "; daughter n. " << i << std::endl;
-               //std::cout << "decayVertex_x " << decayVertex_x << std::endl;
-               //std::cout << "gLLP_daughter_travel_time " << gLLP_daughter_travel_time << std::endl;
-               //std::cout << "x_ecal " << x_ecal << std::endl;
-               //std::cout << "y_ecal " << y_ecal << std::endl;
-               //std::cout << "z_ecal " << z_ecal << std::endl;
-               //std::cout << "phi " << candLLP->daughter(i)->phi() << std::endl;
-               //std::cout << "corr phi " << phi << std::endl;
-               //std::cout << "eta " << candLLP->daughter(i)->eta() << std::endl;
-               //std::cout << "corr theta " << theta << std::endl;
-               //std::cout << "corr eta " << eta << std::endl;
+			float phi = atan((y_ecal-decayVertex_y)/(x_ecal-decayVertex_x));
+			if  (x_ecal < 0.0){
+			  phi = TMath::Pi() + phi;
+			}
+			phi = reco::deltaPhi(phi,0.0);
+			float theta = atan(sqrt(pow(x_ecal-decayVertex_x,2)+pow(y_ecal-decayVertex_y,2))/abs(z_ecal-decayVertex_z));
+			float eta = -1.0*TMath::Sign(1.0, z_ecal-decayVertex_z)*log(tan(theta/2));
+			corrEtaDaughterLLP.push_back(eta);
+			corrPhiDaughterLLP.push_back(phi);
+			checkPtDaughterLLP.push_back(candLLP->daughter(i)->pt());
+			checkEtaDaughterLLP.push_back(candLLP->daughter(i)->eta());
+			checkPhiDaughterLLP.push_back(candLLP->daughter(i)->phi());
+			if (isLLPInCaloAcceptance)
+			  {
+			    DaughterOfLLPInCalo.push_back(true);
+			  }
+			else
+			  {
+			    DaughterOfLLPInCalo.push_back(false);
+			  }
+			LLPRadius_Dau.push_back(travelRadius);
+			LLPX_Dau.push_back(travelX);
+			LLPY_Dau.push_back(travelY);
+			LLPZ_Dau.push_back(travelZ);
+			//std::cout << "\n" << std::endl;
+			//std::cout << "LLP n. " << l << "; daughter n. " << i << std::endl;
+			//std::cout << "decayVertex_x " << decayVertex_x << std::endl;
+			//std::cout << "gLLP_daughter_travel_time " << gLLP_daughter_travel_time << std::endl;
+			//std::cout << "x_ecal " << x_ecal << std::endl;
+			//std::cout << "y_ecal " << y_ecal << std::endl;
+			//std::cout << "z_ecal " << z_ecal << std::endl;
+			//std::cout << "phi " << candLLP->daughter(i)->phi() << std::endl;
+			//std::cout << "corr phi " << phi << std::endl;
+			//std::cout << "eta " << candLLP->daughter(i)->eta() << std::endl;
+			//std::cout << "corr theta " << theta << std::endl;
+			//std::cout << "corr eta " << eta << std::endl;
                             
-               
-               const reco::Candidate *tmpDauParticle = candLLP->daughter(i);
-               for (unsigned int g = 0; g < tmpDauParticle->numberOfDaughters(); g++ )
-               {
-               
-                  if(abs(candLLP->daughter(i)->daughter(g)->pdgId())==5 && idMotherB==25)
-                  {
-                  TLorentzVector tmpdau;
-		 tmpdau.SetPxPyPzE(tmpDauParticle->daughter(g)->px(), tmpDauParticle->daughter(g)->py(), tmpDauParticle->daughter(g)->pz(), tmpDauParticle->daughter(g)->energy());
-		 float gLLP_granddaughter_travel_time = (1./30.)*fabs(ecal_radius-travelRadius)/(tmpdau.Pt()/tmpdau.E());
-		 float x_ecal = decayVertex_x + 30. * (tmpdau.Px()/tmpdau.E())*gLLP_granddaughter_travel_time;
-                  float y_ecal = decayVertex_y + 30. * (tmpdau.Py()/tmpdau.E())*gLLP_granddaughter_travel_time;
-                  float z_ecal = decayVertex_z + 30. * (tmpdau.Pz()/tmpdau.E())*gLLP_granddaughter_travel_time;
-		 float phi = atan((y_ecal-decayVertex_y)/(x_ecal-decayVertex_x));
-		 if  (x_ecal < 0.0) {
-		    phi = TMath::Pi() + phi;
-		 }
-		 phi = deltaPhi(phi,0.0);
-		 float theta = atan(sqrt(pow(x_ecal-decayVertex_x,2)+pow(y_ecal-decayVertex_y,2))/abs(z_ecal-decayVertex_z));
-		 float eta = -1.0*TMath::Sign(1.0, z_ecal-decayVertex_z)*log(tan(theta/2));
-		 corrEtaGrandDaughterLLP.push_back(eta);
-                  corrPhiGrandDaughterLLP.push_back(phi);
-                  checkPtGrandDaughterLLP.push_back(tmpDauParticle->daughter(g)->pt());
-                  checkEtaGrandDaughterLLP.push_back(tmpDauParticle->daughter(g)->eta());
-                  checkPhiGrandDaughterLLP.push_back(tmpDauParticle->daughter(g)->phi());
-                  if (isLLPInCaloAcceptance)
-                  {
-                      GrandDaughterOfLLPInCalo.push_back(true);
-                  }
-                  else
-                  {
-                      GrandDaughterOfLLPInCalo.push_back(false);
-                  }
-		  LLPRadius_GrandDau.push_back(travelRadius);
-		  LLPX_GrandDau.push_back(travelX);
-		  LLPY_GrandDau.push_back(travelY);
-		  LLPZ_GrandDau.push_back(travelZ);
-                  //std::cout << "\n" << std::endl;
-                  //std::cout << "LLP n. " << l << "; daughter n. " << i << "; grand daughter n. " << g << std::endl;
-                  //std::cout << "decayVertex_x " << decayVertex_x << std::endl;
-                  //std::cout << "gLLP_granddaughter_travel_time " << gLLP_granddaughter_travel_time << std::endl;
-                  //std::cout << "x_ecal " << x_ecal << std::endl;
-                  //std::cout << "y_ecal " << y_ecal << std::endl;
-                  //std::cout << "z_ecal " << z_ecal << std::endl;
-                  //std::cout << "phi " << tmpDauParticle->daughter(g)->phi() << std::endl;
-                  //std::cout << "corr phi " << phi << std::endl;
-                  //std::cout << "corr theta " << theta << std::endl;
-                  //std::cout << "eta " << tmpDauParticle->daughter(g)->eta() << std::endl;
-                  //std::cout << "corr eta " << eta << std::endl;
-                  //std::cout << "status and id grand dau: " << tmpDauParticle->daughter(g)->pdgId() << "\t" << tmpDauParticle->daughter(g)->status() << std::endl;
-                  }
-               }//granddau loop
-             }//if
-         
-         }//dau loop
-         
-         }//ask to have 2 daughters and size>1
-    }//loop on LLPs
+		   
+			const reco::Candidate *tmpDauParticle = candLLP->daughter(i);
+			for (unsigned int g = 0; g < tmpDauParticle->numberOfDaughters(); g++ )
+			  {
+			    if(abs(candLLP->daughter(i)->daughter(g)->pdgId())==grand_daughters_ids.at(s) && (idMotherB1==25 || idMotherB1==23))
+			      {
+				TLorentzVector tmpdau;
+				tmpdau.SetPxPyPzE(tmpDauParticle->daughter(g)->px(), tmpDauParticle->daughter(g)->py(), tmpDauParticle->daughter(g)->pz(), tmpDauParticle->daughter(g)->energy());
+				float gLLP_granddaughter_travel_time = (1./30.)*fabs(ecal_radius-travelRadius)/(tmpdau.Pt()/tmpdau.E());
+				float x_ecal = decayVertex_x + 30. * (tmpdau.Px()/tmpdau.E())*gLLP_granddaughter_travel_time;
+				float y_ecal = decayVertex_y + 30. * (tmpdau.Py()/tmpdau.E())*gLLP_granddaughter_travel_time;
+				float z_ecal = decayVertex_z + 30. * (tmpdau.Pz()/tmpdau.E())*gLLP_granddaughter_travel_time;
+				float phi = atan((y_ecal-decayVertex_y)/(x_ecal-decayVertex_x));
+				if  (x_ecal < 0.0) {
+				  phi = TMath::Pi() + phi;
+				}
+				phi = deltaPhi(phi,0.0);
+				float theta = atan(sqrt(pow(x_ecal-decayVertex_x,2)+pow(y_ecal-decayVertex_y,2))/abs(z_ecal-decayVertex_z));
+				float eta = -1.0*TMath::Sign(1.0, z_ecal-decayVertex_z)*log(tan(theta/2));
+				corrEtaGrandDaughterLLP.push_back(eta);
+				corrPhiGrandDaughterLLP.push_back(phi);
+				checkPtGrandDaughterLLP.push_back(tmpDauParticle->daughter(g)->pt());
+				checkEtaGrandDaughterLLP.push_back(tmpDauParticle->daughter(g)->eta());
+				checkPhiGrandDaughterLLP.push_back(tmpDauParticle->daughter(g)->phi());
+				if (isLLPInCaloAcceptance)
+				  {
+				    GrandDaughterOfLLPInCalo.push_back(true);
+				  }
+				else
+				  {
+				    GrandDaughterOfLLPInCalo.push_back(false);
+				  }
+				LLPRadius_GrandDau.push_back(travelRadius);
+				LLPX_GrandDau.push_back(travelX);
+				LLPY_GrandDau.push_back(travelY);
+				LLPZ_GrandDau.push_back(travelZ);
+				//std::cout << "\n" << std::endl;
+				//std::cout << "LLP n. " << l << "; daughter n. " << i << "; grand daughter n. " << g << std::endl;
+				//std::cout << "decayVertex_x " << decayVertex_x << std::endl;
+				//std::cout << "gLLP_granddaughter_travel_time " << gLLP_granddaughter_travel_time << std::endl;
+				//std::cout << "x_ecal " << x_ecal << std::endl;
+				//std::cout << "y_ecal " << y_ecal << std::endl;
+				//std::cout << "z_ecal " << z_ecal << std::endl;
+				//std::cout << "phi " << tmpDauParticle->daughter(g)->phi() << std::endl;
+				//std::cout << "corr phi " << phi << std::endl;
+				//std::cout << "corr theta " << theta << std::endl;
+				//std::cout << "eta " << tmpDauParticle->daughter(g)->eta() << std::endl;
+				//std::cout << "corr eta " << eta << std::endl;
+				//std::cout << "status and id grand dau: " << tmpDauParticle->daughter(g)->pdgId() << "\t" << tmpDauParticle->daughter(g)->status() << std::endl;
+			      }
+			  }//granddau loop
+		      }//if
+		  }//check ids in list
+	      }//dau loop
+	    
+	  }//ask to have 2 daughters and size>1
+      }//loop on LLPs
     
     //std::cout << "check pt higgs: " << std::endl;
     //for(unsigned int a=0;a<GenHiggsVect.size();a++) std::cout << GenHiggsVect.at(a).pt() << std::endl;
@@ -1123,6 +1247,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     for(unsigned int i = 0; i < GenHiggsVect.size(); i++) GenHiggs.push_back( GenPType() );
     for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) GenLLPs.push_back( GenPType() );
     for(unsigned int i = 0; i < GenBquarksVect.size(); i++) GenBquarks.push_back( GenPType() );
+    for(unsigned int i = 0; i < GenGravitinosVect.size(); i++) GenGravitinos.push_back( GenPType() );
 
     if(nGenBquarks>0) gen_b_radius = GenBquarksVect.at(0).mother()? sqrt(pow(GenBquarksVect.at(0).vx() - GenBquarksVect.at(0).mother()->vx(),2) + pow(GenBquarksVect.at(0).vy() - GenBquarksVect.at(0).mother()->vy(),2) + pow(GenBquarksVect.at(0).vz() - GenBquarksVect.at(0).mother()->vz(),2)) : -1.;
     if(nGenLL>0) m_pi = GenLongLivedVect.at(0).mass();
@@ -1144,23 +1269,28 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	//if(GenLongLivedVect.size()==1) {LLPInCalo.push_back(false);}
 	//if(GenLongLivedVect.size()==2 and LLPInCalo.size()==0) {LLPInCalo.push_back(false);LLPInCalo.push_back(false);}
 	for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenLLPs[i], &GenLongLivedVect[i], LLPInCalo[i], -9., -9., -1000.,-10000.,-10000.,-10000.);
+
       }
     if (WriteGenHiggs)
       {
 	//std::cout << "write gen higgs " << std::endl;
-	for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenHiggs[i], &GenHiggsVect[i], idMotherB==25 ? DaughterOfLLPInCalo[i] : false, idMotherB==25 ? corrEtaDaughterLLP[i] : -9., idMotherB==25 ? corrPhiDaughterLLP[i] : -9., idMotherB==25 ? LLPRadius_Dau[i] : -1000., idMotherB==25 ? LLPX_Dau[i] : -10000., idMotherB==25 ? LLPY_Dau[i] : -10000., idMotherB==25 ? LLPZ_Dau[i] : -10000.);
+	for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenHiggs[i], &GenHiggsVect[i], (idMotherB1==25 || idMotherB1==23) ?DaughterOfLLPInCalo[i] : false, (idMotherB1==25 || idMotherB1==23) ? corrEtaDaughterLLP[i] : -9., (idMotherB1==25 || idMotherB1==23) ? corrPhiDaughterLLP[i] : -9., (idMotherB1==25 || idMotherB1==23) ? LLPRadius_Dau[i] : -1000., (idMotherB1==25 || idMotherB1==23) ? LLPX_Dau[i] : -10000., (idMotherB1==25 || idMotherB1==23) ? LLPY_Dau[i] : -10000., (idMotherB1==25 || idMotherB1==23) ? LLPZ_Dau[i] : -10000.);
+
+	//Write also gravitinos
+	//check if it segfaults!
+	for(unsigned int i = 0; i < GenGravitinosVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenGravitinos[i], &GenGravitinosVect[i], (idMotherB1==25 || idMotherB1==23) ? DaughterOfLLPInCalo[i]: false, (idMotherB1==25 || idMotherB1==23) ? corrEtaDaughterLLP[i] : -9., (idMotherB1==25 || idMotherB1==23) ? corrPhiDaughterLLP[i] : -9., (idMotherB1==25 || idMotherB1==23) ? LLPRadius_Dau[i] : -1000., (idMotherB1==25 || idMotherB1==23) ? LLPX_Dau[i] : -10000., (idMotherB1==25 || idMotherB1==23) ? LLPY_Dau[i] : -10000., (idMotherB1==25 || idMotherB1==23) ? LLPZ_Dau[i] : -10000.);
       }
     //std::cout << "GenBquarksVect.size()" << GenBquarksVect.size() << std::endl;
     //std::cout << "LLPRadius_Dau.size()" << LLPRadius_Dau.size() << std::endl;
     //std::cout << "LLPRadius_GrandDau.size()" << LLPRadius_GrandDau.size() << std::endl;
     if(WriteGenBquarks && (LLPZ_GrandDau.size()==GenBquarksVect.size() || LLPZ_Dau.size()==GenBquarksVect.size()) ) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenBquarks[i], &GenBquarksVect[i],
-    idMotherB==25 && GrandDaughterOfLLPInCalo.size()==GenBquarksVect.size() ? GrandDaughterOfLLPInCalo[i] : DaughterOfLLPInCalo[i],
-    idMotherB==25 && corrEtaGrandDaughterLLP.size()==GenBquarksVect.size() ? corrEtaGrandDaughterLLP[i] : corrEtaDaughterLLP[i],
-    idMotherB==25 && corrPhiGrandDaughterLLP.size()==GenBquarksVect.size()? corrPhiGrandDaughterLLP[i] : corrPhiDaughterLLP[i],
-    idMotherB==25 && LLPRadius_GrandDau.size()==GenBquarksVect.size() ? LLPRadius_GrandDau[i] : LLPRadius_Dau[i],
-    idMotherB==25 && LLPX_GrandDau.size()==GenBquarksVect.size() ? LLPX_GrandDau[i] : LLPX_Dau[i],
-    idMotherB==25 && LLPY_GrandDau.size()==GenBquarksVect.size() ? LLPY_GrandDau[i] : LLPY_Dau[i],
-    idMotherB==25 && LLPZ_GrandDau.size()==GenBquarksVect.size() ? LLPZ_GrandDau[i] : LLPZ_Dau[i]);
+    (idMotherB1==25 || idMotherB1==23) && GrandDaughterOfLLPInCalo.size()==GenBquarksVect.size() ? GrandDaughterOfLLPInCalo[i] : DaughterOfLLPInCalo[i],
+    (idMotherB1==25 || idMotherB1==23) && corrEtaGrandDaughterLLP.size()==GenBquarksVect.size() ? corrEtaGrandDaughterLLP[i] : corrEtaDaughterLLP[i],
+    (idMotherB1==25 || idMotherB1==23) && corrPhiGrandDaughterLLP.size()==GenBquarksVect.size()? corrPhiGrandDaughterLLP[i] : corrPhiDaughterLLP[i],
+    (idMotherB1==25 || idMotherB1==23) && LLPRadius_GrandDau.size()==GenBquarksVect.size() ? LLPRadius_GrandDau[i] : LLPRadius_Dau[i],
+    (idMotherB1==25 || idMotherB1==23) && LLPX_GrandDau.size()==GenBquarksVect.size() ? LLPX_GrandDau[i] : LLPX_Dau[i],
+    (idMotherB1==25 || idMotherB1==23) && LLPY_GrandDau.size()==GenBquarksVect.size() ? LLPY_GrandDau[i] : LLPY_Dau[i],
+    (idMotherB1==25 || idMotherB1==23) && LLPZ_GrandDau.size()==GenBquarksVect.size() ? LLPZ_GrandDau[i] : LLPZ_Dau[i]);
     //some non empty gen b quarks
     //for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillCaloGenPType(GenBquarks[i], &GenBquarksVect[i], false, -1., -1., -1., -1.);
     //std::cout<< " Not diedddd!!!" << std::endl;
@@ -1170,7 +1300,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // Pu weight and number of vertices
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-    //if(isVerbose) std::cout << "Pile-up" << std::endl;
+    if(isVerbose) std::cout << "Pile-up" << std::endl;
     PUWeight     = thePileupAnalyzer->GetPUWeight(iEvent);//calculates pileup weights
     PUWeightUp   = thePileupAnalyzer->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
     PUWeightDown = thePileupAnalyzer->GetPUWeightDown(iEvent);//syst uncertainties due to pileup
@@ -1335,7 +1465,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	for(unsigned int a = 0; a<CHSJetsVect.size(); a++)
 	  {
 	    current_delta_R_CHSJets = fabs(reco::deltaR(CHSJetsVect[a].eta(),CHSJetsVect[a].phi(),GenBquarks[b].eta,GenBquarks[b].phi));
-	    if(current_delta_R_CHSJets<0.4 && current_delta_R_CHSJets<delta_R_CHSJets && CHSJetsVect[a].genParton() && (fabs(CHSJetsVect[a].hadronFlavour())==5 || fabs(CHSJetsVect[a].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB)
+	    //TODO: probably to be removed since we have also non-b contributions!!
+	    //We can check the gen b quark flavour
+	    if(current_delta_R_CHSJets<0.4 && current_delta_R_CHSJets<delta_R_CHSJets && CHSJetsVect[a].genParton() && ( fabs(CHSJetsVect[a].hadronFlavour())==fabs(GenBquarks.at(b).pdgId) || fabs(CHSJetsVect[a].partonFlavour())==fabs(GenBquarks.at(b).pdgId) ) && (abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB1 || abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB2))
 	      //this implements all the reasonable possibilities!
 	      {
 		delta_R_CHSJets = min(delta_R_CHSJets,current_delta_R_CHSJets);
@@ -1387,7 +1519,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	int number_bs_matched_to_CHSJet = 0;
 	for (unsigned int b = 0; b<GenBquarks.size(); b++){
 	  current_delta_R_CHSJets = fabs(reco::deltaR(CHSJetsVect[r].eta(),CHSJetsVect[r].phi(),GenBquarks[b].eta,GenBquarks[b].phi));
-	  if(current_delta_R_CHSJets<0.4 && CHSJetsVect[r].genParton() && (fabs(CHSJetsVect[r].hadronFlavour())==5 || fabs(CHSJetsVect[r].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[r].genParton()) )==idMotherB)
+	  //TODO: probably to be reconsidered since we have also non b
+	  //We can check the gen b quark flavour
+	  if(current_delta_R_CHSJets<0.4 && CHSJetsVect[r].genParton() && ( fabs(CHSJetsVect[r].hadronFlavour())==fabs(GenBquarks.at(b).pdgId) || fabs(CHSJetsVect[r].partonFlavour())==fabs(GenBquarks.at(b).pdgId) ) && (abs( Utilities::FindMotherId(CHSJetsVect[r].genParton()) )==idMotherB1 || abs( Utilities::FindMotherId(CHSJetsVect[r].genParton()) )==idMotherB2))
 	    //this implements all the reasonable possibilities!
 	    {
 	      number_bs_matched_to_CHSJet += 1;
@@ -1408,7 +1542,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	for(unsigned int a = 0; a<CHSJetsVect.size(); a++)
 	  {
 	    current_delta_R = fabs(reco::deltaR(CHSJetsVect[a].eta(),CHSJetsVect[a].phi(),GenBquarks[b].eta,GenBquarks[b].phi));
-	    if(current_delta_R<0.4 && current_delta_R<delta_R && CHSJetsVect[a].genParton() && (fabs(CHSJetsVect[a].hadronFlavour())==5 || fabs(CHSJetsVect[a].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB && GenBquarks[b].isLLPInCaloAcceptance)
+	    //TODO: probably to be removed since we have also non-b contributions!!
+	    //We can check the gen b quark flavour
+	    if(current_delta_R<0.4 && current_delta_R<delta_R && CHSJetsVect[a].genParton() && (fabs(CHSJetsVect[a].hadronFlavour())==fabs(GenBquarks.at(b).pdgId) || fabs(CHSJetsVect[a].partonFlavour())==fabs(GenBquarks.at(b).pdgId)) && (abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB1 || abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB2) && GenBquarks[b].isLLPInCaloAcceptance)
 
 	      {
 		delta_R = min(delta_R,current_delta_R);
@@ -1447,7 +1583,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	for(unsigned int a = 0; a<CHSJetsVect.size(); a++)
 	  {
 	    current_delta_R = fabs(reco::deltaR(CHSJetsVect[a].eta(),CHSJetsVect[a].phi(),GenBquarks[b].corrCaloEta,GenBquarks[b].corrCaloPhi));
-	    if(current_delta_R<0.4 && current_delta_R<delta_R && CHSJetsVect[a].genParton() && (fabs(CHSJetsVect[a].hadronFlavour())==5 || fabs(CHSJetsVect[a].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB)
+	    //TODO: probably to be removed since we have also non-b contributions!!
+	    //We can check the gen b quark flavour
+	    if(current_delta_R<0.4 && current_delta_R<delta_R && CHSJetsVect[a].genParton() && ( fabs(CHSJetsVect[a].hadronFlavour())==fabs(GenBquarks.at(b).pdgId) || fabs(CHSJetsVect[a].partonFlavour())==fabs(GenBquarks.at(b).pdgId) ) && (abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB1 || abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB2))
 
 	      {
 		delta_R = min(delta_R,current_delta_R);
@@ -1487,7 +1625,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	int number_bs_matched_to_CHSJet_CaloCorr = 0;
 	for (unsigned int b = 0; b<GenBquarks.size(); b++){
 	  current_delta_R = fabs(reco::deltaR(CHSJetsVect[r].eta(),CHSJetsVect[r].phi(),GenBquarks[b].corrCaloEta,GenBquarks[b].corrCaloPhi));
-	  if(current_delta_R<0.4 && CHSJetsVect[r].genParton() && (fabs(CHSJetsVect[r].hadronFlavour())==5 || fabs(CHSJetsVect[r].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[r].genParton()) )==idMotherB)
+	  //TODO: probably to be removed since we have also non-b contributions!!
+	  //We can check the gen b quark flavour
+	  if(current_delta_R<0.4 && CHSJetsVect[r].genParton() && (fabs(CHSJetsVect[r].hadronFlavour())==fabs(GenBquarks.at(b).pdgId) || fabs(CHSJetsVect[r].partonFlavour())==fabs(GenBquarks.at(b).pdgId)) && (abs( Utilities::FindMotherId(CHSJetsVect[r].genParton()) )==idMotherB1 || abs( Utilities::FindMotherId(CHSJetsVect[r].genParton()) )==idMotherB2))
 	    //this implements all the reasonable possibilities!
 	    {
 	      number_bs_matched_to_CHSJet_CaloCorr += 1;
@@ -1509,7 +1649,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	for(unsigned int a = 0; a<CHSJetsVect.size(); a++)
 	  {
 	    current_delta_R = fabs(reco::deltaR(CHSJetsVect[a].eta(),CHSJetsVect[a].phi(),GenBquarks[b].corrCaloEta,GenBquarks[b].corrCaloPhi));
-	    if(current_delta_R<0.4 && current_delta_R<delta_R && CHSJetsVect[a].genParton() && (fabs(CHSJetsVect[a].hadronFlavour())==5 || fabs(CHSJetsVect[a].partonFlavour())==5) && abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB && GenBquarks[b].isLLPInCaloAcceptance)
+	    //TODO: probably to be removed since we have also non-b contributions!!
+	    //We can check the gen b quark flavour
+	    if(current_delta_R<0.4 && current_delta_R<delta_R && CHSJetsVect[a].genParton() && (fabs(CHSJetsVect[a].hadronFlavour())==fabs(GenBquarks.at(b).pdgId) || fabs(CHSJetsVect[a].partonFlavour())==fabs(GenBquarks.at(b).pdgId)) && (abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB1 || abs( Utilities::FindMotherId(CHSJetsVect[a].genParton()) )==idMotherB2) && GenBquarks[b].isLLPInCaloAcceptance)
 
 	      {
 		delta_R = min(delta_R,current_delta_R);
@@ -3333,12 +3475,23 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
    
-    /*
+    //if(isVerbose) std::cout << "DT segments" << std::endl;
+
+    //edm::ESHandle<GlobalTrackingGeometry> theTrackingGeometry_2;
+    //iSetup.get<GlobalTrackingGeometryRecord>().get(theTrackingGeometry_2);
+
+    edm::ESHandle<DTGeometry> dtG;
+    iSetup.get<MuonGeometryRecord>().get(dtG);
+
     std::vector<DTRecSegment4D> DTSegmentVect = theDTAnalyzer->FillDTSegment4DVector(iEvent);
-    std::vector<GlobalPoint> DTSegment_Global_points = theDTAnalyzer->FillGlobalPointDT4DSegmentVector(iEvent, iSetup,DTSegmentVect);
+    //if(isVerbose) std::cout << "DTSegmentVect filled" << std::endl;
+    //std::vector<GlobalPoint> DTSegment_Global_points = theDTAnalyzer->FillGlobalPointDT4DSegmentVector(iEvent, iSetup,DTSegmentVect);
+    //std::vector<GlobalPoint> DTSegment_Global_points = theDTAnalyzer->FillGlobalPointDT4DSegmentVector(iEvent, iSetup,DTSegmentVect,theTrackingGeometry_2);
+    //if(isVerbose) std::cout << "DT global points filled" << std::endl;
     for(unsigned int i =0; i< DTSegmentVect.size();i++) DTRecSegments4D.push_back( DT4DSegmentType() );
 
     nDTSegments = DTSegmentVect.size();
+    //if(isVerbose) std::cout << "DT segments filled" << std::endl;
     for(unsigned int i = 0; i < DTSegmentVect.size(); i++)
       {
 	//std::cout << DTSegmentVect.at(i).recHits << std::endl;
@@ -3347,7 +3500,8 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	if(DTSegmentVect.at(i).chamberId().station()==3) nDTSegmentsStation3++;
 	if(DTSegmentVect.at(i).chamberId().station()==4) nDTSegmentsStation4++;
       }
-    
+
+    /*
 
     for(unsigned int s = 0; s < DTSegment_Global_points.size(); s++)
       {
@@ -3453,7 +3607,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             }//duplicates removed
         }
     nMatchedDTsegmentstoVBF = MatchedDTSegment4DtoVBFVect.size();
-    
+    */
     
    
     //------------------------------------------------------------------------------------------
@@ -3462,12 +3616,17 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     
+    //if(isVerbose) std::cout << "CSC segments" << std::endl;
+
+    edm::ESHandle<CSCGeometry> cscG;
+    iSetup.get<MuonGeometryRecord>().get(cscG);
 
     std::vector<CSCSegment> CSCSegmentVect = theCSCAnalyzer->FillCSCSegmentVector(iEvent);
-    std::vector<GlobalPoint> CSCSegment_Global_points = theCSCAnalyzer->FillGlobalPointCSCSegmentVector(iEvent, iSetup,CSCSegmentVect);
+    //std::vector<GlobalPoint> CSCSegment_Global_points = theCSCAnalyzer->FillGlobalPointCSCSegmentVector(iEvent, iSetup,CSCSegmentVect);
     for(unsigned int i =0; i< CSCSegmentVect.size();i++) CSCSegments.push_back( CSCSegmentType() );
     nCSCSegments = CSCSegmentVect.size();
 
+    /*
     // Match DT Segments to Gen b quarks
 
     // for gen matching, to be filled later
@@ -3560,6 +3719,42 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     */
 
+
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // Cosmic muons
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+   
+    std::vector<reco::Track> CosmicMuonsVect = theCosmicMuonsAnalyzer->FillStandAloneMuonsVector(iEvent);
+    nCosmicMuons = CosmicMuonsVect.size();
+
+    std::vector<TLorentzVector> CosmicMuonsPropagatedVect = theCosmicMuonsAnalyzer->FillStandAloneMuonsPropagatedVector(iEvent,iSetup);
+
+    std::vector<reco::Track> CosmicMuonsOneLegVect = theCosmicMuonsOneLegAnalyzer->FillStandAloneMuonsVector(iEvent);
+    nCosmicMuonsOneLeg = CosmicMuonsOneLegVect.size();
+
+    std::vector<TLorentzVector> CosmicMuonsOneLegPropagatedVect = theCosmicMuonsOneLegAnalyzer->FillStandAloneMuonsPropagatedVector(iEvent,iSetup);
+
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // Standalone muons
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+   
+    std::vector<reco::Track> StandAloneMuonsVect = theStandAloneMuonsAnalyzer->FillStandAloneMuonsVector(iEvent);
+    nStandAloneMuons = StandAloneMuonsVect.size();
+
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // Displaced standalone muons
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+   
+    std::vector<reco::Track> DisplacedStandAloneMuonsVect = theDisplacedStandAloneMuonsAnalyzer->FillStandAloneMuonsVector(iEvent);
+    nDisplacedStandAloneMuons = DisplacedStandAloneMuonsVect.size();
+
+
     //-----------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     // Fill objects
@@ -3610,10 +3805,11 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //for(unsigned int i = 0; i < CaloJetsVect.size(); i++) CaloJets.push_back( CaloJetType() );//slim ntuple
     //for(unsigned int i = 0; i < CaloJetsVect.size(); i++) ObjectsFormat::FillCaloJetType(CaloJets[i], &CaloJetsVect[i], isMC, caloGenMatched[i], caloGenMatchedRadius2D[i], caloGenMatchedEta[i]);//slim ntuple
     //DTSegments
-    //for(unsigned int i =0; i< DTSegmentVect.size();i++) ObjectsFormat::FillDT4DSegmentType(DTRecSegments4D[i], &DTSegmentVect[i],&DTSegment_Global_points[i]);//slim ntuple
+    //for(unsigned int i =0; i< DTSegmentVect.size();i++) ObjectsFormat::FillDT4DSegmentType(DTRecSegments4D[i], &DTSegmentVect[i],&DTSegment_Global_points[i],dtG);//slim ntuple
+    for(unsigned int i =0; i< DTSegmentVect.size();i++) ObjectsFormat::FillDT4DSegmentType(DTRecSegments4D[i], &DTSegmentVect[i],dtG);//slim ntuple
 
     //CSCSegments
-    //for(unsigned int i =0; i< CSCSegmentVect.size();i++) ObjectsFormat::FillCSCSegmentType(CSCSegments[i], &CSCSegmentVect[i],&CSCSegment_Global_points[i]);//slim ntuple
+    for(unsigned int i =0; i< CSCSegmentVect.size();i++) ObjectsFormat::FillCSCSegmentType(CSCSegments[i], &CSCSegmentVect[i],cscG);//slim ntuple
 
 
 
@@ -3656,10 +3852,24 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
     */
 
-    ////StandAloneMuons
-    //for(unsigned int i =0; i< StandAloneMuonsVect.size();i++) ObjectsFormat::FillTrackType(StandAloneMuons[i], &StandAloneMuonsVect[i], GenStandAloneMuonsFlag[i]);
-    ////DisplacedStandAloneMuons
-    //for(unsigned int i =0; i< DisplacedStandAloneMuonsVect.size();i++) ObjectsFormat::FillTrackType(DisplacedStandAloneMuons[i], &DisplacedStandAloneMuonsVect[i],GenDisplacedStandAloneMuonsFlag[i]);
+    //CosmicMuons
+    for(unsigned int i =0; i< CosmicMuonsVect.size();i++) CosmicMuons.push_back(TrackType());
+    for(unsigned int i =0; i< CosmicMuonsVect.size();i++) ObjectsFormat::FillTrackType(CosmicMuons[i], &CosmicMuonsVect[i]);
+    for(unsigned int i =0; i< CosmicMuonsPropagatedVect.size();i++) CosmicMuonsPropagated.push_back(LorentzType());
+    for(unsigned int i =0; i< CosmicMuonsPropagatedVect.size();i++) ObjectsFormat::FillLorentzType(CosmicMuonsPropagated[i], &CosmicMuonsPropagatedVect[i]);
+
+    //CosmicMuonsOneLeg
+    for(unsigned int i =0; i< CosmicMuonsOneLegVect.size();i++) CosmicMuonsOneLeg.push_back(TrackType());
+    for(unsigned int i =0; i< CosmicMuonsOneLegVect.size();i++) ObjectsFormat::FillTrackType(CosmicMuonsOneLeg[i], &CosmicMuonsOneLegVect[i]);
+    for(unsigned int i =0; i< CosmicMuonsOneLegPropagatedVect.size();i++) CosmicMuonsOneLegPropagated.push_back(LorentzType());
+    for(unsigned int i =0; i< CosmicMuonsOneLegPropagatedVect.size();i++) ObjectsFormat::FillLorentzType(CosmicMuonsOneLegPropagated[i], &CosmicMuonsOneLegPropagatedVect[i]);
+
+    //StandAloneMuons
+    for(unsigned int i =0; i< StandAloneMuonsVect.size();i++) StandAloneMuons.push_back(TrackType());
+    for(unsigned int i =0; i< StandAloneMuonsVect.size();i++) ObjectsFormat::FillTrackType(StandAloneMuons[i], &StandAloneMuonsVect[i]);
+    //DisplacedStandAloneMuons
+    for(unsigned int i =0; i< DisplacedStandAloneMuonsVect.size();i++) DisplacedStandAloneMuons.push_back(TrackType());
+    for(unsigned int i =0; i< DisplacedStandAloneMuonsVect.size();i++) ObjectsFormat::FillTrackType(DisplacedStandAloneMuons[i], &DisplacedStandAloneMuonsVect[i]);
       
 
 
@@ -3707,6 +3917,9 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       std::cout << "number of CHS AK4 jets:  " << CHSJetsVect.size() << std::endl;
       for(unsigned int i = 0; i < CHSJetsVect.size(); i++) std::cout << "  CHS AK4 jet  [" << i << "]\tpt: " << CHSJetsVect[i].pt() << "\teta: " << CHSJetsVect[i].eta() << "\tphi: " << CHSJetsVect[i].phi() << "\tmass: " << CHSJetsVect[i].mass() << "\tcHadEFrac: " << CHSJetsVect[i].userFloat("cHadEFrac") << std::endl;
 
+      std::cout << "number of EcalRecHitsAK4:  " << EcalRecHitsAK4.size() << std::endl;
+      for(unsigned int i = 0; i < EcalRecHitsAK4.size(); i++) std::cout << "  ECAL rec hit  [" << i << "]\tenergy: " << EcalRecHitsAK4[i].energy << "\teta: " <<  EcalRecHitsAK4[i].eta << "\tphi: " << EcalRecHitsAK4[i].phi << "\tjteIdx: " << EcalRecHitsAK4[i].jetIndex << "\tjet pT: " << EcalRecHitsAK4[i].jetPt  << std::endl;
+
       ////std::cout << "VBF jets pair:  " << VBFPairJetsVect.size() << std::endl;
       ////if(isVBF) std::cout << "VBF conditions satisfied" << std::endl;
       ////for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) std::cout << "  VBF jet  [" << i << "]\tpt: " << VBFPairJetsVect[i].pt() << "\teta: " << VBFPairJetsVect[i].eta() << "\tphi: " << VBFPairJetsVect[i].phi() << "\tmass: " << VBFPairJetsVect[i].mass() << std::endl;
@@ -3726,13 +3939,48 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //std::cout << "number of Matched Calo AK4 jets:  " << MatchedCaloJetsVect.size() << std::endl;
       //for(unsigned int i = 0; i < MatchedCaloJetsVect.size(); i++) std::cout << "  Calo AK4 jet  [" << i << "]\tpt: " << MatchedCaloJetsVect[i].pt() << "\teta: " << MatchedCaloJetsVect[i].eta() << "\tphi: " << MatchedCaloJetsVect[i].phi() << "\tmass: " << MatchedCaloJetsVect[i].mass() << "\temEnergyFraction " << MatchedCaloJetsVect[i].emEnergyFraction() << std::endl;
 
+      std::cout << "number of Muons: " << MuonVect.size() << std::endl;
+      for(unsigned int i = 0; i < MuonVect.size(); i++) std::cout << "  Muon  [" << i << "]\tpt: " << MuonVect[i].pt() << "\teta: " << MuonVect[i].eta() << "\tphi: " << MuonVect[i].phi() << std::endl;
+
+      std::cout << "number of CosmicMuons: " << CosmicMuonsVect.size() << std::endl;
+
+      for(unsigned int i = 0; i < CosmicMuonsVect.size(); i++) 
+	{
+	  std::cout << "  CosmicMuons  [" << i << "]\tpt: " << CosmicMuonsVect[i].pt() << "\teta: " << CosmicMuonsVect[i].eta() << "\tphi: " << CosmicMuonsVect[i].phi()<< std::endl;
+	  //std::cout << "  CosmicMuons  [" << i << "]\tin pos X: " << CosmicMuonsVect[i].innerPosition().X() << "\tin pos Y: " << CosmicMuonsVect[i].innerPosition().Y() << "\tin pos Z: " << CosmicMuonsVect[i].innerPosition().Z() << std::endl;
+	  //std::cout << "  CosmicMuons  [" << i << "]\tout pos X: " << CosmicMuonsVect[i].outerPosition().X() << "\tout pos Y: " << CosmicMuonsVect[i].outerPosition().Y() << "\tout pos Z: " << CosmicMuonsVect[i].outerPosition().Z() << std::endl;
+	  //std::cout << "  CosmicMuons  [" << i << "]\tvx: " << CosmicMuonsVect[i].vx() << "\tvy: " << CosmicMuonsVect[i].vy() <<  "\tvz: " << CosmicMuonsVect[i].vz()  << std::endl;
+	  //for(unsigned int i = 0; i < CosmicMuonsVect.size(); i++) std::cout << "  CosmicMuons  [" << i << "]\tpt: " << CosmicMuonsVect[i].pt() << "\teta: " << CosmicMuonsVect[i].eta() << "\tphi: " << CosmicMuonsVect[i].phi() << std::endl;
+	}
+      for(unsigned int i = 0; i < CosmicMuonsPropagatedVect.size(); i++) std::cout << "  CosmicMuonsPropagated  [" << i << "]\tpt: " << CosmicMuonsPropagatedVect[i].Pt() << "\teta: " << CosmicMuonsPropagatedVect[i].Eta() << "\tphi: " << CosmicMuonsPropagatedVect[i].Phi() << std::endl;
+
+      std::cout << "number of CosmicMuonsOneLeg: " << CosmicMuonsOneLegVect.size() << std::endl;
+      for(unsigned int i = 0; i < CosmicMuonsOneLegVect.size(); i++)
+	{
+	  std::cout << "  CosmicMuonsOneLeg  [" << i << "]\tpt: " << CosmicMuonsOneLegVect[i].pt() << "\teta: " << CosmicMuonsOneLegVect[i].eta() << "\tphi: " << CosmicMuonsOneLegVect[i].phi()<< std::endl;
+	  //std::cout << "  CosmicMuonsOneLeg  [" << i << "]\tin pos X: " << CosmicMuonsOneLegVect[i].innerPosition().X() << "\tin pos Y: " << CosmicMuonsOneLegVect[i].innerPosition().Y() << "\tin pos Z: " << CosmicMuonsOneLegVect[i].innerPosition().Z() << std::endl;
+	  //std::cout << "  CosmicMuonsOneLeg  [" << i << "]\tout pos X: " << CosmicMuonsOneLegVect[i].outerPosition().X() << "\tout pos Y: " << CosmicMuonsOneLegVect[i].outerPosition().Y() << "\tout pos Z: " << CosmicMuonsOneLegVect[i].outerPosition().Z() << std::endl;
+	  //std::cout << "  CosmicMuonsOneLeg  [" << i << "]\tvx: " << CosmicMuonsOneLegVect[i].vx() << "\tvy: " << CosmicMuonsOneLegVect[i].vy() <<  "\tvz: " << CosmicMuonsOneLegVect[i].vz()  << std::endl;
+	}
+      for(unsigned int i = 0; i < CosmicMuonsOneLegPropagatedVect.size(); i++) std::cout << "  CosmicMuonsOneLegPropagated  [" << i << "]\tpt: " << CosmicMuonsOneLegPropagatedVect[i].Pt() << "\teta: " << CosmicMuonsOneLegPropagatedVect[i].Eta() << "\tphi: " << CosmicMuonsOneLegPropagatedVect[i].Phi() << std::endl;
+
+      std::cout << "number of StandAloneMuons: " << StandAloneMuonsVect.size() << std::endl;
+      for(unsigned int i = 0; i < StandAloneMuonsVect.size(); i++) std::cout << "  StandAloneMuons  [" << i << "]\tpt: " << StandAloneMuonsVect[i].pt() << "\teta: " << StandAloneMuonsVect[i].eta() << "\tphi: " << StandAloneMuonsVect[i].phi() << std::endl;
+
+      std::cout << "number of DisplacedStandAloneMuons: " << DisplacedStandAloneMuonsVect.size() << std::endl;
+      for(unsigned int i = 0; i < DisplacedStandAloneMuonsVect.size(); i++) std::cout << "  DisplacedStandAloneMuons  [" << i << "]\tpt: " << DisplacedStandAloneMuonsVect[i].pt() << "\teta: " << DisplacedStandAloneMuonsVect[i].eta() << "\tphi: " << DisplacedStandAloneMuonsVect[i].phi() << std::endl;
+
+
       ////std::cout << "number of StandAloneMuons: " << StandAloneMuonsVect.size() << std::endl;
       ////for(unsigned int i = 0; i < StandAloneMuonsVect.size(); i++) std::cout << "  StandAloneMuons  [" << i << "]\tpt: " << StandAloneMuonsVect[i].pt() << "\teta: " << StandAloneMuonsVect[i].eta() << "\tphi: " << StandAloneMuonsVect[i].phi() << std::endl;
 
       ////std::cout << "number of DisplacedStandAloneMuons: " << DisplacedStandAloneMuonsVect.size() << std::endl;
       ////for(unsigned int i = 0; i < DisplacedStandAloneMuonsVect.size(); i++) std::cout << "  DisplacedStandAloneMuons  [" << i << "]\tpt: " << DisplacedStandAloneMuonsVect[i].pt() << "\teta: " << DisplacedStandAloneMuonsVect[i].eta() << "\tphi: " << DisplacedStandAloneMuonsVect[i].phi() << std::endl;
 
-      ////std::cout << "number of DT segments:  " << DTSegmentVect.size() << std::endl;
+      std::cout << "number of DT segments:  " << DTSegmentVect.size() << std::endl;
+      //for(unsigned int i = 0; i <DTRecSegments4D.size(); i++) std::cout << "Segment["<<i <<"]\teta: " << DTRecSegments4D[i].eta << "\tphi: " << DTRecSegments4D[i].phi << "\tnRecHits: " << DTRecSegments4D[i].nRecHits  << "\twheel: " << DTRecSegments4D[i].wheel  << "\tsector: " << DTRecSegments4D[i].sector << "\tstation: " << DTRecSegments4D[i].station << std::endl;
+      for(unsigned int i = 0; i <DTRecSegments4D.size(); i++) std::cout << "Segment["<<i <<"]\tx: " << DTRecSegments4D[i].x << "\ty: " << DTRecSegments4D[i].y << "\tz: " << DTRecSegments4D[i].z  << "\twheel: " << DTRecSegments4D[i].wheel  << "\tsector: " << DTRecSegments4D[i].sector << "\tstation: " << DTRecSegments4D[i].station << std::endl;
+
       ////std::cout << "number of DT global position:  " << DTSegment_Global_points.size() << std::endl;
       ////for(unsigned int i = 0; i < DTSegment_Global_points.size(); i++) std::cout << "  Global position of DT segment [" << i << "]\teta: " << DTSegment_Global_points[i].eta() << "\tphi: " << DTSegment_Global_points[i].phi() << "\tsize of rech hits: "<< DTSegmentVect.at(i).recHits().size() << std::endl;
 
@@ -3772,8 +4020,14 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     PFCandidatesAK8.clear();
 
 
-    //DTRecSegments4D.clear();
-    //CSCSegments.clear();
+    DTRecSegments4D.clear();
+    CSCSegments.clear();
+    CosmicMuons.clear();
+    CosmicMuonsPropagated.clear();
+    CosmicMuonsOneLeg.clear();
+    CosmicMuonsOneLegPropagated.clear();
+    StandAloneMuons.clear();
+    DisplacedStandAloneMuons.clear();
 
 #ifdef THIS_IS_AN_EVENT_EXAMPLE
     Handle<ExampleData> pIn;
@@ -3796,13 +4050,20 @@ AODNtuplizer::beginJob()
   //
 
    tree = fs->make<TTree>("tree", "tree");
-   //if(isSignal) tree -> Branch("Model",       &Model);
+   //if(isSignal) tree -> Branch("Model",       &Model.Data());
    tree -> Branch("isMC" , &isMC, "isMC/O");
    tree -> Branch("EventNumber" , &EventNumber , "EventNumber/L");
    tree -> Branch("LumiNumber" , &LumiNumber , "LumiNumber/L");
    tree -> Branch("RunNumber" , &RunNumber , "RunNumber/L");
    tree -> Branch("EventWeight", &EventWeight, "EventWeight/F");
    tree -> Branch("GenEventWeight", &GenEventWeight, "GenEventWeight/F");
+   tree -> Branch("QScale", &QScale,"QScale/F");
+   tree -> Branch("AlphaQCD", &AlphaQCD,"AlphaQCD/F");
+   tree -> Branch("AlphaQED", &AlphaQED,"AlphaQED/F");
+   tree -> Branch("QCDWeights", &QCDWeights);
+   tree -> Branch("PDFWeights", &PDFWeights);
+   tree -> Branch("QCDWeightsNames", &QCDWeightsNames);
+   tree -> Branch("PDFWeightsNames", &PDFWeightsNames);
    tree -> Branch("PUWeight", &PUWeight, "PUWeight/F");
    tree -> Branch("PUWeightUp", &PUWeightUp, "PUWeightUp/F");
    tree -> Branch("PUWeightDown", &PUWeightDown, "PUWeightDown/F");
@@ -3832,6 +4093,9 @@ AODNtuplizer::beginJob()
    tree -> Branch("gen_b_radius" , &gen_b_radius , "gen_b_radius/F");
    tree -> Branch("gen_b_radius_2D" , &gen_b_radius_2D , "gen_b_radius_2D/F");
    tree -> Branch("m_pi" , &m_pi , "m_pi/F");
+   tree -> Branch("is_central" , &is_central , "is_central/O");
+   tree -> Branch("m_chi" , &m_chi , "m_chi/I");
+   tree -> Branch("ctau" , &ctau , "ctau/I");
    tree -> Branch("nElectrons", &nElectrons, "nElectrons/I");
    tree -> Branch("nMuons", &nMuons, "nMuons/I");
    tree -> Branch("nTaus", &nTaus, "nTaus/I");
@@ -3855,12 +4119,12 @@ AODNtuplizer::beginJob()
    tree -> Branch("nMatchedCaloJets" , &nMatchedCaloJets , "nMatchedCaloJets/L");
    tree -> Branch("nVBFGenMatchedCHSJets", & nVBFGenMatchedCHSJets, "nVBFGenMatchedCHSJets/L");
    tree -> Branch("nVBFGenMatchedVBFJets", & nVBFGenMatchedVBFJets, "nVBFGenMatchedVBFJets/L");
-   //tree -> Branch("nDTSegments", &nDTSegments, "nDTSegments/L");
-   //tree -> Branch("nDTSegmentsStation1", &nDTSegmentsStation1, "nDTSegmentsStation1/L");
-   //tree -> Branch("nDTSegmentsStation2", &nDTSegmentsStation2, "nDTSegmentsStation2/L");
-   //tree -> Branch("nDTSegmentsStation3", &nDTSegmentsStation3, "nDTSegmentsStation3/L");
-   //tree -> Branch("nDTSegmentsStation4", &nDTSegmentsStation4, "nDTSegmentsStation4/L");
-   //tree -> Branch("nCSCSegments", &nCSCSegments, "nCSCSegments/L");
+   tree -> Branch("nDTSegments", &nDTSegments, "nDTSegments/L");
+   tree -> Branch("nDTSegmentsStation1", &nDTSegmentsStation1, "nDTSegmentsStation1/L");
+   tree -> Branch("nDTSegmentsStation2", &nDTSegmentsStation2, "nDTSegmentsStation2/L");
+   tree -> Branch("nDTSegmentsStation3", &nDTSegmentsStation3, "nDTSegmentsStation3/L");
+   tree -> Branch("nDTSegmentsStation4", &nDTSegmentsStation4, "nDTSegmentsStation4/L");
+   tree -> Branch("nCSCSegments", &nCSCSegments, "nCSCSegments/L");
    //tree -> Branch("nMatchedDTsegmentstob", &nMatchedDTsegmentstob, "nMatchedDTsegmentstob/L");
    //tree -> Branch("nMatchedCSCsegmentstob", &nMatchedCSCsegmentstob, "nMatchedCSCsegmentstob/L");
    //tree -> Branch("nMatchedDTsegmentstoVBF", &nMatchedDTsegmentstoVBF, "nMatchedDTsegmentstoVBF/L");
@@ -3877,8 +4141,10 @@ AODNtuplizer::beginJob()
    //tree -> Branch("n_segments_around_b_quark_1",&n_segments_around_b_quark_1, "n_segments_around_b_quark_1/I");
    //tree -> Branch("n_segments_around_b_quark_2",&n_segments_around_b_quark_2, "n_segments_around_b_quark_2/I");
    //tree -> Branch("n_segments_around_b_quark_3",&n_segments_around_b_quark_3, "n_segments_around_b_quark_3/I");
-   //tree -> Branch("nStandAloneMuons", &nStandAloneMuons, "nStandAloneMuons/L");
-   //tree -> Branch("nDisplacedStandAloneMuons", &nDisplacedStandAloneMuons, "nDisplacedStandAloneMuons/L");
+   tree -> Branch("nCosmicMuons", &nCosmicMuons, "nCosmicMuons/L");
+   tree -> Branch("nCosmicMuonsOneLeg", &nCosmicMuonsOneLeg, "nCosmicMuonsOneLeg/L");
+   tree -> Branch("nStandAloneMuons", &nStandAloneMuons, "nStandAloneMuons/L");
+   tree -> Branch("nDisplacedStandAloneMuons", &nDisplacedStandAloneMuons, "nDisplacedStandAloneMuons/L");
    //tree -> Branch("nMatchedStandAloneMuons", &nMatchedStandAloneMuons, "nMatchedStandAloneMuons/L");
    //tree -> Branch("nMatchedDisplacedStandAloneMuons", &nMatchedDisplacedStandAloneMuons, "nMatchedDisplacedStandAloneMuons/L");   
 
@@ -3912,11 +4178,16 @@ AODNtuplizer::beginJob()
    tree -> Branch("GenHiggs", &GenHiggs);
    tree -> Branch("GenLLPs", &GenLLPs);
    tree -> Branch("GenBquarks", &GenBquarks);
+   tree -> Branch("GenGravitinos", &GenGravitinos);
    //tree -> Branch("GenVBFquarks", &GenVBFquarks);//slim ntuples
-   //tree -> Branch("DTSegments", &DTRecSegments4D);//slim ntuples
-   //tree -> Branch("CSCSegments", &CSCSegments);//slim ntuples
-   //tree -> Branch("StandAloneMuons", &StandAloneMuons);
-   //tree -> Branch("DisplacedStandAloneMuons", &DisplacedStandAloneMuons);
+   tree -> Branch("DTSegments", &DTRecSegments4D);//slim ntuples
+   tree -> Branch("CSCSegments", &CSCSegments);//slim ntuples
+   tree -> Branch("CosmicMuons", &CosmicMuons);
+   tree -> Branch("CosmicMuonsPropagated", &CosmicMuonsPropagated);
+   tree -> Branch("CosmicMuonsOneLeg", &CosmicMuonsOneLeg);
+   tree -> Branch("CosmicMuonsOneLegPropagated", &CosmicMuonsOneLegPropagated);
+   tree -> Branch("StandAloneMuons", &StandAloneMuons);
+   tree -> Branch("DisplacedStandAloneMuons", &DisplacedStandAloneMuons);
    ////tree -> Branch("RecoMEt", &RecoMEt.pt, RecoObjectsFormat::ListRecoMEtType().c_str());
 
    //tree -> Branch("MEt", &MEt.pt, ObjectsFormat::ListMEtType().c_str());

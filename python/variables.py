@@ -266,30 +266,30 @@ var_template = {
     "Jets[[N]].alphaMax": {
       "title" : "jet [[N]] #alpha_{max}",
       "nbins" : 50,
-      "min" : -1000.,
-      "max" : 1000.,
+      "min" : 0.,
+      "max" : 1.5,
       "log" : True,
     },
     "Jets.alphaMax": {
       "title" : "jets #alpha_{max}",
       "nbins" : 50,
-      "min" : 0.,
-      "max" : 1.,
+      "min" : 0,
+      "max" : 1.5,
       "log" : True,
     },
 
     "Jets[[N]].alphaMaxOld": {
       "title" : "jet [[N]] #alpha_{max} with packedPFCandidates",
       "nbins" : 50,
-      "min" : -1000.,
-      "max" : 1000.,
+      "min" : 0,
+      "max" : 1.5,
       "log" : True,
     },
     "Jets.alphaMaxOld": {
       "title" : "jets #alpha_{max} with packedPFCandidates",
       "nbins" : 50,
-      "min" : 0.,
-      "max" : 1.,
+      "min" : 0,
+      "max" : 1.5,
       "log" : True,
     },
 
@@ -300,8 +300,15 @@ var_template = {
       "max" : 3.,
       "log" : True,
     },
-    "Jets.betaMaxOld": {
-      "title" : "jets #beta_{max} with packedPFCandidates",
+    "Jets[[N]].betaMax": {
+      "title" : "jet [[N]] #beta_{max}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 3.,
+      "log" : True,
+    },
+    "Jets[[N]].betaMaxOld": {
+      "title" : "jet [[N]] #beta_{max} with packedPFCandidates",
       "nbins" : 50,
       "min" : 0.,
       "max" : 3.,
@@ -322,6 +329,21 @@ var_template = {
       "max" : 2.,
       "log" : True,
     },       
+    "Jets[[N]].gammaMaxET": {
+      "title" : "jet [[N]] gammaMaxET",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 2.,
+      "log" : True,
+    },       
+    "Jets[[N]].gammaMaxETOld": {
+      "title" : "jet [[N]] gammaMaxET with packedPFCandidates",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 2.,
+      "log" : True,
+    },       
+
     "Jets.minDeltaRPVTracks": {
       "title" : "jets minDeltaRPVTracks",
       "nbins" : 50,
@@ -331,6 +353,21 @@ var_template = {
     },
     "Jets.minDeltaRPVTracksOld": {
       "title" : "jets minDeltaRPVTracks with packedPFCandidates",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+
+    "Jets[[N]].minDeltaRPVTracks": {
+      "title" : "jet [[N]] minDeltaRPVTracks",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    "Jets[[N]].minDeltaRPVTracksOld": {
+      "title" : "jet [[N]] minDeltaRPVTracks with packedPFCandidates",
       "nbins" : 50,
       "min" : 0.,
       "max" : 1.,
@@ -1095,11 +1132,11 @@ var_template = {
         "min" : 0,"max" : 20,
         "log" : True,
     },
-    "Jets.nSelectedTracks": {
+    "Jets[[N]].nSelectedTracks": {
         "title" : "Number of selected tracks per jet [[N]]",
-        "nbins" : 20,
-        "min" : 0,
-        "max" : 20,
+        "nbins" : 40,
+        "min" : 0-0.5,
+        "max" : 40-0.5,
         "log" : True,
     },
     "Jets.nSelectedTracks": {
@@ -1152,8 +1189,22 @@ var_template = {
         "max" : 102-0.5,
         "log" : True,
     },
+    "Jets[[N]].nRecHitsEB": {
+        "title" : "AK4 jet [[N]]: ECAL barr. rec hits multiplicity",
+        "nbins" : 51,
+        "min" : 0-0.5,
+        "max" : 102-0.5,
+        "log" : True,
+    },
     "Jets.energyRecHitsEB": {
         "title" : "energyRecHitsEB jets",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 50,
+        "log" : True,
+    },
+    "Jets[[N]].energyRecHitsEB": {
+        "title" : "energyRecHitsEB jet [[N]]",
         "nbins" : 50,
         "min" : 0,
         "max" : 50,
@@ -1169,17 +1220,40 @@ var_template = {
     "Jets.timeRecHitsEB": {
         "title" : "AK4 jets: ECAL barr. rec hits time (ns)",
         "nbins" : 50,
-        "min" : -10,
-        "max" : 10,
+        "min" : -3,
+        "max" : 5,
         "log" : True,
     },
     "Jets[[N]].timeRecHitsEB": {
         "title" : "AK4 jet [[N]]: ECAL barr. rec hits time (ns)",
         "nbins" : 50,
-        "min" : -10,
-        "max" : 10,
+        "min" : -3,
+        "max" : 5,
         "log" : True,
     },
+
+    "Jets[[N]].ptDEB": {
+        "title" : "AK4 jet [[N]]: fragmentation function ECAL barr. rec hits",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 1,
+        "log" : True,
+    },
+    "Jets[[N]].sig1EB": {
+        "title" : "AK4 jet [[N]]: major axis of ECAL barr. rec hits shower shape",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 1,
+        "log" : True,
+    },
+    "Jets[[N]].sig2EB": {
+        "title" : "AK4 jet [[N]]: minor axis of ECAL barr. rec hits shower shape",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 1,
+        "log" : True,
+    },
+
     "Jets.xRecHitsEB": {
         "title" : "xRecHitsEB jets",
         "nbins" : 50,
@@ -1596,8 +1670,8 @@ var_template = {
     "FatJets[[N]].alphaMax": {
       "title" : "AK8 jet [[N]] #alpha_{max}",
       "nbins" : 50,
-      "min" : 0.,
-      "max" : 1.,
+      "min" : 0,
+      "max" : 1.5,
       "log" : True,
     },
     "FatJets.alphaMax": {

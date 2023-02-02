@@ -1659,7 +1659,6 @@ std::string ObjectsFormat::ListCustomFatJetType() {return "pt/F:eta/F:phi/F:mass
 //*******************//
 //  Missing energy   //
 //*******************//
-
 void ObjectsFormat::FillMEtType(MEtType& I, const pat::MET* R, bool isMC) {
     I.pt          = R->pt();
     I.eta         = R->eta();
@@ -1689,13 +1688,23 @@ void ObjectsFormat::FillMEtType(MEtType& I, const pat::MET* R, bool isMC) {
     //I.ptType1     = R->hasUserFloat("ptType1") ? R->userFloat("ptType1") : -1.;
     //I.phiType1    = R->hasUserFloat("phiType1") ? R->userFloat("phiType1") : -9.;
     if(isMC && R->genMET()) {I.ptGen       = R->genMET()->pt();}
+    if(isMC && R->genMET()) {I.pxGen       = R->genMET()->px();}
+    if(isMC && R->genMET()) {I.pyGen       = R->genMET()->py();}
+    if(isMC && R->genMET()) {I.pzGen       = R->genMET()->pz();}
+    if(isMC && R->genMET()) {I.etaGen      = R->genMET()->eta();}
     if(isMC && R->genMET()) {I.phiGen      = R->genMET()->phi();}
+    if(isMC && R->genMET()) {I.signGen     = R->genMET()->significance();}
+    if(isMC && R->genMET()) {I.massGen     = R->genMET()->mass();}
+    if(isMC && R->genMET()) {I.energyGen     = R->genMET()->energy();}
+    if(isMC && R->genMET()) {I.invisibleEnergyGen     = R->genMET()->invisibleEnergy();}
     //I.ptScaleUp   = R->hasUserFloat("ptScaleUp") ? R->userFloat("ptScaleUp") : -1.;
     //I.ptScaleDown = R->hasUserFloat("ptScaleDown") ? R->userFloat("ptScaleDown") : -1.;
     //I.ptResUp     = R->hasUserFloat("ptResUp") ? R->userFloat("ptResUp") : -1.;
     //I.ptResDown   = R->hasUserFloat("ptResDown") ? R->userFloat("ptResDown") : -1.;
     I.ptCalo      = R->caloMETPt();
 }
+
+
 
 void ObjectsFormat::ResetMEtType(MEtType& I) {
     I.pt          = -1.;
@@ -1715,7 +1724,15 @@ void ObjectsFormat::ResetMEtType(MEtType& I) {
     //I.ptType1     = -1.;
     //I.phiType1    = -9.;
     I.ptGen       = -1.;
+    I.pxGen       = -10000.;
+    I.pyGen       = -10000.;
+    I.pzGen       = -10000.;
+    I.etaGen      = -9.;
     I.phiGen      = -9.;
+    I.signGen     = -1.;
+    I.massGen     = -1.;
+    I.energyGen     = -1.;
+    I.invisibleEnergyGen     = -1.;
     //I.ptScaleUp   = -1.;
     //I.ptScaleDown = -1.;
     //I.ptResUp     = -1.;
@@ -1724,7 +1741,7 @@ void ObjectsFormat::ResetMEtType(MEtType& I) {
 }
 
 //std::string ObjectsFormat::ListMEtType() {return "pt/F:eta/F:phi/F:sign/F:ptRaw/F:phiRaw/F:ptGen/F:phiGen/F:ptCalo/F";}
-std::string ObjectsFormat::ListMEtType() {return "pt/F:eta/F:phi/F:sign/F:ptShiftJetResUp/F:ptShiftJetResDown/F:ptShiftJetEnUp/F:ptShiftJetEnDown/F:ptShiftUnclusteredEnUp/F:ptShiftUnclusteredEnDown/F:ptShiftJetResUpSmear/F:ptShiftJetResDownSmear/F:ptRaw/F:phiRaw/F:ptGen/F:phiGen/F:ptCalo/F";}
+std::string ObjectsFormat::ListMEtType() {return "pt/F:eta/F:phi/F:sign/F:ptShiftJetResUp/F:ptShiftJetResDown/F:ptShiftJetEnUp/F:ptShiftJetEnDown/F:ptShiftUnclusteredEnUp/F:ptShiftUnclusteredEnDown/F:ptShiftJetResUpSmear/F:ptShiftJetResDownSmear/F:ptRaw/F:phiRaw/F:ptGen/F:pxGen/F:pyGen/F:pzGen/F:etaGen/F:phiGen/F:signGen/F:massGen/F:energyGen/F:invisibleEnergyGen/F:ptCalo/F";}
 
 
 
@@ -1794,6 +1811,11 @@ void ObjectsFormat::ResetMEtFullType(MEtFullType& I) {
 
 std::string ObjectsFormat::ListMEtFullType() {return "pt/F:eta/F:phi/F:sign/F:ptRaw/F:phiRaw/F:ptGen/F:phiGen/F:ptJERUp/F:ptJERDown/F:ptJERUpSmear/F:ptJERDownSmear/F:ptJESUp/F:ptJESDown/F:ptMUSUp/F:ptMUSDown/F:ptELSUp/F:ptELSDown/F:ptTAUUp/F:ptTAUDown/F:ptUNCUp/F:ptUNCDown/F:ptPHOUp/F:ptPHODown/F:phf/F:nhf/F:elf/F:chf/F:muf/F";}
 
+void ObjectsFormat::FillCaloMEtType(CaloMEtType& I, const reco::CaloMET* R, bool isMC) {
+    I.pt          = R->pt();
+    I.phi         = R->phi();
+    I.sign        = R->significance();
+}
 
 void ObjectsFormat::FillCandidateType(CandidateType& I, pat::CompositeCandidate* R, bool isMC) {
   if(!R) return;
@@ -1857,12 +1879,38 @@ void ObjectsFormat::FillCandidateType(CandidateType& I, const reco::Candidate::L
 }
 */
 
-void ObjectsFormat::FillLorentzType(LorentzType& I, const reco::Candidate::LorentzVector* V) {
-  I.pt          = V->pt();
-  I.eta         = V->eta();
-  I.phi         = V->phi();
-  I.energy      = V->energy();
-  I.mass        = V->mass();
+void ObjectsFormat::FillTrackType(TrackType& I, const reco::Track* T) {
+  I.pt          = T->pt();
+  I.ptError     = T->ptError();
+  I.eta         = T->eta();
+  I.etaError    = T->etaError();
+  I.phi         = T->phi();
+  I.phiError    = T->phiError();
+  I.chi2        = T->chi2();
+  I.d0          = T->d0();
+  I.d0Error     = T->d0Error();
+  I.dsz         = T->dsz();
+  I.dszError    = T->dszError();
+  I.dxy         = T->dxy();
+  I.dxyError    = T->dxyError();
+  I.dz          = T->dz();
+  I.dzError     = T->dzError();
+  I.theta       = T->theta();
+  I.thetaError  = T->thetaError();
+  I.ndof        = T->ndof();
+  I.numberOfValidHits = T->numberOfValidHits();
+  I.vx          = T->vx();
+  I.vy          = T->vy();
+  I.vz          = T->vz();
+}
+
+//void ObjectsFormat::FillLorentzType(LorentzType& I, const reco::Candidate::LorentzVector* V) {
+void ObjectsFormat::FillLorentzType(LorentzType& I, TLorentzVector* V) {
+  I.pt          = V->Pt();//->pt();
+  I.eta         = V->Eta();//V->eta();
+  I.phi         = V->Phi();//V->phi();
+  I.energy      = V->E();//V->energy();
+  I.mass        = V->M();//V->mass();
 }
 
 void ObjectsFormat::ResetLorentzType(LorentzType& I) {
@@ -2009,7 +2057,7 @@ std::string ObjectsFormat::ListTriggerObjectType() {return "pt/F:eta/F:phi/F:mas
 //    Calo Jets      //
 //*******************//
 
-void ObjectsFormat::FillCaloJetType(CaloJetType& I, const reco::CaloJet* R, bool isMC, bool isMatched, float genbRadius2D, float genbEta) {
+void ObjectsFormat::FillCaloJetType(CaloJetType& I, const reco::CaloJet* R, bool isMC, bool isMatched, float genbRadius2D, float genbEta, int nRecHitsEB, float timeRecHitsEB, float timeRMSRecHitsEB, float energyRecHitsEB) {
     if(!R) return;
     I.pt          = R->pt();
     I.eta         = R->eta();
@@ -2035,6 +2083,11 @@ void ObjectsFormat::FillCaloJetType(CaloJetType& I, const reco::CaloJet* R, bool
     I.isGenMatched     = isMatched;
     I.genbRadius2D     = genbRadius2D;
     I.genbEta          = genbEta;
+    I.nRecHitsEB       = nRecHitsEB;
+    I.timeRecHitsEB    = timeRecHitsEB;
+    I.timeRMSRecHitsEB = nRecHitsEB > 0 ? timeRMSRecHitsEB/sqrt(nRecHitsEB) : -1.;//fixed already
+    I.energyRecHitsEB  = energyRecHitsEB;
+    I.eFracRecHitsEB   = R->energy() > 0 ? energyRecHitsEB / R->energy() : -1.;//fixed already
 }
 
 void ObjectsFormat::ResetCaloJetType(CaloJetType& I) {
@@ -2407,15 +2460,41 @@ std::string ObjectsFormat::ListSimplifiedJetType() {return "pt/F:eta/F:phi/F:mas
 ////*****************************//
 
 
-void ObjectsFormat::FillDT4DSegmentType(DT4DSegmentType& I, const DTRecSegment4D* R, const GlobalPoint* P) {
+//void ObjectsFormat::FillDT4DSegmentType(DT4DSegmentType& I, const DTRecSegment4D* R, const GlobalPoint* P, edm::ESHandle<DTGeometry>& dtG) {
+void ObjectsFormat::FillDT4DSegmentType(DT4DSegmentType& I, const DTRecSegment4D* R, edm::ESHandle<DTGeometry>& dtG) {
     if(!R) return;
-    I.eta         = P->eta();
-    I.phi         = P->phi();
-    I.sector      = R->chamberId().sector();
-    I.station      = R->chamberId().station();
-    I.wheel      = R->chamberId().wheel();
 
+    const DTRecSegment4D *dtSegment_copy = R;
+    const DTChamberRecSegment2D* phiSeg = dtSegment_copy->phiSegment();
+    // LocalError  segmentLocalPositionError  = iDT->localPositionError();
+    // LocalError  segmentLocalDirectionError = iDT->localDirectionError();
+    DetId         geoid = R->geographicalId();
+    DTChamberId   dtdetid = DTChamberId(geoid);
+    const DTChamber * dtchamber = dtG->chamber(dtdetid);
 
+    LocalPoint    segmentLocalPosition       = R->localPosition();
+    LocalVector   segmentLocalDirection      = R->localDirection();
+    GlobalPoint   globalPosition  = dtchamber->toGlobal(segmentLocalPosition);
+    GlobalVector  globalDirection = dtchamber->toGlobal(segmentLocalDirection);
+
+    I.eta         = dtchamber ? globalPosition.eta() : -9.;
+    I.phi         = dtchamber ? globalPosition.phi() : -9.;
+    I.x           = dtchamber ? globalPosition.x() : -9999.;
+    I.y           = dtchamber ? globalPosition.y() : -9999.;
+    I.z           = dtchamber ? globalPosition.z() : -9999.;
+    I.dir_x       = dtchamber ? globalDirection.x() : -9999.;
+    I.dir_y       = dtchamber ? globalDirection.y() : -9999.;
+    I.dir_z       = dtchamber ? globalDirection.z() : -9999.;
+    //I.eta_old     = P->eta();
+    //I.phi_old     = P->phi();
+    //I.x_old       = P->x();
+    //I.y_old       = P->y();
+    //I.z_old       = P->z();
+    I.time        = dtchamber and phiSeg and phiSeg->ist0Valid() ? phiSeg->t0() : -9999.;
+    I.wheel       = dtchamber ? dtdetid.wheel() : -9;
+    I.sector      = dtchamber ? dtdetid.sector() : -9;
+    I.station     = dtchamber ? dtdetid.station() : -9;
+    I.nRecHits    = R->recHits().size();
 }
 
 void ObjectsFormat::ResetDT4DSegmentType(DT4DSegmentType& I) {
@@ -2430,16 +2509,35 @@ void ObjectsFormat::ResetDT4DSegmentType(DT4DSegmentType& I) {
 std::string ObjectsFormat::ListDT4DSegmentType() {return "eta/F:phi/F:sector/I:station/I:wheel/I";}
 
 
-
-void ObjectsFormat::FillCSCSegmentType(CSCSegmentType& I, const CSCSegment* R, const GlobalPoint* P) {
+//void ObjectsFormat::FillCSCSegmentType(CSCSegmentType& I, const CSCSegment* R, const GlobalPoint* P) {
+void ObjectsFormat::FillCSCSegmentType(CSCSegmentType& I, const CSCSegment* R, edm::ESHandle<CSCGeometry>& cscG) {
     if(!R) return;
-    I.eta         = P->eta();
-    I.phi         = P->phi();
+
+    CSCDetId id  = (CSCDetId)(R)->cscDetId();
+    int endcap = CSCDetId::endcap(id) == 1 ? 1 : -1;
+    LocalPoint segPos = (R)->localPosition();
+    LocalVector segDirection = (R)->localDirection();
+    const CSCChamber* cscchamber = cscG->chamber(id);
+
+    GlobalPoint globalPosition = cscchamber->toGlobal(segPos);
+    GlobalVector globalDirection = cscchamber->toGlobal(segDirection);
+
+    I.eta         = cscchamber ? globalPosition.eta() : -9.;//P->eta();
+    I.phi         = cscchamber ? globalPosition.phi() : -9.;//P->phi();
+    I.x           = cscchamber ? globalPosition.x() : -9999.;
+    I.y           = cscchamber ? globalPosition.y() : -9999.;
+    I.z           = cscchamber ? globalPosition.z() : -9999.;
+    I.dir_x       = cscchamber ? globalDirection.x() : -9999.;
+    I.dir_y       = cscchamber ? globalDirection.y() : -9999.;
+    I.dir_z       = cscchamber ? globalDirection.z() : -9999.;
     I.time        = R->time();
+    I.chi2        = R->chi2();
     I.layer       = R->cscDetId().layer();
     I.ring        = R->cscDetId().ring();
-    I.station     = R->cscDetId().station();
-    I.endcap       = R->cscDetId().endcap();
+    I.station     = endcap*CSCDetId::station(id);//R->cscDetId().station();
+    I.chamber     = endcap*(CSCDetId::station(id)*10 + CSCDetId::ring(id));//R->cscDetId().station();
+    I.endcap      = R->cscDetId().endcap();
+    I.nRecHits    = R->nRecHits();
 
 }
 

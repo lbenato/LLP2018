@@ -25,6 +25,8 @@
 
 // CSC Segment Collection
 #include "DataFormats/CSCRecHit/interface/CSCSegmentCollection.h"
+#include "Geometry/CSCGeometry/interface/CSCGeometry.h"
+#include "DataFormats/MuonDetId/interface/CSCDetId.h"
 
 #include "FWCore/Framework/interface/EDConsumerBase.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
@@ -52,7 +54,7 @@ class CSCAnalyzer {
         ~CSCAnalyzer();
         virtual std::vector<CSCSegment> FillCSCSegmentVector(const edm::Event&);
         virtual std::map<std::string,float> GenMatcherCSCSegments(std::vector<GlobalPoint>&,std::vector<reco::GenParticle>&, std::string);
-        virtual std::vector<GlobalPoint> FillGlobalPointCSCSegmentVector(const edm::Event&,const edm::EventSetup&,std::vector<CSCSegment>&);
+        virtual std::vector<GlobalPoint> FillGlobalPointCSCSegmentVector(const edm::Event&,const edm::EventSetup&,std::vector<CSCSegment>&, edm::ESHandle<GlobalTrackingGeometry>&);
         
     private:
         edm::EDGetTokenT<CSCSegmentCollection> CSCSegmentToken;

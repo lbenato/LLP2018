@@ -43,12 +43,15 @@ std::string RecoObjectsFormat::ListRecoMEtType() {return "pt/F:eta/F:phi/F";}
 //  RecoElectrons    //                                                         
 //*******************//                                                         
 
-void RecoObjectsFormat::FillRecoElectronType(RecoLeptonType& I, const reco::GsfElectron* R, bool isMC) {
+void RecoObjectsFormat::FillRecoElectronType(RecoLeptonType& I, const reco::GsfElectron* R, bool isVeto, bool isLoose, bool isTight, bool isMC) {
   if(!R) return;
   I.pt          = R->pt();
   I.eta         = R->eta();
   I.phi         = R->phi();
   I.mass        = R->mass();
+  I.isVeto      = isVeto;
+  I.isLoose      = isLoose;
+  I.isTight      = isTight;
 }
 
 void RecoObjectsFormat::ResetRecoElectronType(RecoLeptonType& I) {
