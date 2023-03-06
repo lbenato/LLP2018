@@ -87,6 +87,7 @@
 #include "VertexAnalyzer.h"
 #include "PFCandidateAnalyzer.h"
 #include "ROIAnalyzer.h"
+#include "V0Analyzer.h"
 #include "Objects.h"
 #include "ObjectsFormat.h"
 #include "Utilities.h"
@@ -132,6 +133,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::ParameterSet VertexPSet;
     edm::ParameterSet PFCandidatePSet;
     edm::ParameterSet ROIPSet;
+    edm::ParameterSet V0PSet;
 
     edm::EDGetTokenT<GenLumiInfoHeader> genLumiHeaderToken_;
     TString     model_;
@@ -155,6 +157,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     VertexAnalyzer* theVertexAnalyzer;
     PFCandidateAnalyzer* thePFCandidateAnalyzer;
     ROIAnalyzer* theROIAnalyzer;
+    V0Analyzer* theV0Analyzer;
 
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP0p01Token;
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP0p1Token;
@@ -183,6 +186,8 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     bool WriteBtagInfos;
     bool WriteROITaggerScore;
     bool WriteROITaggerInputs;
+    bool WriteKShorts;
+    bool WriteLambdas;
     bool CalculateNsubjettiness;
     bool PerformPreFiringStudies;
     bool PerformVBF;
@@ -231,7 +236,9 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     std::vector<int> ROIAnnulusTrackMultiplicity;
     std::vector<float> ROIDistanceToLeadingLLP;
     std::vector<float> ROIDistanceToSubleadingLLP;
-
+    // V0 candidates
+    std::vector<VertexType> KShorts;
+    std::vector<VertexType> Lambdas;
 
 
     // --------------------------------
@@ -282,6 +289,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     long int number_of_PV;
     long int number_of_SV;
     long int nPFCandidates, nPFCandidatesTrack, nPFCandidatesHighPurityTrack, nPFCandidatesFullTrackInfo, nPFCandidatesFullTrackInfo_pt, nPFCandidatesFullTrackInfo_hasTrackDetails;
+    long int nKShorts, nLambdas;
     float EventWeight;
     float EventWeight_leptonSF;
     float EventWeight_leptonSFUp;

@@ -47,6 +47,7 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     VertexPSet(iConfig.getParameter<edm::ParameterSet>("vertexSet")),
     PFCandidatePSet(iConfig.getParameter<edm::ParameterSet>("pfCandidateSet")),
     ROIPSet(iConfig.getParameter<edm::ParameterSet>("roiSet")),
+    V0PSet(iConfig.getParameter<edm::ParameterSet>("v0Set")), 
     //JetTagToken(CColl.consumes<reco::JetTagCollection>(iConfig.getParameter<edm::InputTag>("jetTagToken"))),//here????
     idLLP(iConfig.getParameter<int>("idLLP")),
     idHiggs(iConfig.getParameter<int>("idHiggs")),
@@ -83,6 +84,8 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     WriteBtagInfos(iConfig.getParameter<bool>("writeBtagInfos")),
     WriteROITaggerScore(iConfig.getParameter<bool>("writeROITaggerScore")),
     WriteROITaggerInputs(iConfig.getParameter<bool>("writeROITaggerInputs")),
+    WriteKShorts(iConfig.getParameter<bool>("writeKShorts")),
+    WriteLambdas(iConfig.getParameter<bool>("writeLambdas")), 
     CalculateNsubjettiness(iConfig.getParameter<bool>("calculateNsubjettiness")),
     PerformPreFiringStudies(iConfig.getParameter<bool>("performPreFiringStudies")),
     PerformVBF(iConfig.getParameter<bool>("performVBF")),
@@ -125,6 +128,7 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     theVertexAnalyzer      = new VertexAnalyzer(VertexPSet, consumesCollector());
     thePFCandidateAnalyzer = new PFCandidateAnalyzer(PFCandidatePSet, consumesCollector());
     theROIAnalyzer         = new ROIAnalyzer(ROIPSet, consumesCollector());
+    theV0Analyzer          = new V0Analyzer(V0PSet, consumesCollector());
 
     std::vector<std::string> TriggerList(TriggerPSet.getParameter<std::vector<std::string> >("paths"));
     for(unsigned int i = 0; i < TriggerList.size(); i++) TriggerMap[ TriggerList[i] ] = false;
@@ -208,6 +212,7 @@ Ntuplizer::~Ntuplizer()
     delete theVertexAnalyzer;
     delete thePFCandidateAnalyzer;
     delete theROIAnalyzer;
+    delete theV0Analyzer;
 
 }
 
@@ -2198,6 +2203,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     number_of_SV = SVertexVect.size();
     nSV = number_of_SV;
 
+
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     // PFCandidates
@@ -2837,6 +2843,29 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
     }
 
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // V0 candidates
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+
+    if(isVerbose) std::cout << "V0 candidates" << std::endl;
+    KShorts.clear();
+    Lambdas.clear();
+
+    std::vector<reco::VertexCompositePtrCandidate> KShortVect;
+    std::vector<reco::VertexCompositePtrCandidate> LambdaVect;
+
+    KShortVect = theV0Analyzer->FillKShortVector(iEvent);
+    LambdaVect = theV0Analyzer->FillLambdaVector(iEvent);
+
+    for(unsigned int i = 0; i < KShortVect.size(); i++) KShorts.push_back( VertexType() );
+    for(unsigned int i = 0; i < LambdaVect.size(); i++) Lambdas.push_back( VertexType() );
+
+    nKShorts = KShorts.size();
+    nLambdas = Lambdas.size();
+
+
     // ---------- Fill objects ----------
     auto end = std::chrono::system_clock::now();//time!
     std::chrono::duration<double> elapsed_seconds = end-start;
@@ -2973,6 +3002,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         ObjectsFormat::FillROIType(ROIs[i], &RegionsOfInterest[i], ROIScores[i], ROIDeltaR[i], ROIDeltaPhi[i], ROITrackClusterMultiplicity[i], ROIAnnulusTrackMultiplicity[i], ROIDistanceToLeadingLLP[i], ROIDistanceToSubleadingLLP[i]);
       }
     }
+
+    if (WriteKShorts) for(unsigned int i = 0; i < KShortVect.size(); i++) ObjectsFormat::FillSecVertexType(KShorts[i], &KShortVect[i]);
+    if (WriteLambdas) for(unsigned int i = 0; i < LambdaVect.size(); i++) ObjectsFormat::FillSecVertexType(Lambdas[i], &LambdaVect[i]);
 
     if(isVerbose) std::cout << "TREE FILL!" << std::endl;
     tree -> Fill();
@@ -3143,6 +3175,8 @@ Ntuplizer::beginJob()
       tree -> Branch("nLooseNotTightElectrons", &nLooseElectrons, "nLooseElectrons/I");
       tree -> Branch("nLooseNotTightMuons", &nLooseMuons, "nLooseMuons/I");
       tree -> Branch("nTriggerMuons", &nTriggerMuons, "nTriggerMuons/I");
+      tree -> Branch("nKShorts", &nKShorts, "nKShorts/I");
+      tree -> Branch("nLambdas", &nLambdas, "nLambdas/I");
     }
     if (!isShort){
       tree -> Branch("nPFCandidates" , &nPFCandidates, "nPFCandidates/I");
@@ -3294,6 +3328,8 @@ Ntuplizer::beginJob()
     if (WriteFatJets) tree -> Branch("FatJets", &CHSFatJets);
     if (WriteVertices) tree -> Branch("PrimaryVertices", &PrimVertices);
     if (WriteVertices) tree -> Branch("SecondaryVertices", &SecVertices);
+    if (WriteKShorts) tree -> Branch("KShorts", &KShorts);
+    if (WriteLambdas) tree -> Branch("Lambdas", &Lambdas);
     if (WriteAK4JetPFCandidates || WriteAK8JetPFCandidates || WriteAllJetPFCandidates || WriteAllPFCandidates) tree -> Branch("PFCandidates", &PFCandidates);
     if (WriteLostTracks) tree -> Branch("LostTracks", &LostTracks);
     if (WriteBtagInfos) tree->Branch("BTagVertices", &BTagVertices);

@@ -2063,6 +2063,10 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         trackClusters      = cms.InputTag("ntupleClusterTrackAssociator",   "",             "ntuple"),
         regionsOfInterest  = cms.InputTag("ntupleRegionOfInterestProducer", "",             "ntuple"),
     ),
+    v0Set = cms.PSet(
+        kShorts = cms.InputTag('slimmedKshortVertices'),
+        lambdas =  cms.InputTag('slimmedLambdaVertices'),
+    ),
     #Define gen decay:
     idLLP = cms.int32(idLLP),
     idHiggs = cms.int32(idHiggs),
@@ -2108,6 +2112,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     writeBtagInfos = cms.bool(False),
     writeROITaggerScore = cms.bool(False), #For tracking lifetimes see below
     writeROITaggerInputs = cms.bool(False), #For tracking lifetimes see below
+    writeKShorts = cms.bool(True),
+    writeLambdas = cms.bool(True),
     calculateNsubjettiness = cms.bool(False),
     performPreFiringStudies = cms.bool(True if ('unprefirable' in process.source.fileNames[0]) else False),
     performVBF = cms.bool(isVBF),
