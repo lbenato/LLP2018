@@ -23,6 +23,7 @@ namespace {
     ecalRecHitType dummy14;
     hcalRecHitType dummy15;
     ROIType dummy16;
+    V0Type dummy17;
 
     //Vector of structures
     std::vector<JetType> dummyVector0;
@@ -42,6 +43,7 @@ namespace {
     std::vector<ecalRecHitType> dummyVector14;
     std::vector<hcalRecHitType> dummyVector15;
     std::vector<ROIType> dummyVector16;
+    std::vector<V0Type> dummyVector17;
 
   };
 }

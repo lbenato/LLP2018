@@ -2850,21 +2850,280 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
 
     if(isVerbose) std::cout << "V0 candidates" << std::endl;
+
+    //------------------------------------------------------------------------------------------
+    // KShorts
+    //------------------------------------------------------------------------------------------
+
     KShorts.clear();
-    Lambdas.clear();
 
     std::vector<reco::VertexCompositePtrCandidate> KShortVect;
-    std::vector<reco::VertexCompositePtrCandidate> LambdaVect;
 
     KShortVect = theV0Analyzer->FillKShortVector(iEvent);
-    LambdaVect = theV0Analyzer->FillLambdaVector(iEvent);
 
-    for(unsigned int i = 0; i < KShortVect.size(); i++) KShorts.push_back( VertexType() );
-    for(unsigned int i = 0; i < LambdaVect.size(); i++) Lambdas.push_back( VertexType() );
+    // KShort properties
+    KShortNMatchedROIs.clear();
+    KShortLeadingMatchedROI.clear();
+    KShortNearestMatchedROI.clear();
+    KShortLeadingMatchedROIScore.clear();
+    KShortNearestMatchedROIScore.clear();
+    // KShortDistanceToNearestMatchedROI.clear();
+    // KShortDistanceToLeadingMatchedROI.clear();
+    KShortNearestMuon.clear();
+    KShortDistanceToNearestMuon.clear();
+    KShortNearestJet.clear();
+    KShortAbsDeltaPhiToNearestJet.clear();
+    KShortAbsDeltaPhiToMET.clear();
+
+    if (WriteKShorts) {
+        for (unsigned int thisKShort = 0; thisKShort < KShortVect.size(); thisKShort++) {
+            math::XYZPoint thisKShortPosition(KShortVect.at(thisKShort).vx(), KShortVect.at(thisKShort).vy(), KShortVect.at(thisKShort).vz());
+
+            // Compute 3D distance (R) to ROIs and add to matched if R < 1cm
+            std::vector<int> thisKShortMatchedROIs;
+            std::vector<float> thisKShortDistanceToMatchedROIs;
+
+            for (unsigned int thisROI = 0; thisROI < RegionsOfInterest.size(); thisROI++) {
+                math::XYZPoint thisROIPosition(RegionsOfInterest.at(thisROI).vx(), RegionsOfInterest.at(thisROI).vy(), RegionsOfInterest.at(thisROI).vz());
+
+                math::XYZVector thisKShortVectorToThisROI = thisROIPosition - thisKShortPosition;
+
+                float thisKShortDistanceToThisROI = thisKShortVectorToThisROI.R();
+
+                if (thisKShortDistanceToThisROI < 1.0) {
+                    thisKShortMatchedROIs.push_back(thisROI);
+                    thisKShortDistanceToMatchedROIs.push_back(thisKShortDistanceToThisROI);
+                }
+            }
+
+            // Matched ROIs: Find the leading (highest score) and the nearest (shortest 3D distance)
+            int thisKShortNMatchedROIs = thisKShortMatchedROIs.size();
+
+            if (thisKShortNMatchedROIs > 1) std::cout << "More than 1 ROI matched to KShort!!!" << std::endl;
+
+            int thisKShortLeadingMatchedROI = -1;
+            int thisKShortNearestMatchedROI = -1;
+            float thisKShortLeadingMatchedROIScore = -1.;
+            // float thisKShortNearestMatchedROIScore = -1.;
+            // float thisKShortDistanceToLeadingMatchedROI = 99;
+            float thisKShortDistanceToNearestMatchedROI = 99.;
+
+            for (int thisMatchedROI = 0; thisMatchedROI < thisKShortNMatchedROIs; thisMatchedROI++) {
+                if (ROIScores[thisKShortMatchedROIs[thisMatchedROI]] > thisKShortLeadingMatchedROIScore) {
+                    thisKShortLeadingMatchedROI = thisKShortMatchedROIs[thisMatchedROI];
+                    thisKShortLeadingMatchedROIScore = ROIScores[thisKShortMatchedROIs[thisMatchedROI]];
+                }
+
+                if (thisKShortDistanceToMatchedROIs[thisMatchedROI] < thisKShortDistanceToNearestMatchedROI) {
+                    thisKShortNearestMatchedROI = thisKShortMatchedROIs[thisMatchedROI];
+                    thisKShortDistanceToNearestMatchedROI = thisKShortDistanceToMatchedROIs[thisMatchedROI];
+                }
+            }
+
+            KShortNMatchedROIs.push_back(thisKShortNMatchedROIs);
+
+            KShortLeadingMatchedROI.push_back(thisKShortLeadingMatchedROI);
+            KShortNearestMatchedROI.push_back(thisKShortNearestMatchedROI);
+
+            KShortLeadingMatchedROIScore.push_back(thisKShortLeadingMatchedROIScore);
+            KShortNearestMatchedROIScore.push_back(ROIScores[thisKShortNearestMatchedROI]);
+
+            // Distance to nearest muon
+            int thisKShortNearestMuon = -1;
+            float thisKShortDistanceToNearestMuon = 99.;
+
+            for(unsigned int thisTriggerMuon = 0; thisTriggerMuon < TriggerMuonVect.size(); thisTriggerMuon++) {
+                // Get best track from muon
+                reco::TrackRef thisMuonTrack = TriggerMuonVect[thisTriggerMuon].muonBestTrack();
+
+                // Consider uniform 3.8T magnetic field
+                const UniformMagneticField * const magneticField = new UniformMagneticField(3.8);
+
+                // Get transient track
+                reco::TransientTrack thisMuonTransientTrack(thisMuonTrack, magneticField);
+
+                // Get muon trajectory's closest approach
+                const auto &thisMuonPOCAToThisKaon = thisMuonTransientTrack.trajectoryStateClosestToPoint(GlobalPoint(thisKShortPosition.x(), thisKShortPosition.y(), thisKShortPosition.z()));
+
+                // Get distance of closest approach
+                math::XYZPoint thisMuonPosition(thisMuonPOCAToThisKaon.position().x(), thisMuonPOCAToThisKaon.position().y(), thisMuonPOCAToThisKaon.position().z());
+
+                math::XYZVector thisKShortVectorToThisMuon = thisMuonPosition - thisKShortPosition;
+
+                float thisKShortDistanceToThisMuon = thisKShortVectorToThisMuon.R();
+
+                if (thisKShortDistanceToThisMuon < thisKShortDistanceToNearestMuon) {
+                    thisKShortNearestMuon = thisTriggerMuon;
+                    thisKShortDistanceToNearestMuon = thisKShortDistanceToThisMuon;
+                }
+
+            }
+
+            KShortNearestMuon.push_back(thisKShortNearestMuon);
+            KShortDistanceToNearestMuon.push_back(thisKShortDistanceToNearestMuon);
+
+            // DeltaPhi to nearest jet
+            int thisKShortNearestJet = -1;
+            float thisKShortAbsDeltaPhiToNearestJet = 99.;
+
+            for(unsigned int thisJet = 0; thisJet < CHSJetsVect.size(); thisJet++) {
+                float thisKShortAbsDeltaPhiToThisJet = fabs(reco::deltaPhi(thisKShortPosition.phi(), CHSJetsVect[thisJet].phi()));
+                if ( thisKShortAbsDeltaPhiToThisJet < thisKShortAbsDeltaPhiToNearestJet) {
+                    thisKShortNearestJet = thisJet;
+                    thisKShortAbsDeltaPhiToNearestJet = thisKShortAbsDeltaPhiToThisJet;
+                }
+            }
+
+            KShortNearestJet.push_back(thisKShortNearestJet);
+            KShortAbsDeltaPhiToNearestJet.push_back(thisKShortAbsDeltaPhiToNearestJet);
+
+            // DeltaPhi to MET
+            float thisKShortAbsDeltaPhiToMET = fabs(reco::deltaPhi(thisKShortPosition.phi(), MET.phi()));
+            KShortAbsDeltaPhiToMET.push_back(thisKShortAbsDeltaPhiToMET);
+        }
+    }
+
+    for(unsigned int i = 0; i < KShortVect.size(); i++) KShorts.push_back( V0Type() );
 
     nKShorts = KShorts.size();
-    nLambdas = Lambdas.size();
 
+
+    //------------------------------------------------------------------------------------------
+    // Lambdas
+    //------------------------------------------------------------------------------------------
+
+    Lambdas.clear();
+
+    std::vector<reco::VertexCompositePtrCandidate> LambdaVect;
+
+    LambdaVect = theV0Analyzer->FillLambdaVector(iEvent);
+
+
+    // Lambda properties
+    LambdaNMatchedROIs.clear();
+    LambdaLeadingMatchedROI.clear();
+    LambdaNearestMatchedROI.clear();
+    LambdaLeadingMatchedROIScore.clear();
+    LambdaNearestMatchedROIScore.clear();
+    // LambdaDistanceToNearestMatchedROI.clear();
+    // LambdaDistanceToLeadingMatchedROI.clear();
+    LambdaNearestMuon.clear();
+    LambdaDistanceToNearestMuon.clear();
+    LambdaNearestJet.clear();
+    LambdaAbsDeltaPhiToNearestJet.clear();
+    LambdaAbsDeltaPhiToMET.clear();
+
+    if (WriteLambdas) {
+        for (unsigned int thisLambda = 0; thisLambda < LambdaVect.size(); thisLambda++) {
+            math::XYZPoint thisLambdaPosition(LambdaVect.at(thisLambda).vx(), LambdaVect.at(thisLambda).vy(), LambdaVect.at(thisLambda).vz());
+
+            // Compute 3D distance (R) to ROIs and add to matched if R < 1cm
+            std::vector<int> thisLambdaMatchedROIs;
+            std::vector<float> thisLambdaDistanceToMatchedROIs;
+
+            for (unsigned int thisROI = 0; thisROI < RegionsOfInterest.size(); thisROI++) {
+                math::XYZPoint thisROIPosition(RegionsOfInterest.at(thisROI).vx(), RegionsOfInterest.at(thisROI).vy(), RegionsOfInterest.at(thisROI).vz());
+
+                math::XYZVector thisLambdaVectorToThisROI = thisROIPosition - thisLambdaPosition;
+
+                float thisLambdaDistanceToThisROI = thisLambdaVectorToThisROI.R();
+
+                if (thisLambdaDistanceToThisROI < 1.0) {
+                    thisLambdaMatchedROIs.push_back(thisROI);
+                    thisLambdaDistanceToMatchedROIs.push_back(thisLambdaDistanceToThisROI);
+                }
+            }
+
+            // Matched ROIs: Find the leading (highest score) and the nearest (shortest 3D distance)
+            int thisLambdaNMatchedROIs = thisLambdaMatchedROIs.size();
+
+            if (thisLambdaNMatchedROIs > 1) std::cout << "More than 1 ROI matched to Lambda!!!" << std::endl;
+
+            int thisLambdaLeadingMatchedROI = -1;
+            int thisLambdaNearestMatchedROI = -1;
+            float thisLambdaLeadingMatchedROIScore = -1.;
+            // float thisLambdaNearestMatchedROIScore = -1.;
+            // float thisLambdaDistanceToLeadingMatchedROI = 99;
+            float thisLambdaDistanceToNearestMatchedROI = 99.;
+
+            for (int thisMatchedROI = 0; thisMatchedROI < thisLambdaNMatchedROIs; thisMatchedROI++) {
+                if (ROIScores[thisLambdaMatchedROIs[thisMatchedROI]] > thisLambdaLeadingMatchedROIScore) {
+                    thisLambdaLeadingMatchedROI = thisLambdaMatchedROIs[thisMatchedROI];
+                    thisLambdaLeadingMatchedROIScore = ROIScores[thisLambdaMatchedROIs[thisMatchedROI]];
+                }
+
+                if (thisLambdaDistanceToMatchedROIs[thisMatchedROI] < thisLambdaDistanceToNearestMatchedROI) {
+                    thisLambdaNearestMatchedROI = thisLambdaMatchedROIs[thisMatchedROI];
+                    thisLambdaDistanceToNearestMatchedROI = thisLambdaDistanceToMatchedROIs[thisMatchedROI];
+                }
+            }
+
+            LambdaNMatchedROIs.push_back(thisLambdaNMatchedROIs);
+
+            LambdaLeadingMatchedROI.push_back(thisLambdaLeadingMatchedROI);
+            LambdaNearestMatchedROI.push_back(thisLambdaNearestMatchedROI);
+
+            LambdaLeadingMatchedROIScore.push_back(thisLambdaLeadingMatchedROIScore);
+            LambdaNearestMatchedROIScore.push_back(ROIScores[thisLambdaNearestMatchedROI]);
+
+            // Distance to nearest muon
+            int thisLambdaNearestMuon = -1;
+            float thisLambdaDistanceToNearestMuon = 99.;
+
+            for(unsigned int thisTriggerMuon = 0; thisTriggerMuon < TriggerMuonVect.size(); thisTriggerMuon++) {
+                // Get best track from muon
+                reco::TrackRef thisMuonTrack = TriggerMuonVect[thisTriggerMuon].muonBestTrack();
+
+                // Consider uniform 3.8T magnetic field
+                const UniformMagneticField * const magneticField = new UniformMagneticField(3.8);
+
+                // Get transient track
+                reco::TransientTrack thisMuonTransientTrack(thisMuonTrack, magneticField);
+
+                // Get muon trajectory's closest approach
+                const auto &thisMuonPOCAToThisKaon = thisMuonTransientTrack.trajectoryStateClosestToPoint(GlobalPoint(thisLambdaPosition.x(), thisLambdaPosition.y(), thisLambdaPosition.z()));
+
+                // Get distance of closest approach
+                math::XYZPoint thisMuonPosition(thisMuonPOCAToThisKaon.position().x(), thisMuonPOCAToThisKaon.position().y(), thisMuonPOCAToThisKaon.position().z());
+
+                math::XYZVector thisLambdaVectorToThisMuon = thisMuonPosition - thisLambdaPosition;
+
+                float thisLambdaDistanceToThisMuon = thisLambdaVectorToThisMuon.R();
+
+                if (thisLambdaDistanceToThisMuon < thisLambdaDistanceToNearestMuon) {
+                    thisLambdaNearestMuon = thisTriggerMuon;
+                    thisLambdaDistanceToNearestMuon = thisLambdaDistanceToThisMuon;
+                }
+
+            }
+
+            LambdaNearestMuon.push_back(thisLambdaNearestMuon);
+            LambdaDistanceToNearestMuon.push_back(thisLambdaDistanceToNearestMuon);
+
+            // DeltaPhi to nearest jet
+            int thisLambdaNearestJet = -1;
+            float thisLambdaAbsDeltaPhiToNearestJet = 99.;
+
+            for(unsigned int thisJet = 0; thisJet < CHSJetsVect.size(); thisJet++) {
+                float thisLambdaAbsDeltaPhiToThisJet = fabs(reco::deltaPhi(thisLambdaPosition.phi(), CHSJetsVect[thisJet].phi()));
+                if ( thisLambdaAbsDeltaPhiToThisJet < thisLambdaAbsDeltaPhiToNearestJet) {
+                    thisLambdaNearestJet = thisJet;
+                    thisLambdaAbsDeltaPhiToNearestJet = thisLambdaAbsDeltaPhiToThisJet;
+                }
+            }
+
+            LambdaNearestJet.push_back(thisLambdaNearestJet);
+            LambdaAbsDeltaPhiToNearestJet.push_back(thisLambdaAbsDeltaPhiToNearestJet);
+
+            // DeltaPhi to MET
+            float thisLambdaAbsDeltaPhiToMET = fabs(reco::deltaPhi(thisLambdaPosition.phi(), MET.phi()));
+            LambdaAbsDeltaPhiToMET.push_back(thisLambdaAbsDeltaPhiToMET);
+        }
+    }
+
+    for(unsigned int i = 0; i < LambdaVect.size(); i++) Lambdas.push_back( V0Type() );
+
+    nLambdas = Lambdas.size();
 
     // ---------- Fill objects ----------
     auto end = std::chrono::system_clock::now();//time!
@@ -3003,8 +3262,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
     }
 
-    if (WriteKShorts) for(unsigned int i = 0; i < KShortVect.size(); i++) ObjectsFormat::FillSecVertexType(KShorts[i], &KShortVect[i]);
-    if (WriteLambdas) for(unsigned int i = 0; i < LambdaVect.size(); i++) ObjectsFormat::FillSecVertexType(Lambdas[i], &LambdaVect[i]);
+    if (WriteKShorts) for(unsigned int i = 0; i < KShortVect.size(); i++) ObjectsFormat::FillV0Type(KShorts[i], &KShortVect[i], KShortNMatchedROIs[i], KShortLeadingMatchedROI[i], KShortNearestMatchedROI[i], KShortLeadingMatchedROIScore[i], KShortNearestMatchedROIScore[i], KShortNearestMuon[i], KShortDistanceToNearestMuon[i], KShortNearestJet[i], KShortAbsDeltaPhiToNearestJet[i], KShortAbsDeltaPhiToMET[i]);
+    if (WriteLambdas) for(unsigned int i = 0; i < LambdaVect.size(); i++) ObjectsFormat::FillV0Type(Lambdas[i], &LambdaVect[i], LambdaNMatchedROIs[i], LambdaLeadingMatchedROI[i], LambdaNearestMatchedROI[i], LambdaLeadingMatchedROIScore[i], LambdaNearestMatchedROIScore[i], LambdaNearestMuon[i], LambdaDistanceToNearestMuon[i], LambdaNearestJet[i], LambdaAbsDeltaPhiToNearestJet[i], LambdaAbsDeltaPhiToMET[i]);
 
     if(isVerbose) std::cout << "TREE FILL!" << std::endl;
     tree -> Fill();

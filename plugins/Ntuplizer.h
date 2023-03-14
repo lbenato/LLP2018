@@ -71,6 +71,11 @@
 #include "fastjet/PseudoJet.hh"
 #include "fastjet/contrib/Njettiness.hh"
 
+// Testing muon matching
+#include "DataFormats/TrackReco/interface/Track.h"
+#include "MagneticField/UniformEngine/interface/UniformMagneticField.h"
+#include "TrackingTools/TransientTrack/interface/TransientTrack.h"
+
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "TTree.h"
@@ -91,6 +96,7 @@
 #include "Objects.h"
 #include "ObjectsFormat.h"
 #include "Utilities.h"
+
 
 //
 // class declaration
@@ -237,9 +243,32 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     std::vector<float> ROIDistanceToLeadingLLP;
     std::vector<float> ROIDistanceToSubleadingLLP;
     // V0 candidates
-    std::vector<VertexType> KShorts;
-    std::vector<VertexType> Lambdas;
-
+    std::vector<V0Type> KShorts;
+    std::vector<int> KShortNMatchedROIs;
+    std::vector<int> KShortLeadingMatchedROI;
+    std::vector<int> KShortNearestMatchedROI;
+    std::vector<float> KShortLeadingMatchedROIScore;
+    std::vector<float> KShortNearestMatchedROIScore;
+    std::vector<float> KShortDistanceToNearestMatchedROI;
+    std::vector<float> KShortDistanceToLeadingMatchedROI;
+    std::vector<int> KShortNearestMuon;
+    std::vector<float> KShortDistanceToNearestMuon;
+    std::vector<int> KShortNearestJet;
+    std::vector<float> KShortAbsDeltaPhiToNearestJet;
+    std::vector<float> KShortAbsDeltaPhiToMET;
+    std::vector<V0Type> Lambdas;
+    std::vector<int> LambdaNMatchedROIs;
+    std::vector<int> LambdaLeadingMatchedROI;
+    std::vector<int> LambdaNearestMatchedROI;
+    std::vector<float> LambdaLeadingMatchedROIScore;
+    std::vector<float> LambdaNearestMatchedROIScore;
+    std::vector<float> LambdaDistanceToNearestMatchedROI;
+    std::vector<float> LambdaDistanceToLeadingMatchedROI;
+    std::vector<int> LambdaNearestMuon;
+    std::vector<float> LambdaDistanceToNearestMuon;
+    std::vector<int> LambdaNearestJet;
+    std::vector<float> LambdaAbsDeltaPhiToNearestJet;
+    std::vector<float> LambdaAbsDeltaPhiToMET;
 
     // --------------------------------
     // TODO: Add the following (below):

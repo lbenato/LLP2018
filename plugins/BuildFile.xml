@@ -41,6 +41,7 @@
 <use name="fastjet-contrib"/>
 <use name="HiggsLongLived/TreeMaker"/>
 <use name="HiggsLongLived/AnalysisCommon"/>
+<use name="MagneticField/UniformEngine"/>
 <!--<use name="lhapdf"/>-->
 
 

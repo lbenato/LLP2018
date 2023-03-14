@@ -2466,3 +2466,28 @@ void ObjectsFormat::FillROIType(ROIType& I, const RegionOfInterest* R, const flo
   I.matchedToSubleadingLLP           = (dSubleadingLLP > 0 && dSubleadingLLP < 0.4) ? true : false;
   I.matchedToLLP                     = ((dLeadingLLP > 0 && dLeadingLLP < 0.4) || (dSubleadingLLP > 0 && dSubleadingLLP < 0.4)) ? true : false;
 }
+
+void ObjectsFormat::FillV0Type(V0Type& I, const reco::VertexCompositePtrCandidate* R, const int nMatchedROIs, const int leadingMatchedROI, const int nearestMatchedROI, const float leadingMatchedROIScore, const float nearestMatchedROIScore, const int nearestMuon, const float distanceToNearestMuon, const int nearestJet, const float absDeltaPhiToNearestJet, const float absDeltaPhiToMET) {
+  if(!R) return;
+  I.chi2        = R->vertexChi2();
+  I.ndof        = R->vertexNdof();
+  I.x           = R->vx();
+  I.y           = R->vy();
+  I.z           = R->vz();
+  I.R           = TMath::Sqrt((R->vx() * R->vx()) + (R->vy() * R->vy()));
+  I.phi         = TMath::ATan2(R->vy(), R->vx());
+  I.px          = R->px();
+  I.py          = R->py();
+  I.pz          = R->pz();
+  I.mass        = R->mass();
+  I.nMatchedROIs                          = nMatchedROIs;
+  I.leadingMatchedROI                     = leadingMatchedROI;  
+  I.nearestMatchedROI                     = nearestMatchedROI;  
+  I.leadingMatchedROILog10BackgroundScore = TMath::Log10(leadingMatchedROIScore);
+  I.nearestMatchedROILog10BackgroundScore = TMath::Log10(nearestMatchedROIScore);
+  I.nearestMuon                           = nearestMuon;
+  I.distanceToNearestMuon                 = distanceToNearestMuon;  
+  I.nearestJet                            = nearestJet;
+  I.absDeltaPhiToNearestJet               = absDeltaPhiToNearestJet;
+  I.absDeltaPhiToMET                      = absDeltaPhiToMET;
+}

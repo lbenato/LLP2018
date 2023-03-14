@@ -1397,4 +1397,29 @@ ROIType(): x(-9999.), y(-9999.), z(-9999.), R(-1.), phi(-99.), backgroundScore(-
     bool matchedToSubleadingLLP;
 };
 
+struct V0Type {
+V0Type(): chi2(-1.), ndof(-1.), x(-100.), y(-100.), z(-100.), R(-100.), phi(-99.), px(-100.), py(-100.), pz(-100.), mass(-1.), nMatchedROIs(-1), leadingMatchedROI(-1), nearestMatchedROI(-1), leadingMatchedROILog10BackgroundScore(-1.), nearestMatchedROILog10BackgroundScore(-1.), nearestMuon(-1), distanceToNearestMuon(-1.), nearestJet(-1), absDeltaPhiToNearestJet(-1.), absDeltaPhiToMET(-1.) {}
+  float chi2;
+  float ndof;
+  float x;
+  float y;
+  float z;
+  float R;
+  float phi;
+  float px;
+  float py;
+  float pz;
+  float mass;
+  int nMatchedROIs;
+  int leadingMatchedROI;  
+  int nearestMatchedROI;  
+  float leadingMatchedROILog10BackgroundScore;
+  float nearestMatchedROILog10BackgroundScore;
+  int nearestMuon;
+  float distanceToNearestMuon;
+  int nearestJet;
+  float absDeltaPhiToNearestJet;
+  float absDeltaPhiToMET;
+};
+
 #endif
