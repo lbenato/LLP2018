@@ -2093,6 +2093,8 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
     writeGenLLPs = cms.bool(True),
     writeGenBquarks = cms.bool(True), #Acceptance cuts a few lines above!
     writeGenMuons = cms.bool(True if isTracking else False),
+    writeGenKShorts = cms.bool(True if isTracking else False),
+    writeGenLambdas = cms.bool(True if isTracking else False),
     writeNMatchedJets = cms.int32(0),#(4), #Warning: List/Reset JetType functions missing several attributes. Please check before using!
     writeNLeptons = cms.int32(0),#Framework already validated
     ##

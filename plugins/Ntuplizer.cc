@@ -68,6 +68,8 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     WriteGenLLPs(iConfig.getParameter<bool>("writeGenLLPs")),
     WriteGenBquarks(iConfig.getParameter<bool>("writeGenBquarks")),
     WriteGenMuons(iConfig.getParameter<bool>("writeGenMuons")),
+    WriteGenKShorts(iConfig.getParameter<bool>("writeGenKShorts")),
+    WriteGenLambdas(iConfig.getParameter<bool>("writeGenLambdas")),
     WriteNMatchedJets(iConfig.getParameter<int>("writeNMatchedJets")),
     WriteNLeptons(iConfig.getParameter<int>("writeNLeptons")),
     WriteOnlyTriggerEvents(iConfig.getParameter<bool>("writeOnlyTriggerEvents")),
@@ -417,6 +419,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     GenLLPs.clear();
     GenBquarks.clear();
     GenMuons.clear();
+    GenKShorts.clear();
+    GenKShortsFromLLP.clear();
+    GenLambdas.clear();
+    GenLambdasFromLLP.clear();
 
     std::vector<reco::GenParticle> GenVBFVect = theGenAnalyzer->FillVBFGenVector(iEvent);
     std::vector<reco::GenParticle> GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idHiggs,statusHiggs);
@@ -433,16 +439,58 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
 
     std::vector<reco::GenParticle> GenMuonsVect = theGenAnalyzer->FillGenVectorByIdAndAncestor(iEvent,13,idLLP);
+    std::vector<reco::GenParticle> GenKShortsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,310,1);
+    std::vector<reco::GenParticle> GenLambdasVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,3122,1);
 
     nGenLL = GenLongLivedVect.size();
     nGenBquarks = GenBquarksVect.size();
     nGenMuons = GenMuonsVect.size();
+    nGenKShorts = GenKShortsVect.size();
+    nGenLambdas = GenLambdasVect.size();
+
+    // V0's from LLP decays
+    if (isSignal) {
+        std::vector<reco::GenParticle> GenKShortsFromLLPVect = theGenAnalyzer->FillGenVectorByIdAndAncestor(iEvent,310,idLLP);
+        nGenKShortsFromLLP = GenKShortsFromLLPVect.size();
+
+        for (unsigned int i = 0; i < nGenKShorts; i++) {
+            bool thisKShortFromLLP = false;
+
+            for (unsigned int j = 0; j < nGenKShortsFromLLP; j++) {
+                if (GenKShortsVect[i].pt() == GenKShortsFromLLPVect[j].pt()) {
+                    thisKShortFromLLP = true;
+                    break;
+                }
+            } 
+
+            GenKShortsFromLLP.push_back(thisKShortFromLLP);
+        }
+
+        std::vector<reco::GenParticle> GenLambdasFromLLPVect = theGenAnalyzer->FillGenVectorByIdAndAncestor(iEvent,3122,idLLP);
+        nGenLambdasFromLLP = GenLambdasFromLLPVect.size();
+
+        for (unsigned int i = 0; i < nGenLambdas; i++) {
+            bool thisLambdaFromLLP = false;
+
+            for (unsigned int j = 0; j < nGenLambdasFromLLP; j++) {
+                if (GenLambdasVect[i].pt() == GenLambdasFromLLPVect[j].pt()) {
+                    thisLambdaFromLLP = true;
+                    break;
+                }
+            } 
+
+            GenLambdasFromLLP.push_back(thisLambdaFromLLP);
+        }        
+
+    }
 
     for(unsigned int i = 0; i < GenVBFVect.size(); i++) GenVBFquarks.push_back( GenPType() );
     for(unsigned int i = 0; i < GenHiggsVect.size(); i++) GenHiggs.push_back( GenPType() );
     for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) GenLLPs.push_back( GenPType() );
     for(unsigned int i = 0; i < GenBquarksVect.size(); i++) GenBquarks.push_back( GenPType() );
     for(unsigned int i = 0; i < GenMuonsVect.size(); i++) GenMuons.push_back( GenPType() );
+    for(unsigned int i = 0; i < GenKShortsVect.size(); i++) GenKShorts.push_back( GenPType() );
+    for(unsigned int i = 0; i < GenLambdasVect.size(); i++) GenLambdas.push_back( GenPType() );
 
     if(nGenBquarks>0) gen_b_radius = GenBquarksVect.at(0).mother()? sqrt(pow(GenBquarksVect.at(0).vx() - GenBquarksVect.at(0).mother()->vx(),2) + pow(GenBquarksVect.at(0).vy() - GenBquarksVect.at(0).mother()->vy(),2) + pow(GenBquarksVect.at(0).vz() - GenBquarksVect.at(0).mother()->vz(),2)) : -1.;
     if(nGenLL>0) m_pi = GenLongLivedVect.at(0).mass();
@@ -2899,7 +2947,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             // Matched ROIs: Find the leading (highest score) and the nearest (shortest 3D distance)
             int thisKShortNMatchedROIs = thisKShortMatchedROIs.size();
 
-            if (thisKShortNMatchedROIs > 1) std::cout << "More than 1 ROI matched to KShort!!!" << std::endl;
+            if (thisKShortNMatchedROIs > 1) edm::LogWarning("KShort-ROI Matching") << "More than 1 ROI matched to KShort!";
 
             int thisKShortLeadingMatchedROI = -1;
             int thisKShortNearestMatchedROI = -1;
@@ -3037,7 +3085,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             // Matched ROIs: Find the leading (highest score) and the nearest (shortest 3D distance)
             int thisLambdaNMatchedROIs = thisLambdaMatchedROIs.size();
 
-            if (thisLambdaNMatchedROIs > 1) std::cout << "More than 1 ROI matched to Lambda!!!" << std::endl;
+            if (thisLambdaNMatchedROIs > 1) edm::LogWarning("Lambda-ROI Matching") << "More than 1 ROI matched to Lambda!";
 
             int thisLambdaLeadingMatchedROI = -1;
             int thisLambdaNearestMatchedROI = -1;
@@ -3171,6 +3219,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (WriteGenLLPs) for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillGenPType(GenLLPs[i], &GenLongLivedVect[i]);
     if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillGenPType(GenBquarks[i], &GenBquarksVect[i]);
     if (WriteGenMuons) for(unsigned int i = 0; i < GenMuonsVect.size(); i++) ObjectsFormat::FillGenPType(GenMuons[i], &GenMuonsVect[i]);
+    if (WriteGenKShorts) for(unsigned int i = 0; i < GenKShortsVect.size(); i++) ObjectsFormat::FillGenPType(GenKShorts[i], &GenKShortsVect[i]);
+    if (WriteGenLambdas) for(unsigned int i = 0; i < GenLambdasVect.size(); i++) ObjectsFormat::FillGenPType(GenLambdas[i], &GenLambdasVect[i]);
     if (isShort && isControl){
       for(unsigned int i = 0; i < Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
       for(unsigned int i = 0; i < Electrons.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
@@ -3404,6 +3454,10 @@ Ntuplizer::beginJob()
     tree -> Branch("nGenLL" , &nGenLL , "nGenLL/L");
     tree -> Branch("nGenBquarks" , &nGenBquarks , "nGenBquarks/L");
     tree -> Branch("nGenMuons" , &nGenMuons , "nGenMuons/L");
+    tree -> Branch("nGenKShorts" , &nGenKShorts , "nGenKShorts/L");
+    tree -> Branch("nGenKShortsFromLLP" , &nGenKShortsFromLLP , "nGenKShortsFromLLP/L");
+    tree -> Branch("nGenLambdas" , &nGenLambdas , "nGenLambdas/L");
+    tree -> Branch("nGenLambdasFromLLP" , &nGenLambdasFromLLP , "nGenLambdasFromLLP/L");
     tree -> Branch("nMatchedCHSJets" , &nMatchedCHSJets , "nMatchedCHSJets/L");
     tree -> Branch("nMatchedFatJets" , &nMatchedFatJets , "nMatchedFatJets/L");
     tree -> Branch("number_of_b_matched_to_CHSJets", &number_of_b_matched_to_CHSJets, "number_of_b_matched_to_CHSJets/L");
@@ -3547,6 +3601,10 @@ Ntuplizer::beginJob()
     tree -> Branch("GenLLPs", &GenLLPs);
     tree -> Branch("GenBquarks", &GenBquarks);
     if (isTracking && WriteGenMuons) tree -> Branch("GenMuons", &GenMuons);
+    if (isTracking && WriteGenKShorts) tree -> Branch("GenKShorts", &GenKShorts);
+    if (isTracking && WriteGenKShorts) tree -> Branch("GenKShortsFromLLP", &GenKShortsFromLLP);
+    if (isTracking && WriteGenLambdas) tree -> Branch("GenLambdas", &GenLambdas);
+    if (isTracking && WriteGenLambdas) tree -> Branch("GenLambdasFromLLP", &GenLambdasFromLLP);
     ////for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Lepton"+std::to_string(i+1)).c_str(), &(Leptons[i].pt), ObjectsFormat::ListLeptonType().c_str());
     //for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Muon"+std::to_string(i+1)).c_str(), &(Muons[i].pt), ObjectsFormat::ListLeptonType().c_str());
     //for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Electron"+std::to_string(i+1)).c_str(), &(Electrons[i].pt), ObjectsFormat::ListLeptonType().c_str());

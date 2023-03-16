@@ -179,7 +179,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //int WriteNJets, WriteNFatJets;//unused, we have vectors now
     int WriteNFatJets;
     //int WriteNGenBquarks, WriteNGenLongLiveds;//unused, we have vectors now
-    bool WriteGenVBFquarks, WriteGenHiggs, WriteGenLLPs, WriteGenBquarks, WriteGenMuons;
+    bool WriteGenVBFquarks, WriteGenHiggs, WriteGenLLPs, WriteGenBquarks, WriteGenMuons, WriteGenKShorts, WriteGenLambdas;
     int  WriteNMatchedJets;
     int  WriteNLeptons;
     bool WriteOnlyTriggerEvents, WriteOnlyL1FilterEvents, WriteOnlyisVBFEvents;
@@ -214,6 +214,10 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     std::vector<GenPType> GenLLPs;
     std::vector<GenPType> GenBquarks;
     std::vector<GenPType> GenMuons;
+    std::vector<GenPType> GenKShorts;
+    std::vector<bool> GenKShortsFromLLP;
+    std::vector<GenPType> GenLambdas;
+    std::vector<bool> GenLambdasFromLLP;
     std::vector<VertexType> PrimVertices;
     std::vector<VertexType> SecVertices;
     std::vector<VertexType> SecVerticesVert;
@@ -305,7 +309,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     bool AtLeastOneTrigger, AtLeastOneL1Filter;
     bool isIsoMu24_OR_IsoTkMu24, isMu50_OR_TkMu50;
     long int nLooseCHSJets, nTightCHSJets, nCHSJets, nAllBarrelJets, nAllJets, nVBFGenMatchedJets;
-    long int nLooseCHSFatJets, nTightCHSFatJets, nCHSFatJets, nGenLL, nGenBquarks, nGenMuons;
+    long int nLooseCHSFatJets, nTightCHSFatJets, nCHSFatJets, nGenLL, nGenBquarks, nGenMuons, nGenKShorts, nGenKShortsFromLLP, nGenLambdas, nGenLambdasFromLLP;
     long int nMatchedCHSJets, nMatchedFatJets;
   //long int nCaloJets, nMatchedCaloJets, nMatchedCaloJetsWithGenJets;
     long int number_of_b_matched_to_CHSJets;
