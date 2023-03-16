@@ -755,7 +755,10 @@ if isData:
     elif is2017:
         jsonName = "Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON"
     elif is2018:
-        jsonName = "Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON"
+        if isTracking:
+            jsonName = "Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON"
+        else:
+            jsonName = "Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON"
     process.source.lumisToProcess = LumiList.LumiList(filename = 'data/JSON/'+jsonName+'.txt').getVLuminosityBlockRange()
     print "JSON file loaded: ", jsonName
 

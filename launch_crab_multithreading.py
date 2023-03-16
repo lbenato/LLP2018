@@ -1110,14 +1110,17 @@ if __name__ == '__main__':
             btagSFstring = 'DeepJet_102XSF_V2_Run2018'
         print "JER ->", JERstring
 
-        # JSON filter
+        # JSON filter (Note: Parameter not used in miniAOD ntuplizer. Update directly there!)
         jsonName = ""
         if is2016:
             jsonName = "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON"
         elif is2017:
             jsonName = "Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON"
         elif is2018:
-            jsonName = "Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON"
+            if isTracking:
+                jsonName = "Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON"
+            else:
+                jsonName = "Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON"
 
         if isCentralProd and (is2016 or is2017 or is2018):
             jsonName = selected_lumiMasks[j]
