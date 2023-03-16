@@ -248,6 +248,8 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     std::vector<float> ROIDistanceToSubleadingLLP;
     // V0 candidates
     std::vector<V0Type> KShorts;
+    std::vector<int> KShortNearestGenKShort;
+    std::vector<float> KShortDeltaRToNearestGenKShort;
     std::vector<int> KShortNMatchedROIs;
     std::vector<int> KShortLeadingMatchedROI;
     std::vector<int> KShortNearestMatchedROI;
@@ -261,6 +263,8 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     std::vector<float> KShortAbsDeltaPhiToNearestJet;
     std::vector<float> KShortAbsDeltaPhiToMET;
     std::vector<V0Type> Lambdas;
+    std::vector<int> LambdaNearestGenLambda;
+    std::vector<float> LambdaDeltaRToNearestGenLambda;
     std::vector<int> LambdaNMatchedROIs;
     std::vector<int> LambdaLeadingMatchedROI;
     std::vector<int> LambdaNearestMatchedROI;

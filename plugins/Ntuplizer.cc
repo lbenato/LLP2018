@@ -2910,6 +2910,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     KShortVect = theV0Analyzer->FillKShortVector(iEvent);
 
     // KShort properties
+    KShortNearestGenKShort.clear();
+    KShortDeltaRToNearestGenKShort.clear();
     KShortNMatchedROIs.clear();
     KShortLeadingMatchedROI.clear();
     KShortNearestMatchedROI.clear();
@@ -2926,6 +2928,22 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (WriteKShorts) {
         for (unsigned int thisKShort = 0; thisKShort < KShortVect.size(); thisKShort++) {
             math::XYZPoint thisKShortPosition(KShortVect.at(thisKShort).vx(), KShortVect.at(thisKShort).vy(), KShortVect.at(thisKShort).vz());
+
+            // Gen. matching: Find nearest gen. KShort in deltaR
+            int thisKShortNearestGenKShort = -1;
+            float thisKShortDeltaRToNearestGenKShort = 99.;
+
+            for (int thisGenKShort = 0; thisGenKShort < nGenKShorts; thisGenKShort++) {
+                float thisKShortDeltaRToThisGenKShort = reco::deltaR(KShortVect.at(thisKShort),GenKShortsVect.at(thisGenKShort));
+
+                if (thisKShortDeltaRToThisGenKShort < thisKShortDeltaRToNearestGenKShort) {
+                    thisKShortDeltaRToNearestGenKShort = thisKShortDeltaRToThisGenKShort;
+                    thisKShortNearestGenKShort = thisGenKShort;
+                }
+            }
+
+            KShortNearestGenKShort.push_back(thisKShortNearestGenKShort);
+            KShortDeltaRToNearestGenKShort.push_back(thisKShortDeltaRToNearestGenKShort);
 
             // Compute 3D distance (R) to ROIs and add to matched if R < 1cm
             std::vector<int> thisKShortMatchedROIs;
@@ -3046,8 +3064,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     LambdaVect = theV0Analyzer->FillLambdaVector(iEvent);
 
-
     // Lambda properties
+    LambdaNearestGenLambda.clear();
+    LambdaDeltaRToNearestGenLambda.clear();
     LambdaNMatchedROIs.clear();
     LambdaLeadingMatchedROI.clear();
     LambdaNearestMatchedROI.clear();
@@ -3064,6 +3083,22 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (WriteLambdas) {
         for (unsigned int thisLambda = 0; thisLambda < LambdaVect.size(); thisLambda++) {
             math::XYZPoint thisLambdaPosition(LambdaVect.at(thisLambda).vx(), LambdaVect.at(thisLambda).vy(), LambdaVect.at(thisLambda).vz());
+
+            // Gen. matching: Find nearest gen. Lambda in deltaR
+            int thisLambdaNearestGenLambda = -1;
+            float thisLambdaDeltaRToNearestGenLambda = 99.;
+
+            for (int thisGenLambda = 0; thisGenLambda < nGenLambdas; thisGenLambda++) {
+                float thisLambdaDeltaRToThisGenLambda = reco::deltaR(LambdaVect.at(thisLambda),GenLambdasVect.at(thisGenLambda));
+
+                if (thisLambdaDeltaRToThisGenLambda < thisLambdaDeltaRToNearestGenLambda) {
+                    thisLambdaDeltaRToNearestGenLambda = thisLambdaDeltaRToThisGenLambda;
+                    thisLambdaNearestGenLambda = thisGenLambda;
+                }
+            }
+
+            LambdaNearestGenLambda.push_back(thisLambdaNearestGenLambda);
+            LambdaDeltaRToNearestGenLambda.push_back(thisLambdaDeltaRToNearestGenLambda);
 
             // Compute 3D distance (R) to ROIs and add to matched if R < 1cm
             std::vector<int> thisLambdaMatchedROIs;
@@ -3312,8 +3347,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
     }
 
-    if (WriteKShorts) for(unsigned int i = 0; i < KShortVect.size(); i++) ObjectsFormat::FillV0Type(KShorts[i], &KShortVect[i], KShortNMatchedROIs[i], KShortLeadingMatchedROI[i], KShortNearestMatchedROI[i], KShortLeadingMatchedROIScore[i], KShortNearestMatchedROIScore[i], KShortNearestMuon[i], KShortDistanceToNearestMuon[i], KShortNearestJet[i], KShortAbsDeltaPhiToNearestJet[i], KShortAbsDeltaPhiToMET[i]);
-    if (WriteLambdas) for(unsigned int i = 0; i < LambdaVect.size(); i++) ObjectsFormat::FillV0Type(Lambdas[i], &LambdaVect[i], LambdaNMatchedROIs[i], LambdaLeadingMatchedROI[i], LambdaNearestMatchedROI[i], LambdaLeadingMatchedROIScore[i], LambdaNearestMatchedROIScore[i], LambdaNearestMuon[i], LambdaDistanceToNearestMuon[i], LambdaNearestJet[i], LambdaAbsDeltaPhiToNearestJet[i], LambdaAbsDeltaPhiToMET[i]);
+    if (WriteKShorts) for(unsigned int i = 0; i < KShortVect.size(); i++) ObjectsFormat::FillV0Type(KShorts[i], &KShortVect[i], KShortNearestGenKShort[i], KShortDeltaRToNearestGenKShort[i], KShortNMatchedROIs[i], KShortLeadingMatchedROI[i], KShortNearestMatchedROI[i], KShortLeadingMatchedROIScore[i], KShortNearestMatchedROIScore[i], KShortNearestMuon[i], KShortDistanceToNearestMuon[i], KShortNearestJet[i], KShortAbsDeltaPhiToNearestJet[i], KShortAbsDeltaPhiToMET[i]);
+    if (WriteLambdas) for(unsigned int i = 0; i < LambdaVect.size(); i++) ObjectsFormat::FillV0Type(Lambdas[i], &LambdaVect[i], LambdaNearestGenLambda[i], LambdaDeltaRToNearestGenLambda[i], LambdaNMatchedROIs[i], LambdaLeadingMatchedROI[i], LambdaNearestMatchedROI[i], LambdaLeadingMatchedROIScore[i], LambdaNearestMatchedROIScore[i], LambdaNearestMuon[i], LambdaDistanceToNearestMuon[i], LambdaNearestJet[i], LambdaAbsDeltaPhiToNearestJet[i], LambdaAbsDeltaPhiToMET[i]);
 
     if(isVerbose) std::cout << "TREE FILL!" << std::endl;
     tree -> Fill();

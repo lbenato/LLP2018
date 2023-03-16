@@ -1398,7 +1398,7 @@ ROIType(): x(-9999.), y(-9999.), z(-9999.), R(-1.), phi(-99.), backgroundScore(-
 };
 
 struct V0Type {
-V0Type(): chi2(-1.), ndof(-1.), x(-100.), y(-100.), z(-100.), R(-100.), phi(-99.), px(-100.), py(-100.), pz(-100.), mass(-1.), nMatchedROIs(-1), leadingMatchedROI(-1), nearestMatchedROI(-1), leadingMatchedROILog10BackgroundScore(-1.), nearestMatchedROILog10BackgroundScore(-1.), nearestMuon(-1), distanceToNearestMuon(-1.), nearestJet(-1), absDeltaPhiToNearestJet(-1.), absDeltaPhiToMET(-1.) {}
+V0Type(): chi2(-1.), ndof(-1.), x(-100.), y(-100.), z(-100.), R(-100.), phi(-99.), px(-100.), py(-100.), pz(-100.), mass(-1.), isGenMatched(false), nearestGenV0(-1), deltaRToNearestGenV0(-1.), nMatchedROIs(-1), leadingMatchedROI(-1), nearestMatchedROI(-1), leadingMatchedROILog10BackgroundScore(-1.), nearestMatchedROILog10BackgroundScore(-1.), nearestMuon(-1), distanceToNearestMuon(-1.), nearestJet(-1), absDeltaPhiToNearestJet(-1.), absDeltaPhiToMET(-1.) {}
   float chi2;
   float ndof;
   float x;
@@ -1410,6 +1410,9 @@ V0Type(): chi2(-1.), ndof(-1.), x(-100.), y(-100.), z(-100.), R(-100.), phi(-99.
   float py;
   float pz;
   float mass;
+  bool isGenMatched;
+  int nearestGenV0;
+  float deltaRToNearestGenV0;
   int nMatchedROIs;
   int leadingMatchedROI;  
   int nearestMatchedROI;  

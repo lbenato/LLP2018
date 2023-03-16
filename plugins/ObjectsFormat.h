@@ -51,7 +51,7 @@ class ObjectsFormat {
         static void FillDT4DSegmentType(DT4DSegmentType&, const DTRecSegment4D* R, const GlobalPoint* P);
         static void FillCSCSegmentType(CSCSegmentType&, const CSCSegment* R, const GlobalPoint* P);
         static void FillROIType(ROIType&, const RegionOfInterest*, const float, const float, const float, const int, const int, const float, const float);
-        static void FillV0Type(V0Type&, const reco::VertexCompositePtrCandidate*, const int, const int, const int, const float, const float, const int, const float, const int, const float, const float);
+        static void FillV0Type(V0Type&, const reco::VertexCompositePtrCandidate*, const int, const float, const int, const int, const int, const float, const float, const int, const float, const int, const float, const float);
 
 
         static void ResetLeptonType(LeptonType&);

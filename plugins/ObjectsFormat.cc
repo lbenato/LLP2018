@@ -2467,7 +2467,7 @@ void ObjectsFormat::FillROIType(ROIType& I, const RegionOfInterest* R, const flo
   I.matchedToLLP                     = ((dLeadingLLP > 0 && dLeadingLLP < 0.4) || (dSubleadingLLP > 0 && dSubleadingLLP < 0.4)) ? true : false;
 }
 
-void ObjectsFormat::FillV0Type(V0Type& I, const reco::VertexCompositePtrCandidate* R, const int nMatchedROIs, const int leadingMatchedROI, const int nearestMatchedROI, const float leadingMatchedROIScore, const float nearestMatchedROIScore, const int nearestMuon, const float distanceToNearestMuon, const int nearestJet, const float absDeltaPhiToNearestJet, const float absDeltaPhiToMET) {
+void ObjectsFormat::FillV0Type(V0Type& I, const reco::VertexCompositePtrCandidate* R, const int nearestGenV0, const float deltaRToNearestGenV0, const int nMatchedROIs, const int leadingMatchedROI, const int nearestMatchedROI, const float leadingMatchedROIScore, const float nearestMatchedROIScore, const int nearestMuon, const float distanceToNearestMuon, const int nearestJet, const float absDeltaPhiToNearestJet, const float absDeltaPhiToMET) {
   if(!R) return;
   I.chi2        = R->vertexChi2();
   I.ndof        = R->vertexNdof();
@@ -2480,6 +2480,9 @@ void ObjectsFormat::FillV0Type(V0Type& I, const reco::VertexCompositePtrCandidat
   I.py          = R->py();
   I.pz          = R->pz();
   I.mass        = R->mass();
+  I.isGenMatched                          = deltaRToNearestGenV0 < 0.4 ? true : false;
+  I.nearestGenV0                          = nearestGenV0;
+  I.deltaRToNearestGenV0                  = deltaRToNearestGenV0 != 99. ? deltaRToNearestGenV0 : -1.;
   I.nMatchedROIs                          = nMatchedROIs;
   I.leadingMatchedROI                     = leadingMatchedROI;  
   I.nearestMatchedROI                     = nearestMatchedROI;  
