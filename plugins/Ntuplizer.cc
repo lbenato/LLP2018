@@ -142,17 +142,20 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
 
     if (isTracking && is2018) {
       // Initialize additional PileupAnalyzers for B-parking triggers
-      PileupPSet = iConfig.getParameter<edm::ParameterSet>("pileupSet_HLT_Mu7_IP4");
-      thePileupAnalyzer_HLT_Mu7_IP4   = new PileupAnalyzer(PileupPSet, consumesCollector());
+      // PileupPSet = iConfig.getParameter<edm::ParameterSet>("pileupSet_HLT_Mu7_IP4");
+      // thePileupAnalyzer_HLT_Mu7_IP4   = new PileupAnalyzer(PileupPSet, consumesCollector());
 
       PileupPSet = iConfig.getParameter<edm::ParameterSet>("pileupSet_HLT_Mu9_IP6");
       thePileupAnalyzer_HLT_Mu9_IP6    = new PileupAnalyzer(PileupPSet, consumesCollector());
 
-      PileupPSet = iConfig.getParameter<edm::ParameterSet>("pileupSet_HLT_Mu9_IP6_v6");
-      thePileupAnalyzer_HLT_Mu9_IP6_v6 = new PileupAnalyzer(PileupPSet, consumesCollector());
+      PileupPSet = iConfig.getParameter<edm::ParameterSet>("pileupSet_HLT_Mu9_IP6_UL");
+      thePileupAnalyzer_HLT_Mu9_IP6_UL = new PileupAnalyzer(PileupPSet, consumesCollector());
 
-      PileupPSet = iConfig.getParameter<edm::ParameterSet>("pileupSet_HLT_Mu12_IP6");
-      thePileupAnalyzer_HLT_Mu12_IP6  = new PileupAnalyzer(PileupPSet, consumesCollector());
+      PileupPSet = iConfig.getParameter<edm::ParameterSet>("pileupSet_HLT_Mu9_IP6_v7");
+      thePileupAnalyzer_HLT_Mu9_IP6_v7 = new PileupAnalyzer(PileupPSet, consumesCollector());
+
+      // PileupPSet = iConfig.getParameter<edm::ParameterSet>("pileupSet_HLT_Mu12_IP6");
+      // thePileupAnalyzer_HLT_Mu12_IP6  = new PileupAnalyzer(PileupPSet, consumesCollector());
 
       // Set back to usual value
       PileupPSet = iConfig.getParameter<edm::ParameterSet>("pileupSet");
@@ -279,9 +282,11 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     number_of_VBFGen_matched_to_AllJets = 0;
     //number_of_b_matched_to_CaloJets = number_of_b_matched_to_CaloJetsWithGenJets = 0;
     GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = LeptonWeight = ZewkWeight = WewkWeight = 1.;
-    PUWeight_HLT_Mu7_IP4 = PUWeightUp_HLT_Mu7_IP4 = PUWeightDown_HLT_Mu7_IP4 = 1.;
+    // PUWeight_HLT_Mu7_IP4 = PUWeightUp_HLT_Mu7_IP4 = PUWeightDown_HLT_Mu7_IP4 = 1.;
     PUWeight_HLT_Mu9_IP6 = PUWeightUp_HLT_Mu9_IP6 = PUWeightDown_HLT_Mu9_IP6 = 1.;
-    PUWeight_HLT_Mu12_IP6 = PUWeightUp_HLT_Mu12_IP6 = PUWeightDown_HLT_Mu12_IP6 = 1.;
+    PUWeight_HLT_Mu9_IP6_UL = PUWeightUp_HLT_Mu9_IP6_UL = PUWeightDown_HLT_Mu9_IP6_UL = 1.;
+    PUWeight_HLT_Mu9_IP6_v7 = PUWeightUp_HLT_Mu9_IP6_v7 = PUWeightDown_HLT_Mu9_IP6_v7 = 1.;
+    // PUWeight_HLT_Mu12_IP6 = PUWeightUp_HLT_Mu12_IP6 = PUWeightDown_HLT_Mu12_IP6 = 1.;
     LeptonWeightUp = LeptonWeightDown = 1.;
     EventWeight_leptonSF = EventWeight_leptonSFUp = EventWeight_leptonSFDown = 1.;
     bTagWeight_central = bTagWeight_jesup = bTagWeight_jesdown = bTagWeight_lfup = bTagWeight_lfdown = bTagWeight_hfup = bTagWeight_hfdown = bTagWeight_hfstats1up = bTagWeight_hfstats1down = bTagWeight_hfstats2up = bTagWeight_hfstats2down = bTagWeight_lfstats1up = bTagWeight_lfstats1down = bTagWeight_lfstats2up = bTagWeight_lfstats2down = bTagWeight_cferr1up = bTagWeight_cferr1down = bTagWeight_cferr2up = bTagWeight_cferr2down = 1.0;
@@ -549,9 +554,13 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       PUWeightUp_HLT_Mu9_IP6      = thePileupAnalyzer_HLT_Mu9_IP6->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
       PUWeightDown_HLT_Mu9_IP6    = thePileupAnalyzer_HLT_Mu9_IP6->GetPUWeightDown(iEvent);//syst uncertainties due to pileup
 
-      PUWeight_HLT_Mu9_IP6_v6     = thePileupAnalyzer_HLT_Mu9_IP6_v6->GetPUWeight(iEvent);//calculates pileup weights
-      PUWeightUp_HLT_Mu9_IP6_v6   = thePileupAnalyzer_HLT_Mu9_IP6_v6->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
-      PUWeightDown_HLT_Mu9_IP6_v6 = thePileupAnalyzer_HLT_Mu9_IP6_v6->GetPUWeightDown(iEvent);//syst uncertainties due to pileup
+      PUWeight_HLT_Mu9_IP6_UL     = thePileupAnalyzer_HLT_Mu9_IP6_UL->GetPUWeight(iEvent);//calculates pileup weights
+      PUWeightUp_HLT_Mu9_IP6_UL   = thePileupAnalyzer_HLT_Mu9_IP6_UL->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
+      PUWeightDown_HLT_Mu9_IP6_UL = thePileupAnalyzer_HLT_Mu9_IP6_UL->GetPUWeightDown(iEvent);//syst uncertainties due to pileup
+
+      PUWeight_HLT_Mu9_IP6_v7     = thePileupAnalyzer_HLT_Mu9_IP6_v7->GetPUWeight(iEvent);//calculates pileup weights
+      PUWeightUp_HLT_Mu9_IP6_v7   = thePileupAnalyzer_HLT_Mu9_IP6_v7->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
+      PUWeightDown_HLT_Mu9_IP6_v7 = thePileupAnalyzer_HLT_Mu9_IP6_v7->GetPUWeightDown(iEvent);//syst uncertainties due to pileup
 
       // PUWeight_HLT_Mu12_IP6     = thePileupAnalyzer_HLT_Mu12_IP6->GetPUWeight(iEvent);//calculates pileup weights
       // PUWeightUp_HLT_Mu12_IP6   = thePileupAnalyzer_HLT_Mu12_IP6->GetPUWeightUp(iEvent);//syst uncertainties due to pileup
@@ -628,7 +637,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
           }
         }
 
-        // Trigger muons: All requirements as in muonPSet (For v6: loose ID, no isolation, pT > 0.1 GeV, |eta| < 2.4)
+        // Trigger muons: All requirements as in muonPSet (For v6 on: loose ID, no isolation, pT > 0.1 GeV, |eta| < 2.4)
         if (MuonVect.at(a).hasUserInt("triggered_HLT_Mu9_IP6") && MuonVect.at(a).userInt("triggered_HLT_Mu9_IP6")>0) {
             TriggerMuonVect.push_back(MuonVect.at(a));
             nTriggerMuons++;
@@ -3432,18 +3441,21 @@ Ntuplizer::beginJob()
     tree -> Branch("PUWeightUp", &PUWeightUp, "PUWeightUp/F");
     tree -> Branch("PUWeightDown", &PUWeightDown, "PUWeightDown/F");
     if (isTracking && is2018) {
-      tree -> Branch("PUWeight_HLT_Mu7_IP4", &PUWeight_HLT_Mu7_IP4, "PUWeight_HLT_Mu7_IP4/F");
-      tree -> Branch("PUWeightUp_HLT_Mu7_IP4", &PUWeightUp_HLT_Mu7_IP4, "PUWeightUp_HLT_Mu7_IP4/F");
-      tree -> Branch("PUWeightDown_HLT_Mu7_IP4", &PUWeightDown_HLT_Mu7_IP4, "PUWeightDown_HLT_Mu7_IP4/F");
+      // tree -> Branch("PUWeight_HLT_Mu7_IP4", &PUWeight_HLT_Mu7_IP4, "PUWeight_HLT_Mu7_IP4/F");
+      // tree -> Branch("PUWeightUp_HLT_Mu7_IP4", &PUWeightUp_HLT_Mu7_IP4, "PUWeightUp_HLT_Mu7_IP4/F");
+      // tree -> Branch("PUWeightDown_HLT_Mu7_IP4", &PUWeightDown_HLT_Mu7_IP4, "PUWeightDown_HLT_Mu7_IP4/F");
       tree -> Branch("PUWeight_HLT_Mu9_IP6", &PUWeight_HLT_Mu9_IP6, "PUWeight_HLT_Mu9_IP6/F");
       tree -> Branch("PUWeightUp_HLT_Mu9_IP6", &PUWeightUp_HLT_Mu9_IP6, "PUWeightUp_HLT_Mu9_IP6/F");
       tree -> Branch("PUWeightDown_HLT_Mu9_IP6", &PUWeightDown_HLT_Mu9_IP6, "PUWeightDown_HLT_Mu9_IP6/F");
-      tree -> Branch("PUWeight_HLT_Mu12_IP6", &PUWeight_HLT_Mu12_IP6, "PUWeight_HLT_Mu12_IP6/F");
-      tree -> Branch("PUWeightUp_HLT_Mu12_IP6", &PUWeightUp_HLT_Mu12_IP6, "PUWeightUp_HLT_Mu12_IP6/F");
-      tree -> Branch("PUWeightDown_HLT_Mu12_IP6", &PUWeightDown_HLT_Mu12_IP6, "PUWeightDown_HLT_Mu12_IP6/F");
-      tree -> Branch("PUWeight_HLT_Mu9_IP6_v6", &PUWeight_HLT_Mu9_IP6_v6, "PUWeight_HLT_Mu9_IP6_v6/F");
-      tree -> Branch("PUWeightUp_HLT_Mu9_IP6_v6", &PUWeightUp_HLT_Mu9_IP6_v6, "PUWeightUp_HLT_Mu9_IP6_v6/F");
-      tree -> Branch("PUWeightDown_HLT_Mu9_IP6_v6", &PUWeightDown_HLT_Mu9_IP6_v6, "PUWeightDown_HLT_Mu9_IP6_v6/F");
+      tree -> Branch("PUWeight_HLT_Mu9_IP6_UL", &PUWeight_HLT_Mu9_IP6_UL, "PUWeight_HLT_Mu9_IP6_UL/F");
+      tree -> Branch("PUWeightUp_HLT_Mu9_IP6_UL", &PUWeightUp_HLT_Mu9_IP6_UL, "PUWeightUp_HLT_Mu9_IP6_UL/F");
+      tree -> Branch("PUWeightDown_HLT_Mu9_IP6_UL", &PUWeightDown_HLT_Mu9_IP6_UL, "PUWeightDown_HLT_Mu9_IP6_UL/F");
+      tree -> Branch("PUWeight_HLT_Mu9_IP6_v7", &PUWeight_HLT_Mu9_IP6_v7, "PUWeight_HLT_Mu9_IP6_v7/F");
+      tree -> Branch("PUWeightUp_HLT_Mu9_IP6_v7", &PUWeightUp_HLT_Mu9_IP6_v7, "PUWeightUp_HLT_Mu9_IP6_v7/F");
+      tree -> Branch("PUWeightDown_HLT_Mu9_IP6_v7", &PUWeightDown_HLT_Mu9_IP6_v7, "PUWeightDown_HLT_Mu9_IP6_v7/F");
+      // tree -> Branch("PUWeight_HLT_Mu12_IP6", &PUWeight_HLT_Mu12_IP6, "PUWeight_HLT_Mu12_IP6/F");
+      // tree -> Branch("PUWeightUp_HLT_Mu12_IP6", &PUWeightUp_HLT_Mu12_IP6, "PUWeightUp_HLT_Mu12_IP6/F");
+      // tree -> Branch("PUWeightDown_HLT_Mu12_IP6", &PUWeightDown_HLT_Mu12_IP6, "PUWeightDown_HLT_Mu12_IP6/F");
     }
     if (isControl){
       if (isShort) {

@@ -2290,28 +2290,46 @@ if (isTracking and is2018):
     # 'HLT_HT650_DisplacedDijet60_Inclusive_v',#          backup  unprescaled     DisplacedJet
     ])
 
+
+    scenario = "2018_25ns_JuneProjectionFull18_PoissonOOTPU"
+
     process.ntuple.pileupSet_HLT_Mu7_IP4 = process.ntuple.pileupSet.clone(
-        dataFileName     = cms.string('data/PU_69200_2018-HLT_Mu7_IP4.root'),#updated
-        dataFileNameUp   = cms.string('data/PU_72380_2018-HLT_Mu7_IP4.root'),#updated
-        dataFileNameDown = cms.string('data/PU_66020_2018-HLT_Mu7_IP4.root'),#updated
+        dataFileName     = cms.string('data/PU_69200_2018-HLT_Mu7_IP4.root'),
+        dataFileNameUp   = cms.string('data/PU_72380_2018-HLT_Mu7_IP4.root'),
+        dataFileNameDown = cms.string('data/PU_66020_2018-HLT_Mu7_IP4.root'),
+        mcFileName = cms.string('data/PU_MC_%s.root' % (scenario)),          
+        mcName = cms.string(scenario),                                       
     )
 
     process.ntuple.pileupSet_HLT_Mu9_IP6 = process.ntuple.pileupSet.clone(
-        dataFileName     = cms.string('data/PU_69200_2018-HLT_Mu9_IP6.root'),#updated
-        dataFileNameUp   = cms.string('data/PU_72380_2018-HLT_Mu9_IP6.root'),#updated
-        dataFileNameDown = cms.string('data/PU_66020_2018-HLT_Mu9_IP6.root'),#updated
+        dataFileName     = cms.string('data/PU_69200_2018-HLT_Mu9_IP6.root'),
+        dataFileNameUp   = cms.string('data/PU_72380_2018-HLT_Mu9_IP6.root'),
+        dataFileNameDown = cms.string('data/PU_66020_2018-HLT_Mu9_IP6.root'),
+        mcFileName = cms.string('data/PU_MC_%s.root' % (scenario)),
+        mcName = cms.string(scenario),
     )
 
-    process.ntuple.pileupSet_HLT_Mu9_IP6_v6 = process.ntuple.pileupSet.clone(
-        dataFileName     = cms.string('data/PU_69200_2018-v6-HLT_Mu9_IP6.root'),#updated
-        dataFileNameUp   = cms.string('data/PU_72380_2018-v6-HLT_Mu9_IP6.root'),#updated
-        dataFileNameDown = cms.string('data/PU_66020_2018-v6-HLT_Mu9_IP6.root'),#updated
+    process.ntuple.pileupSet_HLT_Mu9_IP6_UL = process.ntuple.pileupSet.clone(
+        dataFileName     = cms.string('data/PU_69200_2018-HLT_Mu9_IP6.root'),
+        dataFileNameUp   = cms.string('data/PU_72380_2018-HLT_Mu9_IP6.root'),
+        dataFileNameDown = cms.string('data/PU_66020_2018-HLT_Mu9_IP6.root'),
+        # Using UL MC scenario: "2018_25ns_UltraLegacy_PoissonOOTPU"
+    )
+
+    process.ntuple.pileupSet_HLT_Mu9_IP6_v7 = process.ntuple.pileupSet.clone(
+        dataFileName     = cms.string('data/PU_69200_2018-v6-HLT_Mu9_IP6.root'),#FIXME - Update to v7 after processing data
+        dataFileNameUp   = cms.string('data/PU_72380_2018-v6-HLT_Mu9_IP6.root'),#FIXME - Update to v7 after processing data
+        dataFileNameDown = cms.string('data/PU_66020_2018-v6-HLT_Mu9_IP6.root'),#FIXME - Update to v7 after processing data
+        mcFileName = cms.string('data/PU_MC_%s.root' % (scenario)),
+        mcName = cms.string(scenario),
     )
 
     process.ntuple.pileupSet_HLT_Mu12_IP6 = process.ntuple.pileupSet.clone(
-        dataFileName     = cms.string('data/PU_69200_2018-HLT_Mu12_IP6.root'),#updated
-        dataFileNameUp   = cms.string('data/PU_72380_2018-HLT_Mu12_IP6.root'),#updated
-        dataFileNameDown = cms.string('data/PU_66020_2018-HLT_Mu12_IP6.root'),#updated
+        dataFileName     = cms.string('data/PU_69200_2018-HLT_Mu12_IP6.root'),
+        dataFileNameUp   = cms.string('data/PU_72380_2018-HLT_Mu12_IP6.root'),
+        dataFileNameDown = cms.string('data/PU_66020_2018-HLT_Mu12_IP6.root'),
+        mcFileName = cms.string('data/PU_MC_%s.root' % (scenario)),
+        mcName = cms.string(scenario),        
     )
 
 if (isShort and is2016):
