@@ -2928,6 +2928,52 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
         }
 
+        // Distance to trigger muons
+        math::XYZPoint leadingROIPosition, subleadingROIPosition;
+
+        if (LeadingROI != -1) leadingROIPosition.SetXYZ(RegionsOfInterest.at(LeadingROI).vx(), RegionsOfInterest.at(LeadingROI).vy(), RegionsOfInterest.at(LeadingROI).vz());
+        if (SubleadingROI_dPhi2p0 != -1) subleadingROIPosition.SetXYZ(RegionsOfInterest.at(SubleadingROI_dPhi2p0).vx(), RegionsOfInterest.at(SubleadingROI_dPhi2p0).vy(), RegionsOfInterest.at(SubleadingROI_dPhi2p0).vz());
+
+        for(unsigned int thisTriggerMuon = 0; thisTriggerMuon < TriggerMuonVect.size(); thisTriggerMuon++) {
+            // Get best track from muon
+            reco::TrackRef thisMuonTrack = TriggerMuonVect[thisTriggerMuon].muonBestTrack();
+
+            // Consider uniform 3.8T magnetic field
+            const UniformMagneticField * const magneticField = new UniformMagneticField(3.8);
+
+            // Get transient track
+            reco::TransientTrack thisMuonTransientTrack(thisMuonTrack, magneticField);
+
+            // Get muon trajectory's closest approach to leading ROI
+            if (LeadingROI != -1) {
+                const auto &thisMuonPOCAToLeadingROI = thisMuonTransientTrack.trajectoryStateClosestToPoint(GlobalPoint(leadingROIPosition.x(), leadingROIPosition.y(), leadingROIPosition.z()));
+
+                // Get distance of closest approach
+                math::XYZPoint thisMuonPosition(thisMuonPOCAToLeadingROI.position().x(), thisMuonPOCAToLeadingROI.position().y(), thisMuonPOCAToLeadingROI.position().z());
+
+                math::XYZVector thisMuonVectorToLeadingROI = thisMuonPosition - leadingROIPosition;
+
+                float thisMuonDistanceToLeadingROI = thisMuonVectorToLeadingROI.R();
+
+                TriggerMuonVect.at(thisTriggerMuon).addUserFloat("distanceToLeadingROI", thisMuonDistanceToLeadingROI);
+            }
+
+            // Get muon trajectory's closest approach to subleading ROI
+            if (SubleadingROI_dPhi2p0 != -1) {
+                const auto &thisMuonPOCAToSubleadingROI = thisMuonTransientTrack.trajectoryStateClosestToPoint(GlobalPoint(subleadingROIPosition.x(), subleadingROIPosition.y(), subleadingROIPosition.z()));
+
+                // Get distance of closest approach
+                math::XYZPoint thisMuonPosition(thisMuonPOCAToSubleadingROI.position().x(), thisMuonPOCAToSubleadingROI.position().y(), thisMuonPOCAToSubleadingROI.position().z());
+
+                math::XYZVector thisMuonVectorToSubleadingROI = thisMuonPosition - subleadingROIPosition;
+
+                float thisMuonDistanceToSubleadingROI = thisMuonVectorToSubleadingROI.R();
+
+                TriggerMuonVect.at(thisTriggerMuon).addUserFloat("distanceToSubleadingROI_dPhi2p0", thisMuonDistanceToSubleadingROI);
+
+            }
+        }
+
         // // Displaced jet matching to leading ROI and non-overlapping subleading ROI
         // if (MaxDisplacedJet > -1) {
         //   if (nROIs > 0) {

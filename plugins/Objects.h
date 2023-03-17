@@ -74,6 +74,11 @@ LeptonType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), inTrkPt(-1.),
 
     int nearestPFCandidate;
     float deltaRToNearestPFCandidate;
+
+    float distanceToLeadingROI;
+    bool matchedToLeadingROI;
+    float distanceToSubleadingROI_dPhi2p0;
+    bool matchedToSubleadingROI_dPhi2p0;
 };
 
 struct PhotonType {

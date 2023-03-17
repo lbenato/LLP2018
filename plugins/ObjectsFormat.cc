@@ -106,6 +106,10 @@ void ObjectsFormat::FillMuonType(LeptonType& I, const pat::Muon* R, bool isMC) {
     I.MatchedGenMuonIndex = R->hasUserInt("MatchedGenMuonIndex") ? R->userInt("MatchedGenMuonIndex") : -1;
     I.nearestPFCandidate = R->hasUserInt("nearestPFCandidate") ? R->userInt("nearestPFCandidate") : -1;
     I.deltaRToNearestPFCandidate = R->hasUserFloat("deltaRToNearestPFCandidate") ? R->userFloat("deltaRToNearestPFCandidate") : -1;
+    I.distanceToLeadingROI = R->hasUserFloat("distanceToLeadingROI") ? R->userFloat("distanceToLeadingROI") : -1;
+    I.matchedToLeadingROI = (R->hasUserFloat("distanceToLeadingROI") && R->userFloat("distanceToLeadingROI") < 1.) ? true : false;
+    I.distanceToSubleadingROI_dPhi2p0 = R->hasUserFloat("distanceToSubleadingROI_dPhi2p0") ? R->userFloat("distanceToSubleadingROI_dPhi2p0") : -1;
+    I.matchedToSubleadingROI_dPhi2p0 = (R->hasUserFloat("distanceToSubleadingROI_dPhi2p0") && R->userFloat("distanceToSubleadingROI_dPhi2p0") < 1.) ? true : false;
 
     // if(isMC && R->genLepton()) I.isMatched = false;//(Utilities::FindMotherId(dynamic_cast<const reco::Candidate*>(R->genLepton()))==23);
 }
