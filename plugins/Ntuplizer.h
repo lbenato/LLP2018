@@ -286,7 +286,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     // int nROIsMatchedToLeadingLLP;
     // int nROIsMatchedToSubleadingLLP;
 
-    int LeadingLLP, LeadingROI, SubleadingROI_dPhi2p0, MaxDisplacedJet;
+    int LeadingLLP, LeadingROI, SubleadingROI_dPhi2p0, MaxDisplacedJet, MaxDisplacedJet_noMu, MaxDisplacedJet_noTrigMu;
     float LeadingROIScore, SubleadingROIScore_dPhi2p0;
 
     MEtType MEt;

@@ -71,6 +71,9 @@ LeptonType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), inTrkPt(-1.),
 
     bool isGenMatched;
     int MatchedGenMuonIndex;
+
+    int nearestPFCandidate;
+    float deltaRToNearestPFCandidate;
 };
 
 struct PhotonType {
@@ -131,7 +134,7 @@ matchBquark(-1), matchLL(-1),
 //original_jet_index(-1),
 isGenMatched(0), isGenMatchedCaloCorr(0), isGenMatchedLLPAccept(0), isGenMatchedCaloCorrLLPAccept(0), radiusLLP(-1000.), xLLP(-10000.), yLLP(-10000.), zLLP(-10000.), radiusLLPCaloCorr(-1000.), xLLPCaloCorr(-10000.), yLLPCaloCorr(-10000.), zLLPCaloCorr(-10000.), xGenb(-10000.), yGenb(-10000.), zGenb(-10000.), xGenbCaloCorr(-10000.), yGenbCaloCorr(-10000.), zGenbCaloCorr(-10000.), isVBFGenMatched(0),
 //track variables, old implementation
-alphaMaxOld(-100.), sumPtJetOld(-1.), betaMaxOld(-100.), gammaMaxOld(-100.), gammaMaxEMOld(-100.), gammaMaxHadronicOld(-100.), gammaMaxETOld(-100.), sigIP2DMedianOld(-10000.), log10AbsSigIP2DMedianOld(5.), theta2DMedianOld(-100.), POCA_theta2DMedianOld(-100.), nPixelHitsMedianOld(-1.0), nHitsMedianOld(-1.0), dxyMedianOld(-9999.), dzMedianOld(-9999.),//minDeltaRAllTracksOld(999.), minDeltaRPVTracksOld(999.), minDeltaRAllTracksInJetOld(999.), minDeltaRPVTracksInJetOld(999.),
+alphaMaxOld(-100.), sumPtJetOld(-1.), betaMaxOld(-100.), gammaMaxOld(-100.), gammaMaxEMOld(-100.), gammaMaxHadronicOld(-100.), gammaMaxETOld(-100.), sigIP2DMedianOld(-10000.), sigIP2DMedianOldNoMu(-10000.), sigIP2DMedianOldNoTrigMu(-10000.), log10AbsSigIP2DMedianOld(5.), log10AbsSigIP2DMedianOldNoMu(5.), log10AbsSigIP2DMedianOldNoTrigMu(5.), theta2DMedianOld(-100.), POCA_theta2DMedianOld(-100.), nPixelHitsMedianOld(-1.0), nHitsMedianOld(-1.0), dxyMedianOld(-9999.), dzMedianOld(-9999.),//minDeltaRAllTracksOld(999.), minDeltaRPVTracksOld(999.), minDeltaRAllTracksInJetOld(999.), minDeltaRPVTracksInJetOld(999.),
 //track variables, new implementation
 ptAllTracks(-1.), ptAllPVTracks(-1.), ptPVTracksMax(-1.), nTracksAll(-1), nTracksPVMax(-1), medianIP2D(-10000.), medianTheta2D(-100.), alphaMax(-100.), betaMax(-100.), gammaMax(-100.), gammaMaxEM(-100.), gammaMaxHadronic(-100.), gammaMaxET(-100.), minDeltaRAllTracks(999.), minDeltaRPVTracks(999.), nPixelHitsMedian(-1.0), nHitsMedian(-1.0), dzMedian(-9999.), dxyMedian(-9999.),
 hcalE(-100.), ecalE(-100.), FracCal(-100.), flightDist2d(-100.), flightDist2dError(-100.), flightDist3d(-100.), flightDist3dError(-100.), nSV(-1), nSVCand(-1), nVertexTracks(-1), nSelectedTracks(-1), dRSVJet(-100.), SV_x(-1000.), SV_y(-1000.), SV_z(-1000.), SV_dx(-100.), SV_dy(-100.), SV_dz(-100.), nTracksSV(-1), SV_mass(-100.),  isCaloTag(0),
@@ -291,7 +294,11 @@ absDeltaPhiToLeadingROI(-1.), absDeltaPhiToSubleadingROI(-1.), absDeltaPhiToNear
     //float minDeltaRAllTracksInJetOld;
     //float minDeltaRPVTracksInJetOld;
     float sigIP2DMedianOld;
+    float sigIP2DMedianOldNoMu;
+    float sigIP2DMedianOldNoTrigMu;    
     float log10AbsSigIP2DMedianOld;
+    float log10AbsSigIP2DMedianOldNoMu;
+    float log10AbsSigIP2DMedianOldNoTrigMu;
     float theta2DMedianOld;
     float POCA_theta2DMedianOld;
     float nPixelHitsMedianOld;

@@ -2299,10 +2299,13 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       if(PFCandidateVect.at(i).charge()!=0 && PFCandidateVect.at(i).hasTrackDetails()) nPFCandidatesFullTrackInfo_hasTrackDetails++;
     }
 
-    // PFCandidate matching to AK4 jets, AK8 jets and PV's
+    // PFCandidate matching to AK4 jets, AK8 jets, PV's and trigger muons
     unsigned int nPFCandidatesMatchedToAK4Jet = 0;
     unsigned int nPFCandidatesMatchedToAK8Jet = 0;
     unsigned int nPFCandidatesMatchedToAnyJet = 0;
+
+    int TriggerMuonNearestPFCandidate = -1;
+    float TriggerMuonDeltaRToNearestPFCandidate = 99;
 
     for(unsigned int i = 0; i < PFCandidateVect.size(); i++){
 
@@ -2359,6 +2362,15 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       if (nMatchedPVs > 1) edm::LogWarning("PFCandidate-PV") << "WARNING: More than 1 PV has been matched to PFCandidate " << i << std::endl;
 
+    if (TriggerMuonVect.size() > 0) {
+        float thisDeltaRToTriggerMuon = reco::deltaR(PFCandidateVect[i], TriggerMuonVect[0]);
+
+        if (thisDeltaRToTriggerMuon < TriggerMuonDeltaRToNearestPFCandidate) {
+            TriggerMuonNearestPFCandidate = i;
+            TriggerMuonDeltaRToNearestPFCandidate = thisDeltaRToTriggerMuon;
+        } 
+    }
+    
     }
 
     if(WriteAK4JetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAK8Jet; i++) PFCandidates.push_back( PFCandidateType() );
@@ -2366,6 +2378,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(WriteAllJetPFCandidates) for(unsigned int i = 0; i < nPFCandidatesMatchedToAnyJet; i++) PFCandidates.push_back( PFCandidateType() );
     if(WriteAllPFCandidates)    for(unsigned int i = 0; i < PFCandidateVect.size();       i++) PFCandidates.push_back( PFCandidateType() );
 
+    if (TriggerMuonVect.size() > 0) {
+        TriggerMuonVect[0].addUserInt("nearestPFCandidate", TriggerMuonNearestPFCandidate);
+        TriggerMuonVect[0].addUserFloat("deltaRToNearestPFCandidate", TriggerMuonDeltaRToNearestPFCandidate);
+    }
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -2381,6 +2397,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       float sumPtJet = 0.;
       std::vector<float> sumPtPV;
       std::vector<float> sigIP2D;
+      std::vector<float> sigIP2D_noMu;
+      std::vector<float> sigIP2D_noTrigMu;
       std::vector<float> theta2D;
       std::vector<float> POCA_theta2D;
       std::vector<float> nPixelHits;
@@ -2388,6 +2406,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       float alphaMax = -100.;
       float sigIP2DMedian = -100000.;
+      float sigIP2DMedian_noMu = -100000.;
+      float sigIP2DMedian_noTrigMu = -100000.;
       float theta2DMedian = -100.;
       float POCA_theta2DMedian = -100.;
       float nPixelHitsMedian = -1.;
@@ -2436,6 +2456,15 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
               sigIP2D.push_back(PFCandidateVect[i].dxy()/PFCandidateVect[i].dxyError());
 
+              if (abs(PFCandidateVect[i].pdgId()) != 13 && !PFCandidateVect[i].isGlobalMuon() && !PFCandidateVect[i].isStandAloneMuon()) {
+                sigIP2D_noMu.push_back(PFCandidateVect[i].dxy()/PFCandidateVect[i].dxyError());
+                sigIP2D_noTrigMu.push_back(PFCandidateVect[i].dxy()/PFCandidateVect[i].dxyError());
+              }
+
+              else if (TriggerMuonVect.size() > 0 && reco::deltaR(PFCandidateVect[i], TriggerMuonVect[0]) > 0.002) {
+                sigIP2D_noTrigMu.push_back(PFCandidateVect[i].dxy()/PFCandidateVect[i].dxyError());
+              }
+
               nPixelHits.push_back(PFCandidateVect[i].numberOfPixelHits());
               nHits.push_back(PFCandidateVect[i].numberOfHits());
 
@@ -2468,6 +2497,16 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	if (sigIP2D.size() % 2 ==0) sigIP2DMedian = ((sigIP2D[sigIP2D.size()/2 -1] + sigIP2D[sigIP2D.size()/2]) /2);
 	else sigIP2DMedian = sigIP2D[sigIP2D.size()/2];
       }
+      if (sigIP2D_noMu.size() > 0) {
+    std::sort(sigIP2D_noMu.begin(), sigIP2D_noMu.end());
+    if (sigIP2D_noMu.size() % 2 ==0) sigIP2DMedian_noMu = ((sigIP2D_noMu[sigIP2D_noMu.size()/2 -1] + sigIP2D_noMu[sigIP2D_noMu.size()/2]) /2);
+    else sigIP2DMedian_noMu = sigIP2D_noMu[sigIP2D_noMu.size()/2];
+      }
+      if (sigIP2D_noTrigMu.size() > 0) {
+    std::sort(sigIP2D_noTrigMu.begin(), sigIP2D_noTrigMu.end());
+    if (sigIP2D_noTrigMu.size() % 2 ==0) sigIP2DMedian_noTrigMu = ((sigIP2D_noTrigMu[sigIP2D_noTrigMu.size()/2 -1] + sigIP2D_noTrigMu[sigIP2D_noTrigMu.size()/2]) /2);
+    else sigIP2DMedian_noTrigMu = sigIP2D_noTrigMu[sigIP2D_noTrigMu.size()/2];
+      }
       if (theta2D.size() > 0) {
 	std::sort(theta2D.begin(), theta2D.end());
 	if (theta2D.size() % 2 ==0) theta2DMedian = ((theta2D[theta2D.size()/2 -1] + theta2D[theta2D.size()/2]) /2);
@@ -2499,6 +2538,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       CHSJetsVect[j].addUserFloat("alphaMaxOld", alphaMax);
       CHSJetsVect[j].addUserFloat("sigIP2DMedianOld", sigIP2DMedian);
+      CHSJetsVect[j].addUserFloat("sigIP2DMedianOldNoMu", sigIP2DMedian_noMu);
+      CHSJetsVect[j].addUserFloat("sigIP2DMedianOldNoTrigMu", sigIP2DMedian_noTrigMu);
       CHSJetsVect[j].addUserFloat("theta2DMedianOld", theta2DMedian);
       CHSJetsVect[j].addUserFloat("POCA_theta2DMedianOld", POCA_theta2DMedian);
       CHSJetsVect[j].addUserFloat("nPixelHitsMedianOld", nPixelHitsMedian);
@@ -2831,6 +2872,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         MaxDisplacedJet = -1;
         float MaxDisplacement = 0;
 
+        MaxDisplacedJet_noMu = -1;
+        float MaxDisplacement_noMu = 0;
+
+        MaxDisplacedJet_noTrigMu = -1;
+        float MaxDisplacement_noTrigMu = 0;                
+
         float thisJetPhi;
         float thisJetAbsDeltaPhiToLeadingROI;
         float thisJetAbsDeltaPhiToSubleadingROI;
@@ -2855,14 +2902,30 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
           CHSJetsVect.at(thisJet).addUserFloat("absDeltaPhiToLeadingROI",thisJetAbsDeltaPhiToLeadingROI);
           CHSJetsVect.at(thisJet).addUserFloat("absDeltaPhiToSubleadingROI",thisJetAbsDeltaPhiToSubleadingROI);
 
-          // For jets with valid 2D IP sig (i.e. with at least one PF candidate with track details)
+          // Find jet with the maximum |2D IP sig|
           if ( CHSJetsVect.at(thisJet).hasUserFloat("sigIP2DMedianOld") && CHSJetsVect.at(thisJet).userFloat("sigIP2DMedianOld") != -10000 ) {
-            // Find jet with the maximum |2D IP sig|
             if ( TMath::Abs(CHSJetsVect.at(thisJet).userFloat("sigIP2DMedianOld")) > MaxDisplacement) {
               MaxDisplacedJet = thisJet;
-              MaxDisplacement =  TMath::Abs(CHSJetsVect.at(thisJet).userFloat("sigIP2DMedianOld"));
+              MaxDisplacement = TMath::Abs(CHSJetsVect.at(thisJet).userFloat("sigIP2DMedianOld"));
             }
           }
+
+          // Find jet with the maximum |2D IP sig| - excluding muons
+          if ( CHSJetsVect.at(thisJet).hasUserFloat("sigIP2DMedianOldNoMu") && CHSJetsVect.at(thisJet).userFloat("sigIP2DMedianOldNoMu") != -10000 ) {
+            if ( TMath::Abs(CHSJetsVect.at(thisJet).userFloat("sigIP2DMedianOldNoMu")) > MaxDisplacement_noMu) {
+              MaxDisplacedJet_noMu = thisJet;
+              MaxDisplacement_noMu = TMath::Abs(CHSJetsVect.at(thisJet).userFloat("sigIP2DMedianOldNoMu"));
+            }
+          }
+
+          // Find jet with the maximum |2D IP sig| - excluding trigger muons
+          if ( CHSJetsVect.at(thisJet).hasUserFloat("sigIP2DMedianOldNoTrigMu") && CHSJetsVect.at(thisJet).userFloat("sigIP2DMedianOldNoTrigMu") != -10000 ) {
+            if ( TMath::Abs(CHSJetsVect.at(thisJet).userFloat("sigIP2DMedianOldNoTrigMu")) > MaxDisplacement_noTrigMu) {
+              MaxDisplacedJet_noTrigMu = thisJet;
+              MaxDisplacement_noTrigMu = TMath::Abs(CHSJetsVect.at(thisJet).userFloat("sigIP2DMedianOldNoTrigMu"));
+            }
+          }
+
         }
 
         // // Displaced jet matching to leading ROI and non-overlapping subleading ROI
@@ -2974,7 +3037,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             // Matched ROIs: Find the leading (highest score) and the nearest (shortest 3D distance)
             int thisKShortNMatchedROIs = thisKShortMatchedROIs.size();
 
-            if (thisKShortNMatchedROIs > 1) edm::LogWarning("KShort-ROI Matching") << "More than 1 ROI matched to KShort!";
+            // if (thisKShortNMatchedROIs > 1) edm::LogWarning("KShort-ROI Matching") << "More than 1 ROI matched to KShort!";
 
             int thisKShortLeadingMatchedROI = -1;
             int thisKShortNearestMatchedROI = -1;
@@ -3129,7 +3192,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             // Matched ROIs: Find the leading (highest score) and the nearest (shortest 3D distance)
             int thisLambdaNMatchedROIs = thisLambdaMatchedROIs.size();
 
-            if (thisLambdaNMatchedROIs > 1) edm::LogWarning("Lambda-ROI Matching") << "More than 1 ROI matched to Lambda!";
+            // if (thisLambdaNMatchedROIs > 1) edm::LogWarning("Lambda-ROI Matching") << "More than 1 ROI matched to Lambda!";
 
             int thisLambdaLeadingMatchedROI = -1;
             int thisLambdaNearestMatchedROI = -1;
@@ -3609,6 +3672,8 @@ Ntuplizer::beginJob()
       // tree -> Branch("SubleadingROIScore", &SubleadingROIScore);
       tree -> Branch("SubleadingROILog10BackgroundScore_dPhi2p0", &SubleadingROIScore_dPhi2p0);
       tree -> Branch("MaxDisplacedJet", &MaxDisplacedJet);
+      tree -> Branch("MaxDisplacedJet_noMu", &MaxDisplacedJet_noMu);
+      tree -> Branch("MaxDisplacedJet_noTrigMu", &MaxDisplacedJet_noTrigMu);
     }
 
 

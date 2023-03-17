@@ -104,6 +104,8 @@ void ObjectsFormat::FillMuonType(LeptonType& I, const pat::Muon* R, bool isMC) {
     I.isSoftMuonFromCuts = R->hasUserInt("isSoftMuonFromCuts") ? R->userInt("isSoftMuonFromCuts") : false;
     I.isGenMatched = R->hasUserInt("isGenMatched") ? R->userInt("isGenMatched") : false;
     I.MatchedGenMuonIndex = R->hasUserInt("MatchedGenMuonIndex") ? R->userInt("MatchedGenMuonIndex") : -1;
+    I.nearestPFCandidate = R->hasUserInt("nearestPFCandidate") ? R->userInt("nearestPFCandidate") : -1;
+    I.deltaRToNearestPFCandidate = R->hasUserFloat("deltaRToNearestPFCandidate") ? R->userFloat("deltaRToNearestPFCandidate") : -1;
 
     // if(isMC && R->genLepton()) I.isMatched = false;//(Utilities::FindMotherId(dynamic_cast<const reco::Candidate*>(R->genLepton()))==23);
 }
@@ -411,7 +413,11 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     //I.minDeltaRAllTracksInJet = R->hasUserFloat("minDeltaRAllTracksInJet") ? R->userFloat("minDeltaRAllTracksInJet") : 999.;
     //I.minDeltaRPVTracksInJet  = R->hasUserFloat("minDeltaRPVTracksInJet") ? R->userFloat("minDeltaRPVTracksInJet") : 999.;
     I.sigIP2DMedianOld = R->hasUserFloat("sigIP2DMedianOld") ? R->userFloat("sigIP2DMedianOld") : -10000;
+    I.sigIP2DMedianOldNoMu = R->hasUserFloat("sigIP2DMedianOldNoMu") ? R->userFloat("sigIP2DMedianOldNoMu") : -10000;
+    I.sigIP2DMedianOldNoTrigMu = R->hasUserFloat("sigIP2DMedianOldNoTrigMu") ? R->userFloat("sigIP2DMedianOldNoTrigMu") : -10000;
     I.log10AbsSigIP2DMedianOld = R->hasUserFloat("sigIP2DMedianOld") ? TMath::Log10(TMath::Abs(R->userFloat("sigIP2DMedianOld"))) : 5;
+    I.log10AbsSigIP2DMedianOldNoMu = R->hasUserFloat("sigIP2DMedianOldNoMu") ? TMath::Log10(TMath::Abs(R->userFloat("sigIP2DMedianOldNoMu"))) : 5;
+    I.log10AbsSigIP2DMedianOldNoTrigMu = R->hasUserFloat("sigIP2DMedianOldNoTrigMu") ? TMath::Log10(TMath::Abs(R->userFloat("sigIP2DMedianOldNoTrigMu"))) : 5;
     I.theta2DMedianOld = R->hasUserFloat("theta2DMedianOld") ? R->userFloat("theta2DMedianOld") : -100;
     I.POCA_theta2DMedianOld = R->hasUserFloat("POCA_theta2DMedianOld") ? R->userFloat("POCA_theta2DMedianOld") : -100;
     I.nPixelHitsMedianOld = R->hasUserFloat("nPixelHitsMedianOld") ? R->userFloat("nPixelHitsMedianOld") : -1.0;
