@@ -363,12 +363,12 @@ requests = {
 # 'DisplacedJet_Run2018C-17Sep2018-v1' : '/DisplacedJet/Run2018C-17Sep2018-v1/MINIAOD',
 # 'DisplacedJet_Run2018D-PromptReco-v2' : '/DisplacedJet/Run2018D-PromptReco-v2/MINIAOD',
 
-# 'ParkingBPH1_Run2018A-05May2019-v1' : '/ParkingBPH1/Run2018A-05May2019-v1/MINIAOD',
-# 'ParkingBPH2_Run2018A-05May2019-v1' : '/ParkingBPH2/Run2018A-05May2019-v1/MINIAOD',
-# 'ParkingBPH3_Run2018A-05May2019-v1' : '/ParkingBPH3/Run2018A-05May2019-v1/MINIAOD',
-# 'ParkingBPH4_Run2018A-05May2019-v1' : '/ParkingBPH4/Run2018A-05May2019-v1/MINIAOD',
-# 'ParkingBPH5_Run2018A-05May2019-v1' : '/ParkingBPH5/Run2018A-05May2019-v1/MINIAOD',
-# 'ParkingBPH6_Run2018A-05May2019-v1' : '/ParkingBPH6/Run2018A-05May2019-v1/MINIAOD',
+'ParkingBPH1_Run2018A-05May2019-v1' : '/ParkingBPH1/Run2018A-05May2019-v1/MINIAOD',
+'ParkingBPH2_Run2018A-05May2019-v1' : '/ParkingBPH2/Run2018A-05May2019-v1/MINIAOD',
+'ParkingBPH3_Run2018A-05May2019-v1' : '/ParkingBPH3/Run2018A-05May2019-v1/MINIAOD',
+'ParkingBPH4_Run2018A-05May2019-v1' : '/ParkingBPH4/Run2018A-05May2019-v1/MINIAOD',
+'ParkingBPH5_Run2018A-05May2019-v1' : '/ParkingBPH5/Run2018A-05May2019-v1/MINIAOD',
+'ParkingBPH6_Run2018A-05May2019-v1' : '/ParkingBPH6/Run2018A-05May2019-v1/MINIAOD',
 
 'ParkingBPH1_Run2018B-05May2019-v2' : '/ParkingBPH1/Run2018B-05May2019-v2/MINIAOD',
 'ParkingBPH2_Run2018B-05May2019-v2' : '/ParkingBPH2/Run2018B-05May2019-v2/MINIAOD',
@@ -383,9 +383,9 @@ requests = {
 'ParkingBPH4_Run2018C-05May2019-v1' : '/ParkingBPH4/Run2018C-05May2019-v1/MINIAOD',
 'ParkingBPH5_Run2018C-05May2019-v1' : '/ParkingBPH5/Run2018C-05May2019-v1/MINIAOD',
 
-# 'ParkingBPH1_Run2018D-05May2019promptD-v1' : '/ParkingBPH1/Run2018D-05May2019promptD-v1/MINIAOD',
-# 'ParkingBPH2_Run2018D-05May2019promptD-v1' : '/ParkingBPH2/Run2018D-05May2019promptD-v1/MINIAOD',
-# 'ParkingBPH3_Run2018D-05May2019promptD-v1' : '/ParkingBPH3/Run2018D-05May2019promptD-v1/MINIAOD',
-# 'ParkingBPH4_Run2018D-05May2019promptD-v1' : '/ParkingBPH4/Run2018D-05May2019promptD-v1/MINIAOD',
-# 'ParkingBPH5_Run2018D-05May2019promptD-v1' : '/ParkingBPH5/Run2018D-05May2019promptD-v1/MINIAOD',
+'ParkingBPH1_Run2018D-05May2019promptD-v1' : '/ParkingBPH1/Run2018D-05May2019promptD-v1/MINIAOD',
+'ParkingBPH2_Run2018D-05May2019promptD-v1' : '/ParkingBPH2/Run2018D-05May2019promptD-v1/MINIAOD',
+'ParkingBPH3_Run2018D-05May2019promptD-v1' : '/ParkingBPH3/Run2018D-05May2019promptD-v1/MINIAOD',
+'ParkingBPH4_Run2018D-05May2019promptD-v1' : '/ParkingBPH4/Run2018D-05May2019promptD-v1/MINIAOD',
+'ParkingBPH5_Run2018D-05May2019promptD-v1' : '/ParkingBPH5/Run2018D-05May2019promptD-v1/MINIAOD',
 }
