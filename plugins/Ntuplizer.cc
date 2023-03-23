@@ -3110,7 +3110,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             KShortNearestMatchedROI.push_back(thisKShortNearestMatchedROI);
 
             KShortLeadingMatchedROIScore.push_back(thisKShortLeadingMatchedROIScore);
-            KShortNearestMatchedROIScore.push_back(ROIScores[thisKShortNearestMatchedROI]);
+            KShortNearestMatchedROIScore.push_back(thisKShortNearestMatchedROI > -1 ? ROIScores[thisKShortNearestMatchedROI] : -1.);
 
             // Distance to nearest muon
             int thisKShortNearestMuon = -1;
@@ -3265,7 +3265,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             LambdaNearestMatchedROI.push_back(thisLambdaNearestMatchedROI);
 
             LambdaLeadingMatchedROIScore.push_back(thisLambdaLeadingMatchedROIScore);
-            LambdaNearestMatchedROIScore.push_back(ROIScores[thisLambdaNearestMatchedROI]);
+            LambdaNearestMatchedROIScore.push_back(thisLambdaNearestMatchedROI > -1 ? ROIScores[thisLambdaNearestMatchedROI] : -1.);
 
             // Distance to nearest muon
             int thisLambdaNearestMuon = -1;
