@@ -73,7 +73,7 @@ if __name__ == '__main__':
     # Selection of samples via python lists
     import os
 
-    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","QCD_HT","QCD_MuEnriched","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017","ggH_MH-125_2018","gluinoGMSB","Others","data_BTagCSV","WH_MH-125_2016","WH_MH-125_2018","ZH_MH-125_2018","data_ParkingBPH"]
+    list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","TTJets","QCD","QCD_HT","QCD_MuEnriched","signal_VBF","signal_ggH","all","data_obs","ZJetsToNuNu", "DYJets", "WJets", "signal_ZH", "SUSY", "TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT", "VBFH_MH-125_2016","VBFH_MH-125_2017", "VBFH_MH-125_2018","ggH_MH-125_2016","ggH_MH-125_2017","ggH_MH-125_2018","gluinoGMSB","Others","data_BTagCSV","WH_MH-125_2016","WH_MH-125_2018","ZH_MH-125_2018","data_ParkingBPH", "data_ParkingBPH_Run2018A", "data_ParkingBPH_test"]
     print "Possible subgroups of samples:"
     for a in list_of_samples:
         print a
@@ -777,6 +777,42 @@ if __name__ == '__main__':
         # config.Data.splitting = 'FileBased'
         # config.Data.unitsPerJob = 1
         # if "ParkingBPH" in options.groupofsamples: config.Data.totalUnits = 5000 #Use w/ FileBased splitting for data
+    elif options.lists == "v7_central_miniAOD_2018_ControlRegion_21Mar2023" or "v7_central_miniAOD_2018_SignalRegion_21Mar2023":
+        os.system('tput bold && tput setab 1') #Print bold text in red background. Format is reset in the next line
+        os.system('echo "     REMINDER: Make sure PU weight file is updated for this production\'s ParkingBPH data!     $(tput sgr0)"')
+        from Analyzer.LLP2018.crab_requests_lists_2018MINIAOD_centrallyProduced import *
+        from Analyzer.LLP2018.crab_lumiMask_lists_gen_centrallyProduced import *
+        from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2018 import sample, samples
+        if ("H_MH-125_2016" in options.groupofsamples or "H_MH-125_2017" in options.groupofsamples):
+            print("Error: Using wrong group of samples for 2018 list")
+            exit()
+        if ("2016" in options.runera or "2017" in options.runera):
+            print("Error: Using wrong run era for 2018 list")
+            exit()
+        pset = "Ntuplizer2018.py"
+        folder = options.lists + "/"
+        outLFNDirBase = "/store/user/kjpena/"+folder
+        workarea = "/nfs/dust/cms/user/penaka/crabProjects/" + folder
+        isCalo = False
+        isTracking = True
+        isShort = False
+        isControl = True if ("ControlRegion" in options.lists) else False
+        isVBF = False
+        isggH = False
+        isTwinHiggs = True
+        isHeavyHiggs = False
+        isSUSY = False
+        isCentralProd = True if ("H_MH-125_201" in options.groupofsamples) else False
+        isMINIAOD = True
+        isAOD  = False
+        is2016 = False
+        is2017 = False
+        is2018 = True
+        config.JobType.inputFiles = ['data',os.environ['CMSSW_BASE']+'/src/HiggsLongLived/DeepSets/data/']
+        config.Data.splitting = 'Automatic'
+        # config.Data.splitting = 'FileBased'
+        # config.Data.unitsPerJob = 1
+        # if "ParkingBPH" in options.groupofsamples: config.Data.totalUnits = 5000 #Use w/ FileBased splitting for data
     else:
         print "No list indicated, aborting!"
         exit()
@@ -855,6 +891,8 @@ if __name__ == '__main__':
                 if k in masks.keys():
                     selected_lumiMasks[k] = masks[k]
                     print "lumi mask:", masks[k]
+                elif "MS-15_ctauS-1_" in k: #First signal point: Privately produced
+                    print "Signal point missing from central production: Privately produced, no lumi mask needed"
                 else:
                     print "no mask available"
                     exit()
@@ -911,7 +949,7 @@ if __name__ == '__main__':
         print "***************************************"
         print "***************************************"
         print "\n"
-        print "Performing control region for SHORT LIFETIMES!"
+        print "Running CONTROL REGION!"
         print "\n"
         print "***************************************"
         print "***************************************"
@@ -980,6 +1018,7 @@ if __name__ == '__main__':
         noLHEinfo = True if ('WW_TuneCUETP8M1_13TeV-pythia8' in j or 'WZ_TuneCUETP8M1_13TeV-pythia8' in j or 'ZZ_TuneCUETP8M1_13TeV-pythia8' in j or 'WW_TuneCP5_13TeV-pythia8' in j or 'WZ_TuneCP5_13TeV-pythia8' in j or 'ZZ_TuneCP5_13TeV-pythia8' in j) else False #check for PythiaLO samples
         isbbH = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in j) else False #bbH has a different label in LHEEventProduct
         isSignal = True if ('HToSSTobbbb_MH-125' in j or 'HToSSTo4b_MH-125' in j or 'HToSSTobbbb_WToLNu' in j or 'HToSSTobbbb_ZToLL' in j) else False #FIXME: Update with other signal modes & models?
+        isCentralProd = ("H_MH-125_201" in options.groupofsamples) and not (is2018 and "ggH_HToSSTobbbb_MH-125_MS-15_ctauS-1_" in j) #First signal point: Privately produced
         GT = ''
 
         if isMINIAOD:
@@ -1187,6 +1226,9 @@ if __name__ == '__main__':
             if "VBFH_HToSS" in j and not isCentralProd:
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
+            elif "ggH_HToSS" in j and not isCentralProd:
+                #automatic implementation of the choice bewteen inputDBS global/phys03
+                config.Data.inputDBS = "phys03"
             elif "GluGluH_HToSS" in j:
                 #automatic implementation of the choice bewteen inputDBS global/phys03
                 config.Data.inputDBS = "phys03"
@@ -1225,7 +1267,7 @@ if __name__ == '__main__':
 
             os.system('echo submitting this config...\n')
             #modify parameters here
-            config.General.requestName = j + "_01Jun2022"
+            config.General.requestName = j# + "_01Jun2022"
             config.Data.inputDataset = selected_requests[j]
             config.JobType.psetName = "python/" + pset
             config.Data.outLFNDirBase = outLFNDirBase
@@ -1237,9 +1279,18 @@ if __name__ == '__main__':
                 elif is2017:
                     config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
                 elif is2018:
-                    # config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
-                    config.Data.lumiMask = 'https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
-                    # config.Data.lumiMask = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+                    if isTracking:
+                        if options.groupofsamples == "data_ParkingBPH_test":
+                            if isControl:
+                                config.Data.lumiMask = '/nfs/dust/cms/user/penaka/crabProjects/v6_central_miniAOD_2018_14Mar2022/crab_ParkingBPH1_Run2018D-05May2019promptD-v1/results/processedLumis.json'
+                            else:
+                                config.Data.lumiMask = '/nfs/dust/cms/user/penaka/crabProjects/v6_central_miniAOD_2018_28Mar2022/crab_ParkingBPH1_Run2018D-05May2019promptD-v1/results/processedLumis.json'
+                        else:
+                            config.Data.lumiMask = 'https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions18/13TeV/ReReco/Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt'
+                    else:
+                        # config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+                        config.Data.lumiMask = 'https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+                        # config.Data.lumiMask = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
                 #config.Data.splitting = 'Automatic'
                 #config.Data.unitsPerJob = 100000#comment, giving errors with new crab
             elif isCentralProd:
