@@ -1548,28 +1548,29 @@ if __name__ == '__main__':
 
         print "GT ->", GT
 
-        JECstring = ''
-        if isData and (isReReco or isReMiniAod):
-          if any(s in j for s in theRunBCD2016):
-            JECstring = "Summer16_23Sep2016BCDV3_DATA" #if isReMiniAod else "Summer16_23Sep2016BCDV3_DATA"
-          if any(s in j for s in theRunEF2016):
-            JECstring = "Summer16_23Sep2016EFV3_DATA" #if isReMiniAod else "Summer16_23Sep2016EFV3_DATA"
-          if any(s in j for s in theRunG2016):
-            JECstring = "Summer16_23Sep2016GV3_DATA" #if isReMiniAod else "Summer16_23Sep2016GV3_DATA"
-          if any(s in j for s in theRunH2016):
-            JECstring = "Summer16_23Sep2016HV3_DATA" #if isReMiniAod else "Summer16_23Sep2016HV3_DATA"
-        elif isData and isPromptReco:
-           JECstring = "Spring16_25nsV6_DATA"
-        elif not isData:
-           JECstring = "Summer16_23Sep2016V3_MC"
-        else:#dummy!#FIXME Update JEC after current production is done?
-           print "WARNING! Dummy JEC for other run eras!!!!!!!!!!!"
-           JECstring = "Summer16_23Sep2016HV3_DATA"
+        # Obsolete
+        # JECstring = ''
+        # if isData and (isReReco or isReMiniAod):
+        #   if any(s in j for s in theRunBCD2016):
+        #     JECstring = "Summer16_23Sep2016BCDV3_DATA" #if isReMiniAod else "Summer16_23Sep2016BCDV3_DATA"
+        #   if any(s in j for s in theRunEF2016):
+        #     JECstring = "Summer16_23Sep2016EFV3_DATA" #if isReMiniAod else "Summer16_23Sep2016EFV3_DATA"
+        #   if any(s in j for s in theRunG2016):
+        #     JECstring = "Summer16_23Sep2016GV3_DATA" #if isReMiniAod else "Summer16_23Sep2016GV3_DATA"
+        #   if any(s in j for s in theRunH2016):
+        #     JECstring = "Summer16_23Sep2016HV3_DATA" #if isReMiniAod else "Summer16_23Sep2016HV3_DATA"
+        # elif isData and isPromptReco:
+        #    JECstring = "Spring16_25nsV6_DATA"
+        # elif not isData:
+        #    JECstring = "Summer16_23Sep2016V3_MC"
+        # else:#dummy!#FIXME Update JEC after current production is done?
+        #    print "WARNING! Dummy JEC for other run eras!!!!!!!!!!!"
+        #    JECstring = "Summer16_23Sep2016HV3_DATA"
 
-        print "JEC ->",JECstring
+        # print "JEC ->",JECstring
 
-        #FIXME JERstring should not be needed anymore. Test miniAOD ntuplizer without this parameter!
-        JERstring = ''
+        # Note: JERstring is not needed anymore. Right, now using JER from GT
+        # JERstring = ''
         MuonSFTriggerstring = ''
         MuonSFISOstring = ''
         MuonSFIDstring = ''
@@ -1585,7 +1586,7 @@ if __name__ == '__main__':
         phoMVANonTrigMediumIdFilestring = ''
         btagSFstring = ''
         if is2016:
-            JERstring = 'Summer16_25nsV1b_MC'
+            # JERstring = 'Summer16_25nsV1b_MC' # Obsolete - Now using JER from GT
             #WARNING! Muon SF should not be here applied for 2016! It needed to be a lumi weighted SF and hence only calculated after full run and brilcalc procedure! Needed to be done after ntuplizer process!
             #==> hardcoded in Ntuplizer that SF for Muons are not applied!
             MuonSFTriggerstring = 'MuonTrigger_average_RunBtoH_SF_Run2_2016'
@@ -1603,7 +1604,7 @@ if __name__ == '__main__':
             phoMVANonTrigMediumIdFilestring = 'Fall17V2_2016_MVAwp90_photons'
             btagSFstring = 'DeepJet_2016LegacySF_V1'
         elif is2017:
-            JERstring = 'Fall17_V3b_MC'
+            # JERstring = 'Fall17_V3b_MC' # Obsolete - Now using JER from GT
             MuonSFTriggerstring = 'MuonTrigger_EfficienciesAndSF_RunBtoF_Nov17Nov2017'
             MuonSFISOstring = 'MuonISO_2017_RunBCDEF_SF_ISO_Nov17'
             MuonSFIDstring = 'MuonID_2017_RunBCDEF_SF_ID_Nov17'
@@ -1619,9 +1620,9 @@ if __name__ == '__main__':
             phoMVANonTrigMediumIdFilestring = '2017_PhotonsMVAwp90'
             btagSFstring = 'DeepFlavour_94XSF_V4_B_F_Run2017'
         elif is2018:
-            JERstring = 'Autumn18_V7b_MC'
+            # JERstring = 'Autumn18_V7b_MC'  # Obsolete - Now using JER from GT
             MuonSFTriggerstring = 'MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate'
-            print "WARNING! There is another SF root file for single muon triggers for Run A: run < 316361 it is called: MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_BeforeMuonHLTUpdate. TO BE IMPLEMENTED SOMEHOW!"
+            if not isTracking: print "WARNING! There is another SF root file for single muon triggers for Run A: run < 316361 it is called: MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_BeforeMuonHLTUpdate. TO BE IMPLEMENTED SOMEHOW!"
             # print "To ignore this warning, add the option 'isControl = False' to your list"
             # if isControl: exit()
             MuonSFISOstring = 'MuonISO_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ISO'
@@ -1637,7 +1638,7 @@ if __name__ == '__main__':
             phoTightIdFilestring = '2018_PhotonsTight'
             phoMVANonTrigMediumIdFilestring = '2018_PhotonsMVAwp90'
             btagSFstring = 'DeepJet_102XSF_V2_Run2018'
-        print "JER ->", JERstring
+        # print "JER ->", JERstring
 
         # JSON filter (Note: Parameter not used in miniAOD ntuplizer. Update directly there for local jobs (and below for crab jobs)!)
         jsonName = ""
@@ -1687,8 +1688,8 @@ if __name__ == '__main__':
         string_isSignal = 'PisSignal='+str(isSignal)
         string_isCentralProd = 'PisCentralProd='+str(isCentralProd)
         string_GT = 'PGT='+str(GT)
-        string_JECstring = 'PJECstring='+str(JECstring)
-        string_JERstring = 'PJERstring='+str(JERstring)
+        # string_JECstring = 'PJECstring='+str(JECstring)
+        # string_JERstring = 'PJERstring='+str(JERstring)
         string_MuonSFIDstring = 'PMuonSFIDstring='+str(MuonSFIDstring)
         string_MuonSFISOstring = 'PMuonSFISOstring='+str(MuonSFISOstring)
         string_MuonSFTriggerstring = 'PMuonSFTriggerstring='+str(MuonSFTriggerstring)
@@ -1812,13 +1813,11 @@ if __name__ == '__main__':
                 config.General.requestName = j + "_recoveryTask"
                 config.Data.lumiMask = recoveryJSON
             #config.JobType.pyCfgParams = ['runLocal=False']
-            #FIXME JERstring should not be needed anymore. Test miniAOD ntuplizer without this parameter!
-            #FIXME isCentralProd is not yet implemented in AOD ntuplizer. Add!
-            #FIXME Once those two parameters work similarly for AOD and miniAOD, remove the if...else below
+            #FIXME Once these parameters work similarly for AOD and miniAOD, remove the if...else below
             if isAOD:
-                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod,string_isPromptReco, string_is2016, string_is2017, string_is2018, string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_btagSFstring, string_triggerTag, string_triggerString, string_filterString, string_calo, string_tracking, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY, string_RPV, string_Split, string_JetJet]
+                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod,string_isPromptReco, string_is2016, string_is2017, string_is2018, string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_btagSFstring, string_triggerTag, string_triggerString, string_filterString, string_calo, string_tracking, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY, string_RPV, string_Split, string_JetJet]
             else:
-                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod,string_isPromptReco, string_is2016, string_is2017, string_is2018, string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_JECstring, string_JERstring, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_btagSFstring, string_triggerTag, string_triggerString, string_filterString, string_calo, string_tracking, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
+                config.JobType.pyCfgParams = [string_runLocal, string_isData, string_isREHLT, string_isReReco, string_isReMiniAod,string_isPromptReco, string_is2016, string_is2017, string_is2018, string_noLHEinfo, string_isbbH, string_isSignal, string_isCentralProd, string_GT, string_MuonSFIDstring, string_MuonSFISOstring, string_MuonSFTriggerstring, string_jsonName, string_eleVetoIDstring, string_eleLooseIdstring, string_eleMediumIdstring, string_eleTightIdstring, string_eleMVA90noISOstring, string_eleMVA80noISOstring, string_phoLooseIdFilestring, string_phoMediumIdFilestring, string_phoTightIdFilestring, string_phoMVANonTrigMediumIdFilestring, string_btagSFstring, string_triggerTag, string_triggerString, string_filterString, string_calo, string_tracking, string_short, string_control, string_VBF, string_ggH, string_TwinHiggs, string_HeavyHiggs, string_SUSY]
             print config
             # Submit config file
             if options.crabaction=="submit" or options.crabaction=="recover":

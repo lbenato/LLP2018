@@ -94,18 +94,18 @@ options.register(
     VarParsing.varType.string,
     "GT parser flag"
 )
-options.register(
-    "PJECstring", "",
-    VarParsing.multiplicity.singleton,
-    VarParsing.varType.string,
-    "JECstring parser flag"
-)
-options.register(
-    "PJERstring", "",
-    VarParsing.multiplicity.singleton,
-    VarParsing.varType.string,
-    "JERstring parser flag"
-)
+# options.register(
+#     "PJECstring", "",
+#     VarParsing.multiplicity.singleton,
+#     VarParsing.varType.string,
+#     "JECstring parser flag"
+# )
+# options.register(
+#     "PJERstring", "",
+#     VarParsing.multiplicity.singleton,
+#     VarParsing.varType.string,
+#     "JERstring parser flag"
+# )
 options.register(
     "PMuonSFIDstring", "",
     VarParsing.multiplicity.singleton,
@@ -657,32 +657,32 @@ task.add(getattr(process,updatedTauName))
 # Jet corrector https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookJetEnergyCorrections#CorrOnTheFly
 process.load('JetMETCorrections.Configuration.JetCorrectors_cff')
 
+# Obsolete - Now using updateJetCollection
+# JECstring = ''
+# if RunLocal:
+#     if isData and (isReReco or isReMiniAod):
+#       if any(s in process.source.fileNames[0] for s in theRunBCD2016):
+#         JECstring = "Summer16_23Sep2016BCDV3_DATA" #if isReMiniAod else "Summer16_23Sep2016BCDV3_DATA"
+#       if any(s in process.source.fileNames[0] for s in theRunEF2016):
+#         JECstring = "Summer16_23Sep2016EFV3_DATA" #if isReMiniAod else "Summer16_23Sep2016EFV3_DATA"
+#       if any(s in process.source.fileNames[0] for s in theRunG2016):
+#         JECstring = "Summer16_23Sep2016GV3_DATA" #if isReMiniAod else "Summer16_23Sep2016GV3_DATA"
+#       if any(s in process.source.fileNames[0] for s in theRunH2016):
+#         JECstring = "Summer16_23Sep2016HV3_DATA" #if isReMiniAod else "Summer16_23Sep2016HV3_DATA"
+#     elif isData and isPromptReco:
+#         JECstring = "Spring16_25nsV6_DATA"
+#     elif not isData:
+#         JECstring = "Summer16_23Sep2016V3_MC"
+#     else:#dummy!
+#        print "WARNING! Dummy JEC for other run eras!!!!!!!!!!!"
+#        JECstring = "Summer16_23Sep2016HV3_DATA"
 
-JECstring = ''
-if RunLocal:
-    if isData and (isReReco or isReMiniAod):
-      if any(s in process.source.fileNames[0] for s in theRunBCD2016):
-        JECstring = "Summer16_23Sep2016BCDV3_DATA" #if isReMiniAod else "Summer16_23Sep2016BCDV3_DATA"
-      if any(s in process.source.fileNames[0] for s in theRunEF2016):
-        JECstring = "Summer16_23Sep2016EFV3_DATA" #if isReMiniAod else "Summer16_23Sep2016EFV3_DATA"
-      if any(s in process.source.fileNames[0] for s in theRunG2016):
-        JECstring = "Summer16_23Sep2016GV3_DATA" #if isReMiniAod else "Summer16_23Sep2016GV3_DATA"
-      if any(s in process.source.fileNames[0] for s in theRunH2016):
-        JECstring = "Summer16_23Sep2016HV3_DATA" #if isReMiniAod else "Summer16_23Sep2016HV3_DATA"
-    elif isData and isPromptReco:
-        JECstring = "Spring16_25nsV6_DATA"
-    elif not isData:
-        JECstring = "Summer16_23Sep2016V3_MC"
-    else:#dummy!
-       print "WARNING! Dummy JEC for other run eras!!!!!!!!!!!"
-       JECstring = "Summer16_23Sep2016HV3_DATA"
-
-else:
-    JECstring = options.PJECstring
-print "JEC ->",JECstring
+# else:
+#     JECstring = options.PJECstring
+# print "JEC ->",JECstring
 
 
-JERstring = ''
+# JERstring = '' # Obsolete - Now using JER from GT
 MuonSFTriggerstring = ''
 MuonSFISOstring = ''
 MuonSFIDstring = ''
@@ -699,7 +699,7 @@ phoMVANonTrigMediumIdFilestring = ''
 btagSFstring = ''
 if RunLocal:
    if is2016:
-      JERstring = 'Summer16_25nsV1b_MC'
+      # JERstring = 'Summer16_25nsV1b_MC' # Obsolete - Now using JER from GT
       #WARNING! Muon SF should not be here applied for 2016! It needed to be a lumi weighted SF and hence only calculated after full run and brilcalc procedure! Needed to be done after ntuplizer process!
       MuonSFTriggerstring = 'MuonTrigger_average_RunBtoH_SF_Run2_2016'
       MuonSFISOstring = 'MuonISO_average_RunBtoH_SF_Run2_2016'
@@ -716,7 +716,7 @@ if RunLocal:
       phoMVANonTrigMediumIdFilestring = 'Fall17V2_2016_MVAwp90_photons'
       btagSFstring = 'DeepJet_2016LegacySF_V1'
    elif is2017:
-      JERstring = 'Fall17_V3b_MC'
+      # JERstring = 'Fall17_V3b_MC' # Obsolete - Now using JER from GT
       MuonSFTriggerstring = 'MuonTrigger_EfficienciesAndSF_RunBtoF_Nov17Nov2017'
       MuonSFISOstring = 'MuonISO_2017_RunBCDEF_SF_ISO_Nov17'
       MuonSFIDstring = 'MuonID_2017_RunBCDEF_SF_ID_Nov17'
@@ -732,9 +732,9 @@ if RunLocal:
       phoMVANonTrigMediumIdFilestring = '2017_PhotonsMVAwp90'
       btagSFstring = 'DeepFlavour_94XSF_V4_B_F_Run2017'
    elif is2018:
-      JERstring = 'Autumn18_V7b_MC'
+      # JERstring = 'Autumn18_V7b_MC' # Obsolete - Now using JER from GT
       MuonSFTriggerstring = 'MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_AfterMuonHLTUpdate'
-      print "WARNING! There is another SF root file for single muon triggers for Run A: run < 316361 it is called: MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_BeforeMuonHLTUpdate. TO BE IMPLEMENTED SOMEHOW!"
+      if not isTracking: print "WARNING! There is another SF root file for single muon triggers for Run A: run < 316361 it is called: MuonTrigger_EfficienciesStudies_2018_trigger_EfficienciesAndSF_2018Data_BeforeMuonHLTUpdate. TO BE IMPLEMENTED SOMEHOW!"
       # if isControl: exit()
       MuonSFISOstring = 'MuonISO_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ISO'
       MuonSFIDstring = 'MuonID_EfficienciesStudies_2018_rootfiles_RunABCD_SF_ID'
@@ -750,7 +750,7 @@ if RunLocal:
       phoMVANonTrigMediumIdFilestring = '2018_PhotonsMVAwp90'
       btagSFstring = 'DeepJet_102XSF_V2_Run2018'
 else:
-   JERstring = options.PJERstring
+   # JERstring = options.PJERstring # Obsolete - Now using JER from GT
    MuonSFIDstring = options.PMuonSFIDstring
    MuonSFISOstring = options.PMuonSFISOstring
    MuonSFTriggerstring = options.PMuonSFTriggerstring
@@ -765,7 +765,7 @@ else:
    phoTightIdFilestring = options.PphoTightIdFilestring
    phoMVANonTrigMediumIdFilestring = options.PphoMVANonTrigMediumIdFilestring
    btagSFstring = options.PbtagSFstring
-print "JER ->", JERstring
+# print "JER ->", JERstring
 
 #-----------------------#
 #        FILTERS        #
@@ -1760,9 +1760,9 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         ebRecHits = cms.InputTag("reducedEcalRecHitsEB", "","RECO"),
         eeRecHits  = cms.InputTag("reducedEcalRecHitsEE", "","RECO"),
         esRecHits = cms.InputTag("reducedEcalRecHitsES", "","RECO"),
-        recalibrateJets = cms.bool(False),#(True if is2016 else False),
-        recalibrateMass = cms.bool(False),
-        recalibratePuppiMass = cms.bool(False),
+        # recalibrateJets = cms.bool(False),#(True if is2016 else False),
+        # recalibrateMass = cms.bool(False),
+        # recalibratePuppiMass = cms.bool(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
         smearJets = cms.bool(True),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
@@ -1816,9 +1816,9 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         ebRecHits = cms.InputTag("reducedEcalRecHitsEB", "","RECO"),
         eeRecHits  = cms.InputTag("reducedEcalRecHitsEE", "","RECO"),
         esRecHits = cms.InputTag("reducedEcalRecHitsES", "","RECO"),
-        recalibrateJets = cms.bool(False),#(True if is2016 else False),
-        recalibrateMass = cms.bool(False),
-        recalibratePuppiMass = cms.bool(False),
+        # recalibrateJets = cms.bool(False),#(True if is2016 else False),
+        # recalibrateMass = cms.bool(False),
+        # recalibratePuppiMass = cms.bool(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
         smearJets = cms.bool(True),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
@@ -1876,9 +1876,9 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         ebRecHits = cms.InputTag("reducedEcalRecHitsEB", "","RECO"),
         eeRecHits  = cms.InputTag("reducedEcalRecHitsEE", "","RECO"),
         esRecHits = cms.InputTag("reducedEcalRecHitsES", "","RECO"),
-        recalibrateJets = cms.bool(False),#(True if is2016 else False),
-        recalibrateMass = cms.bool(False),
-        recalibratePuppiMass = cms.bool(False),
+        # recalibrateJets = cms.bool(False),#(True if is2016 else False),
+        # recalibrateMass = cms.bool(False),
+        # recalibratePuppiMass = cms.bool(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
         smearJets = cms.bool(True),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),# if not isAOD else 'offlinePrimaryVertices'),
@@ -1932,9 +1932,9 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         ebRecHits = cms.InputTag("reducedEcalRecHitsEB", "","RECO"),
         eeRecHits  = cms.InputTag("reducedEcalRecHitsEE", "","RECO"),
         esRecHits = cms.InputTag("reducedEcalRecHitsES", "","RECO"),
-        recalibrateJets = cms.bool(False),#(True if is2016 else False),
-        recalibrateMass = cms.bool(False),#(True if is2016 else False),#(False),
-        recalibratePuppiMass = cms.bool(False),#(True),#(False),
+        # recalibrateJets = cms.bool(False),#(True if is2016 else False),
+        # recalibrateMass = cms.bool(False),#(True if is2016 else False),#(False),
+        # recalibratePuppiMass = cms.bool(False),#(True),#(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
         smearJets = cms.bool(True),
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
