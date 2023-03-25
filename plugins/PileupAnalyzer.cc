@@ -81,6 +81,19 @@ float PileupAnalyzer::GetPV(const edm::Event& iEvent) {
     return PVCollection->size();
 }
 
+
+std::vector<int> PileupAnalyzer::GetBunchCrossing(const edm::Event& iEvent) {
+    std::vector<int> Vect;
+    if(!iEvent.isRealData()) {
+      edm::Handle<std::vector<PileupSummaryInfo> > PUInfo;
+      iEvent.getByToken(PUToken, PUInfo);
+      for(std::vector<PileupSummaryInfo>::const_iterator pvi=PUInfo->begin(), pvn=PUInfo->end(); pvi!=pvn; ++pvi) {
+	Vect.push_back(pvi->getBunchCrossing()); // getPU_NumInteractions();
+      }
+    }
+    return Vect;
+}
+
 int PileupAnalyzer::GetMeanNumInteractions(const edm::Event& iEvent) {
     int nPT(0);
     if(!iEvent.isRealData()) {
@@ -91,4 +104,29 @@ int PileupAnalyzer::GetMeanNumInteractions(const edm::Event& iEvent) {
       }
     }
     return nPT;
+}
+
+std::vector<int> PileupAnalyzer::GetTrueNumInteractions(const edm::Event& iEvent) {
+    std::vector<int> Vect;
+    if(!iEvent.isRealData()) {
+      edm::Handle<std::vector<PileupSummaryInfo> > PUInfo;
+      iEvent.getByToken(PUToken, PUInfo);
+      for(std::vector<PileupSummaryInfo>::const_iterator pvi=PUInfo->begin(), pvn=PUInfo->end(); pvi!=pvn; ++pvi) {
+	//std::cout << "BX : " << pvi->getBunchCrossing() << " ; nInt: " << pvi->getTrueNumInteractions() << " ; nPU: " <<  pvi->getPU_NumInteractions() << std::endl;
+	Vect.push_back(pvi->getTrueNumInteractions()); // getPU_NumInteractions();
+      }
+    }
+    return Vect;
+}
+
+std::vector<int> PileupAnalyzer::GetPUNumInteractions(const edm::Event& iEvent) {
+    std::vector<int> Vect;
+    if(!iEvent.isRealData()) {
+      edm::Handle<std::vector<PileupSummaryInfo> > PUInfo;
+      iEvent.getByToken(PUToken, PUInfo);
+      for(std::vector<PileupSummaryInfo>::const_iterator pvi=PUInfo->begin(), pvn=PUInfo->end(); pvi!=pvn; ++pvi) {
+	Vect.push_back(pvi->getPU_NumInteractions());
+      }
+    }
+    return Vect;
 }

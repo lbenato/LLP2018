@@ -132,6 +132,10 @@ elif options.lists == "v4_calo_AOD_2018":
     #LUMI = 11.816443876*1000.
     #LUMI = 13.906390984*1000.# METRun2018A-17Sep2018-v1 all done, 28 Jul 2020
     LUMI = 59690#2018 lumi with normtag, from pdvm2018 twiki
+elif options.lists == "v5_calo_AOD_2018":
+    from Analyzer.LLP2018.samplesAOD2018 import sample, samples
+    from Analyzer.LLP2018.crab_requests_lists_calo_AOD_2018 import *
+    LUMI = 59690#2018 lumi with normtag, from pdvm2018 twiki
 elif options.lists == "v1_central_miniAOD_2017_17Nov2020":
     from Analyzer.LLP2018.samples_centrallyProduced_MINIAOD2017 import sample, samples
     from Analyzer.LLP2018.crab_requests_lists_2017MINIAOD_centrallyProduced import *
@@ -179,6 +183,10 @@ for b, k in enumerate(requests.keys()):
             if "ggH_HToSSTobbbb" in k:
                 print k
                 selected_requests[k] = requests[k]
+    elif options.groupofsamples=="signal_ZH":
+        if "ZH_HToSSTobb" in k:
+            print k
+            selected_requests[k] = requests[k]
     elif options.groupofsamples=="centralSignal_ZH":
             if "ZH_HToSSTobbbb" in k:
                 print k
@@ -187,8 +195,12 @@ for b, k in enumerate(requests.keys()):
             if "WplusH_HToSSTobbbb" in k or "WminusH_HToSSTobbbb" in k:
                 print k
                 selected_requests[k] = requests[k]
-    elif options.groupofsamples=="signal_ZH":
-        if "ZH_HToSSTobb" in k:
+    elif options.groupofsamples=="JetJet":
+        if "XXTo4J" in k:
+            print k
+            selected_requests[k] = requests[k]
+    elif options.groupofsamples=="splitSUSY":
+        if "GluinoGluinoToNeutralinoNeutralinoTo2T2B2S" in k:
             print k
             selected_requests[k] = requests[k]
     elif options.groupofsamples=="SUSY":
@@ -288,6 +300,10 @@ def weight(name):
         elif('GluGluH2_H2ToSSTobbbb') in name:
             #We do not take into account ggH Higgs production x-sec! Absolute x-sec needed!
             xs = 1.#48.58
+        elif('XXTo4J') in name:
+            xs = 1.
+        elif('GluinoGluinoToNeutralinoNeutralinoTo2T2B2S') in name:
+            xs = 1.
         else:
             if 'filtereff' in sample[name]:
                 xs = sample[name]['xsec'] * sample[name]['kfactor'] * sample[name]['filtereff']

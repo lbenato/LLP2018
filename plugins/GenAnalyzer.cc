@@ -96,6 +96,17 @@ float GenAnalyzer::GenEventWeight(const edm::Event& iEvent) {
   const GenEventInfoProduct& genEventInfo = *(GenEventCollection.product());
 
   weight = genEventInfo.weights()[0];
+  //std::cout<< "weight[0]:" << genEventInfo.weights()[0] << std::endl;
+  //std::cout<< "weight[1]: " << genEventInfo.weights()[1] << std::endl;
+  //std::cout<< "weight[2]: " << genEventInfo.weights()[2] << std::endl;
+  //std::cout<< "weight[3]: " << genEventInfo.weights()[3] << std::endl;
+  //std::cout<< "weight(): " << genEventInfo.weight() << std::endl;
+  //std::cout<< "signalProcessID " << genEventInfo.signalProcessID() << std::endl;
+  //std::cout<< "qScale " << genEventInfo.qScale() << std::endl;
+  //std::cout<< "alphaQCD " << genEventInfo.alphaQCD() << std::endl;
+  //std::cout<< "alphaQED " << genEventInfo.alphaQED() << std::endl;
+  
+  
   return weight;
 }
 

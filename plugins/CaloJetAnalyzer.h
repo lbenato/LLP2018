@@ -58,7 +58,7 @@ class CaloJetAnalyzer {
         CaloJetAnalyzer(edm::ParameterSet&, edm::ConsumesCollector&&);
         ~CaloJetAnalyzer();
         virtual std::vector<reco::CaloJet> FillJetVector(const edm::Event&);
-        virtual void CorrectJet(reco::CaloJet&, float, float, bool);
+        //virtual void CorrectJet(reco::CaloJet&, float, float, bool);
         //virtual void CorrectMass(reco::CaloJet&, float, float, bool);
         //virtual void CorrectPuppiMass(reco::CaloJet&, bool);
         virtual void CleanJetsFromMuons(std::vector<reco::CaloJet>&, std::vector<pat::Muon>&, float);
@@ -85,12 +85,13 @@ class CaloJetAnalyzer {
         bool RecalibrateJets, RecalibrateMass;
 	//bool RecalibratePuppiMass;
         bool SmearJets;
-        std::string JECUncertaintyMC;
-        std::string JECUncertaintyDATA;
-        std::vector<std::string> JetCorrectorMC;
-        std::vector<std::string> JetCorrectorDATA;
-        std::vector<std::string> MassCorrectorMC;
-        std::vector<std::string> MassCorrectorDATA;
+        std::string JECUncertaintyName;
+        //std::string JECUncertaintyMC;
+        //std::string JECUncertaintyDATA;
+        //std::vector<std::string> JetCorrectorMC;
+        //std::vector<std::string> JetCorrectorDATA;
+        //std::vector<std::string> MassCorrectorMC;
+        //std::vector<std::string> MassCorrectorDATA;
         //std::string MassCorrectorPuppi;
         edm::EDGetTokenT<reco::VertexCollection> VertexToken;        
         edm::EDGetTokenT<double> RhoToken;
@@ -116,13 +117,13 @@ class CaloJetAnalyzer {
 	//bool isMetTriggerFile;
 
         // JEC Uncertainty
-        JetCorrectionUncertainty* jecUncMC;
-        JetCorrectionUncertainty* jecUncDATA;
+        //JetCorrectionUncertainty* jecUncMC;
+        //JetCorrectionUncertainty* jecUncDATA;
         
-        boost::shared_ptr<FactorizedJetCorrector> jetCorrMC;
-        boost::shared_ptr<FactorizedJetCorrector> jetCorrDATA;
-        boost::shared_ptr<FactorizedJetCorrector> massCorrMC;
-        boost::shared_ptr<FactorizedJetCorrector> massCorrDATA;
+        //boost::shared_ptr<FactorizedJetCorrector> jetCorrMC;
+        //boost::shared_ptr<FactorizedJetCorrector> jetCorrDATA;
+        //boost::shared_ptr<FactorizedJetCorrector> massCorrMC;
+        //boost::shared_ptr<FactorizedJetCorrector> massCorrDATA;
         
         // Btag calibrations
         //BTagCalibration       * calib;

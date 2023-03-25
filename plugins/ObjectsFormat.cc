@@ -223,10 +223,44 @@ void ObjectsFormat::FillTauType(TauType& I, const pat::Tau* R, bool isMC) {
     I.dz          = R->hasUserFloat("dz") ? R->userFloat("dz") : 0.;
     I.charge      = R->charge();
     I.pdgId       = R->pdgId();
-    I.isLoose     = R->hasUserInt("isLoose") ? R->userInt("isLoose") : false;
-    I.isMedium    = R->hasUserInt("isMedium") ? R->userInt("isMedium") : false;
-    I.isTight     = R->hasUserInt("isTight") ? R->userInt("isTight") : false;
+    //I.isLoose     = R->hasUserInt("isLoose") ? R->userInt("isLoose") : false;
+    //I.isMedium    = R->hasUserInt("isMedium") ? R->userInt("isMedium") : false;
+    //I.isTight     = R->hasUserInt("isTight") ? R->userInt("isTight") : false;
     if(isMC) I.isMatched = false;//(Utilities::FindMotherId(dynamic_cast<const reco::Candidate*>(R->genLepton()))==23);
+    I.decayModeFinding = R->tauID("decayModeFinding");
+    I.decayModeFindingNewDMs = R->tauID("decayModeFindingNewDMs");
+    I.byLooseCombinedIsolationDeltaBetaCorr3Hits = R->tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits");
+    I.byMediumCombinedIsolationDeltaBetaCorr3Hits = R->tauID("byMediumCombinedIsolationDeltaBetaCorr3Hits");
+    I.byTightCombinedIsolationDeltaBetaCorr3Hits = R->tauID("byTightCombinedIsolationDeltaBetaCorr3Hits");
+    I.againstElectronVLooseMVA6 = R->tauID("againstElectronVLooseMVA6");
+    I.againstElectronVTightMVA6 = R->tauID("againstElectronVTightMVA6");
+    I.byVLooseIsolationMVArun2v1DBnewDMwLT = R->tauID("byVLooseIsolationMVArun2v1DBnewDMwLT");
+    I.byLooseIsolationMVArun2v1DBnewDMwLT = R->tauID("byLooseIsolationMVArun2v1DBnewDMwLT");
+    I.byMediumIsolationMVArun2v1DBnewDMwLT = R->tauID("byMediumIsolationMVArun2v1DBnewDMwLT");
+    I.byTightIsolationMVArun2v1DBnewDMwLT = R->tauID("byTightIsolationMVArun2v1DBnewDMwLT");
+    I.byVTightIsolationMVArun2v1DBnewDMwLT = R->tauID("byVTightIsolationMVArun2v1DBnewDMwLT");
+    I.byVVTightIsolationMVArun2v1DBnewDMwLT = R->tauID("byVVTightIsolationMVArun2v1DBnewDMwLT");
+    I.byVVVLooseDeepTau2017v2p1VSjet = R->tauID("byVVVLooseDeepTau2017v2p1VSjet");
+    I.byVVLooseDeepTau2017v2p1VSjet = R->tauID("byVVLooseDeepTau2017v2p1VSjet");
+    I.byVLooseDeepTau2017v2p1VSjet = R->tauID("byVLooseDeepTau2017v2p1VSjet");
+    I.byLooseDeepTau2017v2p1VSjet = R->tauID("byLooseDeepTau2017v2p1VSjet");
+    I.byMediumDeepTau2017v2p1VSjet = R->tauID("byMediumDeepTau2017v2p1VSjet");
+    I.byTightDeepTau2017v2p1VSjet = R->tauID("byTightDeepTau2017v2p1VSjet");
+    I.byVTightDeepTau2017v2p1VSjet = R->tauID("byVTightDeepTau2017v2p1VSjet");
+    I.byVVTightDeepTau2017v2p1VSjet = R->tauID("byVVTightDeepTau2017v2p1VSjet");
+    I.byVVVLooseDeepTau2017v2p1VSe = R->tauID("byVVVLooseDeepTau2017v2p1VSe");
+    I.byVVLooseDeepTau2017v2p1VSe = R->tauID("byVVLooseDeepTau2017v2p1VSe");
+    I.byVLooseDeepTau2017v2p1VSe = R->tauID("byVLooseDeepTau2017v2p1VSe");
+    I.byLooseDeepTau2017v2p1VSe = R->tauID("byLooseDeepTau2017v2p1VSe");
+    I.byMediumDeepTau2017v2p1VSe = R->tauID("byMediumDeepTau2017v2p1VSe");
+    I.byTightDeepTau2017v2p1VSe = R->tauID("byTightDeepTau2017v2p1VSe");
+    I.byVTightDeepTau2017v2p1VSe = R->tauID("byVTightDeepTau2017v2p1VSe");
+    I.byVVTightDeepTau2017v2p1VSe = R->tauID("byVVTightDeepTau2017v2p1VSe");
+    I.byVLooseDeepTau2017v2p1VSmu = R->tauID("byVLooseDeepTau2017v2p1VSmu");
+    I.byLooseDeepTau2017v2p1VSmu = R->tauID("byLooseDeepTau2017v2p1VSmu");
+    I.byMediumDeepTau2017v2p1VSmu = R->tauID("byMediumDeepTau2017v2p1VSmu");
+    I.byTightDeepTau2017v2p1VSmu = R->tauID("byTightDeepTau2017v2p1VSmu");
+    I.decayMode = R->decayMode();
 }
 
 
@@ -240,9 +274,9 @@ void ObjectsFormat::ResetTauType(TauType& I) {
     I.dz          = -99.;
     I.charge      = 0;
     I.pdgId       = 0;
-    I.isLoose     = false;
-    I.isMedium    = false;
-    I.isTight     = false;
+    //I.isLoose     = false;
+    //I.isMedium    = false;
+    //I.isTight     = false;
     I.isMatched   = false;
 }
 
@@ -360,7 +394,6 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     if(isMC && R->genParton()) I.mother = Utilities::FindMotherId(R->genParton());
     //I.isMatched   = (I.mother==25);
     I.isLoose     = R->hasUserInt("isLoose") ? R->userInt("isLoose") : false;
-    I.isMedium    = false;
     I.isTight     = R->hasUserInt("isTight") ? R->userInt("isTight") : false;
     I.isTightLepVeto     = R->hasUserInt("isTightLepVeto") ? R->userInt("isTightLepVeto") : false;
     I.isCSVL      = R->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags")>0.5426 ? true : false;
@@ -483,9 +516,25 @@ void ObjectsFormat::FillJetType(JetType& I, const pat::Jet* R, bool isMC) {
     //I.VBF_DisplacedJet40_VVTightID_Hadronic_match = R->hasUserInt("VBF_DisplacedJet40_VVTightID_Hadronic_match") ? R->userInt("VBF_DisplacedJet40_VVTightID_Hadronic_match") : 0;
     I.ptJESUp = R->hasUserFloat("ptJESUp") ? R->userFloat("ptJESUp") : -1.;
     I.ptJESDown = R->hasUserFloat("ptJESDown") ? R->userFloat("ptJESDown") : -1.;
+
     I.ptJER = R->hasUserFloat("ptJER") ? R->userFloat("ptJER") : -1.;
     I.ptJERUp = R->hasUserFloat("ptJERUp") ? R->userFloat("ptJERUp") : -1.;
     I.ptJERDown = R->hasUserFloat("ptJERDown") ? R->userFloat("ptJERDown") : -1.;
+    I.energyJER = R->hasUserFloat("energyJER") ? R->userFloat("energyJER") : -1.;
+    I.energyJERUp = R->hasUserFloat("energyJERUp") ? R->userFloat("energyJERUp") : -1.;
+    I.energyJERDown = R->hasUserFloat("energyJERDown") ? R->userFloat("energyJERDown") : -1.;
+    I.etaJER = R->hasUserFloat("etaJER") ? R->userFloat("etaJER") : -1.;
+    I.etaJERUp = R->hasUserFloat("etaJERUp") ? R->userFloat("etaJERUp") : -1.;
+    I.etaJERDown = R->hasUserFloat("etaJERDown") ? R->userFloat("etaJERDown") : -1.;
+    //scale factors
+    I.JERresolution = R->hasUserFloat("JERresolution") ? R->userFloat("JERresolution") : -1.;
+    I.JERsf = R->hasUserFloat("JERsf") ? R->userFloat("JERsf") : -1.;
+    I.JERsfUp = R->hasUserFloat("JERsfUp") ? R->userFloat("JERsfUp") : -1.;
+    I.JERsfDown = R->hasUserFloat("JERsfDown") ? R->userFloat("JERsfDown") : -1.;
+    I.JERsmearFactor = R->hasUserFloat("JERsmearFactor") ? R->userFloat("JERsmearFactor") : -1.;
+    I.JERsmearFactorUp = R->hasUserFloat("JERsmearFactorUp") ? R->userFloat("JERsmearFactorUp") : -1.;
+    I.JERsmearFactorDown = R->hasUserFloat("JERsmearFactorDown") ? R->userFloat("JERsmearFactorDown") : -1.;
+
     I.tau1 = R->hasUserFloat("tau1") ? R->userFloat("tau1") : -1.;
     I.tau2 = R->hasUserFloat("tau2") ? R->userFloat("tau2") : -1.;
     I.tau3 = R->hasUserFloat("tau3") ? R->userFloat("tau3") : -1.;
@@ -710,7 +759,6 @@ void ObjectsFormat::ResetJetType(JetType& I) {
     I.hadronFlavour     = 0;
     I.mother      = false;
     I.isLoose     = false;
-    I.isMedium    = false;
     I.isTight     = false;
     I.isTightLepVeto     = false;
     I.isCSVL      = false;
@@ -873,10 +921,10 @@ void ObjectsFormat::ResetJetType(JetType& I) {
     I.deepJet_probbb    = -99.;
 }
 
-std::string ObjectsFormat::ListJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:energyRaw/F:ptRaw/F:ptUnc/F:CSV/F:CMVA/F:cHadE/F:nHadE/F:eleE/F:photonE/F:muE/F:nEmE/F:cEmE/F:cmuE/F:cHadEFrac/F:nHadEFrac/F:eleEFrac/F:photonEFrac/F:muEFrac/F:nEmEFrac/F:cEmEFrac/F:cmuEFrac/F:cHadMulti/F:nHadMulti/F:eleMulti/F:photonMulti/F:muMulti/F:cMulti/F:nMulti/F:npr/F:cHadMultiFrac/F:nHadMultiFrac/F:eleMultiFrac/F:photonMultiFrac/F:muMultiFrac/F:cMultiFrac/F:nMultiFrac/F:ptGenJ/F:etaGenJ/F:phiGenJ/F:massGenJ/F:ptGen/F:etaGen/F:phiGen/F:massGen/F:pdgIdGen/I:partonFlavour/I:hadronFlavour/I:mother/I:isLoose/O:isMedium/O:isTight/O:isTightLepVeto/O:isCSVL/O:isCSVM/O:isCSVT/O:PUId/I:PUIdLoose/O:PUIdMedium/O:PUIdTight/O:PUDiscriminant/F:matchBquark/I:matchLL/I:isGenMatched/I:isVBFGenMatched/I:alphaMaxOld/F:sumPtJetOld/F:betaMaxOld/F:gammaMaxOld/F:gammaMaxEMOld/F:gammaMaxHadronicOld/F:gammaMaxETOld/F:sigIP2DMedianOld/F:theta2DMedianOld/F:POCA_theta2DMedianOld/F:nPixelHitsMedianOld/F:nHitsMedianOld/F:dxyMedianOld/F:dzMedianOld/F:ptAllTracks/F:ptAllPVTracks/F:ptPVTracksMax/F:nTracksAll/I:nTracksPVMax/I:medianIP2D/F:medianTheta2D/F:alphaMax/F:betaMax/F:gammaMax/F:gammaMaxEM/F:gammaMaxHadronic/F:gammaMaxET/F:minDeltaRAllTracks/F:minDeltaRPVTracks/F:nPixelHitsMedian/F:nHitsMedian/F:dzMedian/F:dxyMedian/F:hcalE/F:ecalE/F:FracCal/F:flightDist2d/F:flightDist2dError/F:flightDist3d/F:flightDist3dError/F:nSV/I:nSVCand/I:nVertexTracks/I:nSelectedTracks/I:dRSVJet/F:SV_x/F:SV_y/F:SV_z/F:SV_dx/F:SV_dy/F:SV_dz/F:nTracksSV/I:SV_mass/F:isCaloTag/I:ptJESUp/F:ptJESDown/F:ptJERUp/F:ptJERDown/F:nSubJets/I:tau1/F:tau2/F:tau3/F:tau21/F:tau31/F:tau23/F:tau1_neutral/F:tau2_neutral/F:tau21_neutral/F:tau1_charged/F:tau2_charged/F:tau21_charged/F:nConstituents/I:nTrackConstituents/I:nTracks0PixelHits/I:nTracks1PixelHit/I:nTracks2PixelHits/I:nTracks3PixelHits/I:nTracks4PixelHits/I:nTracks5PixelHits/I:nTracksAtLeast6PixelHits/I:nTracksValidHitInBPix1/I:nTracks0LostInnerHits/I:nTracks1LostInnerHit/I:nTracksAtLeast2LostInnerHits/I:nTrackConstituentsWithPtLarger0p95/I:nTrackConstituentsWithTrackDetails/I:nTrackConstituentsWithTrackDetailsPtLarger0p95/I:nMatchedGenBquarks/I:nRecHits/I:timeRecHits/F:timeRMSRecHits/F:energyRecHits/F:energyErrorRecHits/F:sigprob/F:pfXWP0p01/F:pfXWP0p1/F:pfXWP1/F:pfXWP10/F:pfXWP100/F:pfXWP1000/F:I.deepCSV_probc_probudsg/F:I.deepCSV_probb_probbb/F:deepCSV_probudsg/F:deepCSV_probb/F:deepCSV_probc/F:deepCSV_probbb/F:I.deepJet_probb_probbb_problepb/F:I.deepJet_probc_probg_probuds/F:deepJet_probuds/F:deepJet_probg/F:deepJet_problepb/F:deepJet_probb/F:deepJet_probc/F:deepJet_probbb/F";}
+std::string ObjectsFormat::ListJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:energyRaw/F:ptRaw/F:ptUnc/F:CSV/F:CMVA/F:cHadE/F:nHadE/F:eleE/F:photonE/F:muE/F:nEmE/F:cEmE/F:cmuE/F:cHadEFrac/F:nHadEFrac/F:eleEFrac/F:photonEFrac/F:muEFrac/F:nEmEFrac/F:cEmEFrac/F:cmuEFrac/F:cHadMulti/F:nHadMulti/F:eleMulti/F:photonMulti/F:muMulti/F:cMulti/F:nMulti/F:npr/F:cHadMultiFrac/F:nHadMultiFrac/F:eleMultiFrac/F:photonMultiFrac/F:muMultiFrac/F:cMultiFrac/F:nMultiFrac/F:ptGenJ/F:etaGenJ/F:phiGenJ/F:massGenJ/F:ptGen/F:etaGen/F:phiGen/F:massGen/F:pdgIdGen/I:partonFlavour/I:hadronFlavour/I:mother/I:isLoose/O:isTight/O:isTightLepVeto/O:isCSVL/O:isCSVM/O:isCSVT/O:PUId/I:PUIdLoose/O:PUIdMedium/O:PUIdTight/O:PUDiscriminant/F:matchBquark/I:matchLL/I:isGenMatched/I:isVBFGenMatched/I:alphaMaxOld/F:sumPtJetOld/F:betaMaxOld/F:gammaMaxOld/F:gammaMaxEMOld/F:gammaMaxHadronicOld/F:gammaMaxETOld/F:sigIP2DMedianOld/F:theta2DMedianOld/F:POCA_theta2DMedianOld/F:nPixelHitsMedianOld/F:nHitsMedianOld/F:dxyMedianOld/F:dzMedianOld/F:ptAllTracks/F:ptAllPVTracks/F:ptPVTracksMax/F:nTracksAll/I:nTracksPVMax/I:medianIP2D/F:medianTheta2D/F:alphaMax/F:betaMax/F:gammaMax/F:gammaMaxEM/F:gammaMaxHadronic/F:gammaMaxET/F:minDeltaRAllTracks/F:minDeltaRPVTracks/F:nPixelHitsMedian/F:nHitsMedian/F:dzMedian/F:dxyMedian/F:hcalE/F:ecalE/F:FracCal/F:flightDist2d/F:flightDist2dError/F:flightDist3d/F:flightDist3dError/F:nSV/I:nSVCand/I:nVertexTracks/I:nSelectedTracks/I:dRSVJet/F:SV_x/F:SV_y/F:SV_z/F:SV_dx/F:SV_dy/F:SV_dz/F:nTracksSV/I:SV_mass/F:isCaloTag/I:ptJESUp/F:ptJESDown/F:ptJERUp/F:ptJERDown/F:nSubJets/I:tau1/F:tau2/F:tau3/F:tau21/F:tau31/F:tau23/F:tau1_neutral/F:tau2_neutral/F:tau21_neutral/F:tau1_charged/F:tau2_charged/F:tau21_charged/F:nConstituents/I:nTrackConstituents/I:nTracks0PixelHits/I:nTracks1PixelHit/I:nTracks2PixelHits/I:nTracks3PixelHits/I:nTracks4PixelHits/I:nTracks5PixelHits/I:nTracksAtLeast6PixelHits/I:nTracksValidHitInBPix1/I:nTracks0LostInnerHits/I:nTracks1LostInnerHit/I:nTracksAtLeast2LostInnerHits/I:nTrackConstituentsWithPtLarger0p95/I:nTrackConstituentsWithTrackDetails/I:nTrackConstituentsWithTrackDetailsPtLarger0p95/I:nMatchedGenBquarks/I:nRecHits/I:timeRecHits/F:timeRMSRecHits/F:energyRecHits/F:energyErrorRecHits/F:sigprob/F:pfXWP0p01/F:pfXWP0p1/F:pfXWP1/F:pfXWP10/F:pfXWP100/F:pfXWP1000/F:I.deepCSV_probc_probudsg/F:I.deepCSV_probb_probbb/F:deepCSV_probudsg/F:deepCSV_probb/F:deepCSV_probc/F:deepCSV_probbb/F:I.deepJet_probb_probbb_problepb/F:I.deepJet_probc_probg_probuds/F:deepJet_probuds/F:deepJet_probg/F:deepJet_problepb/F:deepJet_probb/F:deepJet_probc/F:deepJet_probbb/F";}
 
-//"pt/F:eta/F:phi/F:mass/F:energy/F:ptRaw/F:ptUnc/F:dPhi_met/F:dPhi_Jet1/F:puId/F:CSV/F:CSVR/F:CSVRUp/F:CSVRDown/F:CMVA/F:CMVAR/F:CMVARUp/F:CMVARDown/F:QGLikelihood/F:cHadE/F:nHadE/F:cHadEFrac/F:nHadEFrac/F:nEmE/F:nEmEFrac/F:cEmE/F:cEmEFrac/F:cmuE/F:cmuEFrac/F:muE/F:muEFrac/F:eleE/F:eleEFrac/F:eleMulti/F:photonE/F:photonEFrac/F:photonMulti/F:cHadMulti/F:nHadMulti/F:npr/F:cMulti/F:nMulti/F:emEFrac/F:emEinEB/F:emEinEE/F:emEinHF/F:EFracHad/F:hadEinHB/F:hadEinHE/F:hadEinHF/F:hadEinHO/F:ptGenJ/F:etaGenJ/F:phiGenJ/F:massGenJ/F:ptGen/F:etaGen/F:phiGen/F:massGen/F:pdgIdGen/I:partonFlavour/I:hadronFlavour/I:mother/I:isLoose/O:isMedium/O:isTight/O:isTightLepVeto/O:isCSVL/O:isCSVM/O:isCSVT/O:isMatched/O:dR_q1/F:dR_q2/F:dR_q3/F:dR_q4/F:m_q1/O:m_q2/O:m_q3/O:m_q4/O:dR_pi1/F:dR_pi2/F:matchBquark/I:matchLL/I:original_jet_index/I:isGenMatched/I:alphaMax/F:sigIP2DMedian/F:theta2DMedian/F:hcalE/F:ecalE/F:FracCal/F:flightDist2d/F:flightDist2dSig/F:flightDist3d/F:flightDist3dSig/F:nSV/I:nSVCand/I:nVertexTracks/I:nSelectedTracks/I:dRSVJet/F:SV_x/F:SV_y/F:SV_z/F:SV_dx/F:SV_dy/F:SV_dz/F:nTracksSV/I:SV_mass/F:indexSV/I:isCaloTag/I:VBF_DisplacedJet40_VTightID_Hadronic_match/I:VBF_DisplacedJet40_VVTightID_Hadronic_match/I:ptJESUp/F:ptJESDown/F:ptJERUp/F:ptJERDown/F:nConstituents/I:nTrackConstituents/I:TriggerMatched_VBFJet/I:TriggerMatched_DisplacedJet/I";}
-////std::string ObjectsFormat::ListJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:ptRaw/F:ptUnc/F:dPhi_met/F:dPhi_Jet1/F:puId/F:CSV/F:CSVR/F:CSVRUp/F:CSVRDown/F:CMVA/F:CMVAR/F:CMVARUp/F:CMVARDown/F:QGLikelihood/F:chf/F:nhf/F:phf/F:elf/F:muf/F:ptGenJ/F:etaGenJ/F:phiGenJ/F:massGenJ/F:ptGen/F:etaGen/F:phiGen/F:massGen/F:pdgIdGen/I:ptLhe/F:etaLhe/F:phiLhe/I:chm/I:npr/I:cm/I:nm/I:partonFlavour/I:hadronFlavour/I:mother/I:isLoose/O:isMedium/O:isTight/O:isTightLepVeto/O:isCSVL/O:isCSVM/O:isCSVT/O:isMatched/O:dR_q1/F:dR_q2/F:dR_q3/F:dR_q4/F:m_q1/O:m_q2/O:m_q3/O:m_q4/O:dR_pi1/F:dR_pi2/F:matchBquark/I:matchLL/I:original_jet_index/I:isGenMatched/I:isMatchedToMatchedCHSJet/I";}
+//"pt/F:eta/F:phi/F:mass/F:energy/F:ptRaw/F:ptUnc/F:dPhi_met/F:dPhi_Jet1/F:puId/F:CSV/F:CSVR/F:CSVRUp/F:CSVRDown/F:CMVA/F:CMVAR/F:CMVARUp/F:CMVARDown/F:QGLikelihood/F:cHadE/F:nHadE/F:cHadEFrac/F:nHadEFrac/F:nEmE/F:nEmEFrac/F:cEmE/F:cEmEFrac/F:cmuE/F:cmuEFrac/F:muE/F:muEFrac/F:eleE/F:eleEFrac/F:eleMulti/F:photonE/F:photonEFrac/F:photonMulti/F:cHadMulti/F:nHadMulti/F:npr/F:cMulti/F:nMulti/F:emEFrac/F:emEinEB/F:emEinEE/F:emEinHF/F:EFracHad/F:hadEinHB/F:hadEinHE/F:hadEinHF/F:hadEinHO/F:ptGenJ/F:etaGenJ/F:phiGenJ/F:massGenJ/F:ptGen/F:etaGen/F:phiGen/F:massGen/F:pdgIdGen/I:partonFlavour/I:hadronFlavour/I:mother/I:isLoose/O:isTight/O:isTightLepVeto/O:isCSVL/O:isCSVM/O:isCSVT/O:isMatched/O:dR_q1/F:dR_q2/F:dR_q3/F:dR_q4/F:m_q1/O:m_q2/O:m_q3/O:m_q4/O:dR_pi1/F:dR_pi2/F:matchBquark/I:matchLL/I:original_jet_index/I:isGenMatched/I:alphaMax/F:sigIP2DMedian/F:theta2DMedian/F:hcalE/F:ecalE/F:FracCal/F:flightDist2d/F:flightDist2dSig/F:flightDist3d/F:flightDist3dSig/F:nSV/I:nSVCand/I:nVertexTracks/I:nSelectedTracks/I:dRSVJet/F:SV_x/F:SV_y/F:SV_z/F:SV_dx/F:SV_dy/F:SV_dz/F:nTracksSV/I:SV_mass/F:indexSV/I:isCaloTag/I:VBF_DisplacedJet40_VTightID_Hadronic_match/I:VBF_DisplacedJet40_VVTightID_Hadronic_match/I:ptJESUp/F:ptJESDown/F:ptJERUp/F:ptJERDown/F:nConstituents/I:nTrackConstituents/I:TriggerMatched_VBFJet/I:TriggerMatched_DisplacedJet/I";}
+////std::string ObjectsFormat::ListJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:ptRaw/F:ptUnc/F:dPhi_met/F:dPhi_Jet1/F:puId/F:CSV/F:CSVR/F:CSVRUp/F:CSVRDown/F:CMVA/F:CMVAR/F:CMVARUp/F:CMVARDown/F:QGLikelihood/F:chf/F:nhf/F:phf/F:elf/F:muf/F:ptGenJ/F:etaGenJ/F:phiGenJ/F:massGenJ/F:ptGen/F:etaGen/F:phiGen/F:massGen/F:pdgIdGen/I:ptLhe/F:etaLhe/F:phiLhe/I:chm/I:npr/I:cm/I:nm/I:partonFlavour/I:hadronFlavour/I:mother/I:isLoose/O:isTight/O:isTightLepVeto/O:isCSVL/O:isCSVM/O:isCSVT/O:isMatched/O:dR_q1/F:dR_q2/F:dR_q3/F:dR_q4/F:m_q1/O:m_q2/O:m_q3/O:m_q4/O:dR_pi1/F:dR_pi2/F:matchBquark/I:matchLL/I:original_jet_index/I:isGenMatched/I:isMatchedToMatchedCHSJet/I";}
 
 
 //*******************//
@@ -1034,7 +1082,6 @@ void ObjectsFormat::FillFatJetType(FatJetType& I, const pat::Jet* R, std::string
     if(isMC && R->genParton()) I.mother = Utilities::FindMotherId(R->genParton());//verify
     //if(isMC && R->genParton()) I.mother = false;//Utilities::FindMotherId(dynamic_cast<const reco::Candidate*>(R->genParton()));
     I.isLoose     = R->hasUserInt("isLoose") ? R->userInt("isLoose") : false;
-    I.isMedium    = false;
     I.isTight     = R->hasUserInt("isTight") ? R->userInt("isTight") : false;
     I.isTightLepVeto     = R->hasUserInt("isTightLepVeto") ? R->userInt("isTightLepVeto") : false;
     I.isMatched   = (I.mother==25);
@@ -1309,7 +1356,6 @@ void ObjectsFormat::ResetFatJetType(FatJetType& I) {
     I.hadronFlavour     = 0;
     I.mother      = false;
     I.isLoose     = false;
-    I.isMedium    = false;
     I.isTight     = false;
     I.isTightLepVeto     = false;
     I.isMatched   = false;
@@ -1370,7 +1416,7 @@ void ObjectsFormat::ResetFatJetType(FatJetType& I) {
 }
 
 //to be removed: CSVR1, etc
-std::string ObjectsFormat::ListFatJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:energyRaw/F:ptRaw/F:ptUnc/F:dPhi_met/F:dPhi_Jet1/F:puId/F:CSV/F:CSVR/F:CSVRUp/F:CSVRDown/F:pfBoostedDoubleSVAK8/F:CHSprunedMass/F:CHSsoftdropMass/F:softdropPuppiMass/F:CHSprunedMassCorr/F:CHSsoftdropMassCorr/F:softdropPuppiMassCorr/F:softdropPuppiMassCorrNotSmeared/F:nSoftDropSubJets/I:pt1/F:eta1/F:phi1/F:mass1/F:CSV1/F:CSVR1/F:CSVR1Up/F:CSVR1Down/F:CMVA1/F:CMVAR1/F:CMVAR1Up/F:CMVAR1Down/F:flavour1/F:nSV1/I:nVertexTracks1/I:pt2/F:eta2/F:phi2/F:mass2/F:CSV2/F:CSVR2/F:CSVR2Up/F:CSVR2Down/F:CMVA2/F:CMVAR2/F:CMVAR2Up/F:CMVAR2Down/F:flavour2/F:nSV2/I:nVertexTracks2/I:dR/F:chsTau21/F:puppiTau21/F:ddtTau21/F:BDSV/F:cHadE/F:nHadE/F:eleE/F:photonE/F:muE/F:nEmE/F:cEmE/F:cmuE/F:cHadEFrac/F:nHadEFrac/F:eleEFrac/F:photonEFrac/F:muEFrac/F:nEmEFrac/F:cEmEFrac/F:cmuEFrac/F:cHadMulti/F:nHadMulti/F:eleMulti/F:photonMulti/F:muMulti/F:cMulti/F:nMulti/F:npr/F:cHadMultiFrac/F:nHadMultiFrac/F:eleMultiFrac/F:photonMultiFrac/F:muMultiFrac/F:cMultiFrac/F:nMultiFrac/F:hcalE/F:ecalE/F:FracCal/F:partonFlavour/I:hadronFlavour/I:mother/I:isLoose/O:isMedium/O:isTight/O:isTightLepVeto/O:isCSVL/O:isCSVM/O:isCSVT/O:isMatched/O:JESUnc/F:ptJERUp/F:etaJERUp/F:phiJERUp/F:energyJERUp/F:ptJERDown/F:etaJERDown/F:phiJERDown/F:energyJERDown/F:smearFact/F:smearFactUp/F:smearFactDown/F:softdropPuppiMassCorrJMS/F:softdropPuppiMassCorrJMSUp/F:softdropPuppiMassCorrJMSDown/F:softdropPuppiMassCorrJMR/F:softdropPuppiMassCorrJMRUp/F:softdropPuppiMassCorrJMRDown/F:dR_q1/F:dR_q2/F:dR_q3/F:dR_q4/F:m_q1/O:m_q2/O:m_q3/O:m_q4/O:dR_pi1/F:dR_pi2/F:matchBquark/I:matchLL/I:isGenMatched/O:alphaMax/F:sigIP2DMedian/F:theta2DMedian/F:POCA_theta2DMedian/F:nPixelHitsMedian/F:nHitsMedian/F:nConstituents/I:nTrackConstituents/I:nTracks0PixelHits/I:nTracks1PixelHit/I:nTracks2PixelHits/I:nTracks3PixelHits/I:nTracks4PixelHits/I:nTracks5PixelHits/I:nTracksAtLeast6PixelHits/I:nTracksValidHitInBPix1/I:nTracks0LostInnerHits/I:nTracks1LostInnerHit/I:nTracksAtLeast2LostInnerHits/I:nMatchedGenBquarks/I";}
+std::string ObjectsFormat::ListFatJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:energyRaw/F:ptRaw/F:ptUnc/F:dPhi_met/F:dPhi_Jet1/F:puId/F:CSV/F:CSVR/F:CSVRUp/F:CSVRDown/F:pfBoostedDoubleSVAK8/F:CHSprunedMass/F:CHSsoftdropMass/F:softdropPuppiMass/F:CHSprunedMassCorr/F:CHSsoftdropMassCorr/F:softdropPuppiMassCorr/F:softdropPuppiMassCorrNotSmeared/F:nSoftDropSubJets/I:pt1/F:eta1/F:phi1/F:mass1/F:CSV1/F:CSVR1/F:CSVR1Up/F:CSVR1Down/F:CMVA1/F:CMVAR1/F:CMVAR1Up/F:CMVAR1Down/F:flavour1/F:nSV1/I:nVertexTracks1/I:pt2/F:eta2/F:phi2/F:mass2/F:CSV2/F:CSVR2/F:CSVR2Up/F:CSVR2Down/F:CMVA2/F:CMVAR2/F:CMVAR2Up/F:CMVAR2Down/F:flavour2/F:nSV2/I:nVertexTracks2/I:dR/F:chsTau21/F:puppiTau21/F:ddtTau21/F:BDSV/F:cHadE/F:nHadE/F:eleE/F:photonE/F:muE/F:nEmE/F:cEmE/F:cmuE/F:cHadEFrac/F:nHadEFrac/F:eleEFrac/F:photonEFrac/F:muEFrac/F:nEmEFrac/F:cEmEFrac/F:cmuEFrac/F:cHadMulti/F:nHadMulti/F:eleMulti/F:photonMulti/F:muMulti/F:cMulti/F:nMulti/F:npr/F:cHadMultiFrac/F:nHadMultiFrac/F:eleMultiFrac/F:photonMultiFrac/F:muMultiFrac/F:cMultiFrac/F:nMultiFrac/F:hcalE/F:ecalE/F:FracCal/F:partonFlavour/I:hadronFlavour/I:mother/I:isLoose/O:isTight/O:isTightLepVeto/O:isCSVL/O:isCSVM/O:isCSVT/O:isMatched/O:JESUnc/F:ptJERUp/F:etaJERUp/F:phiJERUp/F:energyJERUp/F:ptJERDown/F:etaJERDown/F:phiJERDown/F:energyJERDown/F:smearFact/F:smearFactUp/F:smearFactDown/F:softdropPuppiMassCorrJMS/F:softdropPuppiMassCorrJMSUp/F:softdropPuppiMassCorrJMSDown/F:softdropPuppiMassCorrJMR/F:softdropPuppiMassCorrJMRUp/F:softdropPuppiMassCorrJMRDown/F:dR_q1/F:dR_q2/F:dR_q3/F:dR_q4/F:m_q1/O:m_q2/O:m_q3/O:m_q4/O:dR_pi1/F:dR_pi2/F:matchBquark/I:matchLL/I:isGenMatched/O:alphaMax/F:sigIP2DMedian/F:theta2DMedian/F:POCA_theta2DMedian/F:nPixelHitsMedian/F:nHitsMedian/F:nConstituents/I:nTrackConstituents/I:nTracks0PixelHits/I:nTracks1PixelHit/I:nTracks2PixelHits/I:nTracks3PixelHits/I:nTracks4PixelHits/I:nTracks5PixelHits/I:nTracksAtLeast6PixelHits/I:nTracksValidHitInBPix1/I:nTracks0LostInnerHits/I:nTracks1LostInnerHit/I:nTracksAtLeast2LostInnerHits/I:nMatchedGenBquarks/I";}
 
 
 //*******************//
@@ -1467,7 +1513,6 @@ void ObjectsFormat::FillCustomFatJetType(CustomFatJetType& I, const pat::Jet* R,
     I.hadronFlavour     = R->hadronFlavour();
     if(isMC && R->genParton()) I.mother = false;//Utilities::FindMotherId(dynamic_cast<const reco::Candidate*>(R->genParton()));
     I.isLoose     = R->hasUserInt("isLoose") ? R->userInt("isLoose") : false;
-    I.isMedium    = false;
     I.isTight     = R->hasUserInt("isTight") ? R->userInt("isTight") : false;
     I.isTightLepVeto     = R->hasUserInt("isTightLepVeto") ? R->userInt("isTightLepVeto") : false;
     //I.isMatched   = (I.mother==25);
@@ -1599,7 +1644,6 @@ void ObjectsFormat::ResetCustomFatJetType(CustomFatJetType& I) {
     I.hadronFlavour     = 0;
     I.mother      = false;
     I.isLoose     = false;
-    I.isMedium    = false;
     I.isTight     = false;
     I.isTightLepVeto     = false;
     //I.isMatched   = false;
@@ -1647,33 +1691,16 @@ void ObjectsFormat::ResetCustomFatJetType(CustomFatJetType& I) {
     I.dR_pi2_sj2  = 1000;
 }
 
-//std::string ObjectsFormat::ListCustomFatJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:ptRaw/F:ptUnc/F:dPhi_met/F:dPhi_Jet1/F:puId/F:CSV/F:CSVR/F:CSVRUp/F:CSVRDown/F:CHSprunedMass/F:CHSsoftdropMass/F:prunedMass/F:softdropMass/F:softdropPuppiMass/F:CHSprunedMassCorr/F:CHSsoftdropMassCorr/F:prunedMassCorr/F:softdropMassCorr/F:softdropPuppiMassCorr/F:softdropPuppiMassCorrNotSmeared/F:pt1/F:eta1/F:phi1/F:mass1/F:CSV1/F:CSVR1/F:CSVR1Up/F:CSVR1Down/F:CMVA1/F:CMVAR1/F:CMVAR1Up/F:CMVAR1Down/F:flavour1/F:pt2/F:eta2/F:phi2/F:mass2/F:CSV2/F:CSVR2/F:CSVR2Up/F:CSVR2Down/F:CMVA2/F:CMVAR2/F:CMVAR2Up/F:CMVAR2Down/F:flavour2/F:dR/F:Tau21/F:puppiTau21/F:ddtTau21/F:BDSV/F:chf/F:nhf/F:phf/F:elf/F:muf/F:chm/I:npr/I:flavour/I:mother/I:isLoose/O:isMedium/O:isTight/O:isTightLepVeto/O:isCSVL/O:isCSVM/O:isCSVT/O:isMatched/O:JESUnc/F:ptJERUp/F:etaJERUp/F:phiJERUp/F:energyJERUp/F:ptJERDown/F:etaJERDown/F:phiJERDown/F:energyJERDown/F:smearFact/F:smearFactUp/F:smearFactDown/F:softdropPuppiMassCorrJMS/F:softdropPuppiMassCorrJMSUp/F:softdropPuppiMassCorrJMSDown/F:softdropPuppiMassCorrJMR/F:softdropPuppiMassCorrJMRUp/F:softdropPuppiMassCorrJMRDown/F:dR_q1/F:dR_q2/F:dR_q3/F:dR_q4/F:m_q1/O:m_q2/O:m_q3/O:m_q4/O:dR_pi1/F:dR_pi2/F:matchBquark/I:matchLL/I";}
+//std::string ObjectsFormat::ListCustomFatJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:ptRaw/F:ptUnc/F:dPhi_met/F:dPhi_Jet1/F:puId/F:CSV/F:CSVR/F:CSVRUp/F:CSVRDown/F:CHSprunedMass/F:CHSsoftdropMass/F:prunedMass/F:softdropMass/F:softdropPuppiMass/F:CHSprunedMassCorr/F:CHSsoftdropMassCorr/F:prunedMassCorr/F:softdropMassCorr/F:softdropPuppiMassCorr/F:softdropPuppiMassCorrNotSmeared/F:pt1/F:eta1/F:phi1/F:mass1/F:CSV1/F:CSVR1/F:CSVR1Up/F:CSVR1Down/F:CMVA1/F:CMVAR1/F:CMVAR1Up/F:CMVAR1Down/F:flavour1/F:pt2/F:eta2/F:phi2/F:mass2/F:CSV2/F:CSVR2/F:CSVR2Up/F:CSVR2Down/F:CMVA2/F:CMVAR2/F:CMVAR2Up/F:CMVAR2Down/F:flavour2/F:dR/F:Tau21/F:puppiTau21/F:ddtTau21/F:BDSV/F:chf/F:nhf/F:phf/F:elf/F:muf/F:chm/I:npr/I:flavour/I:mother/I:isLoose/O:isTight/O:isTightLepVeto/O:isCSVL/O:isCSVM/O:isCSVT/O:isMatched/O:JESUnc/F:ptJERUp/F:etaJERUp/F:phiJERUp/F:energyJERUp/F:ptJERDown/F:etaJERDown/F:phiJERDown/F:energyJERDown/F:smearFact/F:smearFactUp/F:smearFactDown/F:softdropPuppiMassCorrJMS/F:softdropPuppiMassCorrJMSUp/F:softdropPuppiMassCorrJMSDown/F:softdropPuppiMassCorrJMR/F:softdropPuppiMassCorrJMRUp/F:softdropPuppiMassCorrJMRDown/F:dR_q1/F:dR_q2/F:dR_q3/F:dR_q4/F:m_q1/O:m_q2/O:m_q3/O:m_q4/O:dR_pi1/F:dR_pi2/F:matchBquark/I:matchLL/I";}
 
 //simplified version:
-std::string ObjectsFormat::ListCustomFatJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:ptRaw/F:ptUnc/F:dPhi_met/F:dPhi_Jet1/F:puId/F:CSV/F:CHSprunedMass/F:CHSsoftdropMass/F:prunedMass/F:softdropMass/F:softdropPuppiMass/F:CHSprunedMassCorr/F:CHSsoftdropMassCorr/F:prunedMassCorr/F:softdropMassCorr/F:softdropPuppiMassCorr/F:softdropPuppiMassCorrNotSmeared/F:pt1/F:eta1/F:phi1/F:mass1/F:CSV1/F:CMVA1/F:flavour1/F:pt2/F:eta2/F:phi2/F:mass2/F:CSV2/F:CMVA2/F:flavour2/F:pt1SDP/F:eta1SDP/F:phi1SDP/F:mass1SDP/F:CSV1SDP/F:CMVA1SDP/F:flavour1SDP/F:pt2SDP/F:eta2SDP/F:phi2SDP/F:mass2SDP/F:CSV2SDP/F:CMVA2SDP/F:flavour2SDP/F:dR/F:Tau21/F:puppiTau21/F:ddtTau21/F:BDSV/F:chf/F:nhf/F:phf/F:elf/F:muf/F:chm/I:npr/I:partonFlavour/I:hadronFlavour/I:mother/I:isLoose/O:isMedium/O:isTight/O:isTightLepVeto/O:dR_q1/F:dR_q2/F:dR_q3/F:dR_q4/F:m_q1/O:m_q2/O:m_q3/O:m_q4/O:dR_pi1/F:dR_pi2/F:matchBquark/I:matchLL/I:dR_q1_sj1/F:dR_q2_sj1/F:dR_q3_sj1/F:dR_q4_sj1/F:dR_pi1_sj1/F:dR_pi2_sj1/F:dR_q1_sj2/F:dR_q2_sj2/F:dR_q3_sj2/F:dR_q4_sj2/F:dR_pi1_sj2/F:dR_pi2_sj2/F";}
+std::string ObjectsFormat::ListCustomFatJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:ptRaw/F:ptUnc/F:dPhi_met/F:dPhi_Jet1/F:puId/F:CSV/F:CHSprunedMass/F:CHSsoftdropMass/F:prunedMass/F:softdropMass/F:softdropPuppiMass/F:CHSprunedMassCorr/F:CHSsoftdropMassCorr/F:prunedMassCorr/F:softdropMassCorr/F:softdropPuppiMassCorr/F:softdropPuppiMassCorrNotSmeared/F:pt1/F:eta1/F:phi1/F:mass1/F:CSV1/F:CMVA1/F:flavour1/F:pt2/F:eta2/F:phi2/F:mass2/F:CSV2/F:CMVA2/F:flavour2/F:pt1SDP/F:eta1SDP/F:phi1SDP/F:mass1SDP/F:CSV1SDP/F:CMVA1SDP/F:flavour1SDP/F:pt2SDP/F:eta2SDP/F:phi2SDP/F:mass2SDP/F:CSV2SDP/F:CMVA2SDP/F:flavour2SDP/F:dR/F:Tau21/F:puppiTau21/F:ddtTau21/F:BDSV/F:chf/F:nhf/F:phf/F:elf/F:muf/F:chm/I:npr/I:partonFlavour/I:hadronFlavour/I:mother/I:isLoose/O:isTight/O:isTightLepVeto/O:dR_q1/F:dR_q2/F:dR_q3/F:dR_q4/F:m_q1/O:m_q2/O:m_q3/O:m_q4/O:dR_pi1/F:dR_pi2/F:matchBquark/I:matchLL/I:dR_q1_sj1/F:dR_q2_sj1/F:dR_q3_sj1/F:dR_q4_sj1/F:dR_pi1_sj1/F:dR_pi2_sj1/F:dR_q1_sj2/F:dR_q2_sj2/F:dR_q3_sj2/F:dR_q4_sj2/F:dR_pi1_sj2/F:dR_pi2_sj2/F";}
 
 
 
 //*******************//
 //  Missing energy   //
 //*******************//
-
-//void ObjectsFormat::FillMEtType(MEtType& I, const pat::MET* R, bool isMC) {
-//    I.pt          = R->pt();
-//    I.eta         = R->eta();
-//    I.phi         = R->phi();
-//    I.sign        = R->metSignificance();
-//}
-
-//void ObjectsFormat::ResetMEtType(MEtType& I) {
-//    I.pt          = -1.;
-//    I.eta         = -9.;
-//    I.phi         = -9.;
-//    I.sign        = -1.;
-//}
-
-//std::string ObjectsFormat::ListMEtType() {return "pt/F:eta/F:phi/F:sign/F";}
-
 
 void ObjectsFormat::FillMEtType(MEtType& I, const pat::MET* R, bool isMC) {
     I.pt          = R->pt();
@@ -1684,10 +1711,21 @@ void ObjectsFormat::FillMEtType(MEtType& I, const pat::MET* R, bool isMC) {
     I.ptShiftJetResDown = R->hasUserFloat("ptShiftJetResDown") ? R->userFloat("ptShiftJetResDown") : -1;
     I.ptShiftJetEnUp = R->hasUserFloat("ptShiftJetEnUp") ? R->userFloat("ptShiftJetEnUp") : -1;
     I.ptShiftJetEnDown = R->hasUserFloat("ptShiftJetEnDown") ? R->userFloat("ptShiftJetEnDown") : -1;
+    //I.ptShiftJetResUpSmear = R->hasUserFloat("ptShiftJetResUpSmear") ? R->userFloat("ptShiftJetResUpSmear") : -1.;
+    //I.ptShiftJetResDownSmear = R->hasUserFloat("ptShiftJetResDownSmear") ? R->userFloat("ptShiftJetResDownSmear") : -1.;
+    I.ptShiftMuonEnUp = R->hasUserFloat("ptShiftMuonEnUp") ? R->userFloat("ptShiftMuonEnUp") : -1.;
+    I.ptShiftMuonEnDown = R->hasUserFloat("ptShiftMuonEnDown") ? R->userFloat("ptShiftMuonEnDown") : -1.;
+    I.ptShiftElectronEnUp = R->hasUserFloat("ptShiftElectronEnUp") ? R->userFloat("ptShiftElectronEnUp") : -1.;
+    I.ptShiftElectronEnDown = R->hasUserFloat("ptShiftElectronEnDown") ? R->userFloat("ptShiftElectronEnDown") : -1.;
+    I.ptShiftTauEnUp = R->hasUserFloat("ptShiftTauEnUp") ? R->userFloat("ptShiftTauEnUp") : -1.;
+    I.ptShiftTauEnDown = R->hasUserFloat("ptShiftTauEnDown") ? R->userFloat("ptShiftTauEnDown") : -1.;
+    I.ptShiftPhotonEnUp = R->hasUserFloat("ptShiftPhotonEnUp") ? R->userFloat("ptShiftPhotonEnUp") : -1.;
+    I.ptShiftPhotonEnDown = R->hasUserFloat("ptShiftPhotonEnDown") ? R->userFloat("ptShiftPhotonEnDown") : -1.;
+    I.ptShiftNoShift = R->hasUserFloat("ptShiftNoShift") ? R->userFloat("ptShiftNoShift") : -1.;
+    //I.ptShiftMETUncertaintySize = R->hasUserFloat("ptShiftMETUncertaintySize") ? R->userFloat("ptShiftMETUncertaintySize") : -1.;
+    //I.ptShiftMETFullUncertaintySize = R->hasUserFloat("ptShiftMETFullUncertaintySize") ? R->userFloat("ptShiftMETFullUncertaintySize") : -1.;
     I.ptShiftUnclusteredEnUp = R->hasUserFloat("ptShiftUnclusteredEnUp") ? R->userFloat("ptShiftUnclusteredEnUp") : -1;
     I.ptShiftUnclusteredEnDown = R->hasUserFloat("ptShiftUnclusteredEnDown") ? R->userFloat("ptShiftUnclusteredEnDown") : -1;
-    I.ptShiftJetResUpSmear = R->hasUserFloat("ptShiftJetResUpSmear") ? R->userFloat("ptShiftJetResUpSmear") : -1.;
-    I.ptShiftJetResDownSmear = R->hasUserFloat("ptShiftJetResDownSmear") ? R->userFloat("ptShiftJetResDownSmear") : -1.;
     I.ptRaw       = R->hasUserFloat("ptRaw") ? R->userFloat("ptRaw") : -1.;
     I.phiRaw      = R->hasUserFloat("phiRaw") ? R->userFloat("phiRaw") : -9.;
     //I.ptType1     = R->hasUserFloat("ptType1") ? R->userFloat("ptType1") : -1.;
@@ -1712,8 +1750,8 @@ void ObjectsFormat::ResetMEtType(MEtType& I) {
     I.ptShiftJetEnDown = -1.;
     I.ptShiftUnclusteredEnUp = -1.;
     I.ptShiftUnclusteredEnDown = -1.;
-    I.ptShiftJetResUpSmear = -1.;
-    I.ptShiftJetResDownSmear = -1.;
+    //I.ptShiftJetResUpSmear = -1.;
+    //I.ptShiftJetResDownSmear = -1.;
     I.ptRaw       = -1.;
     I.phiRaw      = -9.;
     //I.ptType1     = -1.;
@@ -2352,7 +2390,6 @@ void ObjectsFormat::FillSimplifiedJetType(SimplifiedJetType& I, const pat::Jet* 
     I.cMulti      = R->chargedMultiplicity();
     I.nMulti      = R->neutralMultiplicity();
     I.isLoose     = R->hasUserInt("isLoose") ? R->userInt("isLoose") : false;
-    I.isMedium    = false;
     I.isTight     = R->hasUserInt("isTight") ? R->userInt("isTight") : false;
     I.isGenMatched = R->hasUserInt("isGenMatched") ? R->userInt("isGenMatched") : 0;
     if (R->tagInfoLabels().size() > 0){
@@ -2396,7 +2433,6 @@ void ObjectsFormat::ResetSimplifiedJetType(SimplifiedJetType& I) {
     I.cMulti        = -1.;
     I.nMulti        = -1.;
     I.isLoose     = false;
-    I.isMedium    = false;
     I.isTight     = false;
     I.isGenMatched = 0;
     I.nSelectedTracks = 0;
@@ -2406,7 +2442,7 @@ void ObjectsFormat::ResetSimplifiedJetType(SimplifiedJetType& I) {
     I.TriggerMatched_TripleJet50 = 0;
 }
 
-std::string ObjectsFormat::ListSimplifiedJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:cHadE/F:nHadE/F:cHadEFrac/F:nHadEFrac/F:nEmE/F:nEmEFrac/F:cEmE/F:cEmEFrac/F:cmuE/F:cmuEFrac/F:muE/F:muEFrac/F:eleE/F:eleEFrac/F:eleMulti/F:photonE/F:photonEFrac/F:photonMulti/F:cHadMulti/F:nHadMulti/F:npr/F:cMulti/F:nMulti/F:isLoose/O:isMedium/O:isTight/O:isGenMatched/I:nSelectedTracks/I:nConstituents/I:TriggerMatched_VBFJet/I:TriggerMatched_DisplacedJet/I:TriggerMatched_TripleJet50/I";}
+std::string ObjectsFormat::ListSimplifiedJetType() {return "pt/F:eta/F:phi/F:mass/F:energy/F:cHadE/F:nHadE/F:cHadEFrac/F:nHadEFrac/F:nEmE/F:nEmEFrac/F:cEmE/F:cEmEFrac/F:cmuE/F:cmuEFrac/F:muE/F:muEFrac/F:eleE/F:eleEFrac/F:eleMulti/F:photonE/F:photonEFrac/F:photonMulti/F:cHadMulti/F:nHadMulti/F:npr/F:cMulti/F:nMulti/F:isLoose/O:isTight/O:isGenMatched/I:nSelectedTracks/I:nConstituents/I:TriggerMatched_VBFJet/I:TriggerMatched_DisplacedJet/I:TriggerMatched_TripleJet50/I";}
 
 
 //*****************************//

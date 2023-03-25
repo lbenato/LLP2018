@@ -100,7 +100,29 @@ PhotonType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), pfIso(-1.), d
 };
 
 struct TauType {
-TauType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), pfIso(-1.), dz(-99.), charge(0), pdgId(0), isLoose(false), isMedium(false), isTight(false), isMatched(false) {}
+TauType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), pfIso(-1.), dz(-99.), charge(0), pdgId(0), isMatched(false), decayModeFinding(false), decayModeFindingNewDMs(false), byLooseCombinedIsolationDeltaBetaCorr3Hits(false), byMediumCombinedIsolationDeltaBetaCorr3Hits(false), byTightCombinedIsolationDeltaBetaCorr3Hits(false), againstElectronVLooseMVA6(false), againstElectronVTightMVA6(false), byVLooseIsolationMVArun2v1DBnewDMwLT(false), byLooseIsolationMVArun2v1DBnewDMwLT(false), byMediumIsolationMVArun2v1DBnewDMwLT(false), byTightIsolationMVArun2v1DBnewDMwLT(false), byVTightIsolationMVArun2v1DBnewDMwLT(false), byVVTightIsolationMVArun2v1DBnewDMwLT(false),
+    byVVVLooseDeepTau2017v2p1VSjet(false), 
+    byVVLooseDeepTau2017v2p1VSjet(false), 
+    byVLooseDeepTau2017v2p1VSjet(false), 
+    byLooseDeepTau2017v2p1VSjet(false), 
+    byMediumDeepTau2017v2p1VSjet(false), 
+    byTightDeepTau2017v2p1VSjet(false), 
+    byVTightDeepTau2017v2p1VSjet(false), 
+    byVVTightDeepTau2017v2p1VSjet(false), 
+    byVVVLooseDeepTau2017v2p1VSe(false),
+    byVVLooseDeepTau2017v2p1VSe(false),
+    byVLooseDeepTau2017v2p1VSe(false),
+    byLooseDeepTau2017v2p1VSe(false),
+    byMediumDeepTau2017v2p1VSe(false),
+    byTightDeepTau2017v2p1VSe(false),
+    byVTightDeepTau2017v2p1VSe(false),
+    byVVTightDeepTau2017v2p1VSe(false),
+    byVLooseDeepTau2017v2p1VSmu(false),
+    byLooseDeepTau2017v2p1VSmu(false),
+    byMediumDeepTau2017v2p1VSmu(false),
+    byTightDeepTau2017v2p1VSmu(false),
+    decayMode(-1) {}
+
     float pt;
     float eta;
     float phi;
@@ -110,10 +132,44 @@ TauType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), pfIso(-1.), dz(-
     float dz;
     int charge;
     int pdgId;
-    bool isLoose;
-    bool isMedium;
-    bool isTight;
+    //bool isLoose;
+    //bool isMedium;
+    //bool isTight;
     bool isMatched;
+    bool decayModeFinding;
+    bool decayModeFindingNewDMs;
+    bool byLooseCombinedIsolationDeltaBetaCorr3Hits;
+    bool byMediumCombinedIsolationDeltaBetaCorr3Hits;
+    bool byTightCombinedIsolationDeltaBetaCorr3Hits;
+    bool againstElectronVLooseMVA6;
+    bool againstElectronVTightMVA6;
+    bool byVLooseIsolationMVArun2v1DBnewDMwLT;
+    bool byLooseIsolationMVArun2v1DBnewDMwLT;
+    bool byMediumIsolationMVArun2v1DBnewDMwLT;
+    bool byTightIsolationMVArun2v1DBnewDMwLT;
+    bool byVTightIsolationMVArun2v1DBnewDMwLT;
+    bool byVVTightIsolationMVArun2v1DBnewDMwLT;
+    bool byVVVLooseDeepTau2017v2p1VSjet ;
+    bool byVVLooseDeepTau2017v2p1VSjet;
+    bool byVLooseDeepTau2017v2p1VSjet;
+    bool byLooseDeepTau2017v2p1VSjet;
+    bool byMediumDeepTau2017v2p1VSjet;
+    bool byTightDeepTau2017v2p1VSjet;
+    bool byVTightDeepTau2017v2p1VSjet;
+    bool byVVTightDeepTau2017v2p1VSjet;
+    bool byVVVLooseDeepTau2017v2p1VSe;
+    bool byVVLooseDeepTau2017v2p1VSe;
+    bool byVLooseDeepTau2017v2p1VSe;
+    bool byLooseDeepTau2017v2p1VSe;
+    bool byMediumDeepTau2017v2p1VSe;
+    bool byTightDeepTau2017v2p1VSe;
+    bool byVTightDeepTau2017v2p1VSe;
+    bool byVVTightDeepTau2017v2p1VSe;
+    bool byVLooseDeepTau2017v2p1VSmu;
+    bool byLooseDeepTau2017v2p1VSmu;
+    bool byMediumDeepTau2017v2p1VSmu;
+    bool byTightDeepTau2017v2p1VSmu;
+    int decayMode;
 };
 
 
@@ -132,7 +188,7 @@ cHadMultiFrac(-1.), nHadMultiFrac(-1.), eleMultiFrac(-1.), photonMultiFrac(-1.),
 //emEFrac(-1.), emEinEB(-1.), emEinEE(-1.), emEinHF(-1.), EFracHad(-1.), hadEinHB(-1.), hadEinHE(-1.), hadEinHF(-1.), hadEinHO(-1.),
 ptGenJ(-10.), etaGenJ(-4.), phiGenJ(-4.), massGenJ(-10.),ptGen(-10.), etaGen(-4.), phiGen(-4.), massGen(-10.), pdgIdGen(0.),
 // ptLhe(-10.), etaLhe(-4.), phiLhe(-4.),
-partonFlavour(0), hadronFlavour(0), mother(0), isLoose(false), isMedium(false), isTight(false), isTightLepVeto(false), isCSVL(false), isCSVM(false), isCSVT(false),
+partonFlavour(0), hadronFlavour(0), mother(0), isLoose(false), isTight(false), isTightLepVeto(false), isCSVL(false), isCSVM(false), isCSVT(false),
 PUId(-1), PUIdLoose(false), PUIdMedium(false), PUIdTight(false), PUDiscriminant(-2.),
 //isMatched(false), dR_q1(1000), dR_q2(1000), dR_q3(1000), dR_q4(1000), m_q1(false), m_q2(false), m_q3(false), m_q4(false), dR_pi1(1000), dR_pi2(1000),
 matchBquark(-1), matchLL(-1),
@@ -144,7 +200,9 @@ alphaMaxOld(-100.), sumPtJetOld(-1.), betaMaxOld(-100.), gammaMaxOld(-100.), gam
 ptAllTracks(-1.), ptAllPVTracks(-1.), ptPVTracksMax(-1.), nTracksAll(-1), nTracksPVMax(-1), medianIP2D(-10000.), medianTheta2D(-100.), alphaMax(-100.), betaMax(-100.), gammaMax(-100.), gammaMaxEM(-100.), gammaMaxHadronic(-100.), gammaMaxET(-100.), minDeltaRAllTracks(999.), minDeltaRPVTracks(999.), nPixelHitsMedian(-1.0), nHitsMedian(-1.0), dzMedian(-9999.), dxyMedian(-9999.),
 hcalE(-100.), ecalE(-100.), FracCal(-100.), flightDist2d(-100.), flightDist2dError(-100.), flightDist3d(-100.), flightDist3dError(-100.), nSV(-1), nSVCand(-1), nVertexTracks(-1), nSelectedTracks(-1), dRSVJet(-100.), SV_x(-1000.), SV_y(-1000.), SV_z(-1000.), SV_dx(-100.), SV_dy(-100.), SV_dz(-100.), nTracksSV(-1), SV_mass(-100.),  isCaloTag(0),
 //VBF_DisplacedJet40_VTightID_Hadronic_match(0), VBF_DisplacedJet40_VVTightID_Hadronic_match(0),
-ptJESUp (-1.), ptJESDown (-1.), ptJER(-1.), ptJERUp (-1.), ptJERDown (-1.), tau1(-1.), tau2(-1.), tau3(-1.), nSubJets(-1), tau21(-1.), tau31(-1.), tau32(-1.), tau1_neutral(-1.), tau2_neutral(-1.), tau21_neutral(-1.), tau1_charged(-1.), tau2_charged(-1.), tau21_charged(-1.),
+ptJESUp (-1.), ptJESDown (-1.), ptJER(-1.), ptJERUp (-1.), ptJERDown (-1.), 
+energyJER (-1.), energyJERUp (-1.), energyJERDown (-1.), etaJER (-1.), etaJERUp (-1.), etaJERDown (-1.), JERresolution (-1.), JERsf (-1.), JERsfUp (1.), JERsfDown (-1), JERsmearFactor(-1.), JERsmearFactorUp(-1.), JERsmearFactorDown(-1.),
+tau1(-1.), tau2(-1.), tau3(-1.), nSubJets(-1), tau21(-1.), tau31(-1.), tau32(-1.), tau1_neutral(-1.), tau2_neutral(-1.), tau21_neutral(-1.), tau1_charged(-1.), tau2_charged(-1.), tau21_charged(-1.),
 //TriggerMatched_VBFJet(0), TriggerMatched_DisplacedJet(0), TriggerMatched_TripleJet50(0),//currently not used
 nConstituents (-1), nTrackConstituents (-1), nTracks0PixelHits(-1), nTracks1PixelHit(-1),nTracks2PixelHits(-1),nTracks3PixelHits(-1),nTracks4PixelHits(-1),nTracks5PixelHits(-1),nTracksAtLeast6PixelHits(-1),
 nTracksValidHitInBPix1(-1),nTracks0LostInnerHits(-1), nTracks1LostInnerHit(-1), nTracksAtLeast2LostInnerHits(-1), nTrackConstituentsWithPtLarger0p95(-1), nTrackConstituentsWithTrackDetails(-1), nTrackConstituentsWithTrackDetailsPtLarger0p95(-1), nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1),
@@ -242,7 +300,6 @@ absDeltaPhiToLeadingROI(-1.), absDeltaPhiToSubleadingROI(-1.), absDeltaPhiToNear
     int hadronFlavour;
     int mother;
     bool isLoose;
-    bool isMedium;
     bool isTight;
     bool isTightLepVeto;
     bool isCSVL;
@@ -358,6 +415,19 @@ absDeltaPhiToLeadingROI(-1.), absDeltaPhiToSubleadingROI(-1.), absDeltaPhiToNear
     float ptJER;
     float ptJERUp;
     float ptJERDown;
+    float energyJER;
+    float energyJERUp;
+    float energyJERDown;
+    float etaJER;
+    float etaJERUp;
+    float etaJERDown;
+    float JERresolution;
+    float JERsf;
+    float JERsfUp;
+    float JERsfDown;
+    float JERsmearFactor;
+    float JERsmearFactorUp;
+    float JERsmearFactorDown;
     float tau1;
     float tau2;
     float tau3;
@@ -509,7 +579,7 @@ cHadMulti(-1.), nHadMulti(-1.), eleMulti(-1.), photonMulti(-1.), muMulti(-1.), c
 //multiplicity fractions
 cHadMultiFrac(-1.), nHadMultiFrac(-1.), eleMultiFrac(-1.), photonMultiFrac(-1.), muMultiFrac(-1.), cMultiFrac(-1.), nMultiFrac(-1.),
 hcalE(-100.), ecalE(-100.), FracCal(-100.),
-partonFlavour(0), hadronFlavour(0), mother(0), isLoose(false), isMedium(false), isTight(false), isTightLepVeto(false), isMatched(false),
+partonFlavour(0), hadronFlavour(0), mother(0), isLoose(false), isTight(false), isTightLepVeto(false), isMatched(false),
 ptJESUp (-1.), ptJESDown (-1.), ptJER(-1.), ptJERUp (-1.), ptJERDown (-1.),
 //L//JESUnc(-1.), ptJERUp(-1.), etaJERUp(-1.), phiJERUp(-9.), energyJERUp(-1.), ptJERDown(-1.), etaJERDown(-1.), phiJERDown(-9.), energyJERDown(-1.), smearFact(-1.), smearFactUp(-1.), smearFactDown(-1.), softdropPuppiMassCorrJMS(-1.), softdropPuppiMassCorrJMSUp(-1.), softdropPuppiMassCorrJMSDown(-1.), softdropPuppiMassCorrJMR(-1.), softdropPuppiMassCorrJMRUp(-1.), softdropPuppiMassCorrJMRDown(-1.), dR_q1(1000), dR_q2(1000), dR_q3(1000), dR_q4(1000), m_q1(false), m_q2(false), m_q3(false), m_q4(false), dR_pi1(1000), dR_pi2(1000), matchBquark(-1), matchLL(-1),
 isGenMatched(0), isGenMatchedCaloCorr(0), isGenMatchedLLPAccept(0), isGenMatchedCaloCorrLLPAccept(0), radiusLLP(-1000.), xLLP(-10000.), yLLP(-10000.), zLLP(-10000.), radiusLLPCaloCorr(-1000.), xLLPCaloCorr(-10000.), yLLPCaloCorr(-10000.), zLLPCaloCorr(-10000.), xGenb(-10000.), yGenb(-10000.), zGenb(-10000.), xGenbCaloCorr(-10000.), yGenbCaloCorr(-10000.), zGenbCaloCorr(-10000.),
@@ -631,7 +701,6 @@ nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1) {}
     int hadronFlavour;
     int mother;
     bool isLoose;
-    bool isMedium;
     bool isTight;
     bool isTightLepVeto;
     bool isMatched;
@@ -814,7 +883,11 @@ nMatchedGenBquarks(-1), nMatchedGenBquarksCaloCorr(-1) {}
 
 struct MEtType {
   //MEtType(): pt(-1.), eta(-9.), phi(-9.), sign(-1.), ptRaw(-1.), phiRaw(-9.), ptType1(-1.), phiType1(-9.), ptGen(-1.), phiGen(-9.), ptScaleUp(-1.), ptScaleDown(-1.), ptResUp(-1.), ptResDown(-1.), ptCalo(-1.) {}
-    MEtType(): pt(-1.), eta(-9.), phi(-9.), sign(-1.), ptShiftJetResUp(-1.), ptShiftJetResDown(-1.), ptShiftJetEnUp(-1.), ptShiftJetEnDown(-1.), ptShiftUnclusteredEnUp(-1.), ptShiftUnclusteredEnDown(-1.), ptShiftJetResUpSmear(-1.), ptShiftJetResDownSmear(-1.), ptRaw(-1.), phiRaw(-9.), ptGen(-1.), phiGen(-9.), ptCalo(-1.) {}
+MEtType(): pt(-1.), eta(-9.), phi(-9.), sign(-1.), ptShiftJetResUp(-1.), ptShiftJetResDown(-1.), ptShiftJetEnUp(-1.), ptShiftJetEnDown(-1.), 
+//ptShiftJetResUpSmear(-1.), ptShiftJetResDownSmear(-1.), 
+ptShiftMuonEnUp (-1.), ptShiftMuonEnDown (-1.), ptShiftElectronEnUp(-1.), ptShiftElectronEnDown(-1.), ptShiftTauEnUp(-1.), ptShiftTauEnDown (-1.), ptShiftPhotonEnUp (-1.), ptShiftPhotonEnDown (-1.), ptShiftNoShift (-1.), 
+//ptShiftMETUncertaintySize (-1.), ptShiftMETFullUncertaintySize (-1.), 
+ptShiftUnclusteredEnUp(-1.), ptShiftUnclusteredEnDown(-1.), ptRaw(-1.), phiRaw(-9.), ptGen(-1.), phiGen(-9.), ptCalo(-1.) {}
     float pt;
     float eta;
     float phi;
@@ -823,10 +896,21 @@ struct MEtType {
     float ptShiftJetResDown;
     float ptShiftJetEnUp;
     float ptShiftJetEnDown;
+  //float ptShiftJetResUpSmear;
+  //float ptShiftJetResDownSmear;
+    float ptShiftMuonEnUp; 
+    float ptShiftMuonEnDown;
+    float ptShiftElectronEnUp;
+    float ptShiftElectronEnDown; 
+    float ptShiftTauEnUp;
+    float ptShiftTauEnDown;
+    float ptShiftPhotonEnUp;
+    float ptShiftPhotonEnDown;
+    float ptShiftNoShift;
+  //float ptShiftMETUncertaintySize;
+  //float ptShiftMETFullUncertaintySize;
     float ptShiftUnclusteredEnUp;
     float ptShiftUnclusteredEnDown;
-    float ptShiftJetResUpSmear;
-    float ptShiftJetResDownSmear;
     float ptRaw;
     float phiRaw;
   //float ptType1;
@@ -972,9 +1056,9 @@ TriggerObjectType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), charge
 
 
 struct CustomFatJetType {
-//CustomFatJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), ptRaw(-1.), ptUnc(-1.), dPhi_met(-1.), dPhi_Jet1(-1.), puId(-1.), CSV(-99.), CSVR(-99.), CSVRUp(-99.), CSVRDown(-99.), CHSprunedMass(-1.), CHSsoftdropMass(-1.), prunedMass(-1.), softdropMass(-1.), softdropPuppiMass(-1.), CHSprunedMassCorr(-1.), CHSsoftdropMassCorr(-1.), prunedMassCorr(-1.), softdropMassCorr(-1.), softdropPuppiMassCorr(-1.), softdropPuppiMassCorrNotSmeared(-1.), pt1(-1.), eta1(-9.), phi1(-9.), mass1(-1.), CSV1(-99.), CSVR1(-99.), CSVR1Up(-99.), CSVR1Down(-99.), CMVA1(-99.), CMVAR1(-99.), CMVAR1Up(-99.), CMVAR1Down(-99.), flavour1(-1.), pt2(-1.), eta2(-9.), phi2(-9.), mass2(-1.), CSV2(-99.), CSVR2(-99.), CSVR2Up(-99.), CSVR2Down(-99.), CMVA2(-99.), CMVAR2(-99.), CMVAR2Up(-99.), CMVAR2Down(-99.), flavour2(-1.), dR(-1.), Tau21(-1.), puppiTau21(-1.), BDSV(-1.), chf(-1.), nhf(-1.), phf(-1.), elf(-1.), muf(-1.), chm(-1), npr(-1), flavour(0), mother(0), isLoose(false), isMedium(false), isTight(false), isTightLepVeto(false), isMatched(false), JESUnc(-1.), ptJERUp(-1.), etaJERUp(-1.), phiJERUp(-9.), energyJERUp(-1.), ptJERDown(-1.), etaJERDown(-1.), phiJERDown(-9.), energyJERDown(-1.), smearFact(-1.), smearFactUp(-1.), smearFactDown(-1.), softdropPuppiMassCorrJMS(-1.), softdropPuppiMassCorrJMSUp(-1.), softdropPuppiMassCorrJMSDown(-1.), softdropPuppiMassCorrJMR(-1.), softdropPuppiMassCorrJMRUp(-1.), softdropPuppiMassCorrJMRDown(-1.), dR_q1(1000), dR_q2(1000), dR_q3(1000), dR_q4(1000), m_q1(false), m_q2(false), m_q3(false), m_q4(false), dR_pi1(1000), dR_pi2(1000), matchBquark(-1), matchLL(-1) {}
+//CustomFatJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), ptRaw(-1.), ptUnc(-1.), dPhi_met(-1.), dPhi_Jet1(-1.), puId(-1.), CSV(-99.), CSVR(-99.), CSVRUp(-99.), CSVRDown(-99.), CHSprunedMass(-1.), CHSsoftdropMass(-1.), prunedMass(-1.), softdropMass(-1.), softdropPuppiMass(-1.), CHSprunedMassCorr(-1.), CHSsoftdropMassCorr(-1.), prunedMassCorr(-1.), softdropMassCorr(-1.), softdropPuppiMassCorr(-1.), softdropPuppiMassCorrNotSmeared(-1.), pt1(-1.), eta1(-9.), phi1(-9.), mass1(-1.), CSV1(-99.), CSVR1(-99.), CSVR1Up(-99.), CSVR1Down(-99.), CMVA1(-99.), CMVAR1(-99.), CMVAR1Up(-99.), CMVAR1Down(-99.), flavour1(-1.), pt2(-1.), eta2(-9.), phi2(-9.), mass2(-1.), CSV2(-99.), CSVR2(-99.), CSVR2Up(-99.), CSVR2Down(-99.), CMVA2(-99.), CMVAR2(-99.), CMVAR2Up(-99.), CMVAR2Down(-99.), flavour2(-1.), dR(-1.), Tau21(-1.), puppiTau21(-1.), BDSV(-1.), chf(-1.), nhf(-1.), phf(-1.), elf(-1.), muf(-1.), chm(-1), npr(-1), flavour(0), mother(0), isLoose(false), isTight(false), isTightLepVeto(false), isMatched(false), JESUnc(-1.), ptJERUp(-1.), etaJERUp(-1.), phiJERUp(-9.), energyJERUp(-1.), ptJERDown(-1.), etaJERDown(-1.), phiJERDown(-9.), energyJERDown(-1.), smearFact(-1.), smearFactUp(-1.), smearFactDown(-1.), softdropPuppiMassCorrJMS(-1.), softdropPuppiMassCorrJMSUp(-1.), softdropPuppiMassCorrJMSDown(-1.), softdropPuppiMassCorrJMR(-1.), softdropPuppiMassCorrJMRUp(-1.), softdropPuppiMassCorrJMRDown(-1.), dR_q1(1000), dR_q2(1000), dR_q3(1000), dR_q4(1000), m_q1(false), m_q2(false), m_q3(false), m_q4(false), dR_pi1(1000), dR_pi2(1000), matchBquark(-1), matchLL(-1) {}
 //simplified version
-CustomFatJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), ptRaw(-1.), ptUnc(-1.), dPhi_met(-99.), dPhi_Jet1(-1.), puId(-1.), CSV(-99.), CHSprunedMass(-1.), CHSsoftdropMass(-1.), prunedMass(-1.), softdropMass(-1.), softdropPuppiMass(-1.), CHSprunedMassCorr(-1.), CHSsoftdropMassCorr(-1.), prunedMassCorr(-1.), softdropMassCorr(-1.), softdropPuppiMassCorr(-1.), softdropPuppiMassCorrNotSmeared(-1.), pt1(-1.), eta1(-9.), phi1(-9.), mass1(-1.), CSV1(-99.), CMVA1(-99.), flavour1(-1.), pt2(-1.), eta2(-9.), phi2(-9.), mass2(-1.), CSV2(-99.), CMVA2(-99.), flavour2(-1.), pt1SDP(-1.), eta1SDP(-9.), phi1SDP(-9.), mass1SDP(-1.), CSV1SDP(-99.), CMVA1SDP(-99.), flavour1SDP(-1.), pt2SDP(-1.), eta2SDP(-9.), phi2SDP(-9.), mass2SDP(-1.), CSV2SDP(-99.), CMVA2SDP(-99.), flavour2SDP(-1.), dR(-1.), Tau21(-1.), puppiTau21(-1.), BDSV(-1.), chf(-1.), nhf(-1.), phf(-1.), elf(-1.), muf(-1.), chm(-1), npr(-1), partonFlavour(0), hadronFlavour(0), mother(0), isLoose(false), isMedium(false), isTight(false), isTightLepVeto(false), dR_q1(1000), dR_q2(1000), dR_q3(1000), dR_q4(1000), m_q1(false), m_q2(false), m_q3(false), m_q4(false), dR_pi1(1000), dR_pi2(1000), matchBquark(-1), matchLL(-1), dR_q1_sj1(1000), dR_q2_sj1(1000), dR_q3_sj1(1000), dR_q4_sj1(1000), dR_pi1_sj1(1000), dR_pi2_sj1(1000), dR_q1_sj2(1000), dR_q2_sj2(1000), dR_q3_sj2(1000), dR_q4_sj2(1000), dR_pi1_sj2(1000), dR_pi2_sj2(1000) {}
+CustomFatJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), ptRaw(-1.), ptUnc(-1.), dPhi_met(-99.), dPhi_Jet1(-1.), puId(-1.), CSV(-99.), CHSprunedMass(-1.), CHSsoftdropMass(-1.), prunedMass(-1.), softdropMass(-1.), softdropPuppiMass(-1.), CHSprunedMassCorr(-1.), CHSsoftdropMassCorr(-1.), prunedMassCorr(-1.), softdropMassCorr(-1.), softdropPuppiMassCorr(-1.), softdropPuppiMassCorrNotSmeared(-1.), pt1(-1.), eta1(-9.), phi1(-9.), mass1(-1.), CSV1(-99.), CMVA1(-99.), flavour1(-1.), pt2(-1.), eta2(-9.), phi2(-9.), mass2(-1.), CSV2(-99.), CMVA2(-99.), flavour2(-1.), pt1SDP(-1.), eta1SDP(-9.), phi1SDP(-9.), mass1SDP(-1.), CSV1SDP(-99.), CMVA1SDP(-99.), flavour1SDP(-1.), pt2SDP(-1.), eta2SDP(-9.), phi2SDP(-9.), mass2SDP(-1.), CSV2SDP(-99.), CMVA2SDP(-99.), flavour2SDP(-1.), dR(-1.), Tau21(-1.), puppiTau21(-1.), BDSV(-1.), chf(-1.), nhf(-1.), phf(-1.), elf(-1.), muf(-1.), chm(-1), npr(-1), partonFlavour(0), hadronFlavour(0), mother(0), isLoose(false), isTight(false), isTightLepVeto(false), dR_q1(1000), dR_q2(1000), dR_q3(1000), dR_q4(1000), m_q1(false), m_q2(false), m_q3(false), m_q4(false), dR_pi1(1000), dR_pi2(1000), matchBquark(-1), matchLL(-1), dR_q1_sj1(1000), dR_q2_sj1(1000), dR_q3_sj1(1000), dR_q4_sj1(1000), dR_pi1_sj1(1000), dR_pi2_sj1(1000), dR_q1_sj2(1000), dR_q2_sj2(1000), dR_q3_sj2(1000), dR_q4_sj2(1000), dR_pi1_sj2(1000), dR_pi2_sj2(1000) {}
     float pt;
     float eta;
     float phi;
@@ -1056,7 +1140,6 @@ CustomFatJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), ptRaw(-
     int hadronFlavour;
     int mother;
     bool isLoose;
-    bool isMedium;
     bool isTight;
     bool isTightLepVeto;
   //bool isMatched;
@@ -1287,7 +1370,7 @@ VertexType(): chi2(-1.), ndof(-1.), x(-100.), y(-100.), z(-100.), px(-100.), py(
 
 
 struct SimplifiedJetType {
-SimplifiedJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.),cHadE(-1.), nHadE (-1.), cHadEFrac(-1.), nHadEFrac(-1.), nEmE(-1.), nEmEFrac(-1.), cEmE(-1.), cEmEFrac(-1.), cmuE(-1.), cmuEFrac(-1.), muE(-1.), muEFrac(-1.), eleE(-1.), eleEFrac(-1.), eleMulti(-1.), photonE(-1.), photonEFrac(-1.), photonMulti(-1.), cHadMulti(-1.), nHadMulti(-1.), npr(-1.), cMulti(-1.), nMulti(-1.), isLoose(false), isMedium(false), isTight(false), isGenMatched(0), nSelectedTracks(0), nConstituents (-1), TriggerMatched_VBFJet(0), TriggerMatched_DisplacedJet(0), TriggerMatched_TripleJet50(0){}
+SimplifiedJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.),cHadE(-1.), nHadE (-1.), cHadEFrac(-1.), nHadEFrac(-1.), nEmE(-1.), nEmEFrac(-1.), cEmE(-1.), cEmEFrac(-1.), cmuE(-1.), cmuEFrac(-1.), muE(-1.), muEFrac(-1.), eleE(-1.), eleEFrac(-1.), eleMulti(-1.), photonE(-1.), photonEFrac(-1.), photonMulti(-1.), cHadMulti(-1.), nHadMulti(-1.), npr(-1.), cMulti(-1.), nMulti(-1.), isLoose(false), isTight(false), isGenMatched(0), nSelectedTracks(0), nConstituents (-1), TriggerMatched_VBFJet(0), TriggerMatched_DisplacedJet(0), TriggerMatched_TripleJet50(0){}
     float pt;
     float eta;
     float phi;
@@ -1317,7 +1400,6 @@ SimplifiedJetType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.),cHadE(-
     float cMulti;
     float nMulti;
     bool isLoose;
-    bool isMedium;
     bool isTight;
     int isGenMatched;
     int nSelectedTracks;

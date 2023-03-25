@@ -13,23 +13,25 @@ JetAnalyzer::JetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl
     hcalRecHitsHOToken(CColl.consumes<edm::SortedCollection<HORecHit,edm::StrictWeakOrdering<HORecHit>>>(edm::InputTag("reducedHcalRecHits","horeco"))),
     hcalRecHitsHBHEToken(CColl.consumes<edm::SortedCollection<HBHERecHit,edm::StrictWeakOrdering<HBHERecHit>>>(edm::InputTag("reducedHcalRecHits","hbhereco"))),
     JetId(PSet.getParameter<int>("jetid")),
+    DataEra(PSet.getParameter<std::string>("dataEra")),
     Jet1Pt(PSet.getParameter<double>("jet1pt")),
     Jet2Pt(PSet.getParameter<double>("jet2pt")),
     JetEta(PSet.getParameter<double>("jeteta")),
     IsAOD(PSet.getParameter<bool>("isAOD")),
     AddQG(PSet.getParameter<bool>("addQGdiscriminator")),
-    RecalibrateJets(PSet.getParameter<bool>("recalibrateJets")),
-    RecalibrateMass(PSet.getParameter<bool>("recalibrateMass")),
-    RecalibratePuppiMass(PSet.getParameter<bool>("recalibratePuppiMass")),
+//RecalibrateJets(PSet.getParameter<bool>("recalibrateJets")),
+//RecalibrateMass(PSet.getParameter<bool>("recalibrateMass")),
+//RecalibratePuppiMass(PSet.getParameter<bool>("recalibratePuppiMass")),
     SoftdropPuppiMassString(PSet.getParameter<std::string>("softdropPuppiMassString")),
     SmearJets(PSet.getParameter<bool>("smearJets")),
-    JECUncertaintyMC(PSet.getParameter<std::string>("jecUncertaintyMC")),
-    JECUncertaintyDATA(PSet.getParameter<std::string>("jecUncertaintyDATA")),
-    JetCorrectorMC(PSet.getParameter<std::vector<std::string> >("jecCorrectorMC")),
-    JetCorrectorDATA(PSet.getParameter<std::vector<std::string> >("jecCorrectorDATA")),
-    MassCorrectorMC(PSet.getParameter<std::vector<std::string> >("massCorrectorMC")),
-    MassCorrectorDATA(PSet.getParameter<std::vector<std::string> >("massCorrectorDATA")),
-    MassCorrectorPuppi(PSet.getParameter<std::string>("massCorrectorPuppi")),
+    JECUncertaintyName(PSet.getParameter<std::string>("jecUncertaintyName")),
+//JECUncertaintyMC(PSet.getParameter<std::string>("jecUncertaintyMC")),
+//JECUncertaintyDATA(PSet.getParameter<std::string>("jecUncertaintyDATA")),
+//JetCorrectorMC(PSet.getParameter<std::vector<std::string> >("jecCorrectorMC")),
+//JetCorrectorDATA(PSet.getParameter<std::vector<std::string> >("jecCorrectorDATA")),
+//MassCorrectorMC(PSet.getParameter<std::vector<std::string> >("massCorrectorMC")),
+//MassCorrectorDATA(PSet.getParameter<std::vector<std::string> >("massCorrectorDATA")),
+//MassCorrectorPuppi(PSet.getParameter<std::string>("massCorrectorPuppi")),
     VertexToken(CColl.consumes<reco::VertexCollection>(PSet.getParameter<edm::InputTag>("vertices"))),
     RhoToken(CColl.consumes<double>(PSet.getParameter<edm::InputTag>("rho"))),
     UseReshape(PSet.getParameter<bool>("reshapeBTag")),
@@ -45,13 +47,13 @@ JetAnalyzer::JetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl
     JerName_sf(PSet.getParameter<std::string>("jerNameSf"))
     //    BTagNames(PSet.getParameter<std::vector<std::string> > ("bTagInfos"))
 {
-  
-    jecUncMC = new JetCorrectionUncertainty(JECUncertaintyMC);
-    jecUncDATA = new JetCorrectionUncertainty(JECUncertaintyDATA);
+
+    //jecUncMC = new JetCorrectionUncertainty(JECUncertaintyMC);
+    //jecUncDATA = new JetCorrectionUncertainty(JECUncertaintyDATA);
 
     isMetTriggerFile = false;
 
-    if (JECUncertaintyMC.find("AK8") != std::string::npos)
+    if (JECUncertaintyName.find("AK8") != std::string::npos)
       {
 	Rparameter = 0.8;
 	dRMatch=1.0;
@@ -63,52 +65,53 @@ JetAnalyzer::JetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl
 	dRMatch=0.5;
       }
 
-    
-    if(RecalibrateJets) {
-        std::vector<JetCorrectorParameters> jetParMC;
-        for ( std::vector<std::string>::const_iterator payloadBegin = JetCorrectorMC.begin(), payloadEnd = JetCorrectorMC.end(), ipayload = payloadBegin; ipayload != payloadEnd; ++ipayload ) {
-            //std::cout << *ipayload << "\n";
-            jetParMC.push_back(JetCorrectorParameters(*ipayload));
-        }    
-        std::vector<JetCorrectorParameters> jetParDATA;
-        for ( std::vector<std::string>::const_iterator payloadBegin = JetCorrectorDATA.begin(), payloadEnd = JetCorrectorDATA.end(), ipayload = payloadBegin; ipayload != payloadEnd; ++ipayload ) {
-            //std::cout << *ipayload << "\n";
-            jetParDATA.push_back(JetCorrectorParameters(*ipayload));
-        }
-        // Make the FactorizedJetCorrector
-        jetCorrMC = boost::shared_ptr<FactorizedJetCorrector> ( new FactorizedJetCorrector(jetParMC) );
-        jetCorrDATA = boost::shared_ptr<FactorizedJetCorrector> ( new FactorizedJetCorrector(jetParDATA) );
-    }
-    
-    if(RecalibrateMass) {
-        std::vector<JetCorrectorParameters> massParMC;
-        for ( std::vector<std::string>::const_iterator payloadBegin = MassCorrectorMC.begin(), payloadEnd = MassCorrectorMC.end(), ipayload = payloadBegin; ipayload != payloadEnd; ++ipayload ) {
-            massParMC.push_back(JetCorrectorParameters(*ipayload));
-        }    
-        std::vector<JetCorrectorParameters> massParDATA;
-        for ( std::vector<std::string>::const_iterator payloadBegin = MassCorrectorDATA.begin(), payloadEnd = MassCorrectorDATA.end(), ipayload = payloadBegin; ipayload != payloadEnd; ++ipayload ) {
-            massParDATA.push_back(JetCorrectorParameters(*ipayload));
-        }
-        // Make the FactorizedJetCorrector
-        massCorrMC = boost::shared_ptr<FactorizedJetCorrector> ( new FactorizedJetCorrector(massParMC) );
-        massCorrDATA = boost::shared_ptr<FactorizedJetCorrector> ( new FactorizedJetCorrector(massParDATA) );
-    }
-    
-    //if(SmearJets) {
-    //    resolution    = JME::JetResolution::get(iSetup, JerName_res);//new JME::JetResolution(JerName_res);
-    //    resolution_sf = JME::JetResolutionScaleFactor::get(iSetup, JerName_sf);//new JME::JetResolutionScaleFactor(JerName_sf);
-    //    if (JerName_res.find("AK8") != std::string::npos)
-    //        Rparameter = 0.8;
-    //    else 
-    //        Rparameter = 0.4;
+    ////obsolete, kept only as future reference for FWLite
+    //if(RecalibrateJets) {
+    //std::vector<JetCorrectorParameters> jetParMC;
+    //    for ( std::vector<std::string>::const_iterator payloadBegin = JetCorrectorMC.begin(), payloadEnd = JetCorrectorMC.end(), ipayload = payloadBegin; ipayload != payloadEnd; ++ipayload ) {
+    //        //std::cout << *ipayload << "\n";
+    //        jetParMC.push_back(JetCorrectorParameters(*ipayload));
+    //    }    
+    //    std::vector<JetCorrectorParameters> jetParDATA;
+    //    for ( std::vector<std::string>::const_iterator payloadBegin = JetCorrectorDATA.begin(), payloadEnd = JetCorrectorDATA.end(), ipayload = payloadBegin; ipayload != payloadEnd; ++ipayload ) {
+    //        //std::cout << *ipayload << "\n";
+    //        jetParDATA.push_back(JetCorrectorParameters(*ipayload));
+    //  }
+    //    // Make the FactorizedJetCorrector
+    //    jetCorrMC = boost::shared_ptr<FactorizedJetCorrector> ( new FactorizedJetCorrector(jetParMC) );
+    //    jetCorrDATA = boost::shared_ptr<FactorizedJetCorrector> ( new FactorizedJetCorrector(jetParDATA) );
     //}
     
-    if(RecalibratePuppiMass) {
-        PuppiCorrFile = new TFile(MassCorrectorPuppi.c_str(), "READ");
-        PuppiJECcorr_gen = (TF1*)PuppiCorrFile->Get("puppiJECcorr_gen");
-        PuppiJECcorr_reco_0eta1v3 = (TF1*)PuppiCorrFile->Get("puppiJECcorr_reco_0eta1v3");
-        PuppiJECcorr_reco_1v3eta2v5 = (TF1*)PuppiCorrFile->Get("puppiJECcorr_reco_1v3eta2v5");
-    }
+    ////obsolete, kept only as future reference for FWLite
+    //if(RecalibrateMass) {
+    //    std::vector<JetCorrectorParameters> massParMC;
+    //    for ( std::vector<std::string>::const_iterator payloadBegin = MassCorrectorMC.begin(), payloadEnd = MassCorrectorMC.end(), ipayload = payloadBegin; ipayload != payloadEnd; ++ipayload ) {
+    //        massParMC.push_back(JetCorrectorParameters(*ipayload));
+    //    }    
+    //    std::vector<JetCorrectorParameters> massParDATA;
+    //    for ( std::vector<std::string>::const_iterator payloadBegin = MassCorrectorDATA.begin(), payloadEnd = MassCorrectorDATA.end(), ipayload = payloadBegin; ipayload != payloadEnd; ++ipayload ) {
+    //        massParDATA.push_back(JetCorrectorParameters(*ipayload));
+    //    }
+    //    // Make the FactorizedJetCorrector
+    //    massCorrMC = boost::shared_ptr<FactorizedJetCorrector> ( new FactorizedJetCorrector(massParMC) );
+    //    massCorrDATA = boost::shared_ptr<FactorizedJetCorrector> ( new FactorizedJetCorrector(massParDATA) );
+    //}
+    
+    ////if(SmearJets) {
+    ////    resolution    = JME::JetResolution::get(iSetup, JerName_res);//new JME::JetResolution(JerName_res);
+    ////    resolution_sf = JME::JetResolutionScaleFactor::get(iSetup, JerName_sf);//new JME::JetResolutionScaleFactor(JerName_sf);
+    ////    if (JerName_res.find("AK8") != std::string::npos)
+    ////        Rparameter = 0.8;
+    ////    else 
+    ////        Rparameter = 0.4;
+    ////}
+    
+    //if(RecalibratePuppiMass) {
+    //  PuppiCorrFile = new TFile(MassCorrectorPuppi.c_str(), "READ");
+    //    PuppiJECcorr_gen = (TF1*)PuppiCorrFile->Get("puppiJECcorr_gen");
+    //    PuppiJECcorr_reco_0eta1v3 = (TF1*)PuppiCorrFile->Get("puppiJECcorr_reco_0eta1v3");
+    //    PuppiJECcorr_reco_1v3eta2v5 = (TF1*)PuppiCorrFile->Get("puppiJECcorr_reco_1v3eta2v5");
+    //}
     
     // BTag calibrator
     if(UseReshape) {
@@ -211,20 +214,20 @@ JetAnalyzer::JetAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl
     std::cout << "  b-tag cut [1, 2]  :\t" << Jet1BTag << "\t" << Jet2BTag << std::endl;
     std::cout << "  apply recoil corr :\t" << (UseRecoil ? "YES" : "NO") << std::endl;
     std::cout << "  apply jet smearing:\t" << (SmearJets ? "YES" : "NO") << " file: \t: " << JerName_res << std::endl;
-    std::cout << "  recoil file MC    :\t" << RecoilMCFile << std::endl;
-    std::cout << "  recoil file Data  :\t" << RecoilDataFile << std::endl;
+    //std::cout << "  recoil file MC    :\t" << RecoilMCFile << std::endl;
+    //std::cout << "  recoil file Data  :\t" << RecoilDataFile << std::endl;
     std::cout << std::endl;
 }
 
 JetAnalyzer::~JetAnalyzer() {
-    if(RecalibratePuppiMass) PuppiCorrFile->Close();
+    //if(RecalibratePuppiMass) PuppiCorrFile->Close();
 
     if(UseReshape) {
 	delete calib;
 	delete reader;
     }
-    delete jecUncMC;
-    delete jecUncDATA;
+    //delete jecUncMC;
+    //delete jecUncDATA;
     if(UseRecoil) delete recoilCorr;
     MetTriggerFile->Close();
 }
@@ -299,20 +302,24 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 
         // First pt cut, to avoid issues with AK8!
         if(jet.pt()<PtTh) continue;
-        
+	//std::cout << "check isPFJet()" << jet.isPFJet() << std::endl;
+	//std::cout << "check isJPTJet()" << jet.isJPTJet() << std::endl;
+        //if( !(jet.isJPTJet() or jet.isPFJet()) ) std::cout<< " - - - - NOT VALID! SKIP!!! - - - - - " << std::endl;
+        if( !(jet.isJPTJet() or jet.isPFJet()) ) continue;
+	
 
 	//First of all, jet id selections
         // Quality cut
-        if(JetId==1 && !isLooseJet(jet)) continue;
-        if(JetId==2 && !isTightJet(jet)) continue;
-        if(JetId==3 && !isTightLepVetoJet(jet)) continue;
+        if(JetId==1 && !isLooseJet(jet,DataEra)) continue;
+        if(JetId==2 && !isTightJet(jet,DataEra)) continue;
+        if(JetId==3 && !isTightLepVetoJet(jet,DataEra)) continue;
         
         // b-tagging
         if(BTagTh==1 && jet.bDiscriminator(BTag)<BTagTh) continue;
         // Save jet ID
-        jet.addUserInt("isLoose", isLooseJet(jet) ? 1 : 0);
-        jet.addUserInt("isTight", isTightJet(jet) ? 1 : 0);
-        jet.addUserInt("isTightLepVeto", isTightLepVetoJet(jet) ? 1 : 0);
+        jet.addUserInt("isLoose", isLooseJet(jet,DataEra) ? 1 : 0);
+        jet.addUserInt("isTight", isTightJet(jet,DataEra) ? 1 : 0);
+        jet.addUserInt("isTightLepVeto", isTightLepVetoJet(jet,DataEra) ? 1 : 0);
 	// Save jet energy fractions as user floats, since they are affected by JER smearing
 	jet.addUserFloat("cHadEFrac", jet.chargedHadronEnergyFraction());
 	jet.addUserFloat("nHadEFrac", jet.neutralHadronEnergyFraction());
@@ -360,20 +367,26 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 	//    }	
 
 
+	////Already done via updateJetCollection. Kept as future reference for FW lite
+        //if(RecalibrateJets) CorrectJet(jet, *rho_handle, PVCollection->size(), isMC);
+	edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
+	iSetup.get<JetCorrectionsRecord>().get(JECUncertaintyName,JetCorParColl); 
+	JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"];
+	JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(JetCorPar);
+	jecUnc->setJetEta(jet.eta());
+	jecUnc->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
+	jet.addUserFloat("JESUncertainty", jecUnc->getUncertainty(true));
 
-        if(RecalibrateJets) CorrectJet(jet, *rho_handle, PVCollection->size(), isMC);
-
-        // JEC Uncertainty
-        if (!isMC){
-            jecUncDATA->setJetEta(jet.eta());
-            jecUncDATA->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
-            jet.addUserFloat("JESUncertainty", jecUncDATA->getUncertainty(true));
-        } else {
-            jecUncMC->setJetEta(jet.eta());
-            jecUncMC->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
-            jet.addUserFloat("JESUncertainty", jecUncMC->getUncertainty(true));
-        }
-
+        //// JEC Uncertainty, old method
+        //if (!isMC){
+        //    jecUncDATA->setJetEta(jet.eta());
+        //    jecUncDATA->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
+        //    jet.addUserFloat("JESUncertaintyOld", jecUncDATA->getUncertainty(true));
+        //} else {
+        //    jecUncMC->setJetEta(jet.eta());
+        //    jecUncMC->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
+        //    jet.addUserFloat("JESUncertaintyOld", jecUncMC->getUncertainty(true));
+        //}
 
 	//ADD HERE JET PT UP - DOWN!
 	jet.addUserFloat("ptJESUp", (   jet.hasUserFloat("JESUncertainty") ? (jet.pt() * (1+jet.userFloat("JESUncertainty")) ) : jet.pt()   ) );
@@ -403,12 +416,11 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             jet.addUserFloat("ddtTau21", ddt);
         }
         
-        if(RecalibrateMass) CorrectMass(jet, *rho_handle, PVCollection->size(), isMC);
-        if(RecalibratePuppiMass) CorrectPuppiMass(jet, isMC);
+        //if(RecalibrateMass) CorrectMass(jet, *rho_handle, PVCollection->size(), isMC);
+        //if(RecalibratePuppiMass) CorrectPuppiMass(jet, isMC);
         
 
         // JER NEW IMPLEMENTATION
-
 
 
         if(SmearJets) {//Note: use (isMC && SmearJets) to apply JER only to data
@@ -433,17 +445,17 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             float smearFactor = 1.;
             float smearFactorUp = 1.;
             float smearFactorDown = 1.;
+	    float JERresolution = -1.;
+	    float JERsf = -1.;
+	    float JERsfUp = -1.;
+	    float JERsfDown = -1.;
 
             if(isMC) {
-                //float JERresolution = resolution->getResolution(TheJetParameters);
-                //float JERsf         = resolution_sf->getScaleFactor(TheJetParameters);
-                //float JERsfUp       = resolution_sf->getScaleFactor(TheJetParameters, Variation::UP);
-                //float JERsfDown     = resolution_sf->getScaleFactor(TheJetParameters, Variation::DOWN);
 
-                float JERresolution = resolution.getResolution(TheJetParameters);
-                float JERsf         = resolution_sf.getScaleFactor(TheJetParameters);
-                float JERsfUp       = resolution_sf.getScaleFactor(TheJetParameters, Variation::UP);
-                float JERsfDown     = resolution_sf.getScaleFactor(TheJetParameters, Variation::DOWN);
+                JERresolution = resolution.getResolution(TheJetParameters);
+                JERsf         = resolution_sf.getScaleFactor(TheJetParameters);
+                JERsfUp       = resolution_sf.getScaleFactor(TheJetParameters, Variation::UP);
+                JERsfDown     = resolution_sf.getScaleFactor(TheJetParameters, Variation::DOWN);
                 //std::cout << "JERresolution " << JERresolution << "\n";
                 //std::cout << "JERsf         " << JERsf << "\n";
                 //std::cout << "JERsfUp       " << JERsfUp << "\n";
@@ -497,6 +509,15 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             jet.addUserFloat("etaJERDown", jetJERDown.eta());
             jet.addUserFloat("phiJERDown", jetJERDown.phi());
             jet.addUserFloat("energyJERDown", jetJERDown.energy());
+
+	    //Save SF in case a computation is needed in post-processing
+            jet.addUserFloat("JERresolution", JERresolution);
+            jet.addUserFloat("JERsf", JERsf);
+            jet.addUserFloat("JERsfUp", JERsfUp);
+            jet.addUserFloat("JERsfDown", JERsfDown);
+            jet.addUserFloat("JERsmearFactor", smearFactor);
+            jet.addUserFloat("JERsmearFactorUp", smearFactorUp);
+            jet.addUserFloat("JERsmearFactorDown", smearFactorDown);
 
 
 
@@ -571,6 +592,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             jet.addUserFloat("QGLikelihood", (*QGHandle)[jetRef]);
         }
         */
+
 
         //Find ECAL/HCAL recHits
         //Initialize
@@ -803,11 +825,7 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 
 	  }//loop over hcal hbhe hits          
           
-          
-          
-          
-          
-          
+                   
           
           
         }//IsAOD condition
@@ -883,11 +901,14 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 	*/
         Vect.push_back(jet); // Fill vector
     }
+
     return Vect;
 }
 
 
 /////////////////////////////////////////////
+//obsolete, kept only as future reference for FWLite
+/*
 void JetAnalyzer::CorrectJet(pat::Jet& jet, float rho, float nPV, bool isMC) {
     double corr(1.);
     reco::Candidate::LorentzVector uncorrJet = jet.correctedP4(0);
@@ -980,7 +1001,7 @@ void JetAnalyzer::CorrectPuppiMass(pat::Jet& jet, bool isMC) {
         jet.addUserFloat("ak8PFJetsPuppiSoftDropMassCorrJMRDown", jet.userFloat("ak8PFJetsPuppiSoftDropMassCorr")   * smearJMRDown);
     }
 }
-
+*/
 
 void JetAnalyzer::CleanJetsFromMuons(std::vector<pat::Jet>& Jets, std::vector<pat::Muon>& Muons, float angle) {
     for(unsigned int m = 0; m < Muons.size(); m++) {
@@ -1072,6 +1093,21 @@ pat::MET JetAnalyzer::FillMetVector(const edm::Event& iEvent) {
     MEt.addUserFloat("ptShiftJetResDown", MEt.shiftedPt(pat::MET::METUncertainty::JetResDown));
     MEt.addUserFloat("ptShiftJetEnUp", MEt.shiftedPt(pat::MET::METUncertainty::JetEnUp));
     MEt.addUserFloat("ptShiftJetEnDown", MEt.shiftedPt(pat::MET::METUncertainty::JetEnDown));
+
+    //MEt.addUserFloat("ptShiftJetResUpSmear", MEt.shiftedPt(pat::MET::METUncertainty::JetResUpSmear));
+    //MEt.addUserFloat("ptShiftJetResDownSmear", MEt.shiftedPt(pat::MET::METUncertainty::JetResDownSmear));
+    MEt.addUserFloat("ptShiftMuonEnUp", MEt.shiftedPt(pat::MET::METUncertainty::MuonEnUp));
+    MEt.addUserFloat("ptShiftMuonEnDown", MEt.shiftedPt(pat::MET::METUncertainty::MuonEnDown));
+    MEt.addUserFloat("ptShiftElectronEnUp", MEt.shiftedPt(pat::MET::METUncertainty::ElectronEnUp));
+    MEt.addUserFloat("ptShiftElectronEnDown", MEt.shiftedPt(pat::MET::METUncertainty::ElectronEnDown));
+    MEt.addUserFloat("ptShiftTauEnUp", MEt.shiftedPt(pat::MET::METUncertainty::TauEnUp));
+    MEt.addUserFloat("ptShiftTauEnDown", MEt.shiftedPt(pat::MET::METUncertainty::TauEnDown));
+    MEt.addUserFloat("ptShiftPhotonEnUp", MEt.shiftedPt(pat::MET::METUncertainty::PhotonEnUp));
+    MEt.addUserFloat("ptShiftPhotonEnDown", MEt.shiftedPt(pat::MET::METUncertainty::PhotonEnDown));
+    MEt.addUserFloat("ptShiftNoShift", MEt.shiftedPt(pat::MET::METUncertainty::NoShift));
+    //MEt.addUserFloat("ptShiftMETUncertaintySize", MEt.shiftedPt(pat::MET::METUncertainty::METUncertaintySize));
+    //MEt.addUserFloat("ptShiftMETFullUncertaintySize", MEt.shiftedPt(pat::MET::METUncertainty::METFullUncertaintySize));
+
     MEt.addUserFloat("ptShiftUnclusteredEnUp", MEt.shiftedPt(pat::MET::METUncertainty::UnclusteredEnUp));
     MEt.addUserFloat("ptShiftUnclusteredEnDown", MEt.shiftedPt(pat::MET::METUncertainty::UnclusteredEnDown));
     MEt.addUserFloat("ptRaw", MEt.uncorPt());
@@ -1125,7 +1161,7 @@ void JetAnalyzer::ApplyRecoilCorrections(pat::MET& MET, const reco::Candidate::L
 }
 
 
-float JetAnalyzer::CalculateHT(const edm::Event& iEvent, const edm::EventSetup& iSetup, int id, float pt, float eta) {
+float JetAnalyzer::CalculateHT(const edm::Event& iEvent, const edm::EventSetup& iSetup, int id, float pt, float eta, bool smear) {
 
     std::vector<pat::Jet> Vect;
     // Declare and open collection
@@ -1144,7 +1180,7 @@ float JetAnalyzer::CalculateHT(const edm::Event& iEvent, const edm::EventSetup& 
 
     //Eta and pt thresholds most commonly used for HT
     float HT = 0.;
-    int JetId = id;//common setting: 3, tight jets
+    int JetId = id;//common setting: 2, tight jets
     float PtTh = pt;//common setting: 15 GeV
     float EtaTh = eta;//common setting: 3
 
@@ -1158,23 +1194,26 @@ float JetAnalyzer::CalculateHT(const edm::Event& iEvent, const edm::EventSetup& 
 
 	//First of all, jet id selections
         // Quality cut
-        if(JetId==3 && !isTightJet(jet)) continue;
-        if(JetId==1 && !isLooseJet(jet)) continue;
-        if(RecalibrateJets) CorrectJet(jet, *rho_handle, PVCollection->size(), isMC);
+        if(JetId==2 && !isTightJet(jet,DataEra)) continue;
+        if(JetId==1 && !isLooseJet(jet,DataEra)) continue;
+	//obsolete
+        ////if(RecalibrateJets) CorrectJet(jet, *rho_handle, PVCollection->size(), isMC);
 
         // JEC Uncertainty
-        if (!isMC){
-            jecUncDATA->setJetEta(jet.eta());
-            jecUncDATA->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
-        } else {
-            jecUncMC->setJetEta(jet.eta());
-            jecUncMC->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
-        }
-        if(RecalibrateMass) CorrectMass(jet, *rho_handle, PVCollection->size(), isMC);
+        //if (!isMC){
+        //    jecUncDATA->setJetEta(jet.eta());
+        //    jecUncDATA->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
+        //} else {
+        //    jecUncMC->setJetEta(jet.eta());
+        //    jecUncMC->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
+        //}
+	//obsolete
+        ////if(RecalibrateMass) CorrectMass(jet, *rho_handle, PVCollection->size(), isMC);
 
         // JER NEW IMPLEMENTATION
 	
-        if(SmearJets) {//Note: use (isMC && SmearJets) to apply JER only to data
+        //if(SmearJets) {//Note: use (isMC && SmearJets) to apply JER only to data
+        if(smear) {//Note: use (isMC && SmearJets) to apply JER only to data
             resolution    = JME::JetResolution::get(iSetup, JerName_res);//new JME::JetResolution(JerName_res);
             resolution_sf = JME::JetResolutionScaleFactor::get(iSetup, JerName_sf);//new JME::JetResolutionScaleFactor(JerName_sf);
             if (JerName_res.find("AK8") != std::string::npos)
@@ -1445,7 +1484,51 @@ std::pair< std::pair<float,float>  , float> JetAnalyzer::JetSecondMoments(std::v
 // }
 
 // PFJet Quality ID 2015-2016: see https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID#Recommendations_for_13_TeV_data
-bool JetAnalyzer::isLooseJet(pat::Jet& jet) {
+bool JetAnalyzer::isLooseJet(pat::Jet& jet , std::string dataEra) {
+    //2016
+    if(dataEra.find("2016") != std::string::npos)
+      {
+	if(fabs(jet.eta())<=2.7)
+	  {
+	    
+	    if(fabs(jet.eta())<=2.4)
+	      {
+		if(jet.neutralHadronEnergyFraction()<0.99 and jet.neutralEmEnergyFraction()<0.99 and jet.chargedMultiplicity()+jet.neutralMultiplicity()>1 and jet.chargedHadronEnergyFraction()>0. and jet.chargedMultiplicity()>0 and jet.chargedEmEnergyFraction()<0.99) return true;
+		else return false;
+	      }
+	    else
+	      {
+		if(jet.neutralHadronEnergyFraction()<0.99 and jet.neutralEmEnergyFraction()<0.99 and jet.chargedMultiplicity()+jet.neutralMultiplicity()>1) return true;
+		else return false;
+	      }
+
+	  }
+	else if(fabs(jet.eta())<=3.0 and fabs(jet.eta())>2.7)
+	  {
+	    if(jet.neutralEmEnergyFraction()>0.01 and jet.neutralHadronEnergyFraction()<0.98 and jet.neutralMultiplicity()>2) return true;
+	    else return false;
+	  }
+	else if(fabs(jet.eta())<=5.2 and fabs(jet.eta())>3.0)
+	  {
+	    if(jet.neutralEmEnergyFraction()<0.9 and jet.neutralMultiplicity()>10) return true;
+	    else return false;
+	  }
+	else return false;	
+      }
+    //2017
+    else if(dataEra.find("2017") != std::string::npos)
+      {
+	//Loose jet ID does not exist anymore in 2017
+	return false;
+      }
+    //2018
+    else if(dataEra.find("2018") != std::string::npos)
+      {
+	//Loose jet ID does not exist anymore in 2018
+	return false;
+      }
+    else return false;
+    /*
     if(fabs(jet.eta())<=2.7){ /// |eta| < 2.7
         if(jet.neutralHadronEnergyFraction()>=0.99) return false;
         if(jet.neutralEmEnergyFraction()>=0.99) return false;
@@ -1466,9 +1549,98 @@ bool JetAnalyzer::isLooseJet(pat::Jet& jet) {
         }
     }
     return true;
+    */
 }
 
-bool JetAnalyzer::isTightJet(pat::Jet& jet) {
+bool JetAnalyzer::isTightJet(pat::Jet& jet, std::string dataEra) {
+    //2016
+    if(dataEra.find("2016") != std::string::npos)
+      {
+	if(fabs(jet.eta())<=2.7)
+	  {
+	    
+	    if(fabs(jet.eta())<=2.4)
+	      {
+		if(jet.neutralHadronEnergyFraction()<0.90 and jet.neutralEmEnergyFraction()<0.90 and jet.chargedMultiplicity()+jet.neutralMultiplicity()>1 and jet.chargedHadronEnergyFraction()>0. and jet.chargedMultiplicity()>0 and jet.chargedEmEnergyFraction()<0.99) return true;
+		else return false;
+	      }
+	    else
+	      {
+		if(jet.neutralHadronEnergyFraction()<0.90 and jet.neutralEmEnergyFraction()<0.90 and jet.chargedMultiplicity()+jet.neutralMultiplicity()>1) return true;
+		else return false;
+	      }
+
+	  }
+	else if(fabs(jet.eta())<=3.0 and fabs(jet.eta())>2.7)
+	  {
+	    if(jet.neutralEmEnergyFraction()>0.01 and jet.neutralHadronEnergyFraction()<0.98 and jet.neutralMultiplicity()>2) return true;
+	    else return false;
+	  }
+	else if(fabs(jet.eta())<=5.2 and fabs(jet.eta())>3.0)
+	  {
+	    if(jet.neutralEmEnergyFraction()<0.9 and jet.neutralMultiplicity()>10) return true;
+	    else return false;
+	  }
+	else return false;	
+      }
+    //2017
+    else if(dataEra.find("2017") != std::string::npos)
+      {
+	if(fabs(jet.eta())<=2.7)
+	  {
+	    
+	    if(fabs(jet.eta())<=2.4)
+	      {
+		if(jet.neutralHadronEnergyFraction()<0.90 and jet.neutralEmEnergyFraction()<0.90 and jet.chargedMultiplicity()+jet.neutralMultiplicity()>1 and jet.chargedHadronEnergyFraction()>0. and jet.chargedMultiplicity()>0) return true;
+		else return false;
+	      }
+	    else
+	      {
+		if(jet.neutralHadronEnergyFraction()<0.90 and jet.neutralEmEnergyFraction()<0.90 and jet.chargedMultiplicity()+jet.neutralMultiplicity()>1) return true;
+		else return false;
+	      }
+
+	  }
+	else if(fabs(jet.eta())<=3.0 and fabs(jet.eta())>2.7)
+	  {
+	    if(jet.neutralEmEnergyFraction()<0.99 and jet.neutralEmEnergyFraction()>0.02 and jet.neutralMultiplicity()>2) return true;
+	    else return false;
+	  }
+	else if(fabs(jet.eta())<=5.2 and fabs(jet.eta())>3.0)
+	  {
+	    if(jet.neutralHadronEnergyFraction()>0.2 and jet.neutralEmEnergyFraction()<0.9 and jet.neutralMultiplicity()>10) return true;
+	    else return false;
+	  }
+	else return false;
+
+      }
+    //2018
+    else if(dataEra.find("2018") != std::string::npos)
+      {
+	if(fabs(jet.eta())<=2.6)
+	  {
+	    if(jet.neutralHadronEnergyFraction()<0.90 and jet.neutralEmEnergyFraction()<0.90 and jet.chargedMultiplicity()+jet.neutralMultiplicity()>1 and jet.chargedHadronEnergyFraction()>0. and jet.chargedMultiplicity()>0) return true;
+	    else return false;
+	  }
+	else if(fabs(jet.eta())<=2.7 and fabs(jet.eta())>2.6)
+	  {
+	    if(jet.neutralHadronEnergyFraction()<0.90 and jet.neutralEmEnergyFraction()<0.99 and jet.chargedMultiplicity()>0) return true;
+	    else return false;
+	  }
+	else if(fabs(jet.eta())<=3.0 and fabs(jet.eta())>2.7)
+	  {
+	    if(jet.neutralEmEnergyFraction()<0.99 and jet.neutralEmEnergyFraction()>0.02 and jet.neutralMultiplicity()>2) return true;
+	    else return false;
+	  }
+	else if(fabs(jet.eta())<=5.0 and fabs(jet.eta())>3.0)
+	  {
+	    if(jet.neutralHadronEnergyFraction()>0.2 and jet.neutralEmEnergyFraction()<0.9 and jet.neutralMultiplicity()>10) return true;
+	    else return false;
+	  }
+	else return false;
+      }
+    else return false;
+    /*
     if(fabs(jet.eta())<=2.7){ /// |eta| < 2.7
         if(jet.neutralHadronEnergyFraction()>=0.90) return false;
         if(jet.neutralEmEnergyFraction()>=0.90) return false;
@@ -1489,9 +1661,100 @@ bool JetAnalyzer::isTightJet(pat::Jet& jet) {
         }
     }
     return true;
+    */
 }
 
-bool JetAnalyzer::isTightLepVetoJet(pat::Jet& jet) {
+bool JetAnalyzer::isTightLepVetoJet(pat::Jet& jet, std::string dataEra) {
+    //2016
+    if(dataEra.find("2016") != std::string::npos)
+      {
+	if(fabs(jet.eta())<=2.7)
+	  {
+	    
+	    if(fabs(jet.eta())<=2.4)
+	      {
+		if(jet.neutralHadronEnergyFraction()<0.90 and jet.neutralEmEnergyFraction()<0.90 and jet.chargedMultiplicity()+jet.neutralMultiplicity()>1 and jet.chargedHadronEnergyFraction()>0. and jet.chargedMultiplicity()>0 and jet.chargedEmEnergyFraction()<0.99 and jet.muonEnergyFraction()<0.8) return true;
+		else return false;
+	      }
+	    else
+	      {
+		if(jet.neutralHadronEnergyFraction()<0.90 and jet.neutralEmEnergyFraction()<0.90 and jet.chargedMultiplicity()+jet.neutralMultiplicity()>1 and jet.muonEnergyFraction()<0.8) return true;
+		else return false;
+	      }
+
+	  }
+	else if(fabs(jet.eta())<=3.0 and fabs(jet.eta())>2.7)
+	  {
+	    if(jet.neutralEmEnergyFraction()>0.01 and jet.neutralHadronEnergyFraction()<0.98 and jet.neutralMultiplicity()>2) return true;
+	    else return false;
+	  }
+	else if(fabs(jet.eta())<=5.2 and fabs(jet.eta())>3.0)
+	  {
+	    if(jet.neutralEmEnergyFraction()<0.9 and jet.neutralMultiplicity()>10) return true;
+	    else return false;
+	  }
+	else return false;	
+	
+      }
+    //2017
+    else if(dataEra.find("2017") != std::string::npos)
+      {
+	if(fabs(jet.eta())<=2.7)
+	  {
+	    
+	    if(fabs(jet.eta())<=2.4)
+	      {
+		if(jet.neutralHadronEnergyFraction()<0.90 and jet.neutralEmEnergyFraction()<0.90 and jet.chargedMultiplicity()+jet.neutralMultiplicity()>1 and jet.chargedHadronEnergyFraction()>0. and jet.chargedMultiplicity()>0 and jet.chargedEmEnergyFraction()<0.80) return true;
+		else return false;
+	      }
+	    else
+	      {
+		if(jet.neutralHadronEnergyFraction()<0.90 and jet.neutralEmEnergyFraction()<0.90 and jet.chargedMultiplicity()+jet.neutralMultiplicity()>1 and jet.muonEnergyFraction()<0.80) return true;
+		else return false;
+	      }
+
+	  }
+	else if(fabs(jet.eta())<=3.0 and fabs(jet.eta())>2.7)
+	  {
+	    if(jet.neutralEmEnergyFraction()<0.99 and jet.neutralEmEnergyFraction()>0.02 and jet.neutralMultiplicity()>2) return true;
+	    else return false;
+	  }
+	else if(fabs(jet.eta())<=5.2 and fabs(jet.eta())>3.0)
+	  {
+	    if(jet.neutralHadronEnergyFraction()>0.2 and jet.neutralEmEnergyFraction()<0.9 and jet.neutralMultiplicity()>10) return true;
+	    else return false;
+	  }
+	else return false;
+
+       
+      }
+    //2018
+    else if(dataEra.find("2018") != std::string::npos)
+      {
+	if(fabs(jet.eta())<=2.6)
+	  {
+	    if(jet.neutralHadronEnergyFraction()<0.90 and jet.neutralEmEnergyFraction()<0.90 and jet.chargedMultiplicity()+jet.neutralMultiplicity()>1 and jet.chargedHadronEnergyFraction()>0. and jet.chargedMultiplicity()>0 and jet.muonEnergyFraction()<0.80 and jet.chargedEmEnergyFraction()<0.80) return true;
+	    else return false;
+	  }
+	else if(fabs(jet.eta())<=2.7 and fabs(jet.eta())>2.6)
+	  {
+	    if(jet.neutralHadronEnergyFraction()<0.90 and jet.neutralEmEnergyFraction()<0.99 and jet.chargedMultiplicity()>0 and jet.muonEnergyFraction()<0.80 and jet.chargedEmEnergyFraction()<0.80) return true;
+	    else return false;
+	  }
+	else if(fabs(jet.eta())<=3.0 and fabs(jet.eta())>2.7)
+	  {
+	    if(jet.neutralEmEnergyFraction()<0.99 and jet.neutralEmEnergyFraction()>0.02 and jet.neutralMultiplicity()>2) return true;
+	    else return false;
+	  }
+	else if(fabs(jet.eta())<=5.0 and fabs(jet.eta())>3.0)
+	  {
+	    if(jet.neutralHadronEnergyFraction()>0.2 and jet.neutralEmEnergyFraction()<0.9 and jet.neutralMultiplicity()>10) return true;
+	    else return false;
+	  }
+	else return false;
+      }
+    else return false;
+    /*
     if(fabs(jet.eta())<=2.7){ /// |eta| < 2.7
         if(jet.neutralHadronEnergyFraction()>=0.90) return false;
         if(jet.neutralEmEnergyFraction()>=0.90) return false;
@@ -1513,6 +1776,7 @@ bool JetAnalyzer::isTightLepVetoJet(pat::Jet& jet) {
         }
     }
     return true;
+    */
 }
 
 

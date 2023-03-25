@@ -44,6 +44,7 @@ std::vector<pat::Tau> TauAnalyzer::FillTauVector(const edm::Event& iEvent) {
         if(tau.pt()<PtTh || fabs(tau.eta())>EtaTh) continue;
         float pfIso = ( tau.chargedHadronIso() + std::max(tau.neutralHadronIso() + tau.photonIso() - 0.5*tau.puChargedHadronIso(), 0.) ) / tau.pt();
 
+        //https://twiki.cern.ch/twiki/bin/viewauth/CMS/TauIDRecommendationForRun2
         //Tau id by Decay Mode
         if(TauIdByDecayMode==1 && !tau.tauID("decayModeFinding")) continue;
         if(TauIdByDecayMode==2 && !tau.tauID("decayModeFindingNewDMs")) continue;

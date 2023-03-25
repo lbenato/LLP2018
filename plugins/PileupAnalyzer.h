@@ -24,6 +24,9 @@ class PileupAnalyzer {
         virtual float GetPUWeightDown(const edm::Event&);
         virtual float GetPV(const edm::Event&);
         virtual int GetMeanNumInteractions(const edm::Event&);
+        virtual std::vector<int> GetBunchCrossing(const edm::Event&);
+        virtual std::vector<int> GetTrueNumInteractions(const edm::Event&);
+        virtual std::vector<int> GetPUNumInteractions(const edm::Event&);
 
     private:
         edm::EDGetTokenT<std::vector<PileupSummaryInfo> > PUToken;
