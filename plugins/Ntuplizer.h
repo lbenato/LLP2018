@@ -298,6 +298,11 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     std::map<std::string, bool> MetFiltersMap;
     std::map<std::string, bool> L1FiltersMap;
 
+    std::vector<float> PSWeightValues;
+    std::vector<std::string> PSWeightLabels;
+    std::vector<float> MEWeightValues;
+    std::vector<std::string> MEWeightLabels;
+
     //Initialize tree
     edm::Service<TFileService> fs;
     TTree* tree;

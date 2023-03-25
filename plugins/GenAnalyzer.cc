@@ -3,6 +3,7 @@
 
 GenAnalyzer::GenAnalyzer(edm::ParameterSet& PSet, edm::ConsumesCollector&& CColl):
     GenToken(CColl.consumes<GenEventInfoProduct>(PSet.getParameter<edm::InputTag>("genProduct"))),
+    GenHeaderToken(CColl.consumes<GenLumiInfoHeader,edm::InLumi>(PSet.getParameter<edm::InputTag>("genHeader"))),
     LheToken(CColl.consumes<LHEEventProduct>(PSet.getParameter<edm::InputTag>("lheProduct"))),
     GenParticlesToken(CColl.consumes<std::vector<reco::GenParticle> >(PSet.getParameter<edm::InputTag>("genParticles"))),
     ParticleList(PSet.getParameter<std::vector<int> >("pdgId")),
@@ -120,6 +121,97 @@ std::map<int, float> GenAnalyzer::FillWeightsMap(const edm::Event& iEvent) {
     return Weights;
 }
 
+
+std::vector<float> GenAnalyzer::FillGenWeightValuesVector(const edm::Event& iEvent) {
+    std::vector<float> Weights;
+
+    if(iEvent.isRealData()) return Weights;
+
+    edm::Handle<GenEventInfoProduct> GenEventCollection;
+    iEvent.getByToken(GenToken, GenEventCollection);
+
+    for(unsigned int i = 0; i < GenEventCollection->weights().size(); i++) {
+
+        // Store weight 0: "nominal" (same value as "Baseline" for PS and "originalXWGTUP" for ME)
+        if (i==0) {
+            Weights.push_back(GenEventCollection->weights()[i]);
+        }
+
+        // Store all other weights relative to nominal
+        else {
+            Weights.push_back(GenEventCollection->weights()[i]/GenEventCollection->weights()[0]);
+        }
+    }
+
+    return Weights;
+}
+
+std::vector<std::string> GenAnalyzer::FillGenWeightLabelsVector(const edm::Event& iEvent) {
+    std::vector<std::string> Labels;
+
+    if(iEvent.isRealData()) return Labels;
+
+    edm::Handle<GenLumiInfoHeader> GenHeader;
+    iEvent.getLuminosityBlock().getByToken(GenHeaderToken,GenHeader);
+
+    for(unsigned int i = 0; i < GenHeader->weightNames().size(); i++) {
+        Labels.push_back(GenHeader->weightNames().at(i));
+    }
+
+    return Labels;
+}
+
+std::vector<float> GenAnalyzer::FillLHEWeightValuesVector(const edm::Event& iEvent) {
+    std::vector<float> Weights;
+
+    if(iEvent.isRealData() or PythiaLOSample) return Weights;
+
+    // Declare and open GenEventInfoProduct collection
+    edm::Handle<GenEventInfoProduct> GenEventCollection;
+    iEvent.getByToken(GenToken, GenEventCollection);
+
+    // Declare and open LHEEventProduct collection if present
+    edm::Handle<LHEEventProduct> LheEventCollection;
+    if (iEvent.getByToken(LheToken, LheEventCollection)) {
+        const LHEEventProduct* Product = LheEventCollection.product();
+
+        // Acess GenEventInfoProduct weight (same as weight 0: "nominal")
+        if (GenEventCollection->weight() != Product->originalXWGTUP()) {
+            throw cms::Exception("LHE weights") << 'Value of "originalXWGTUP" different from "nominal" weight. Please check!';
+        }
+
+        // Store weight 0: "nominal" (same value as as "originalXWGTUP")
+        Weights.push_back(GenEventCollection->weight());
+
+        // Store all other weights relative to originalXWGTUP
+        for(unsigned int i = 0; i < Product->weights().size(); i++) {
+            Weights.push_back(Product->weights()[i].wgt / Product->originalXWGTUP());
+        }
+    }
+
+    return Weights;
+}
+
+std::vector<std::string> GenAnalyzer::FillLHEWeightLabelsVector(const edm::Event& iEvent) {
+    std::vector<std::string> Labels;
+
+    if(iEvent.isRealData() or PythiaLOSample) return Labels;
+
+    edm::Handle<LHEEventProduct> LheEventCollection;
+    if (iEvent.getByToken(LheToken, LheEventCollection)) {
+        const LHEEventProduct* Product = LheEventCollection.product();
+
+        // Store label for weight 0: "nominal"
+        Labels.push_back("nominal");
+
+        // Store label for LHE weights
+        for(unsigned int i = 0; i < Product->weights().size(); i++) {
+            Labels.push_back(Product->weights()[i].id);
+        }
+    }
+
+    return Labels;
+}
 
 // ---------- GEN PARTICLES ----------
 

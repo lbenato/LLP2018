@@ -7,9 +7,11 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Framework/interface/EDConsumerBase.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
+#include "FWCore/Framework/interface/LuminosityBlock.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/GenLumiInfoHeader.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHECommonBlocks.h"
@@ -27,6 +29,10 @@ class GenAnalyzer {
         ~GenAnalyzer();
         virtual float GenEventWeight(const edm::Event&);
         virtual std::map<int, float> FillWeightsMap(const edm::Event&);
+        virtual std::vector<float> FillGenWeightValuesVector(const edm::Event&);
+        virtual std::vector<std::string> FillGenWeightLabelsVector(const edm::Event&);
+        virtual std::vector<float> FillLHEWeightValuesVector(const edm::Event&);
+        virtual std::vector<std::string> FillLHEWeightLabelsVector(const edm::Event&);
         virtual std::map<std::string, float> FillLheMap(const edm::Event&);
         virtual std::vector<reco::GenParticle> FillGenVector(const edm::Event&);
         virtual std::vector<reco::GenParticle> FillGenVectorByIdAndStatus(const edm::Event&, int, int);
@@ -61,6 +67,7 @@ class GenAnalyzer {
 
     private:
         edm::EDGetTokenT<GenEventInfoProduct> GenToken;
+        edm::EDGetTokenT<GenLumiInfoHeader> GenHeaderToken;
         edm::EDGetTokenT<LHEEventProduct> LheToken;
         edm::EDGetTokenT<std::vector<reco::GenParticle> > GenParticlesToken;
         std::vector<int> ParticleList;

@@ -318,6 +318,66 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       model_ = gen_header->configDescription();
     }
 
+    // Theory uncertainties:
+    if (isTracking && isSignal && is2018) {
+
+        // Privately-produced sample has the usual format: https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopModGen#Event_Generation
+        if (!isCentralProd) {
+
+            // Weight 0: nominal; Weight 1: Baseline (normalized to nominal); Weights 2-45: PS (normalized to nominal)
+            PSWeightValues = theGenAnalyzer->FillGenWeightValuesVector(iEvent);
+            PSWeightLabels = theGenAnalyzer->FillGenWeightLabelsVector(iEvent);
+
+            if (PSWeightValues.size() != PSWeightLabels.size()) {
+                throw cms::Exception("Gen. Weights") << "Number of values different from number of labels. Please check!";
+            }
+
+            // Weight 0: nominal; Weights 1-1080: ME (normalized to nominal)
+            MEWeightValues = theGenAnalyzer->FillLHEWeightValuesVector(iEvent);
+            MEWeightLabels = theGenAnalyzer->FillLHEWeightLabelsVector(iEvent);
+        }
+
+        // Centrally-produced sample has all weights in one object
+        else {
+
+            // Weight 0: nominal; Weights 1-1080: ME; Weight 1081: Baseline (normalized to nominal); Weights 1082-1125: PS
+            std::vector<float> GenWeightValues = theGenAnalyzer->FillGenWeightValuesVector(iEvent);
+            std::vector<std::string> GenWeightLabels = theGenAnalyzer->FillGenWeightLabelsVector(iEvent);
+
+            if (GenWeightValues.size() != GenWeightLabels.size()) {
+                throw cms::Exception("Gen. Weights") << "Number of values different from number of labels. Please check!";
+            }
+
+            // Store in the usual format instead:
+            for (unsigned int thisWeight = 0; thisWeight < GenWeightValues.size(); thisWeight++) {
+
+                // Weight 0: nominal; Weight 1: Baseline (normalized to nominal); Weights 2-45: PS (normalized to nominal)
+                if (thisWeight == 0 || thisWeight >= 1081) {
+                    PSWeightValues.push_back(GenWeightValues[thisWeight]);
+                    PSWeightLabels.push_back(GenWeightLabels[thisWeight]);
+                }
+
+                // Weight 0: nominal; Weights 1-1080: ME (normalized to nominal)
+                if (thisWeight <= 1080) {
+                    MEWeightValues.push_back(GenWeightValues[thisWeight]);
+                    MEWeightLabels.push_back(GenWeightLabels[thisWeight]);
+                }
+            }
+        }
+    }
+
+    // std::cout << "------- PS Weights -------" << std::endl;
+
+    // for (unsigned int thisWeight = 0; thisWeight < PSWeightValues.size(); thisWeight++) {
+    //     std::cout << thisWeight << "\t" << PSWeightLabels[thisWeight] << "\t" << PSWeightValues[thisWeight] << std::endl;
+    // }
+
+    // std::cout << "------- LHE Weights -------" << std::endl;
+
+    // for (unsigned int thisWeight = 0; thisWeight < MEWeightValues.size(); thisWeight++) {
+    //     std::cout << thisWeight << "\t" << MEWeightLabels[thisWeight] << "\t" << MEWeightValues[thisWeight] << std::endl;
+    // }
+
     if(PerformVBF and PerformggH) throw cms::Exception("Configuration") << "VBF and ggH selections can't be performed together! Please choose one option only!";
 
     //------------------------------------------------------------------------------------------
@@ -3546,6 +3606,8 @@ Ntuplizer::beginJob()
     tree -> Branch("RunNumber" , &RunNumber , "RunNumber/L");
     tree -> Branch("EventWeight", &EventWeight, "EventWeight/F");
     tree -> Branch("GenEventWeight", &GenEventWeight, "GenEventWeight/F");
+    tree -> Branch("PSWeights", &PSWeightValues);
+    tree -> Branch("MEWeights", &MEWeightValues);
     tree -> Branch("PUWeight", &PUWeight, "PUWeight/F");
     tree -> Branch("PUWeightUp", &PUWeightUp, "PUWeightUp/F");
     tree -> Branch("PUWeightDown", &PUWeightDown, "PUWeightDown/F");
