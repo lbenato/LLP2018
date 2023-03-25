@@ -306,8 +306,11 @@ if len(options.inputFiles) == 0:
             #Central production 2017:
             # 'root://cms-xrd-global.cern.ch//store/mc/RunIIFall17MiniAODv2/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/PU2017_12Apr2018_rp_94X_mc2017_realistic_v14-v1/00000/0093CC5C-E152-EA11-AA49-0CC47A706FFE.root',
             #Central production 2018:
+            # 'root://cms-xrd-global.cern.ch//store/mc/RunIIAutumn18MiniAOD/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/rp_102X_upgrade2018_realistic_v15-v1/00000/1CAA3AC7-DFB2-A14D-90C1-084D867FB078.root',
             # 'root://cms-xrd-global.cern.ch//store/mc/RunIIAutumn18MiniAOD/VBFH_HToSSTo4b_MH-125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/rp_102X_upgrade2018_realistic_v15-v2/120000/04A4F8B8-1FC5-C042-A6FF-9E474A712334.root',
             # '/store/mc/RunIIAutumn18MiniAOD/ZH_HToSSTobbbb_ZToLL_MH-125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/rp_102X_upgrade2018_realistic_v15-v1/20000/2921539A-9EEE-3040-B2C2-A7C27BE3DCAD.root',
+            #Privately produced signal point:
+            # "file:/pnfs/desy.de/cms/tier2/store/user/kjpena/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/PrivateMC_MINIAODSIM-102X_upgrade2018_realistic_v15-v1/230126_204439/0000/step4_ggH_HToSSTobbbb_MH-125_MS-15_ctauS-1_13TeV_50.root"
             #JiaJing's
             #'/store/group/phys_exotica/jmao/aodsim/RunIISummer16/MINIAODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh300_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi300_pl1000_ev100000_MINIAODSIM_CaltechT2/200222_061026/0000/SUS-RunIIFall17DRPremix-00183_MINIAOD_9.root'
             #'/store/user/kjpena/miniAODv3_08Feb2020/VBFH_HToSSTobbbb_MH-125_MS-50_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3_MINIAODSIM/200209_083121/0000/output_1.root'
@@ -345,11 +348,13 @@ if len(options.inputFiles) == 0:
             #2018 data:
             # '/store/data/Run2018A/ParkingBPH6/MINIAOD/05May2019-v1/10000/006A9697-3892-B349-B110-C67EEBE19601.root',
             '/store/data/Run2018A/ParkingBPH3/MINIAOD/05May2019-v1/100000/00E44CC8-4FFC-FF4F-9549-FAB57802DB89.root',
+            # 'root://cms-xrd-global.cern.ch//store/data/Run2018D/ParkingBPH1/MINIAOD/05May2019promptD-v1/130000/262AFD38-A2F6-8444-BC76-5095518254EA.root',
             #'/store/data/Run2018A/DisplacedJet/MINIAOD/17Sep2018-v1/110000/058F82F8-9D9D-544D-A7AA-387D778D67DF.root',
             #'file:/pnfs/desy.de/cms/tier2//store/data/Run2018C/MET/MINIAOD/17Sep2018-v1/60000/ED1603BC-E2EC-D042-8262-6FF525FA0CA5.root'
             # '/store/data/Run2018D/ParkingBPH1/MINIAOD/05May2019promptD-v1/270000/4682963C-2EFF-FF4D-B234-8ED5973F70E4.root',
         ),
         # eventsToProcess = cms.untracked.VEventRange('1:26195013-1:26195015','1:27082933-1:27082935'),
+
     )
 
 if RunLocal:
@@ -373,12 +378,12 @@ if RunLocal:
     isReMiniAod       = ('03Feb2017' in process.source.fileNames[0])
     is2016            = True if('RunIISummer16' in process.source.fileNames[0] or 'Run2016' in process.source.fileNames[0]) else False
     is2017            = True if('RunIIFall17' in process.source.fileNames[0] or 'Run2017' in process.source.fileNames[0]) else False
-    is2018            = True if('RunIIAutumn18' in process.source.fileNames[0] or 'Run2018' in process.source.fileNames[0]) else False
+    is2018            = True if('RunIIAutumn18' in process.source.fileNames[0] or 'Run2018' in process.source.fileNames[0] or '102X_upgrade2018' in process.source.fileNames[0]) else False
     isPromptReco      = ('PromptReco' in process.source.fileNames[0])
     noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8' or 'WW_TuneCP5_13TeV-pythia8' or 'WZ_TuneCP5_13TeV-pythia8' or 'ZZ_TuneCP5_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
-    isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0] or 'HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
-    isCentralProd     = True if ('HToSSTo4b_MH-125' in process.source.fileNames[0]) else False
+    isSignal          = True if ('HToSSTobbbb' in process.source.fileNames[0] or 'HToSSTo4b' in process.source.fileNames[0]) else False
+    isCentralProd     = True if (isSignal and '/store/mc/' in process.source.fileNames[0]) else False
     isCalo            = False #HERE for calo analyses!!!
     isTracking        = True
     isShort           = False #HERE for short lifetime analyses!!!
@@ -1550,6 +1555,7 @@ elif is2018:
 process.ntuple = cms.EDAnalyzer('Ntuplizer',
     genSet = cms.PSet(
         genProduct = cms.InputTag('generator'),
+        genHeader  = cms.InputTag('generator'),
         lheProduct = cms.InputTag('externalLHEProducer'),
         genParticles = cms.InputTag('prunedGenParticles'),
         pdgId = cms.vint32(5,9000006,23,24,25),#(1, 2, 3, 4, 5, 6, 11, 12, 13, 14, 15, 16, 21, 23, 24, 25, 36, 39, 1000022, 9100000, 9000001, 9000002, 9100012, 9100022, 9900032, 1023),
