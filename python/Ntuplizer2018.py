@@ -310,47 +310,46 @@ if len(options.inputFiles) == 0:
             # 'root://cms-xrd-global.cern.ch//store/mc/RunIIAutumn18MiniAOD/VBFH_HToSSTo4b_MH-125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/rp_102X_upgrade2018_realistic_v15-v2/120000/04A4F8B8-1FC5-C042-A6FF-9E474A712334.root',
             # '/store/mc/RunIIAutumn18MiniAOD/ZH_HToSSTobbbb_ZToLL_MH-125_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/rp_102X_upgrade2018_realistic_v15-v1/20000/2921539A-9EEE-3040-B2C2-A7C27BE3DCAD.root',
             #Privately produced signal point:
-            # "file:/pnfs/desy.de/cms/tier2/store/user/kjpena/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/PrivateMC_MINIAODSIM-102X_upgrade2018_realistic_v15-v1/230126_204439/0000/step4_ggH_HToSSTobbbb_MH-125_MS-15_ctauS-1_13TeV_50.root"
+            # 'file:/pnfs/desy.de/cms/tier2/store/user/kjpena/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/PrivateMC_MINIAODSIM-102X_upgrade2018_realistic_v15-v1/230126_204439/0000/step4_ggH_HToSSTobbbb_MH-125_MS-15_ctauS-1_13TeV_50.root',
             #JiaJing's
-            #'/store/group/phys_exotica/jmao/aodsim/RunIISummer16/MINIAODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh300_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi300_pl1000_ev100000_MINIAODSIM_CaltechT2/200222_061026/0000/SUS-RunIIFall17DRPremix-00183_MINIAOD_9.root'
-            #'/store/user/kjpena/miniAODv3_08Feb2020/VBFH_HToSSTobbbb_MH-125_MS-50_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3_MINIAODSIM/200209_083121/0000/output_1.root'
-            #'file:/nfs/dust/cms/user/lbenato/HTo2LongLivedTo4b_MH-1000_MFF-450_CTau-10000mm_privateMC_102X_RECO_v1_generation_forMS_output_100_MINIAOD.root'
+            # '/store/group/phys_exotica/jmao/aodsim/RunIISummer16/MINIAODSIM/MSSM-1d-prod/n3n2-n1-hbb-hbb_mh300_pl1000_ev100000/crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi300_pl1000_ev100000_MINIAODSIM_CaltechT2/200222_061026/0000/SUS-RunIIFall17DRPremix-00183_MINIAOD_9.root'
+            # '/store/user/kjpena/miniAODv3_08Feb2020/VBFH_HToSSTobbbb_MH-125_MS-50_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3_MINIAODSIM/200209_083121/0000/output_1.root'
+            # 'file:/nfs/dust/cms/user/lbenato/HTo2LongLivedTo4b_MH-1000_MFF-450_CTau-10000mm_privateMC_102X_RECO_v1_generation_forMS_output_100_MINIAOD.root'
             #test 2017 MC:
-            #'/store/mc/RunIIFall17MiniAODv2/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/40000/D0CB832F-0742-E811-87A1-0CC47A4D76AC.root'
-#          '/store/mc/RunIIFall17MiniAODv2/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/966FD47C-6FB8-E811-8B1A-0242AC1C0500.root'
-            #'/store/mc/RunIIAutumn18DRPremix/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/3017154C-F483-964E-855B-E06F2590FD6B.root'#2018 MC with muons!  #
+            # '/store/mc/RunIIFall17MiniAODv2/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/40000/D0CB832F-0742-E811-87A1-0CC47A4D76AC.root'
+            # '/store/mc/RunIIFall17MiniAODv2/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/966FD47C-6FB8-E811-8B1A-0242AC1C0500.root'
+            # '/store/mc/RunIIAutumn18DRPremix/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/00000/3017154C-F483-964E-855B-E06F2590FD6B.root'#2018 MC with muons!  #
             #2016 background
-            #'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16MiniAODv3/QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/10000/00214FA3-001F-E911-AC83-0CC47A4F1CF6.root',
+            # 'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16MiniAODv3/QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/10000/00214FA3-001F-E911-AC83-0CC47A4F1CF6.root',
             # '/store/mc/RunIISummer16MiniAODv3/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/80000/C6031D62-7BF1-E811-BC1C-001E672480BB.root',
-            #'/store/mc/RunIISummer16MiniAODv2/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/E65DC503-55C9-E611-9A11-02163E019C7F.root',
-            #'/store/mc/RunIISummer16MiniAODv3/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/270000/FE8AFB84-5DEA-E811-83C4-68CC6EA5BD1A.root',
-            #'/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
-          #'/store/mc/RunIISummer16MiniAODv3/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/100000/16099EC8-13EA-E811-9559-0CC47A4C7340.root',
-          #'/store/mc/RunIISummer16MiniAODv3/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/20000/08E2D468-67EF-E811-850B-7CD30ABD295A.root',
-          #'/store/mc/RunIISummer16MiniAODv3/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/100000/00A80353-4FEA-E811-9282-6CC2173CAAE0.root'
+            # '/store/mc/RunIISummer16MiniAODv2/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/E65DC503-55C9-E611-9A11-02163E019C7F.root',
+            # '/store/mc/RunIISummer16MiniAODv3/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/270000/FE8AFB84-5DEA-E811-83C4-68CC6EA5BD1A.root',
+            # '/store/mc/RunIISummer16MiniAODv3/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/120000/001B3D66-B4C0-E811-B670-44A84225C4EB.root'
+            # '/store/mc/RunIISummer16MiniAODv3/TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/100000/16099EC8-13EA-E811-9559-0CC47A4C7340.root',
+            # '/store/mc/RunIISummer16MiniAODv3/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/20000/08E2D468-67EF-E811-850B-7CD30ABD295A.root',
+            # '/store/mc/RunIISummer16MiniAODv3/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/100000/00A80353-4FEA-E811-9282-6CC2173CAAE0.root'
             #2018 background
-            # 'root://cms-xrd-global.cern.ch//store/mc/RunIIAutumn18MiniAOD/QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/10000/037A79A2-18C7-314B-AD6B-A8DA89B1447B.root',
+            'root://cms-xrd-global.cern.ch//store/mc/RunIIAutumn18MiniAOD/QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/10000/037A79A2-18C7-314B-AD6B-A8DA89B1447B.root',
             # 'root://cms-xrd-global.cern.ch//store/mc/RunIIAutumn18MiniAOD/QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/00000/0271701E-A142-B343-B514-0267656D901D.root',
-            #'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/270000/FFB1D063-1653-9441-BCE5-088A8DB0086D.root'
+            # 'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/ZJetsToNuNu_HT-200To400_13TeV-madgraph/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/270000/FFB1D063-1653-9441-BCE5-088A8DB0086D.root'
             # 'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIAutumn18MiniAOD/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v2/100000/02DCC1DD-1EEF-2A4D-9641-8703D1D025FB.root',
             # 'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIAutumn18MiniAOD/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v2/120000/8D294FFA-4895-DC4F-A0AB-12855041E202.root',
             # 'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIAutumn18MiniAOD/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v2/120000/946007D8-EE1B-D748-8B7C-A44CFCB51A2E.root',
             # 'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/90000/17D5FDFE-C156-FE47-9202-F819E74881D3.root',
-            #2017 background?
-            #'root://cms-xrd-global.cern.ch//store/mc/RunIIFall17MiniAODv2/QCD_HT100to200_TuneCP5_13TeV-madgraph-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/00000/007D59B8-82B3-E811-A052-EC0D9A0B30E0.root',
-            #'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
-           #'/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
-            #'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/WW_TuneCP5_13TeV-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v2/80000/7639FB10-DF53-8242-89D8-7A5E5817A3E4.root'
-            #'file:/afs/desy.de/user/e/eichm/public/forLisa/VBFH_m20_ctau500.root'
-#            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_Summer16_MINIAODSIM_calojets_Tranche2/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets/181218_125055/0000/miniaod_1.root',
-            #'/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MINIAODSIM_24May2018/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_24May2018/180529_093853/0000/miniaod_15.root'
-
+            #2017 background
+            # 'root://cms-xrd-global.cern.ch//store/mc/RunIIFall17MiniAODv2/QCD_HT100to200_TuneCP5_13TeV-madgraph-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/00000/007D59B8-82B3-E811-A052-EC0D9A0B30E0.root',
+            # 'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
+            # '/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
+            # 'file:/pnfs/desy.de/cms/tier2//store/mc/RunIIAutumn18MiniAOD/WW_TuneCP5_13TeV-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v2/80000/7639FB10-DF53-8242-89D8-7A5E5817A3E4.root'
+            # 'file:/afs/desy.de/user/e/eichm/public/forLisa/VBFH_m20_ctau500.root'
+            # 'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_Summer16_MINIAODSIM_calojets_Tranche2/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets/181218_125055/0000/miniaod_1.root',
+            # '/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_Summer16_MINIAODSIM_24May2018/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-0_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_24May2018/180529_093853/0000/miniaod_15.root'
             #2018 data:
             # '/store/data/Run2018A/ParkingBPH6/MINIAOD/05May2019-v1/10000/006A9697-3892-B349-B110-C67EEBE19601.root',
-            '/store/data/Run2018A/ParkingBPH3/MINIAOD/05May2019-v1/100000/00E44CC8-4FFC-FF4F-9549-FAB57802DB89.root',
+            # '/store/data/Run2018A/ParkingBPH3/MINIAOD/05May2019-v1/100000/00E44CC8-4FFC-FF4F-9549-FAB57802DB89.root',
             # 'root://cms-xrd-global.cern.ch//store/data/Run2018D/ParkingBPH1/MINIAOD/05May2019promptD-v1/130000/262AFD38-A2F6-8444-BC76-5095518254EA.root',
-            #'/store/data/Run2018A/DisplacedJet/MINIAOD/17Sep2018-v1/110000/058F82F8-9D9D-544D-A7AA-387D778D67DF.root',
-            #'file:/pnfs/desy.de/cms/tier2//store/data/Run2018C/MET/MINIAOD/17Sep2018-v1/60000/ED1603BC-E2EC-D042-8262-6FF525FA0CA5.root'
+            # '/store/data/Run2018A/DisplacedJet/MINIAOD/17Sep2018-v1/110000/058F82F8-9D9D-544D-A7AA-387D778D67DF.root',
+            # 'file:/pnfs/desy.de/cms/tier2//store/data/Run2018C/MET/MINIAOD/17Sep2018-v1/60000/ED1603BC-E2EC-D042-8262-6FF525FA0CA5.root'
             # '/store/data/Run2018D/ParkingBPH1/MINIAOD/05May2019promptD-v1/270000/4682963C-2EFF-FF4D-B234-8ED5973F70E4.root',
         ),
         # eventsToProcess = cms.untracked.VEventRange('1:26195013-1:26195015','1:27082933-1:27082935'),
@@ -926,20 +925,21 @@ if isCalo and pt_AK4<10:
    chosen_JEC = "AK4PFchs"
    chosen_jet_source = 'ak4PFJetsCHSCustom'
    chosen_label = 'Reclustered'
-   chosen_pfcand = 'pfCHS'
+   chosen_pfcand = 'pfForCHS'
    chosen_jets = "patJets"+ chosen_label
    #pt_AK4 = 5
 else:
-   print "\n"
-   print "AK4 won't be reclustered!"
-   print "pt_AK4 = ", pt_AK4
-   print "\n"
-   chosen_jets = "slimmedJets"
-   #pt_AK4 = 15
+    if not isTracking:
+        print "\n"
+        print "AK4 won't be reclustered!"
+        print "pt_AK4 = ", pt_AK4
+        print "\n"
+    chosen_jets = "slimmedJets"
+    #pt_AK4 = 15
 
 ## packedPFCandidates with CHS are used by both AK4 and AK8
-process.pfCHS = cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedPFCandidates"), cut = cms.string("fromPV"))
-task.add(process.pfCHS)
+process.pfForCHS = cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedPFCandidates"), cut = cms.string("fromPV"))
+task.add(process.pfForCHS)
 
 ## Filter out neutrinos from packed GenParticles
 if not isData:
@@ -966,7 +966,7 @@ if isCalo and pt_AK4<10:
    from RecoJets.JetProducers.ak4PFJets_cfi import ak4PFJets
    #non CHS
    #process.ak4PFJets = ak4PFJets.clone(src = 'packedPFCandidates', doAreaFastjet = True, jetPtMin = pt_AK4)
-   process.ak4PFJetsCHSCustom = ak4PFJets.clone(src = "pfCHS", doAreaFastjet = True, jetPtMin = pt_AK4)
+   process.ak4PFJetsCHSCustom = ak4PFJets.clone(src = "pfForCHS", doAreaFastjet = True, jetPtMin = pt_AK4)
    task.add(process.ak4PFJetsCHSCustom)
 
 
@@ -1009,7 +1009,7 @@ if pt_AK8<170:
 
    ### Reco AK8 CHS jets
    from RecoJets.JetProducers.ak4PFJets_cfi import ak4PFJets
-   process.ak8PFJetsCHSCustom  = ak4PFJets.clone (src = 'pfCHS', rParam = 0.8, doAreaFastjet = True, jetPtMin = pt_AK8)
+   process.ak8PFJetsCHSCustom  = ak4PFJets.clone (src = 'pfForCHS', rParam = 0.8, doAreaFastjet = True, jetPtMin = pt_AK8)
    task.add(process.ak8PFJetsCHSCustom)
 
    ### Reco AK8 Puppi jets
@@ -1026,7 +1026,7 @@ if pt_AK8<170:
    task.add(process.ak8PFJetsPuppiCustom)
 
    ### Pruned AK8 CHS
-   process.ak8PFJetsCHSPrunedReclustered = ak8PFJetsCHSPruned.clone(rParam = 0.8, doAreaFastjet = True, src = 'pfCHS', jetPtMin = pt_AK8)
+   process.ak8PFJetsCHSPrunedReclustered = ak8PFJetsCHSPruned.clone(rParam = 0.8, doAreaFastjet = True, src = 'pfForCHS', jetPtMin = pt_AK8)
    task.add(process.ak8PFJetsCHSPrunedReclustered)
 
    ### Pruned AK8 Puppi
@@ -1034,7 +1034,7 @@ if pt_AK8<170:
    task.add(process.ak8PFJetsPuppiPrunedReclustered)
 
    ### Softdrop AK8 CHS
-   process.ak8PFJetsCHSSoftDropReclustered = ak8PFJetsCHSSoftDrop.clone(R0 = 0.8, rParam = 0.8, doAreaFastjet = True, src = 'pfCHS', jetPtMin = pt_AK8)
+   process.ak8PFJetsCHSSoftDropReclustered = ak8PFJetsCHSSoftDrop.clone(R0 = 0.8, rParam = 0.8, doAreaFastjet = True, src = 'pfForCHS', jetPtMin = pt_AK8)
    task.add(process.ak8PFJetsCHSSoftDropReclustered)
 
    ### Softdrop AK8 Puppi
@@ -1049,7 +1049,7 @@ if pt_AK8<170:
        labelName = 'AK8CHSReclustered',
        jetSource = cms.InputTag('ak8PFJetsCHSCustom'),
        pvSource = cms.InputTag('offlineSlimmedPrimaryVertices'),
-       pfCandidates = cms.InputTag('pfCHS'),
+       pfCandidates = cms.InputTag('pfForCHS'),
        svSource = cms.InputTag('slimmedSecondaryVertices'),
        btagDiscriminators = list(bTagDiscriminators),
        btagInfos = bTagInfos,
@@ -1192,7 +1192,7 @@ if pt_AK8<170:
 from PhysicsTools.PatAlgos.tools.jetTools import *
 
 #Seth
-jetSource = chosen_jets
+jetSource = chosen_jets #Calo: patJetsReclustered, else: slimmedJets
 if isData:
    jetCorrectionsAK4 = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'], 'None')
    jetCorrectionsAK8 = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'], 'None')
@@ -1286,7 +1286,6 @@ bTagDiscriminators = set([
 
 
 useExplicitJTA = False #? try true also!
-postfix = "" #"Update"
 
 
 #-----------------------#
@@ -1312,11 +1311,11 @@ process.jetTracksAssociatorAtVertex = cms.EDProducer("JetTracksAssociatorAtVerte
 )
 '''
 
-postfix = 'Final'#TODO
+postfix = 'Final'
 
 updateJetCollection(
     process,
-    jetSource = cms.InputTag(jetSource),
+    jetSource = cms.InputTag(jetSource), #Calo: patJetsReclustered, else: slimmedJets
     jetCorrections = jetCorrectionsAK4,
     pfCandidates = cms.InputTag(pfCandidates),
     pvSource = cms.InputTag(pvSource),
@@ -1540,13 +1539,15 @@ if isTracking:
 #task.add(process.patJetCorrFactorsReapplyJEC)
 #task.add(process.updatedJetsPUID)
 
-#jets_to_be_used = "updatedJetsPUID"
-jets_to_be_used = 'updatedPatJetsTransientCorrected'+postfix
+# jets_to_be_used = "updatedJetsPUID"
+# jets_to_be_used = 'updatedPatJetsTransientCorrected'+postfix
 
 
 #---------------------------------#
 #       PU Jet ID-a-la-2016       #
 #---------------------------------#
+
+# https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupJetID#miniAOD_and_nanoAOD
 
 from RecoJets.JetProducers.PileupJetID_cfi import pileupJetId
 process.pileupJetId = pileupJetId.clone(
@@ -1558,15 +1559,15 @@ process.pileupJetId = pileupJetId.clone(
 task.add(process.pileupJetId)
 
 from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJetCorrFactors, updatedPatJets
-process.patJetCorrFactorsReapplyJEC = updatedPatJetCorrFactors.clone(
+process.patJetCorrFactorsReapplyJECAfterPUID = updatedPatJetCorrFactors.clone(
   src = cms.InputTag(jets_after_btag_tools),
   levels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'] if isData else ['L1FastJet', 'L2Relative', 'L3Absolute']
   )
-task.add(process.patJetCorrFactorsReapplyJEC)
+task.add(process.patJetCorrFactorsReapplyJECAfterPUID)
 
 process.updatedJetsPUID = updatedPatJets.clone(
   jetSource = cms.InputTag(jets_after_btag_tools),
-  jetCorrFactorsSource = cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
+  jetCorrFactorsSource = cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJECAfterPUID"))
   )
 
 process.updatedJetsPUID.userData.userFloats.src += ['pileupJetId:fullDiscriminant']
@@ -1574,10 +1575,33 @@ process.updatedJetsPUID.userData.userInts.src += ['pileupJetId:fullId']
 
 task.add(process.updatedJetsPUID)
 
-jets_to_be_used = "updatedJetsFinal"
-jets_to_be_used = jets_after_btag_tools #FIX later!
+# jets_to_be_used = "updatedJetsFinal"
+# jets_to_be_used = jets_after_btag_tools #FIX later!
 jets_to_be_used = "updatedJetsPUID" #Test, is this readable?
 
+
+#-----------------------#
+#    MET Corrections    #
+#-----------------------#
+
+# MET needs to be recomputed whenever JEC are reapplied
+# Instructions here: https://twiki.cern.ch/twiki/bin/view/CMS/MissingETUncertaintyPrescription#PF_MET
+
+from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+
+postfix_MET = "Final"
+
+runMetCorAndUncFromMiniAOD(process,
+    jetCollUnskimmed=jets_to_be_used,
+    isData=isData,
+    postfix=postfix_MET
+)
+
+# Smeared jets w/ up and down variations produced:
+# https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution
+jets_to_be_used = "patSmearedJets" + postfix_MET
+# jets_to_be_used = "shiftedPatSmearedJetResDown" + postfix_MET
+# jets_to_be_used = "shiftedPatSmearedJetResUp" + postfix_MET
 
 #-----------------------#
 #       ANALYZER        #
@@ -1592,7 +1616,7 @@ elif is2017:
     scenario = "2017_25ns_UltraLegacy_PoissonOOTPU"
 elif is2018:
     data_era = "2018"
-    scenario = "2018_25ns_UltraLegacy_PoissonOOTPU"
+    scenario = "2018_25ns_UltraLegacy_PoissonOOTPU" #Updated for tracking below
 
 process.ntuple = cms.EDAnalyzer('Ntuplizer',
     genSet = cms.PSet(
@@ -1749,7 +1773,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         l1filters = cms.vstring('hltL1sTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBFIorHTT300','hltL1sDoubleJetC112','hltL1sQuadJetC50IorQuadJetC60IorHTT280IorHTT300IorHTT320IorTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBF','hltL1sTripleJetVBFIorHTTIorDoubleJetCIorSingleJet','hltL1sSingleMu22','hltL1sV0SingleMu22IorSingleMu25','hltL1sZeroBias','hltL1sSingleJet60','hltL1sSingleJet35','hltTripleJet50','hltDoubleJet65','hltSingleJet80','hltVBFFilterDisplacedJets'),
     ),
     allJetSet = cms.PSet(
-        jets = cms.InputTag(jets_to_be_used),#(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
+        jets = cms.InputTag(jets_to_be_used), # patSmearedJetsFinal
         jetid = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         dataEra = cms.string(dataString),
         jet1pt = cms.double(15.),
@@ -1764,7 +1788,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         # recalibrateMass = cms.bool(False),
         # recalibratePuppiMass = cms.bool(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
-        smearJets = cms.bool(True),
+        smearJets = cms.bool(False), # Using already-smeared jets
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
         jecUncertaintyName = cms.string('AK4PFchs'),
@@ -1805,7 +1829,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         jerNameSf = cms.string("AK4PFchs"),#('data/JER/%s/%s_SF_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
     ),
     chsJetSet = cms.PSet(
-        jets = cms.InputTag(jets_to_be_used),#(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
+        jets = cms.InputTag(jets_to_be_used), # patSmearedJetsFinal
         jetid = cms.int32(0), # 0: no selection, 1: loose, 2: medium, 3: tight
         dataEra = cms.string(dataString),
         jet1pt = cms.double(pt_AK4),
@@ -1820,7 +1844,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         # recalibrateMass = cms.bool(False),
         # recalibratePuppiMass = cms.bool(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
-        smearJets = cms.bool(True),
+        smearJets = cms.bool(False), # Using already-smeared jets
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
         jecUncertaintyName = cms.string('AK4PFchs'),
@@ -1861,7 +1885,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         jerNameSf = cms.string("AK4PFchs"),#('data/JER/%s/%s_SF_AK4PFchs.txt' % (JERstring, JERstring)),#v10 is the latest
     ),
     vbfJetSet = cms.PSet(
-        jets = cms.InputTag(jets_to_be_used),#(jets_after_btag_tools),#('updatedPatJetsTransientCorrected'+postfix),
+        jets = cms.InputTag(jets_to_be_used), # patSmearedJetsFinal
         jetid = cms.int32(3), # 0: no selection, 1: loose, 2: medium, 3: tight
         dataEra = cms.string(dataString),
         #jet1pt = cms.double(30.),#https://indico.desy.de/indico/event/20983/contribution/0/material/slides/0.pdf
@@ -1880,7 +1904,7 @@ process.ntuple = cms.EDAnalyzer('Ntuplizer',
         # recalibrateMass = cms.bool(False),
         # recalibratePuppiMass = cms.bool(False),
         softdropPuppiMassString = cms.string("ak8PFJetsPuppiValueMap:ak8PFJetsPuppiSoftDropMass" if pt_AK8<170 else "ak8PFJetsPuppiSoftDropMass"),
-        smearJets = cms.bool(True),
+        smearJets = cms.bool(False), # Using already-smeared jets
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),# if not isAOD else 'offlinePrimaryVertices'),
         rho = cms.InputTag('fixedGridRhoFastjetAll'),
         jecUncertaintyName = cms.string('AK4PFchs'),
@@ -2475,6 +2499,7 @@ process.seq = cms.Sequence(
     ####process.fullPatMetSequenceTEST *#leading to segfault
     process.counter *
     ##process.test
+    process.fullPatMetSequenceFinal *
     process.ntuple
 )
 
@@ -2511,6 +2536,7 @@ if isTracking and writeROIs:
         process.ntupleRegionOfInterestTagger +
         process.ntupleClusterTrackAssociator +
         #process.printContent *
+        process.fullPatMetSequenceFinal *
         process.ntuple
     )
 

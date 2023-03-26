@@ -642,8 +642,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     if(isVerbose) std::cout << "HT" << std::endl;
-    HT = theCHSJetAnalyzer->CalculateHT(iEvent,iSetup,2,15,3.,true);
-    HTNoSmear = theCHSJetAnalyzer->CalculateHT(iEvent,iSetup,2,15,3.,false);
+    // Using already-smeared jets:
+    HT = theCHSJetAnalyzer->CalculateHT(iEvent,iSetup,2,15,3.,false);
+
+    // Otherwise:
+    // HT = theCHSJetAnalyzer->CalculateHT(iEvent,iSetup,2,15,3.,true);
+    // HTNoSmear = theCHSJetAnalyzer->CalculateHT(iEvent,iSetup,2,15,3.,false);
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -3744,7 +3748,7 @@ Ntuplizer::beginJob()
       tree -> Branch("isTtoEM" , &isTtoEM, "isTtoEM/O");
     }
     tree -> Branch("HT" , &HT , "HT/F");
-    tree -> Branch("HTNoSmear" , &HTNoSmear , "HTNoSmear/F");
+    // tree -> Branch("HTNoSmear" , &HTNoSmear , "HTNoSmear/F");
     tree -> Branch("MinJetMetDPhi", &MinJetMetDPhi, "MinJetMetDPhi/F");
     tree -> Branch("ggHJetMetDPhi", &ggHJetMetDPhi , "ggHJetMetDPhi/F");
     tree -> Branch("MinJetMetDPhiAllJets", &MinJetMetDPhiAllJets, "MinJetMetDPhiAllJets/F");
