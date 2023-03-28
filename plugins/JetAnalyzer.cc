@@ -287,7 +287,13 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
     //    for (size_t i = 0; i < BTagInfos_.size(); ++i) {
     //      iEvent.getByToken(BTagInfos_[i], jetTagInfos[i]);
     //    }
-    
+
+    // Get JEC uncertainty from GT
+    edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
+    iSetup.get<JetCorrectionsRecord>().get(JECUncertaintyName,JetCorParColl); 
+    JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"];
+    JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(JetCorPar);
+
     // Loop on Jet collection
     for(std::vector<pat::Jet>::const_iterator it=PFJetsCollection->begin(); it!=PFJetsCollection->end(); ++it) {
 
@@ -369,10 +375,6 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 
 	////Already done via updateJetCollection. Kept as future reference for FW lite
         //if(RecalibrateJets) CorrectJet(jet, *rho_handle, PVCollection->size(), isMC);
-	edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
-	iSetup.get<JetCorrectionsRecord>().get(JECUncertaintyName,JetCorParColl); 
-	JetCorrectorParameters const & JetCorPar = (*JetCorParColl)["Uncertainty"];
-	JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(JetCorPar);
 	jecUnc->setJetEta(jet.eta());
 	jecUnc->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
 	jet.addUserFloat("JESUncertainty", jecUnc->getUncertainty(true));
@@ -901,6 +903,8 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 	*/
         Vect.push_back(jet); // Fill vector
     }
+
+    delete jecUnc;
 
     return Vect;
 }
