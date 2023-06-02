@@ -1362,9 +1362,10 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //Remove duplicates from Matched CHSJets Vector
     for(unsigned int r = 0; r<MatchedCHSJetsVect.size(); r++)
       {
-	for(unsigned int s = 0; s<MatchedCHSJetsVect.size(); s++)
+	for(unsigned int s = 0; s<MatchedCHSJetsVect.size(); )
 	  {
 	    if(r!=s && MatchedCHSJetsVect[s].pt()==MatchedCHSJetsVect[r].pt()) MatchedCHSJetsVect.erase(MatchedCHSJetsVect.begin()+s);
+	    else s++;
 	  }//duplicates removed
       }
     nMatchedCHSJets = MatchedCHSJetsVect.size();
@@ -1615,7 +1616,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(PerformVBF)
       {
 
-	for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+	for(unsigned int r = CHSJetsVect.size(); r = 0; r--)
 	  {
 	    for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
 	      {
@@ -1631,7 +1632,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     else if(PerformggH)
       {
 
-	for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+	for(unsigned int r = CHSJetsVect.size(); r = 0; r--)
 	  {
 	    for(unsigned int s = 0; s<ggHJetVect.size(); s++)
 	      {
@@ -1837,7 +1838,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       //We must perform a DR matching, since pT might be different
       //int matching_index_CaloJets_asVBF;//local variable
       {
-	for(unsigned int r = 0; r<CaloJetsVect.size(); r++)
+	for(unsigned int r = CaloJetsVect.size()-1; r = 0 ; r--)
 	  {
 	    delta_R_CaloJets_asVBF = 1000.;
 	    current_delta_R_CaloJets_asVBF = 1000.;
@@ -1860,7 +1861,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       {
 	//Remove calo jets overlapped with ggH candidate
 	//We must perform a DR matching, since pT might be different
-	for(unsigned int r = 0; r<CaloJetsVect.size(); r++)
+	for(unsigned int r = CHSJetsVect.size()-1; r = 0; r--)
 	  {
 	    delta_R_CaloJets_asggH = 1000.;
 	    current_delta_R_CaloJets_asggH = 1000.;
@@ -1927,9 +1928,10 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //Remove duplicates from Matched Jets Vector
     for(unsigned int r = 0; r<MatchedCaloJetsVect.size(); r++)
       {
-	for(unsigned int s = 0; s<MatchedCaloJetsVect.size(); s++)
+	for(unsigned int s = 0; s<MatchedCaloJetsVect.size();)
 	  {
 	    if(r!=s && MatchedCaloJetsVect[s].pt()==MatchedCaloJetsVect[r].pt()) MatchedCaloJetsVect.erase(MatchedCaloJetsVect.begin()+s);
+	    else s++;
 	  }//duplicates removed
       }
     nMatchedCaloJets = MatchedCaloJetsVect.size();
@@ -2192,9 +2194,10 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //Remove duplicates from Matched CHSJets Vector
     for(unsigned int r = 0; r<MatchedFatJetsVect.size(); r++)
       {
-	for(unsigned int s = 0; s<MatchedFatJetsVect.size(); s++)
+	for(unsigned int s = 0; s<MatchedFatJetsVect.size(); )
 	  {
 	    if(r!=s && MatchedFatJetsVect[s].pt()==MatchedFatJetsVect[r].pt()) MatchedFatJetsVect.erase(MatchedFatJetsVect.begin()+s);
+	    else s++;
 	  }//duplicates removed
       }
 
@@ -2348,6 +2351,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	      {
 		if(VBFPairJetsVect[s].pt()==CHSJetsVect[r].pt() && isVBF) //if jets aren't tagged as VBF jets, don't remove them
 		  {
+		  // !!!FIXME!!! If the following line needs to be used, it needs to be adjusted!
 		    CHSJetsVect.erase(CHSJetsVect.begin()+r);
 		  }
 	      }//VBF jet pair removed
@@ -2364,6 +2368,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	      {
 		if(ggHJetVect[s].pt()==CHSJetsVect[r].pt() && isggH) //if jets aren't tagged as ggH jets, don't remove them
 		  {
+		  // !!!FIXME!!! If the following line needs to be used, it needs to be adjusted!
 		    CHSJetsVect.erase(CHSJetsVect.begin()+r);
 		  }
 	      }//ggH jet removed
@@ -3404,6 +3409,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         {
         for(unsigned int s = 0; s<MatchedDTSegment4DVect.size(); s++)
             {
+	    // !!!FIXME!!! If the following line needs to be used, it needs to be adjusted!
             if(r!=s && MatchedDTSegment4DVect[s].localPosition()==MatchedDTSegment4DVect[r].localPosition()) MatchedDTSegment4DVect.erase(MatchedDTSegment4DVect.begin()+s);
             }//duplicates removed
         }
@@ -3449,6 +3455,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         {
         for(unsigned int s = 0; s<MatchedDTSegment4DtoVBFVect.size(); s++)
             {
+	        // !!!FIXME!!! If the following line needs to be used, it needs to be adjusted!
             if(r!=s && MatchedDTSegment4DtoVBFVect[s].localPosition()==MatchedDTSegment4DtoVBFVect[r].localPosition()) MatchedDTSegment4DtoVBFVect.erase(MatchedDTSegment4DtoVBFVect.begin()+s);
             }//duplicates removed
         }
@@ -3507,6 +3514,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         {
         for(unsigned int s = 0; s<MatchedCSCSegmentVect.size(); s++)
             {
+    // !!!FIXME!!! If the following line needs to be used, it needs to be adjusted!
             if(r!=s && MatchedCSCSegmentVect[s].localPosition()==MatchedCSCSegmentVect[r].localPosition()) MatchedCSCSegmentVect.erase(MatchedCSCSegmentVect.begin()+s);
             }//duplicates removed
         }
@@ -3553,6 +3561,7 @@ AODNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         {
         for(unsigned int s = 0; s<MatchedCSCSegmenttoVBFVect.size(); s++)
             {
+    // !!!FIXME!!! If the following line needs to be used, it needs to be adjusted!
             if(r!=s && MatchedCSCSegmenttoVBFVect[s].localPosition()==MatchedCSCSegmenttoVBFVect[r].localPosition()) MatchedCSCSegmenttoVBFVect.erase(MatchedCSCSegmenttoVBFVect.begin()+s);
             }//duplicates removed
         }

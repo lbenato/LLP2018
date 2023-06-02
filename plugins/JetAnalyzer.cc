@@ -377,25 +377,8 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
         //if(RecalibrateJets) CorrectJet(jet, *rho_handle, PVCollection->size(), isMC);
 	jecUnc->setJetEta(jet.eta());
 	jecUnc->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
-	jet.addUserFloat("JESUncertainty", jecUnc->getUncertainty(true));
+	float jecUncMC = jecUnc->getUncertainty(true);
 
-        //// JEC Uncertainty, old method
-        //if (!isMC){
-        //    jecUncDATA->setJetEta(jet.eta());
-        //    jecUncDATA->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
-        //    jet.addUserFloat("JESUncertaintyOld", jecUncDATA->getUncertainty(true));
-        //} else {
-        //    jecUncMC->setJetEta(jet.eta());
-        //    jecUncMC->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
-        //    jet.addUserFloat("JESUncertaintyOld", jecUncMC->getUncertainty(true));
-        //}
-
-	//ADD HERE JET PT UP - DOWN!
-	jet.addUserFloat("ptJESUp", (   jet.hasUserFloat("JESUncertainty") ? (jet.pt() * (1+jet.userFloat("JESUncertainty")) ) : jet.pt()   ) );
-	jet.addUserFloat("ptJESDown", (   jet.hasUserFloat("JESUncertainty") ? (jet.pt() * (1-jet.userFloat("JESUncertainty")) ) : jet.pt()   ) );
-
-
-	//std::cout << "JES uncertainty: " << jet.userFloat("JESUncertainty") <<std::endl;
         // PUPPI soft drop mass for AK8 jets
         if(jet.hasSubjets("SoftDropPuppi")) {
 //            TLorentzVector puppiSoftdrop, puppiSoftdropSubjet;
@@ -426,8 +409,6 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 
 
         if(SmearJets) {//Note: use (isMC && SmearJets) to apply JER only to data
-
-        //if(SmearJets) {
             resolution    = JME::JetResolution::get(iSetup, JerName_res);//new JME::JetResolution(JerName_res);
             resolution_sf = JME::JetResolutionScaleFactor::get(iSetup, JerName_sf);//new JME::JetResolutionScaleFactor(JerName_sf);
             if (JerName_res.find("AK8") != std::string::npos)
@@ -441,8 +422,20 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             TheJetParameters.setJetEta(jet.eta());
             TheJetParameters.setRho(*rho_handle);
 
-	    reco::Candidate::LorentzVector unsmearedJet = jet.correctedP4(0);
+            JME::JetParameters TheJetParameters_jecUncUp;
+            TheJetParameters_jecUncUp.setJetPt( (jet.pt() * (1+jecUncMC) ) );
+            TheJetParameters_jecUncUp.setJetEta(jet.eta());
+            TheJetParameters_jecUncUp.setRho(*rho_handle);
+
+            JME::JetParameters TheJetParameters_jecUncDown;
+            TheJetParameters_jecUncDown.setJetPt( (jet.pt() * (1-jecUncMC) ) );
+            TheJetParameters_jecUncDown.setJetEta(jet.eta());
+            TheJetParameters_jecUncDown.setRho(*rho_handle);
+
+	    reco::Candidate::LorentzVector unsmearedJet = jet.p4(); //use the JEC corrected jet here instead of the raw one (before it was implemented as jet.correctedP4(0), 0 means level 0 of JEC = uncorrected)
 	    reco::Candidate::LorentzVector smearedJet(unsmearedJet);
+	    float smearedPt_JECup = jet.pt() * (1+jecUncMC);
+	    float smearedPt_JECdown = jet.pt() * (1-jecUncMC);
 
             float smearFactor = 1.;
             float smearFactorUp = 1.;
@@ -451,6 +444,12 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
 	    float JERsf = -1.;
 	    float JERsfUp = -1.;
 	    float JERsfDown = -1.;
+            float smearFactor_JECup = 1.;
+	    float JERresolution_JECup = -1.;
+	    float JERsf_JECup = -1.;
+            float smearFactor_JECdown = 1.;
+	    float JERresolution_JECdown = -1.;
+	    float JERsf_JECdown = -1.;
 
             if(isMC) {
 
@@ -458,10 +457,17 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
                 JERsf         = resolution_sf.getScaleFactor(TheJetParameters);
                 JERsfUp       = resolution_sf.getScaleFactor(TheJetParameters, Variation::UP);
                 JERsfDown     = resolution_sf.getScaleFactor(TheJetParameters, Variation::DOWN);
-                //std::cout << "JERresolution " << JERresolution << "\n";
-                //std::cout << "JERsf         " << JERsf << "\n";
-                //std::cout << "JERsfUp       " << JERsfUp << "\n";
-                //std::cout << "JERsfDown     " << JERsfDown << "\n";
+                JERresolution_JECup = resolution.getResolution(TheJetParameters_jecUncUp);
+                JERsf_JECup   = resolution_sf.getScaleFactor(TheJetParameters_jecUncUp);
+                JERresolution_JECdown = resolution.getResolution(TheJetParameters_jecUncDown);
+                JERsf_JECdown = resolution_sf.getScaleFactor(TheJetParameters_jecUncDown);
+                // std::cout << "JERresolution " << JERresolution << "\n";
+                // std::cout << "JERsf         " << JERsf << "\n";
+                // std::cout << "JERsfUp       " << JERsfUp << "\n";
+                // std::cout << "JERsfDown     " << JERsfDown << "\n";
+                // std::cout << "JERsf         " << JERsf << "\n";
+                // std::cout << "JERsf_JECup         " << JERsf_JECup << "\n";
+                // std::cout << "JERsf_JECdown         " << JERsf_JECdown << "\n";
                 const reco::GenJet* genJet=jet.genJet();
                 if(genJet) {
                     if ( ( sqrt( pow(jet.eta() - genJet->eta(),2) + pow(jet.phi() - genJet->phi(),2) ) < 0.5*Rparameter )  &&
@@ -469,21 +475,27 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
                         smearFactor = max(0.,genJet->pt()+JERsf*(jet.pt() - genJet->pt()))/jet.pt();
                         smearFactorUp = max(0.,genJet->pt()+JERsfUp*(jet.pt() - genJet->pt()))/jet.pt();
                         smearFactorDown = max(0.,genJet->pt()+JERsfDown*(jet.pt() - genJet->pt()))/jet.pt();
+			smearFactor_JECup = max(0.,genJet->pt()+JERsf*((jet.pt()* (1+jecUncMC)) - genJet->pt()))/(jet.pt()* (1+jecUncMC));
+			smearFactor_JECdown = max(0.,genJet->pt()+JERsf*((jet.pt()* (1-jecUncMC)) - genJet->pt()))/(jet.pt()* (1-jecUncMC));
                     }  
                     else {
                         TRandom3 rnd(0);
-                        smearFactor = 1. + rnd.Gaus(0.,JERresolution*sqrt(max(0.,JERsf*JERsf-1.)));
-                        smearFactorUp = 1. + rnd.Gaus(0.,JERresolution*sqrt(max(0.,JERsfUp*JERsfUp-1.)));
-                        smearFactorDown = 1. + rnd.Gaus(0.,JERresolution*sqrt(max(0.,JERsfDown*JERsfDown-1.)));
+                        smearFactor = 1. + rnd.Gaus(0.,JERresolution)*sqrt(max(0.,JERsf*JERsf-1.));
+			smearFactorUp = 1. + rnd.Gaus(0.,JERresolution)*sqrt(max(0.,JERsfUp*JERsfUp-1.));
+                        smearFactorDown = 1. + rnd.Gaus(0.,JERresolution)*sqrt(max(0.,JERsfDown*JERsfDown-1.));
+			smearFactor_JECup = 1. +  rnd.Gaus(0.,JERresolution_JECup)*sqrt(max(0.,JERsf_JECup*JERsf_JECup-1.));
+			smearFactor_JECdown = 1. +  rnd.Gaus(0.,JERresolution_JECdown)*sqrt(max(0.,JERsf_JECdown*JERsf_JECdown-1.));
                     }
                 }
 		else {
 		    TRandom3 rnd(0);
-		    smearFactor = 1. + rnd.Gaus(0.,JERresolution*sqrt(max(0.,JERsf*JERsf-1.)));
-		    smearFactorUp = 1. + rnd.Gaus(0.,JERresolution*sqrt(max(0.,JERsfUp*JERsfUp-1.)));
-		    smearFactorDown = 1. + rnd.Gaus(0.,JERresolution*sqrt(max(0.,JERsfDown*JERsfDown-1.)));
+		    smearFactor = 1. + rnd.Gaus(0.,JERresolution)*sqrt(max(0.,JERsf*JERsf-1.));
+		    smearFactorUp = 1. + rnd.Gaus(0.,JERresolution)*sqrt(max(0.,JERsfUp*JERsfUp-1.));
+		    smearFactorDown = 1. + rnd.Gaus(0.,JERresolution)*sqrt(max(0.,JERsfDown*JERsfDown-1.));
+		    smearFactor_JECup = 1. + rnd.Gaus(0.,JERresolution_JECup)*sqrt(max(0.,JERsf_JECup*JERsf_JECup-1.));
+		    smearFactor_JECdown = 1. + rnd.Gaus(0.,JERresolution_JECdown)*sqrt(max(0.,JERsf_JECdown*JERsf_JECdown-1.));
                 }
-            }        
+	    }        
             //std::cout << "Rparameter      " << Rparameter << "\n";
             //std::cout << "smearFactor     " << smearFactor << "\n";
             //std::cout << "smearFactorUp   " << smearFactorUp << "\n";
@@ -498,6 +510,18 @@ std::vector<pat::Jet> JetAnalyzer::FillJetVector(const edm::Event& iEvent, const
             jetJER.setP4(smearedJet * smearFactor);
             jetJERUp.setP4(smearedJet * smearFactorUp);
             jetJERDown.setP4(smearedJet * smearFactorDown);
+
+	    if (UseReshape){//This is implemented as the 'isShort' boolean currently in the ntuple config. This means JER corrected jets are stored as standard jets!
+	      jet.setP4(smearedJet * smearFactor);
+	    }
+
+	    jet.addUserFloat("JESUncertainty", jecUncMC);
+	    //ADD HERE JET PT UP - DOWN!
+	    // std::cout << "ptJESUp " << (  smearedPt_JECup * smearFactor_JECup  ) << std::endl;
+	    // std::cout << "ptJESDown " << (  smearedPt_JECdown * smearFactor_JECdown  ) << std::endl;
+
+	    jet.addUserFloat("ptJESUp", (  smearedPt_JECup * smearFactor_JECup  ));
+	    jet.addUserFloat("ptJESDown", (  smearedPt_JECdown * smearFactor_JECdown  ));
 
             jet.addUserFloat("ptJER", jetJER.pt());
             jet.addUserFloat("etaJER", jetJER.eta());

@@ -84,6 +84,9 @@
 //#include "CSCAnalyzer.h"
 //#include "StandAloneMuonsAnalyzer.h"
 
+// Split up signal samples
+#include "SimDataFormats/GeneratorProducts/interface/GenLumiInfoHeader.h"
+
 //
 // class declaration
 //
@@ -146,6 +149,10 @@ class GenNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::Service<TFileService> fs;
     TTree* tree;
 
+    edm::EDGetTokenT<GenLumiInfoHeader> genLumiHeaderToken_;
+    TString model_="NotSignal";
+
+    bool isCentralProd;
 
 };
 
@@ -179,8 +186,8 @@ GenNtuplizer::GenNtuplizer(const edm::ParameterSet& iConfig):
     WriteGenHiggs(iConfig.getParameter<bool>("writeGenHiggs")),
     WriteGenBquarks(iConfig.getParameter<bool>("writeGenBquarks")),
     WriteGenLLPs(iConfig.getParameter<bool>("writeGenLLPs")),
-    isVerbose(iConfig.getParameter<bool> ("verbose"))
-
+    isVerbose(iConfig.getParameter<bool> ("verbose")),
+    isCentralProd(iConfig.getParameter<bool> ("iscentralprod"))
 {
 
     theGenAnalyzer          = new GenAnalyzer(GenPSet, consumesCollector());
@@ -196,6 +203,10 @@ GenNtuplizer::GenNtuplizer(const edm::ParameterSet& iConfig):
     //now do what ever initialization is needed
 
     usesResource("TFileService");
+
+    //split up signal samples
+    edm::InputTag genLumi = edm::InputTag(std::string("generator"));
+    genLumiHeaderToken_             = consumes <GenLumiInfoHeader,edm::InLumi> (genLumi);
 
     if(isVerbose) std::cout << "---------- STARTING ----------" << std::endl;
 
@@ -254,6 +265,12 @@ GenNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
     EventWeight *= GenEventWeight;
 
+    //split up signal samples
+    if(isCentralProd){
+      edm::Handle<GenLumiInfoHeader> gen_header;
+      iEvent.getLuminosityBlock().getByToken(genLumiHeaderToken_,gen_header);
+      model_ = gen_header->configDescription();
+    }
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -398,6 +415,7 @@ GenNtuplizer::beginJob()
    tree -> Branch("RunNumber" , &RunNumber , "RunNumber/L");
    tree -> Branch("EventWeight", &EventWeight, "EventWeight/F");
    tree -> Branch("GenEventWeight", &GenEventWeight, "GenEventWeight/F");
+   tree -> Branch("model",       &model_);
    //tree -> Branch("PUWeight", &PUWeight, "PUWeight/F");
    //tree -> Branch("PUWeightUp", &PUWeightUp, "PUWeightUp/F");
    //tree -> Branch("PUWeightDown", &PUWeightDown, "PUWeightDown/F");

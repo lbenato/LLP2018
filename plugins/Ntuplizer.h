@@ -156,6 +156,10 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP100Token;
     edm::EDGetTokenT<reco::JetTagCollection> JetTagWP1000Token;
 
+    edm::EDGetTokenT< double > prefweight_token;
+    edm::EDGetTokenT< double > prefweightup_token;
+    edm::EDGetTokenT< double > prefweightdown_token;
+
     int idLLP, idHiggs, idMotherB, statusLLP, statusHiggs;
     double MinGenBpt, MaxGenBeta;
     double InvmassVBF, DetaVBF;//VBF tagging
@@ -190,6 +194,7 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //std::vector<CaloJetType> MatchedCaloJetsWithGenJets;
     std::vector<GenPType> GenVBFquarks;
     std::vector<GenPType> GenBquarks;
+    std::vector<GenPType> GenTTbarQuarks;
     std::vector<GenPType> GenLLPs;
     std::vector<GenPType> GenHiggs;
     std::vector<VertexType> PrimVertices;
@@ -225,8 +230,8 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     long int EventNumber, LumiNumber, RunNumber, nPV, nSV;
     bool AtLeastOneTrigger, AtLeastOneL1Filter;
     bool isIsoMu24_OR_IsoTkMu24, isMu50_OR_TkMu50;
-    long int nLooseCHSJets, nTightCHSJets, nCHSJets, nAllBarrelJets, nAllJets, nVBFGenMatchedJets;
-    long int nLooseCHSFatJets, nTightCHSFatJets, nCHSFatJets, nGenBquarks, nGenLL;
+    long int nLooseCHSJets, nTightCHSJets, nCHSJets, nAllBarrelJets, nAllJets, nVBFGenMatchedJets, nPrefiringJets;
+    long int nLooseCHSFatJets, nTightCHSFatJets, nCHSFatJets, nGenBquarks, nGenTTbarQuarks, nGenLL;
     long int nMatchedCHSJets, nMatchedFatJets;
   //long int nCaloJets, nMatchedCaloJets, nMatchedCaloJetsWithGenJets;
     long int number_of_b_matched_to_CHSJets;
@@ -243,11 +248,18 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     float EventWeight_leptonSFUp;
     float EventWeight_leptonSFDown;
     float GenEventWeight;
+    float GenEventWeight_full;
+    std::vector<double> GenEventWeight_full_vector;
     float PUWeight, PUWeightUp, PUWeightDown;
+    float prefiringweight, prefiringweight_up, prefiringweight_down;
+    float PDFweight_Q, PDFweight_id1, PDFweight_id2, PDFweight_x1, PDFweight_x2, PDFweight_xPDF1, PDFweight_xPDF2, PDF_originalXWGTUP;
+    float murmuf_weight_upup, murmuf_weight_upnone, murmuf_weight_noneup, murmuf_weight_downdown, murmuf_weight_downnone, murmuf_weight_nonedown, murmuf_weight_updown, murmuf_weight_downup;
+    std::vector<float> PDF_systweights;
     float FacWeightUp, FacWeightDown, RenWeightUp, RenWeightDown, CorrWeightUp, CorrWeightDown;
     float PdfWeight;
     float LeptonWeight, LeptonWeightUp, LeptonWeightDown;
     float bTagWeight_central, bTagWeight_jesup, bTagWeight_jesdown, bTagWeight_lfup, bTagWeight_lfdown, bTagWeight_hfup, bTagWeight_hfdown, bTagWeight_hfstats1up, bTagWeight_hfstats1down, bTagWeight_hfstats2up, bTagWeight_hfstats2down, bTagWeight_lfstats1up, bTagWeight_lfstats1down, bTagWeight_lfstats2up, bTagWeight_lfstats2down, bTagWeight_cferr1up, bTagWeight_cferr1down, bTagWeight_cferr2up, bTagWeight_cferr2down;
+    float TopPtWeight;
     float ZewkWeight, WewkWeight;
     float HT;
     float MinJetMetDPhi;
@@ -270,6 +282,16 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
     //Higgs reconstruction
     float HDiCHS, HTriCHS, HQuadCHS;
     float HDiCHSMatched, HTriCHSMatched, HQuadCHSMatched;
+
+  long int nTriggerObjectsDoubleJet90, nTriggerObjectsQuadJet45, nTriggerObjectsDoubleJetC112MaxDeta1p6, nTriggerObjectsDoubleJetC112, nTriggerObjectsSixJet30, nTriggerObjectsQuadPFJetMqq240, nTriggerObjectsQuadPFJetMqq500;
+  long int nFilterObjectsQuadJet45_hltL1s_dRp5, nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5, nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5, nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5;
+  long int nFilterObjectsQuadJet45_hltL1s_dRp4, nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4, nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4, nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4;
+  long int nFilterObjectsQuadJet45_hltL1s_dRp2, nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2, nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2, nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2;
+  long int nFilterObjectsDoubleJet90_hltL1s_dRp5, nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5, nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5, nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5, nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5, nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5;
+  long int nFilterObjectsDoubleJet90_hltL1s_dRp4, nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4, nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4, nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4, nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4, nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4;
+  long int nFilterObjectsDoubleJet90_hltL1s_dRp2, nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2, nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2, nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2, nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2, nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2;
+
+
   //float HDiCalo, HTriCalo, HQuadCalo;
   //float HDiCaloMatched, HTriCaloMatched, HQuadCaloMatched;
 
@@ -284,7 +306,10 @@ class Ntuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 
     //Example to define an histogram:
     //TH1F* Matching_to_b_AK4Jets;
-
+    TH1F* All_histo;
+    TH1F* Trigger_pass;
+    TH1F* AtLeastOneL1Filter_pass;
+    TH1F* isVBF_pass;
 };
 
 #endif

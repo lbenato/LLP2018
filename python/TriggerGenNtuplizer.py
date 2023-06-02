@@ -84,6 +84,12 @@ options.register(
     "isSignal parser flag"
 )
 options.register(
+    "PisCentralProd", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "isCentralProd parser flag"
+)
+options.register(
     "PGT", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
@@ -96,16 +102,112 @@ options.register(
     "JECstring parser flag"
 )
 options.register(
+    "PJERstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "JERstring parser flag"
+)
+options.register(
+    "PMuonSFIDstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "MuonSFIDstring parser flag"
+)
+options.register(
+    "PMuonSFISOstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "MuonSFISOstring parser flag"
+)
+options.register(
+    "PMuonSFTriggerstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "MuonSFTriggerstring parser flag"
+)
+options.register(
     "PjsonName", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
     " jsonName parser flag"
 )
 options.register(
+    "PeleVetoIDstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleVetoIDstring parser flag"
+)
+options.register(
+    "PeleLooseIdstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleLooseIdstring parser flag"
+)
+options.register(
+    "PeleMediumIdstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleMediumIdstring parser flag"
+)
+options.register(
+    "PeleTightIdstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleTightIdstring parser flag"
+)
+options.register(
+    "PeleMVA90noISOstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleMVA90noISOstring parser flag"
+)
+options.register(
+    "PeleMVA80noISOstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PeleMVA80noISOstring parser flag"
+)
+options.register(
+    "PphoLooseIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoLooseIdFilestring parser flag"
+)
+options.register(
+    "PphoMediumIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoMediumIdFilestring parser flag"
+)
+options.register(
+    "PphoTightIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoTightIdFilestring parser flag"
+)
+options.register(
+    "PphoMVANonTrigMediumIdFilestring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "PphoMVANonTrigMediumIdFilestring parser flag"
+)
+options.register(
+    "PbtagSFstring", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "btagSFstring parser flag"
+)
+options.register(
     "PtriggerTag", "",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
     "triggerTag parser flag"
+)
+options.register(
+    "PtriggerString", "",
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.string,
+    "triggerString parser flag"
 )
 options.register(
     "PfilterString", "",
@@ -118,6 +220,24 @@ options.register(
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
     "calo parser flag"
+)
+options.register(
+    "Ptracking", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "tracking parser flag"
+)
+options.register(
+    "Pshort", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "short parser flag"
+)
+options.register(
+    "Pcontrol", False,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.bool,
+    "control parser flag"
 )
 options.register(
     "PVBF", False,
@@ -171,7 +291,7 @@ process.options   = cms.untracked.PSet(
 #process.options.numberOfStreams=cms.untracked.uint32(0)
 
 ## Events to process
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 
 ## Messagge logger
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -187,13 +307,19 @@ if len(options.inputFiles) == 0:
           #split susy
           #'/store/mc/RunIIAutumn18DRPremix/GluinoGluinoToNeutralinoNeutralinoTo2T2B2S_M-2400_CTau-1000mm_TuneCP2_13TeV-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/20000/01AA08C8-76E0-8E4C-8818-DD9B24DFF988.root',
           #jet jet
-          '/store/mc/RunIIAutumn18MiniAOD/XXTo4J_M1000_CTau1000mm_TuneCP2_13TeV_pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/50000/14A803F4-C9E4-3F41-B748-D19DEC529F31.root',
+#          '/store/mc/RunIIAutumn18MiniAOD/XXTo4J_M1000_CTau1000mm_TuneCP2_13TeV_pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/50000/14A803F4-C9E4-3F41-B748-D19DEC529F31.root',
           #2HDM
           #'/store/mc/RunIISummer16MiniAODv3/SUSYGluGluToHToAA_AToMuMu_AToTauTau_mH-750_mA-7_TuneCUETP8M1_13TeV_madgraph_pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v2/20000/A6629877-BCEF-E811-8F66-0CC47AC52E44.root'
           #25?'/store/mc/RunIISummer16MiniAODv3/SUSYGluGluToHToAA_AToMuMu_AToTauTau_mH-750_mA-15_TuneCUETP8M1_13TeV_madgraph_pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/270000/602D800A-AF43-E911-B95A-0025904C641C.root',
           #?#'/store/mc/RunIIFall17MiniAODv2/NMSSM_HToAATo4Mu_mH_125_mA_3_TuneCP5_13TeV-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/6A7763FF-E8CE-E811-A2AA-008CFAFBFB7C.root',
           #'/store/mc/RunIIFall17MiniAODv2/NMSSM_HToAATo4Mu_mH_150_mA_0p5_TuneCP5_13TeV-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/10C5A916-63B3-E811-9797-5065F381E151.root'
           #'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
+#          'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_\Fall18/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM/200318_124011/0000/output_1.root'
+           # 2017 background
+#           'file:/pnfs/desy.de/cms/tier2/store/mc/RunIIFall17MiniAODv2/ZJetsToNuNu_HT-100To200_13TeV-madgraph/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/0047429F-5042-E811-81C4-003048CDCDE0.root',
+           '/store/mc/RunIIFall17MiniAOD/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/MINIAODSIM/94X_mc2017_realistic_v11_ext1-v1/100000/28A382A2-DC34-E811-9F44-A0369FC5E8FC.root'
+           # 2018 background
+           #'root://cms-xrd-global.cern.ch//store/mc/RunIIAutumn18MiniAOD/QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/10000/037A79A2-18C7-314B-AD6B-A8DA89B1447B.root',
           #'file:/afs/desy.de/user/p/penaka/public/forLisa/miniAODv3_test.root'
           #'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-1000_Summer16_MINIAODSIM_calojets/GluGluH_HToSSTobbbb_MH-125_MS-20_ctauS-1000_TuneCUETP8M1_13TeV-powheg-pythia8_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_MINIAODSIM_calojets/181203_140031/0000/miniaod_1.root'
 #            'file:/pnfs/desy.de/cms/tier2/store/user/lbenato/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_Summer16_MINIAODSIM_calojets_Tranche2/VBFH_HToSSTobbbb_MH-125_MS-40_ctauS-5000_TuneCUETP8M1_13TeV-powheg-pythia8_Tranche2_PRIVATE-MC/RunIISummer16-PU_premix-Moriond17_80X_mcRun2_2016_Tranche2_MINIAODSIM_calojets/181218_125055/0000/miniaod_1.root',
@@ -229,10 +355,10 @@ if RunLocal:
     noLHEinfo         = True if ('WW_TuneCUETP8M1_13TeV-pythia8' or 'WZ_TuneCUETP8M1_13TeV-pythia8' or 'ZZ_TuneCUETP8M1_13TeV-pythia8' or 'WW_TuneCP5_13TeV-pythia8' or 'WZ_TuneCP5_13TeV-pythia8' or 'ZZ_TuneCP5_13TeV-pythia8') in process.source.fileNames[0] else False #check for PythiaLO samples
     isbbH             = True if ('bbHToBB_M-125_4FS_yb2_13TeV_amcatnlo' in process.source.fileNames[0]) else False #bbH has a different label in LHEEventProduct
     isSignal          = True if ('HToSSTobbbb_MH-125' in process.source.fileNames[0]) else False
-    isCalo            = True #HERE for calo analyses!!!
+    isCalo            = False #HERE for calo analyses!!!
     isVBF             = False
     isggH             = False
-    isTwinHiggs       = False
+    isTwinHiggs       = True
     isHeavyHiggs      = False
     isSUSY            = False
     is2HDM            = False
@@ -408,7 +534,7 @@ if isCalo:
 if(isTwinHiggs and isCalo):
     pt_AK4 = 5
 else:
-    pt_AK4 = 15
+    pt_AK4 = 20
 
 #-----------------------#
 #     GLOBAL TAG        #
@@ -422,23 +548,25 @@ from Configuration.AlCa.GlobalTag import GlobalTag
 GT = ''
 
 if RunLocal:
-    if isData:
-        if is2016:
-            GT = '80X_dataRun2_2016SeptRepro_v7'
-        elif is2017:
-            GT = '94X_dataRun2_v11'
-        elif is2018:
-            if theRun2018ABC: GT = '102X_dataRun2_v12'
-            if theRun2018D:   GT = '102X_dataRun2_Prompt_v15'
-    elif not(isData):
-        if is2016:
-            GT = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
-        elif is2017:
-            GT = '94X_mc2017_realistic_v17'
-        elif is2018:
-            GT = '102X_upgrade2018_realistic_v20'
+#from https://indico.cern.ch/event/920726/contributions/3868370/attachments/2055396/3446379/20-06-11_News_PPD.pdf
+   if isData:
+      if is2016:
+         GT = '102X_dataRun2_v13'
+      elif is2017:
+         GT = '102X_dataRun2_v13'
+      elif is2018:
+         if theRun2018ABC: GT = '102X_dataRun2_v13'
+         if theRun2018D:   GT = '102X_dataRun2_Prompt_v16'
+   elif not(isData):
+      if is2016:
+         GT = '102X_mcRun2_asymptotic_v8'
+      elif is2017:
+         GT = '102X_mc2017_realistic_v8'
+      elif is2018:
+         GT = '102X_upgrade2018_realistic_v21'
 else:
     GT = options.PGT
+
 
 process.GlobalTag = GlobalTag(process.GlobalTag, GT)
 print 'GlobalTag loaded: ', GT
@@ -513,7 +641,7 @@ process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 if isData:
     import FWCore.PythonUtilities.LumiList as LumiList
     jsonName = "Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON"#"Cert_294927-305364_13TeV_PromptReco_Collisions17_JSON"#"Cert_294927-301567_13TeV_PromptReco_Collisions17_JSON" #golden json
-    process.source.lumisToProcess = LumiList.LumiList(filename = 'data_gen/JSON/'+jsonName+'.txt').getVLuminosityBlockRange()
+    process.source.lumisToProcess = LumiList.LumiList(filename = 'data/JSON/'+jsonName+'.txt').getVLuminosityBlockRange()
     print "JSON file loaded: ", jsonName
 
 if RunLocal:
@@ -533,6 +661,7 @@ else:
 
 ## MET filters, not available on AOD? TODO
 process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
+
 process.BadPFMuonFilter.muons = cms.InputTag('slimmedMuons' if 'MINIAOD' in process.source.fileNames[0] else 'muons')
 process.BadPFMuonFilter.PFCandidates = cms.InputTag('packedPFCandidates' if 'MINIAOD' in process.source.fileNames[0] else 'particleFlow')
 
@@ -557,9 +686,9 @@ process.ntuple = cms.EDAnalyzer('TriggerGenNtuplizer',
         samplesDYJetsToLL = cms.vstring(),
         samplesZJetsToNuNu = cms.vstring(),
         samplesWJetsToLNu = cms.vstring(),
-        samplesDir = cms.string('data_gen/Stitch/'),
+        samplesDir = cms.string('data/Stitch/'),
         sample = cms.string("" ), #( sample )
-        ewkFile = cms.string('data_gen/scalefactors_v4.root'),
+        ewkFile = cms.string('data/scalefactors_v4.root'),
         applyEWK = cms.bool(False),#(True if sample.startswith('DYJets') or sample.startswith('WJets') else False),
         applyTopPtReweigth = cms.bool(False),#(True if sample.startswith('TT_') else False),
         pythiaLOSample = cms.bool(True if noLHEinfo else False),#(True if isDibosonInclusive else False),
@@ -568,89 +697,101 @@ process.ntuple = cms.EDAnalyzer('TriggerGenNtuplizer',
         trigger = cms.InputTag('TriggerResults', '', triggerTag),
         paths = cms.vstring(
 *[
+#2017 menu short
+#'HLT_PFHT300PT30_QuadPFJet_75_60_45_40_TriplePFBTagCSV_3p0_v',
+#'HLT_DoublePFJets100MaxDeta1p6_DoubleCaloBTagCSV_p33_v',
+#'HLT_Mu12_DoublePFJets40MaxDeta1p6_DoubleCaloBTagCSV_p33_v',
+#'HLT_QuadPFJet103_88_75_15_BTagCSV_p013_VBF2_v',
+#'HLT_QuadPFJet103_88_75_15_DoubleBTagCSV_p013_p08_VBF1_v',
 
-#2018 menu
-'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',
-'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',
-'HLT_HT500_DisplacedDijet40_DisplacedTrack_v',
-'HLT_HT650_DisplacedDijet60_Inclusive_v',
-'HLT_AK8PFHT800_TrimMass50_v',
-'HLT_AK8PFHT850_TrimMass50_v',
-'HLT_AK8PFHT900_TrimMass50_v',
-'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p17_v',
-'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p1_v',
-'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2_v',
-'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np4_v',
-'HLT_AK8PFJet360_TrimMass30_v',
-'HLT_AK8PFJet380_TrimMass30_v',
-'HLT_AK8PFJet400_TrimMass30_v',
-'HLT_AK8PFJet420_TrimMass30_v',
-'HLT_AK8PFJet500_v',
-'HLT_AK8PFJet550_v',
-'HLT_AK8PFJetFwd500_v',
-'HLT_CaloJet500_NoJetID_v',
-'HLT_CaloJet550_NoJetID_v',
-'HLT_DoublePFJets116MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
-'HLT_DoublePFJets128MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
-'HLT_Mu12_DoublePFJets40MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
+#2018 menu short
 'HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5_v',
-'HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5_v',
-'HLT_PFHT400_FivePFJet_120_120_60_30_30_DoublePFBTagDeepCSV_4p5_v',
-'HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94_v',
-'HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59_v',
-'HLT_PFHT500_PFMET100_PFMHT100_IDTight_v',
-'HLT_PFHT500_PFMET110_PFMHT110_IDTight_v',
-'HLT_PFHT700_PFMET85_PFMHT85_IDTight_v',
-'HLT_PFHT700_PFMET95_PFMHT95_IDTight_v',
-'HLT_PFHT800_PFMET75_PFMHT75_IDTight_v',
-'HLT_PFHT800_PFMET85_PFMHT85_IDTight_v',
-'HLT_PFJet500_v',
-'HLT_PFJet550_v',
-'HLT_PFJetFwd450_v',
-'HLT_PFJetFwd500_v',
-'HLT_QuadPFJet103_88_75_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
-'HLT_QuadPFJet103_88_75_15_PFBTagDeepCSV_1p3_VBF2_v',
-'HLT_QuadPFJet105_88_76_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
-'HLT_QuadPFJet105_88_76_15_PFBTagDeepCSV_1p3_VBF2_v',
-'HLT_QuadPFJet111_90_80_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
-'HLT_QuadPFJet111_90_80_15_PFBTagDeepCSV_1p3_VBF2_v',
+'HLT_DoublePFJets116MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
 'HLT_QuadPFJet98_83_71_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
 'HLT_QuadPFJet98_83_71_15_PFBTagDeepCSV_1p3_VBF2_v',
-'HLT_Rsq0p35_v',
-'HLT_Rsq0p40_v',
-'HLT_RsqMR300_Rsq0p09_MR200_4jet_v',
-'HLT_RsqMR300_Rsq0p09_MR200_v',
-'HLT_RsqMR320_Rsq0p09_MR200_4jet_v',
-'HLT_RsqMR320_Rsq0p09_MR200_v',
-'HLT_CaloMET350_HBHECleaned_v',
-'HLT_DiJet110_35_Mjj650_PFMET110_v',
-'HLT_DiJet110_35_Mjj650_PFMET120_v',
-'HLT_DiJet110_35_Mjj650_PFMET130_v',
-'HLT_MET105_IsoTrk50_v',
-'HLT_MET120_IsoTrk50_v',
-'HLT_MonoCentralPFJet80_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
-'HLT_MonoCentralPFJet80_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
-'HLT_MonoCentralPFJet80_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
-'HLT_PFMET110_PFMHT110_IDTight_CaloBTagDeepCSV_3p1_v',
-'HLT_PFMET120_PFMHT120_IDTight_CaloBTagDeepCSV_3p1_v',
-'HLT_PFMET120_PFMHT120_IDTight_PFHT60_v',
-'HLT_PFMET120_PFMHT120_IDTight_v',
-'HLT_PFMET130_PFMHT130_IDTight_CaloBTagDeepCSV_3p1_v',
-'HLT_PFMET130_PFMHT130_IDTight_v',
-'HLT_PFMET140_PFMHT140_IDTight_CaloBTagDeepCSV_3p1_v',
-'HLT_PFMET140_PFMHT140_IDTight_v',
-'HLT_PFMET200_HBHE_BeamHaloCleaned_v',
-'HLT_PFMET250_HBHECleaned_v',
-'HLT_PFMET300_HBHECleaned_v',
-'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v',
-'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
-'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
-'HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
-'HLT_PFMETTypeOne140_PFMHT140_IDTight_v',
-'HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v',
-'HLT_TripleJet110_35_35_Mjj650_PFMET110_v',
-'HLT_TripleJet110_35_35_Mjj650_PFMET120_v',
-'HLT_TripleJet110_35_35_Mjj650_PFMET130_v',
+
+#2018 menu
+# 'HLT_HT430_DisplacedDijet40_DisplacedTrack_v',
+# 'HLT_HT430_DisplacedDijet60_DisplacedTrack_v',
+# 'HLT_HT500_DisplacedDijet40_DisplacedTrack_v',
+# 'HLT_HT650_DisplacedDijet60_Inclusive_v',
+# 'HLT_AK8PFHT800_TrimMass50_v',
+# 'HLT_AK8PFHT850_TrimMass50_v',
+# 'HLT_AK8PFHT900_TrimMass50_v',
+# 'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p17_v',
+# 'HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p1_v',
+# 'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np2_v',
+# 'HLT_AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np4_v',
+# 'HLT_AK8PFJet360_TrimMass30_v',
+# 'HLT_AK8PFJet380_TrimMass30_v',
+# 'HLT_AK8PFJet400_TrimMass30_v',
+# 'HLT_AK8PFJet420_TrimMass30_v',
+# 'HLT_AK8PFJet500_v',
+# 'HLT_AK8PFJet550_v',
+# 'HLT_AK8PFJetFwd500_v',
+# 'HLT_CaloJet500_NoJetID_v',
+# 'HLT_CaloJet550_NoJetID_v',
+# 'HLT_DoublePFJets116MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
+# 'HLT_DoublePFJets128MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
+# 'HLT_Mu12_DoublePFJets40MaxDeta1p6_DoubleCaloBTagDeepCSV_p71_v',
+# 'HLT_PFHT330PT30_QuadPFJet_75_60_45_40_TriplePFBTagDeepCSV_4p5_v',
+# 'HLT_PFHT400_FivePFJet_100_100_60_30_30_DoublePFBTagDeepCSV_4p5_v',
+# 'HLT_PFHT400_FivePFJet_120_120_60_30_30_DoublePFBTagDeepCSV_4p5_v',
+# 'HLT_PFHT400_SixPFJet32_DoublePFBTagDeepCSV_2p94_v',
+# 'HLT_PFHT450_SixPFJet36_PFBTagDeepCSV_1p59_v',
+# 'HLT_PFHT500_PFMET100_PFMHT100_IDTight_v',
+# 'HLT_PFHT500_PFMET110_PFMHT110_IDTight_v',
+# 'HLT_PFHT700_PFMET85_PFMHT85_IDTight_v',
+# 'HLT_PFHT700_PFMET95_PFMHT95_IDTight_v',
+# 'HLT_PFHT800_PFMET75_PFMHT75_IDTight_v',
+# 'HLT_PFHT800_PFMET85_PFMHT85_IDTight_v',
+# 'HLT_PFJet500_v',
+# 'HLT_PFJet550_v',
+# 'HLT_PFJetFwd450_v',
+# 'HLT_PFJetFwd500_v',
+# 'HLT_QuadPFJet103_88_75_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
+# 'HLT_QuadPFJet103_88_75_15_PFBTagDeepCSV_1p3_VBF2_v',
+# 'HLT_QuadPFJet105_88_76_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
+# 'HLT_QuadPFJet105_88_76_15_PFBTagDeepCSV_1p3_VBF2_v',
+# 'HLT_QuadPFJet111_90_80_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
+# 'HLT_QuadPFJet111_90_80_15_PFBTagDeepCSV_1p3_VBF2_v',
+# 'HLT_QuadPFJet98_83_71_15_DoublePFBTagDeepCSV_1p3_7p7_VBF1_v',
+# 'HLT_QuadPFJet98_83_71_15_PFBTagDeepCSV_1p3_VBF2_v',
+# 'HLT_Rsq0p35_v',
+# 'HLT_Rsq0p40_v',
+# 'HLT_RsqMR300_Rsq0p09_MR200_4jet_v',
+# 'HLT_RsqMR300_Rsq0p09_MR200_v',
+# 'HLT_RsqMR320_Rsq0p09_MR200_4jet_v',
+# 'HLT_RsqMR320_Rsq0p09_MR200_v',
+# 'HLT_CaloMET350_HBHECleaned_v',
+# 'HLT_DiJet110_35_Mjj650_PFMET110_v',
+# 'HLT_DiJet110_35_Mjj650_PFMET120_v',
+# 'HLT_DiJet110_35_Mjj650_PFMET130_v',
+# 'HLT_MET105_IsoTrk50_v',
+# 'HLT_MET120_IsoTrk50_v',
+# 'HLT_MonoCentralPFJet80_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
+# 'HLT_MonoCentralPFJet80_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
+# 'HLT_MonoCentralPFJet80_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
+# 'HLT_PFMET110_PFMHT110_IDTight_CaloBTagDeepCSV_3p1_v',
+# 'HLT_PFMET120_PFMHT120_IDTight_CaloBTagDeepCSV_3p1_v',
+# 'HLT_PFMET120_PFMHT120_IDTight_PFHT60_v',
+# 'HLT_PFMET120_PFMHT120_IDTight_v',
+# 'HLT_PFMET130_PFMHT130_IDTight_CaloBTagDeepCSV_3p1_v',
+# 'HLT_PFMET130_PFMHT130_IDTight_v',
+# 'HLT_PFMET140_PFMHT140_IDTight_CaloBTagDeepCSV_3p1_v',
+# 'HLT_PFMET140_PFMHT140_IDTight_v',
+# 'HLT_PFMET200_HBHE_BeamHaloCleaned_v',
+# 'HLT_PFMET250_HBHECleaned_v',
+# 'HLT_PFMET300_HBHECleaned_v',
+# 'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v',
+# 'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
+# 'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
+# 'HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v',
+# 'HLT_PFMETTypeOne140_PFMHT140_IDTight_v',
+# 'HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v',
+# 'HLT_TripleJet110_35_35_Mjj650_PFMET110_v',
+# 'HLT_TripleJet110_35_35_Mjj650_PFMET120_v',
+# 'HLT_TripleJet110_35_35_Mjj650_PFMET130_v',
 ###production for MET
 #'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v',
 #'HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v',
@@ -698,12 +839,12 @@ process.ntuple = cms.EDAnalyzer('TriggerGenNtuplizer',
     muonSet = cms.PSet(
         muons = cms.InputTag('slimmedMuons'),#let's be inclusive!
         vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
-        muonTrkFileName = cms.string('data_gen/MuonTrkEfficienciesAndSF_MORIOND17.root'),
-        muonIdFileName = cms.string('data_gen/MuonIdEfficienciesAndSF_MORIOND17.root'),
-        muonIsoFileName = cms.string('data_gen/MuonIsoEfficienciesAndSF_MORIOND17.root'),
-        muonTrkHighptFileName = cms.string('data_gen/tkhighpt_2016full_absetapt.root'),
-        muonTriggerFileName = cms.string('data_gen/MuonTrigEfficienciesAndSF_MORIOND17.root'),
-        doubleMuonTriggerFileName = cms.string('data_gen/MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2.root'),#FIXME -> obsolete
+        muonTrkFileName = cms.string('data/MuonTrkEfficienciesAndSF_MORIOND17.root'),
+        muonIdFileName = cms.string('data/MuonIdEfficienciesAndSF_MORIOND17.root'),
+        muonIsoFileName = cms.string('data/MuonIsoEfficienciesAndSF_MORIOND17.root'),
+        muonTrkHighptFileName = cms.string('data/tkhighpt_2016full_absetapt.root'),
+        muonTriggerFileName = cms.string('data/MuonTrigEfficienciesAndSF_MORIOND17.root'),
+        doubleMuonTriggerFileName = cms.string('data/MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2.root'),#FIXME -> obsolete
         muon1id = cms.int32(0), # 0: pass PF ID, 1: loose, 2: medium, 3: tight, 4: high pt
         muon2id = cms.int32(0),
         muon1iso = cms.int32(-1), # 0: trk iso (<0.1), 1: loose (<0.25), 2: tight (<0.15) (pfIso in cone 0.4)
@@ -722,10 +863,10 @@ process.ntuple = cms.EDAnalyzer('TriggerGenNtuplizer',
 
     minGenBpt = cms.double(0.),#(15.),#gen b quarks in acceptance
     maxGenBeta = cms.double(999.),#(2.4),#gen b quarks in acceptance
-    minGenBradius2D = cms.double(129.),#new!! in cm
-    maxGenBradius2D = cms.double(402.),#new!! in cm
+    minGenBradius2D = cms.double(0.),#new!! in cm
+    maxGenBradius2D = cms.double(10.),#new!! in cm
     minGenBetaAcc = cms.double(0.),#(2.4),#
-    maxGenBetaAcc = cms.double(1.1),#(2.4),#
+    maxGenBetaAcc = cms.double(2.4),#(2.4),#
     ###writeGenVBFquarks = cms.bool(True),
     writeGenHiggs = cms.bool(True),
     writeGenBquarks = cms.bool(True), #Acceptance cuts a few lines above!

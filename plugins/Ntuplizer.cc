@@ -125,8 +125,8 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
     for(unsigned int i = 0; i < TriggerList.size(); i++) PrescalesTriggerMap[ TriggerList[i] ] = -1;
     std::vector<std::string> MetFiltersList(TriggerPSet.getParameter<std::vector<std::string> >("metpaths"));
     for(unsigned int i = 0; i < MetFiltersList.size(); i++) MetFiltersMap[ MetFiltersList[i] ] = false;
-    //std::vector<std::string> L1FiltersList(TriggerPSet.getParameter<std::vector<std::string> >("l1filters"));//commented
-    //for(unsigned int i = 0; i < L1FiltersList.size(); i++) L1FiltersMap[ L1FiltersList[i] ] = false;//commented
+    std::vector<std::string> L1FiltersList(TriggerPSet.getParameter<std::vector<std::string> >("l1filters"));//commented
+    for(unsigned int i = 0; i < L1FiltersList.size(); i++) L1FiltersMap[ L1FiltersList[i] ] = false;//commented
 
     //Imperial College Tagger
     edm::InputTag JetTagWP0p01 = edm::InputTag("pfXTags:0p01:ntuple");
@@ -146,6 +146,10 @@ Ntuplizer::Ntuplizer(const edm::ParameterSet& iConfig):
 
     edm::InputTag JetTagWP1000 = edm::InputTag("pfXTags:1000:ntuple");
     JetTagWP1000Token= consumes<reco::JetTagCollection>(JetTagWP1000);
+
+    prefweight_token = consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProb"));
+    prefweightup_token = consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProbUp"));
+    prefweightdown_token = consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProbDown"));
 
     //split up signal samples
     edm::InputTag genLumi = edm::InputTag(std::string("generator"));
@@ -214,7 +218,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     ////for(int i = 0; i < WriteNLeptons; i++) ObjectsFormat::ResetLeptonType(Electrons[i]);
     ////ObjectsFormat::ResetGenPType(GenHiggs);
     ObjectsFormat::ResetCandidateType(VBF);
-    if (isControl){
+    if (isShort or isControl){
       ObjectsFormat::ResetCandidateType(Z);
       ObjectsFormat::ResetCandidateType(W);
     }
@@ -228,10 +232,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     AtLeastOneTrigger = AtLeastOneL1Filter = false;
     isIsoMu24_OR_IsoTkMu24 = isMu50_OR_TkMu50 = false;
     number_of_PV = number_of_SV = 0;//27 Sep: remember to properly initialize everything
-    nCHSJets = nLooseCHSJets = nTightCHSJets = 0;
+    nCHSJets = nLooseCHSJets = nTightCHSJets = nPrefiringJets = 0;
     nVBFGenMatchedJets = 0;
     nAllBarrelJets = nAllJets = 0;
-    nCHSFatJets = nLooseCHSFatJets = nTightCHSFatJets = nGenBquarks = nGenLL = nPV = nSV = 0;
+    nCHSFatJets = nLooseCHSFatJets = nTightCHSFatJets = nGenBquarks = nGenTTbarQuarks = nGenLL = nPV = nSV = 0;
     nMatchedCHSJets = nMatchedFatJets = 0;
     //nCaloJets = nMatchedCaloJets = nMatchedCaloJetsWithGenJets = 0;
     //nCaloTagJets = nLooseCaloTagJets = 0;
@@ -241,10 +245,17 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     number_of_b_matched_to_FatJets = 0;
     number_of_VBFGen_matched_to_AllJets = 0;
     //number_of_b_matched_to_CaloJets = number_of_b_matched_to_CaloJetsWithGenJets = 0;
-    GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = LeptonWeight = ZewkWeight = WewkWeight = 1.;
-    LeptonWeightUp = LeptonWeightDown = 0.;
+    GenEventWeight = EventWeight = PUWeight = PUWeightDown = PUWeightUp = LeptonWeight = ZewkWeight = WewkWeight = prefiringweight = prefiringweight_down = prefiringweight_up = 1.;
+    GenEventWeight_full = 1.;
+    GenEventWeight_full_vector.clear();
+    PDFweight_Q = PDFweight_id1 = PDFweight_id2 = PDFweight_x1 = PDFweight_x2 = PDFweight_xPDF1 = PDFweight_xPDF2 = 1.;
+    PDF_originalXWGTUP = 1.;
+    murmuf_weight_upup = murmuf_weight_upnone = murmuf_weight_noneup = murmuf_weight_downdown = murmuf_weight_downnone = murmuf_weight_nonedown = murmuf_weight_updown = murmuf_weight_downup = 1.;
+    PDF_systweights.clear();
+    LeptonWeightUp = LeptonWeightDown =  0.;
     EventWeight_leptonSF = EventWeight_leptonSFUp = EventWeight_leptonSFDown = 1.;
     bTagWeight_central = bTagWeight_jesup = bTagWeight_jesdown = bTagWeight_lfup = bTagWeight_lfdown = bTagWeight_hfup = bTagWeight_hfdown = bTagWeight_hfstats1up = bTagWeight_hfstats1down = bTagWeight_hfstats2up = bTagWeight_hfstats2down = bTagWeight_lfstats1up = bTagWeight_lfstats1down = bTagWeight_lfstats2up = bTagWeight_lfstats2down = bTagWeight_cferr1up = bTagWeight_cferr1down = bTagWeight_cferr2up = bTagWeight_cferr2down = 1.0;
+    TopPtWeight = 1.0;
     HT = 0.;
     MinJetMetDPhi = MinJetMetDPhiAllJets = ggHJetMetDPhi = 10.;
     m_pi = 0.;
@@ -252,6 +263,14 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     Prefired = false;
     HDiCHS = HTriCHS = HQuadCHS = HDiCHSMatched = HTriCHSMatched = HQuadCHSMatched = 0;
     nPFCandidates = nPFCandidatesTrack = nPFCandidatesHighPurityTrack = nPFCandidatesFullTrackInfo = nPFCandidatesFullTrackInfo_pt = nPFCandidatesFullTrackInfo_hasTrackDetails = 0;
+    nTriggerObjectsDoubleJet90 = nTriggerObjectsQuadJet45 = nTriggerObjectsDoubleJetC112MaxDeta1p6 = nTriggerObjectsDoubleJetC112 = nTriggerObjectsSixJet30 = nTriggerObjectsQuadPFJetMqq240 = nTriggerObjectsQuadPFJetMqq500 = 0;
+    nFilterObjectsQuadJet45_hltL1s_dRp5 = nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5 = nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5 = nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5 = 0;
+    nFilterObjectsQuadJet45_hltL1s_dRp4 = nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4 = nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4 = nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4 = 0;
+    nFilterObjectsQuadJet45_hltL1s_dRp2 = nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2 = nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2 = nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2 = 0;
+    nFilterObjectsDoubleJet90_hltL1s_dRp5 = nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5 = nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5 = nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5 = nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5 =  nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5 = 0;
+    nFilterObjectsDoubleJet90_hltL1s_dRp4 = nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4 = nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4 = nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4 = nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4 =  nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4 = 0;
+    nFilterObjectsDoubleJet90_hltL1s_dRp2 = nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2 = nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2 = nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2 = nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2 =  nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2 = 0;
+
     //HDiCalo = HTriCalo = HQuadCalo = HDiCaloMatched = HTriCaloMatched = HQuadCaloMatched = 0;
 
     //Event info
@@ -261,8 +280,56 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     RunNumber = iEvent.id().run();
 
     //GenEventWeight
-    GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
+    //    GenEventWeight = theGenAnalyzer->GenEventWeight(iEvent);
+    std::pair<float, std::vector<double>> GenWeights = theGenAnalyzer->GenEventWeights(iEvent);
+    GenEventWeight = GenWeights.first;
     EventWeight *= GenEventWeight;
+
+    PDF_systweights.clear();
+    GenEventWeight_full_vector.clear();
+
+    if (isShort and isMC){
+      for (unsigned int b = 0; b<GenWeights.second.size(); b++){
+	GenEventWeight_full *= GenWeights.second.at(b);
+      }
+      GenEventWeight_full_vector = GenWeights.second;
+
+      std::map<std::string, float> PDFWeights = theGenAnalyzer->GetPDFWeight(iEvent);
+      PDFweight_Q = PDFWeights["Q"];
+      PDFweight_id1 = PDFWeights["id1"];
+      PDFweight_id2 = PDFWeights["id2"];
+      PDFweight_x1 = PDFWeights["x1"];
+      PDFweight_x2 = PDFWeights["x2"];
+      PDFweight_xPDF1 = PDFWeights["xPDF1"];
+      PDFweight_xPDF2 = PDFWeights["xPDF2"];
+
+      std::pair<float, std::vector<float>> PDFsystematics = theGenAnalyzer->GetPDFsystematics(iEvent);
+      PDF_originalXWGTUP = PDFsystematics.first;
+      PDF_systweights = PDFsystematics.second;
+
+      if (PDF_systweights.size() > 9){
+	murmuf_weight_upup = PDF_systweights.at(4)/PDF_originalXWGTUP;
+	murmuf_weight_upnone = PDF_systweights.at(3)/PDF_originalXWGTUP;
+	murmuf_weight_noneup = PDF_systweights.at(1)/PDF_originalXWGTUP;
+	murmuf_weight_downdown = PDF_systweights.at(8)/PDF_originalXWGTUP;
+	murmuf_weight_downnone = PDF_systweights.at(6)/PDF_originalXWGTUP;
+	murmuf_weight_nonedown = PDF_systweights.at(2)/PDF_originalXWGTUP;
+	murmuf_weight_updown = PDF_systweights.at(5)/PDF_originalXWGTUP;
+	murmuf_weight_downup = PDF_systweights.at(7)/PDF_originalXWGTUP;
+      }
+
+      edm::Handle< double > theprefweight;
+      iEvent.getByToken(prefweight_token, theprefweight ) ;
+      prefiringweight =(*theprefweight);
+
+      edm::Handle< double > theprefweightup;
+      iEvent.getByToken(prefweightup_token, theprefweightup ) ;
+      prefiringweight_up =(*theprefweightup);
+
+      edm::Handle< double > theprefweightdown;
+      iEvent.getByToken(prefweightdown_token, theprefweightdown ) ;
+      prefiringweight_down =(*theprefweightdown);
+    }
 
     //split up signal samples
     if(isCentralProd){
@@ -285,7 +352,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     theTriggerAnalyzer->FillMetFiltersMap(iEvent, MetFiltersMap);
     BadPFMuonFlag = theTriggerAnalyzer->GetBadPFMuonFlag(iEvent);
     BadChCandFlag = theTriggerAnalyzer->GetBadChCandFlag(iEvent);
-    //theTriggerAnalyzer->FillL1FiltersMap(iEvent, L1FiltersMap);//commented; filters are treated differently in 2016 w.r.t. 2017/2018
+    theTriggerAnalyzer->FillL1FiltersMap(iEvent, L1FiltersMap);//commented; filters are treated differently in 2016 w.r.t. 2017/2018
 
     // 27 Sep 2018: saving only events that fired at least one trigger, to reduce output size
     for(auto it = TriggerMap.begin(); it != TriggerMap.end(); it++)
@@ -305,7 +372,9 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
 
     ////if(!AtLeastOneTrigger && WriteOnlyTriggerEvents) std::cout << "This event can be rejected" << std::endl;
+    All_histo->Fill(1., EventWeight);
     if(!AtLeastOneTrigger && WriteOnlyTriggerEvents) return;
+    Trigger_pass->Fill(1., EventWeight);
 
     // 10 Dec 2018: saving only events that fired at least one L1 seed
     // 11 Feb 2020: commented, filters treated differently in 2016 w.r.t. 2017-2018
@@ -318,6 +387,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //}
 
     if(!AtLeastOneL1Filter && WriteOnlyL1FilterEvents) return;
+    AtLeastOneL1Filter_pass->Fill(1., EventWeight);
 
     //Trigger-dependent standalone objects
     //They will be used for trigger matching
@@ -374,11 +444,13 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     GenHiggs.clear();
     GenLLPs.clear();
     GenBquarks.clear();
+    GenTTbarQuarks.clear();
 
     std::vector<reco::GenParticle> GenVBFVect = theGenAnalyzer->FillVBFGenVector(iEvent);
     std::vector<reco::GenParticle> GenHiggsVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idHiggs,statusHiggs);
     std::vector<reco::GenParticle> GenLongLivedVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,idLLP,statusLLP);
     std::vector<reco::GenParticle> GenBquarksVect;
+    std::vector<reco::GenParticle> GenTTbarQuarksVect = theGenAnalyzer->FillGenVectorByIdAndStatus(iEvent,fabs(6),22);;
 
     nGenLL = GenLongLivedVect.size();
 
@@ -392,11 +464,28 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
 
     nGenBquarks = GenBquarksVect.size();
+    nGenTTbarQuarks = GenTTbarQuarksVect.size();
 
     for(unsigned int i = 0; i < GenVBFVect.size(); i++) GenVBFquarks.push_back( GenPType() );
     for(unsigned int i = 0; i < GenHiggsVect.size(); i++) GenHiggs.push_back( GenPType() );
     for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) GenLLPs.push_back( GenPType() );
     for(unsigned int i = 0; i < GenBquarksVect.size(); i++) GenBquarks.push_back( GenPType() );
+    if (isShort) {
+      float top_pt = 0.;
+      float antitop_pt = 0.;
+      for(unsigned int i = 0; i < GenTTbarQuarksVect.size(); i++) {
+	GenTTbarQuarks.push_back( GenPType() );
+	if (GenTTbarQuarksVect[i].pdgId() == 6) top_pt = GenTTbarQuarksVect[i].pt();
+	if (GenTTbarQuarksVect[i].pdgId() == -6) antitop_pt = GenTTbarQuarksVect[i].pt();
+      }
+      //Top pT re-weighting following instructions from https://twiki.cern.ch/twiki/bin/view/CMS/TopPtReweighting#TOP_PAG_corrections_based_on_dat
+      //HINT: this are the default values from the twiki. In case one would like to use it properly, it is recommended to redo the SF procedure and not use the equations below
+      if (GenTTbarQuarksVect.size()==2){
+	float SF_top = exp(0.0615-0.0005*top_pt);
+	float SF_antitop = exp(0.0615-0.0005*antitop_pt);
+	TopPtWeight = sqrt(SF_top*SF_antitop);
+      }
+    }
 
     if(nGenBquarks>0) gen_b_radius = GenBquarksVect.at(0).mother()? sqrt(pow(GenBquarksVect.at(0).vx() - GenBquarksVect.at(0).mother()->vx(),2) + pow(GenBquarksVect.at(0).vy() - GenBquarksVect.at(0).mother()->vy(),2) + pow(GenBquarksVect.at(0).vz() - GenBquarksVect.at(0).mother()->vz(),2)) : -1.;
     if(nGenLL>0) m_pi = GenLongLivedVect.at(0).mass();
@@ -468,7 +557,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "Electrons" << std::endl;
     std::vector<pat::Electron> ElecVect = theElectronAnalyzer->FillElectronVector(iEvent);
     std::vector<pat::Electron> TightElecVect;
-    if (isControl) Electrons.clear();
+    if (isControl or isShort) Electrons.clear();
 
     for(unsigned int a = 0; a<ElecVect.size(); a++)
       {
@@ -488,7 +577,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "Muons" << std::endl;
     std::vector<pat::Muon> MuonVect = theMuonAnalyzer->FillMuonVector(iEvent);
     std::vector<pat::Muon> TightMuonVect;
-    if (isControl) Muons.clear();
+    if (isControl or isShort) Muons.clear();
     for(unsigned int a = 0; a<MuonVect.size(); a++)
       {
 	if(MuonVect.at(a).hasUserInt("isTight") && MuonVect.at(a).userInt("isTight")>0 && MuonVect.at(a).hasUserFloat("pfIso04") && MuonVect.at(a).userFloat("pfIso04")<0.15)//tight iso for muons
@@ -525,25 +614,26 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
     //if(EventNumber!=44169) return;
-    if(HT<100) return;//Avoid events with low HT//WAIT!!
+    if(isCalo && HT<100) return;//Avoid events with low HT//WAIT!!
     if(isCalo && MET.pt()<120) return;//Avoid events with very low MET for calo analysis
     if(isCalo && nMuons>0) return;//Veto leptons and photons!
     if(isCalo && nTaus>0) return;//Veto leptons and photons!
     if(isCalo && nElectrons>0) return;//Veto leptons and photons!
     if(isCalo && nPhotons>0) return;//Veto leptons and photons!
 
-    if(isShort && !isControl){
-      if (nMuons>0) return;//Veto leptons and photons!
-      if( nTaus>0) return;//Veto leptons and photons!
-      if(nElectrons>0) return;//Veto leptons and photons!
-      if(nPhotons>0) return;//Veto leptons and photons!
-    }
-    if(isShort && isControl){
-      //if(nTightMuons!=1 || nTightElectrons!=1) return; //Control region for short lifetimes
-      if(nTightMuons<1 && nTightElectrons<1) return; //Control region for short lifetimes
-      //      if(nTaus<1) return;//Veto taus!
-      //      if(nPhotons<1) return;//Veto photons!
-    }
+    // commented to write one bunch of ntuples for signal and control region
+    // if(isShort && !isControl){
+    //   if (nMuons>0) return;//Veto leptons and photons!
+    //   if( nTaus>0) return;//Veto leptons and photons!
+    //   if(nElectrons>0) return;//Veto leptons and photons!
+    //   if(nPhotons>0) return;//Veto leptons and photons!
+    // }
+    // if(isShort && isControl){
+    //   //if(nTightMuons!=1 || nTightElectrons!=1) return; //Control region for short lifetimes
+    //   if(nTightMuons<1 && nTightElectrons<1) return; //Control region for short lifetimes
+    //   //      if(nTaus<1) return;//Veto taus!
+    //   //      if(nPhotons<1) return;//Veto photons!
+    // }
 
 
     //------------------------------------------------------------------------------------------
@@ -560,7 +650,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     float LeptonWeightUp = 1.;
     float LeptonWeightDown = 1.;
 
-    if (isShort && isControl) {
+    if (isShort or isControl) {
 
       //// ---------- Z TO LEPTONS ----------
       if(TightMuonVect.size()>=2 || TightElecVect.size()>=2) {
@@ -602,18 +692,18 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         }
         //    Build candidate
         if(m1 >= 0 && m2 >= 0) {
-        	theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m1) : TightMuonVect.at(m2));
-        	theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m2) : TightMuonVect.at(m1));
-        	addP4.set(theZ);
-        	isZtoMM = true;
+	  theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m1) : TightMuonVect.at(m2));
+	  theZ.addDaughter(TightMuonVect.at(m1).charge() < 0 ? TightMuonVect.at(m2) : TightMuonVect.at(m1));
+	  addP4.set(theZ);
+	  isZtoMM = true;
 
-        	//SF
+	  //SF
 
-        	if(isControl && isMC && !is2016) {
-        	  float LeptonWeightUnc = 0.;
-            LeptonWeightUp = 0.;
-            LeptonWeightDown = 0.;
-        	  /// FIXED -> APPLYING THE SF FOR IsoMu24 NOT ANYLONGER HADRCODED <- FIXED ///
+	  if((isShort or isControl) && isMC && !is2016) {
+	    LeptonWeightUnc = 0.;
+	    LeptonWeightUp = 0.;
+	    LeptonWeightDown = 0.;
+	    /// FIXED -> APPLYING THE SF FOR IsoMu24 NOT ANYLONGER HADRCODED <- FIXED ///
             if (isIsoMu24_OR_IsoTkMu24) {
               if (TightMuonVect.at(m1).pt() > TightMuonVect.at(m2).pt() ) {
                 LeptonWeight     *= theMuonAnalyzer->GetMuonTriggerSFIsoMu24(TightMuonVect.at(m1));
@@ -641,19 +731,19 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         	  // //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(MuonVect.at(m1))      ,2);
         	  // //LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonTrkSFError(MuonVect.at(m2))      ,2);
 
-        	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m1), 3);
-         	  LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m2), 3);
-         	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m1), 3);
-         	  LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m2), 3);
-
-        	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m1), 3)    ,2);
-         	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m2), 3)    ,2);
-         	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m1), 3)   ,2);
-         	  LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m2), 3)   ,2);
-
-        	  LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
-    	      LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
-        	}
+	    LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m1), 3);
+	    LeptonWeight *= theMuonAnalyzer->GetMuonIdSF(TightMuonVect.at(m2), 3);
+	    LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m1), 3);
+	    LeptonWeight *= theMuonAnalyzer->GetMuonIsoSF(TightMuonVect.at(m2), 3);
+	    
+	    LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m1), 3)    ,2);
+	    LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIdSFError(TightMuonVect.at(m2), 3)    ,2);
+	    LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m1), 3)   ,2);
+	    LeptonWeightUnc += pow(theMuonAnalyzer->GetMuonIsoSFError(TightMuonVect.at(m2), 3)   ,2);
+	    
+	    LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
+	    LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
+	  }
         }
       }
 
@@ -683,10 +773,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         	isZtoEE = true;
 
         	// SF
-        	if(isControl && isMC && !is2016) {
-            float LeptonWeightUnc = 0.;
-            LeptonWeightUp = 0.;
-            LeptonWeightDown = 0.;
+        	if((isShort or isControl) && isMC && !is2016) {
+		  LeptonWeightUnc = 0.;
+		  LeptonWeightUp = 0.;
+		  LeptonWeightDown = 0.;
         	  /// FIXME -> APPLYING THE SF FOR Ele27Tight HADRCODED <- FIXME ///
         	  // if (TightElecVect.at(e1).pt() > TightElecVect.at(e2).pt() ){
         	  //   LeptonWeight     *= theElectronAnalyzer->GetElectronTriggerSFEle27Tight(TightElecVect.at(e1));
@@ -707,7 +797,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
          	  LeptonWeightUnc += pow(theElectronAnalyzer->GetElectronIdSFError(TightElecVect.at(e2), 3)     ,2);
 
         	  LeptonWeightUp   = LeptonWeight+sqrt(LeptonWeightUnc);
-            LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
+		  LeptonWeightDown = LeptonWeight-sqrt(LeptonWeightUnc);
         	}
         }
       }
@@ -720,12 +810,13 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         theW.addDaughter(MET);
         addP4.set(theW);
 
-        if (theW.mt()<100. && isControl){
-          return;
-        }
+	// commented to write one bunch of ntuples for signal and control region
+        // if (theW.mt()<100. && isControl){
+        //   return;
+        // }
 
         // SF
-        if(isControl && isMC && !is2016) {
+	if((isShort or isControl) && isMC && !is2016) {
           float LeptonWeightUnc = 0.;
           LeptonWeightUp = 0.;
           LeptonWeightDown = 0.;
@@ -753,11 +844,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         theW.addDaughter(MET);
         addP4.set(theW);
 
-        if (theW.mt()<100. && isControl){
-          return;
-        }
+	// commented to write one bunch of ntuples for signal and control region
+        // if (theW.mt()<100. && isControl){
+        //   return;
+        // }
 
-        if(isControl && isMC && !is2016) {
+	if((isShort or isControl) && isMC && !is2016) {
           float LeptonWeightUnc = 0.;
           LeptonWeightUp = 0.;
           LeptonWeightDown = 0.;
@@ -924,7 +1016,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       {
 	if(!isVBF) return;
       }
-
+    isVBF_pass->Fill(1., EventWeight);
 
     //This trigger not used anymore
     ////Find the VBF pair among trigger standalone objects
@@ -1027,6 +1119,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (WriteAllJets) AllJets.clear();
     //AllBarrelJets.clear();
     CHSJets.clear();
+    ggHJet.clear();
     VBFPairJets.clear();
     if(WriteFatJets) CHSFatJets.clear();
     //CaloJets.clear();
@@ -1058,6 +1151,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //	  {
     //	    if(TriggerVBFPairJetsVect.at(s).pt()==PotentialTriggerDisplacedJets.at(r).pt() && isTriggerVBF)//if not tagged as VBF trigger pair, don't remove them
     //	      {
+    // !!!FIXME!!! If the following line needs to be used, it needs to be adjusted!
     //		PotentialTriggerDisplacedJets.erase(PotentialTriggerDisplacedJets.begin()+r);
     //	      }
     //	  }
@@ -1171,9 +1265,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //Remove duplicates from Matched CHSJets Vector
     for(unsigned int r = 0; r<MatchedCHSJetsVect.size(); r++)
       {
-	for(unsigned int s = 0; s<MatchedCHSJetsVect.size(); s++)
+	for(unsigned int s = 0; s<MatchedCHSJetsVect.size();)
 	  {
 	    if(r!=s && MatchedCHSJetsVect[s].pt()==MatchedCHSJetsVect[r].pt()) MatchedCHSJetsVect.erase(MatchedCHSJetsVect.begin()+s);
+	    else s++;
 	  }//duplicates removed
       }
     nMatchedCHSJets = MatchedCHSJetsVect.size();
@@ -1275,13 +1370,13 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
 
-    if(PerformVBF)
+    if(PerformVBF  && isVBF)
       {
-        for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+        for(unsigned int r = CHSJetsVect.size()-1; r = 0; r--)
           {
             for(unsigned int s = 0; s<VBFPairJetsVect.size(); s++)
               {
-                if(VBFPairJetsVect[s].pt()==CHSJetsVect[r].pt() && isVBF) //if jets aren't tagged as VBF jets, don't remove them
+                if(VBFPairJetsVect[s].pt()==CHSJetsVect[r].pt()) //if jets aren't tagged as VBF jets, don't remove them
                   {
                     CHSJetsVect.erase(CHSJetsVect.begin()+r);
                   }
@@ -1290,14 +1385,14 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       }
 
-    else if(PerformggH)
+    else if(PerformggH && isggH)
       {
 
-        for(unsigned int r = 0; r<CHSJetsVect.size(); r++)
+        for(unsigned int r = CHSJetsVect.size()-1; r = 0; r--)
           {
             for(unsigned int s = 0; s<ggHJetVect.size(); s++)
               {
-                if(ggHJetVect[s].pt()==CHSJetsVect[r].pt() && isggH) //if jets aren't tagged as ggH jets, don't remove them
+                if(ggHJetVect[s].pt()==CHSJetsVect[r].pt() ) //if jets aren't tagged as ggH jets, don't remove them
 
                   {
                     CHSJetsVect.erase(CHSJetsVect.begin()+r);
@@ -1308,6 +1403,13 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     nCHSJets = CHSJetsVect.size();
 
+    if (isShort){
+      for(unsigned int r = 0; r<CHSJetsVect.size(); r++){
+	if (fabs(CHSJetsVect[r].eta()) > 2.0 and fabs(CHSJetsVect[r].eta()) < 3.0){
+	  nPrefiringJets += 1;  
+	}
+      }
+    }
 
     //QCD killer cut
     for(unsigned int i = 0; i < CHSJetsVect.size(); i++) if(fabs(reco::deltaPhi(CHSJetsVect[i].phi(), MET.phi())) < MinJetMetDPhi) MinJetMetDPhi = fabs(reco::deltaPhi(CHSJetsVect[i].phi(), MET.phi()));
@@ -1591,7 +1693,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     // B-tagging discriminant shape calibration for AK4 CHS jets
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-    if (isShort){
+    if (isShort and isMC){
       std::map<std::string, float> btagWeights = theCHSJetAnalyzer->CalculateBtagReshapeSF(CHSJetsVect);
       bTagWeight_central = btagWeights["weight_central"];
       bTagWeight_jesup = btagWeights["weight_jesup"];
@@ -1649,6 +1751,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	      {
 	      delta_R_CaloJets_asVBF = min(delta_R_CaloJets_asVBF,current_delta_R_CaloJets_asVBF);
               if(isVerbose) std::cout << "This calo jet removed because overlaps VBF pair: pt " << CaloJetsVect[r].pt() << " ; eta: " << CaloJetsVect[r].eta() << " ; phi: " << CaloJetsVect[r].phi() << std::endl;
+	      // !!!FIXME!!! If the following line needs to be used, it needs to be adjusted!
               CaloJetsVect.erase(CaloJetsVect.begin()+r);
 	      }
 
@@ -1697,6 +1800,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       {
 	for(unsigned int s = 0; s<MatchedCaloJetsVect.size(); s++)
 	  {
+	  // !!!FIXME!!! If the following line needs to be used, it needs to be adjusted!
 	    if(r!=s && MatchedCaloJetsVect[s].pt()==MatchedCaloJetsVect[r].pt()) MatchedCaloJetsVect.erase(MatchedCaloJetsVect.begin()+s);
 	  }//duplicates removed
       }
@@ -1832,9 +1936,10 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	//Remove duplicates from Matched CHSJets Vector
 	for(unsigned int r = 0; r<MatchedCHSAK8JetsVect.size(); r++)
 	  {
-	    for(unsigned int s = 0; s<MatchedCHSAK8JetsVect.size(); s++)
+	    for(unsigned int s = 0; s<MatchedCHSAK8JetsVect.size();)
 	      {
 		if(r!=s && MatchedCHSAK8JetsVect[s].pt()==MatchedCHSAK8JetsVect[r].pt()) MatchedCHSAK8JetsVect.erase(MatchedCHSAK8JetsVect.begin()+s);
+		else s++;
 	      }//duplicates removed
 	  }
 	nMatchedFatJets = MatchedCHSAK8JetsVect.size();
@@ -1933,10 +2038,13 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //for(unsigned int i = 0; i < CaloJetsVect.size(); i++) CaloJets.push_back( CaloJetType() );
     //for(unsigned int i = 0; i < AllBarrelJetsVect.size(); i++) AllBarrelJets.push_back( JetType() );
     if (WriteAllJets) for(unsigned int i = 0; i < AllJetsVect.size(); i++) AllJets.push_back( JetType() );
-    for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );
     if (WriteFatJets) for(unsigned int i = 0; i < CHSFatJetsVect.size(); i++) CHSFatJets.push_back( FatJetType() );
-    for(unsigned int i = 0; i < ggHJetVect.size(); i++) ggHJet.push_back( JetType() );
-    if (isControl) {
+
+    //    if (!isShort){
+      for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++) VBFPairJets.push_back( JetType() );
+      for(unsigned int i = 0; i < ggHJetVect.size(); i++) ggHJet.push_back( JetType() );
+      //    }
+    if (isShort or isControl) {
       for(unsigned int i = 0; i < TightMuonVect.size(); i++) Muons.push_back( LeptonType() );
       for(unsigned int i = 0; i < TightElecVect.size(); i++) Electrons.push_back( LeptonType() );
     }
@@ -1963,6 +2071,271 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     number_of_PV = PVertexVect.size();
     number_of_SV = SVertexVect.size();
     nSV = number_of_SV;
+
+
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+    // Trigger filters for short lifetime
+    //------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------
+
+    if (isShort){
+      std::string DoubleJet90_string = "HLT_DoubleJet90_Double30_TripleBTagCSV_p087_v";
+      std::vector<pat::TriggerObjectStandAlone> DoubleJet90_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,DoubleJet90_string);
+      nTriggerObjectsDoubleJet90 = DoubleJet90_Vec.size();
+
+      std::string QuadJet45_string = "HLT_QuadJet45_TripleBTagCSV_p087_v";
+      std::vector<pat::TriggerObjectStandAlone> QuadJet45_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,QuadJet45_string);
+      nTriggerObjectsQuadJet45 = QuadJet45_Vec.size();
+
+      std::string DoubleJetC112MaxDeta1p6_string = "HLT_DoubleJetsC112_DoubleBTagCSV_p014_DoublePFJetsC112MaxDeta1p6_v";
+      std::vector<pat::TriggerObjectStandAlone> DoubleJetC112MaxDeta1p6_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,DoubleJetC112MaxDeta1p6_string);
+      nTriggerObjectsDoubleJetC112MaxDeta1p6 = DoubleJetC112MaxDeta1p6_Vec.size();
+
+      std::string DoubleJetC112_string = "HLT_DoubleJetsC112_DoubleBTagCSV_p026_DoublePFJetsC172_v";
+      std::vector<pat::TriggerObjectStandAlone> DoubleJetC112_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,DoubleJetC112_string);
+      nTriggerObjectsDoubleJetC112 = DoubleJetC112_Vec.size();
+    
+      std::string SixJet30_string = "HLT_PFHT400_SixJet30_DoubleBTagCSV_p056_v";
+      std::vector<pat::TriggerObjectStandAlone> SixJet30_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,SixJet30_string);
+      nTriggerObjectsSixJet30 = SixJet30_Vec.size();
+
+      std::string QuadPFJetMqq240_string = "HLT_QuadPFJet_BTagCSV_p016_p11_VBF_Mqq240_v";
+      std::vector<pat::TriggerObjectStandAlone> QuadPFJetMqq240_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,QuadPFJetMqq240_string);
+      nTriggerObjectsQuadPFJetMqq240 = QuadPFJetMqq240_Vec.size();
+
+      std::string QuadPFJetMqq500_string = "HLT_QuadPFJet_BTagCSV_p016_VBF_Mqq500_v";
+      std::vector<pat::TriggerObjectStandAlone> QuadPFJetMqq500_Vec  = theTriggerAnalyzer->FillTriggerObjectVector(iEvent,QuadPFJetMqq500_string);
+      nTriggerObjectsQuadPFJetMqq500 = QuadPFJetMqq500_Vec.size();
+
+
+
+      for(unsigned int s = 0; s<CHSJetsVect.size(); s++){
+	bool is_hltL1;
+	bool is_hltDoubleCentralJet90;
+	bool is_hltQuadCentralJet30;
+	bool is_hltDoublePFCentralJetLooseID90;
+	bool is_hltQuadPFCentralJetLooseID30;
+	bool is_hltBTagCaloCSVp087Triple;
+	float current_delta_R_DoubleJet90 = 1000.;
+	for(unsigned int t1 = 0; t1 < DoubleJet90_Vec.size(); t1++){
+	  is_hltL1 = false;
+	  is_hltDoubleCentralJet90 = false;
+	  is_hltQuadCentralJet30 = false;
+	  is_hltDoublePFCentralJetLooseID90 = false;
+	  is_hltQuadPFCentralJetLooseID30 = false;
+	  is_hltBTagCaloCSVp087Triple = false;
+	  current_delta_R_DoubleJet90 = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),DoubleJet90_Vec.at(t1).eta(),DoubleJet90_Vec.at(t1).phi()));
+	  if (current_delta_R_DoubleJet90<0.5){
+	    CHSJetsVect.at(s).addUserInt("TriggerMatched_DoubleJet90_dRp5",1);
+	    if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltL1sTripleJetVBFIorHTTIorDoubleJetCIorSingleJet")){
+	      is_hltL1 = true;
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltL1s",1);
+	      nFilterObjectsDoubleJet90_hltL1s_dRp5 += 1;
+	    }
+	    if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltDoubleCentralJet90")){
+	      is_hltDoubleCentralJet90 = true;
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltDoubleCentralJet90",1);
+	      nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5 += 1;
+	    }
+	    if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltQuadCentralJet30")){
+	      is_hltQuadCentralJet30 = true;
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltQuadCentralJet30",1);
+	      nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5 += 1;
+	    }
+	    if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltDoublePFCentralJetLooseID90")){
+	      is_hltDoublePFCentralJetLooseID90 = true;
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltDoublePFCentralJetLooseID90",1);
+	      nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5 += 1;
+	    }
+	    if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltQuadPFCentralJetLooseID30")){
+	      is_hltQuadPFCentralJetLooseID30 = true;
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltQuadPFCentralJetLooseID30",1);
+	      nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5 += 1;
+	    }
+	    if (DoubleJet90_Vec.at(t1).hasFilterLabel("hltBTagCaloCSVp087Triple")){
+	      is_hltBTagCaloCSVp087Triple = true;
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_DoubleJet90_hltBTagCaloCSVp087Triple",1);
+	      nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5 += 1;
+	    }
+
+	    if (current_delta_R_DoubleJet90<0.4){
+	      CHSJetsVect.at(s).addUserInt("TriggerMatched_DoubleJet90_dRp4",1);
+	      if (is_hltL1){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltL1s",1);
+		nFilterObjectsDoubleJet90_hltL1s_dRp4 += 1;
+	      }
+	      if (is_hltDoubleCentralJet90){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltDoubleCentralJet90",1);
+		nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4 += 1;
+	      }
+	      if (is_hltQuadCentralJet30){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltQuadCentralJet30",1);
+		nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4 += 1;
+	      }
+	      if (is_hltDoublePFCentralJetLooseID90){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltDoublePFCentralJetLooseID90",1);
+		nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4 += 1;
+	      }
+	      if (is_hltQuadPFCentralJetLooseID30){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltQuadPFCentralJetLooseID30",1);
+		nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4 += 1;
+	      }
+	      if (is_hltBTagCaloCSVp087Triple){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_DoubleJet90_hltBTagCaloCSVp087Triple",1);
+		nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4 += 1;
+	      }
+
+	      if (current_delta_R_DoubleJet90<0.2){
+		CHSJetsVect.at(s).addUserInt("TriggerMatched_DoubleJet90_dRp2",1);
+		if (is_hltL1){
+		  CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltL1s",1);
+		  nFilterObjectsDoubleJet90_hltL1s_dRp2 += 1;
+		}
+		if (is_hltDoubleCentralJet90){
+		  CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltDoubleCentralJet90",1);
+		  nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2 += 1;
+		}
+		if (is_hltQuadCentralJet30){
+		  CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltQuadCentralJet30",1);
+		  nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2 += 1;
+		}
+		if (is_hltDoublePFCentralJetLooseID90){
+		  CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltDoublePFCentralJetLoseID90",1);
+		  nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2 += 1;
+		}
+		if (is_hltQuadPFCentralJetLooseID30){
+		  CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltQuadPFCentralJetLooseID30",1);
+		  nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2 += 1;
+		}
+		if (is_hltBTagCaloCSVp087Triple){
+		  CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_DoubleJet90_hltBTagCaloCSVp087Triple",1);
+		  nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2 += 1;
+		}
+	      }//if < 0.2
+	    }//if < 0.4
+	  }//if < 0.5
+	}//for loop DoubleJet90Vect
+
+      float current_delta_R_QuadJet45 = 1000.;
+      bool is_hltL1s;
+      bool is_hltQuadCentralJet45;
+      bool is_hltQuadPFCentralJetLooseID45;
+      //      bool is_hltBTagCaloCSVp087Triple;
+      for(unsigned int t1 = 0; t1 < QuadJet45_Vec.size(); t1++){
+	is_hltL1s = false;
+	is_hltQuadCentralJet45 = false;
+	is_hltQuadPFCentralJetLooseID45 = false;
+	is_hltBTagCaloCSVp087Triple = false;
+	current_delta_R_QuadJet45 = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),QuadJet45_Vec.at(t1).eta(),QuadJet45_Vec.at(t1).phi()));
+	if (current_delta_R_QuadJet45<0.5){
+	  CHSJetsVect.at(s).addUserInt("TriggerMatched_QuadJet45_dRp5",1);
+	  if(QuadJet45_Vec.at(t1).hasFilterLabel("hltL1sQuadJetC50IorQuadJetC60IorHTT280IorHTT300IorHTT320IorTripleJet846848VBFIorTripleJet887256VBFIorTripleJet927664VBF") || QuadJet45_Vec.at(t1).hasFilterLabel("hltL1sQuadJetCIorTripleJetVBFIorHTT")){
+	    is_hltL1s = true;
+	    CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_QuadJet45_hltL1s",1);
+	    nFilterObjectsQuadJet45_hltL1s_dRp5 += 1;
+	  }
+	  if (QuadJet45_Vec.at(t1).hasFilterLabel("hltQuadCentralJet45")){
+	    is_hltQuadCentralJet45 = true;
+	    CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_QuadJet45_hltQuadCentralJet45",1);
+	    nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5 += 1;
+	  }
+	  if (QuadJet45_Vec.at(t1).hasFilterLabel("hltQuadPFCentralJetLooseID45")){
+	    is_hltQuadPFCentralJetLooseID45 = true;
+	    CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_QuadJet45_hltQuadPFCentralJetLooseID45",1);
+	    nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5 += 1;
+	  }
+	  if (QuadJet45_Vec.at(t1).hasFilterLabel("hltBTagCaloCSVp087Triple")){
+	    is_hltBTagCaloCSVp087Triple = true;
+	    CHSJetsVect.at(s).addUserInt("FilterMatched_dRp5_QuadJet45_hltBTagCaloCSVp087Triple",1);
+	    nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5 += 1;
+	  }
+
+	  if (current_delta_R_QuadJet45<0.4){
+	    CHSJetsVect.at(s).addUserInt("TriggerMatched_QuadJet45_dRp4",1);
+	    if (is_hltL1s) {
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_QuadJet45_hltL1s",1);
+	      nFilterObjectsQuadJet45_hltL1s_dRp4 += 1;
+	    }
+	    if (is_hltQuadCentralJet45){
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_QuadJet45_hltQuadCentralJet45",1);
+	      nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4 += 1;
+	    }
+	    if (is_hltQuadPFCentralJetLooseID45){
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_QuadJet45_hltQuadPFCentralJetLooseID45",1);
+	      nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4 += 1;
+	    }
+	    if (is_hltBTagCaloCSVp087Triple){
+	      CHSJetsVect.at(s).addUserInt("FilterMatched_dRp4_QuadJet45_hltBTagCaloCSVp087Triple",1);
+	      nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4 += 1;
+	    }
+
+	    if (current_delta_R_QuadJet45<0.2){
+	      CHSJetsVect.at(s).addUserInt("TriggerMatched_QuadJet45_dRp2",1);
+	      if (is_hltL1s){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_QuadJet45_hltL1s",1);
+		nFilterObjectsQuadJet45_hltL1s_dRp2 += 1;
+	      }
+	      if (is_hltQuadCentralJet45){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_QuadJet45_hltQuadCentralJet45",1);
+		nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2 += 1;
+	      }
+	      if (is_hltQuadPFCentralJetLooseID45){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_QuadJet45_hltQuadPFCentralJetLooseID45",1);
+		nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2 += 1;
+	      }
+	      if (is_hltBTagCaloCSVp087Triple){
+		CHSJetsVect.at(s).addUserInt("FilterMatched_dRp2_QuadJet45_hltBTagCaloCSVp087Triple",1);
+		nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2 += 1;
+	      }
+	    }//if < 0.2
+	  }//if < 0.4
+	}//if < 0.5
+      }//for loop QuadJet45Vect
+
+      float current_delta_R_DoubleJetC112MaxDeta1p6 = 1000.;
+      for(unsigned int t1 = 0; t1 < DoubleJetC112MaxDeta1p6_Vec.size(); t1++){
+	current_delta_R_DoubleJetC112MaxDeta1p6 = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),DoubleJetC112MaxDeta1p6_Vec.at(t1).eta(),DoubleJetC112MaxDeta1p6_Vec.at(t1).phi()));
+	if (current_delta_R_DoubleJetC112MaxDeta1p6<0.5){
+	  CHSJetsVect.at(s).addUserInt("TriggerMatched_DoubleJetC112MaxDeta1p6",1);
+	  break;
+	}
+      }
+      float current_delta_R_DoubleJetC112 = 1000.;
+      for(unsigned int t1 = 0; t1 < DoubleJetC112_Vec.size(); t1++){
+	current_delta_R_DoubleJetC112 = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),DoubleJetC112_Vec.at(t1).eta(),DoubleJetC112_Vec.at(t1).phi()));
+	if (current_delta_R_DoubleJetC112<0.5){
+	  CHSJetsVect.at(s).addUserInt("TriggerMatched_DoubleJetC112",1);
+	  break;
+	}
+      }
+      float current_delta_R_SixJet30 = 1000.;
+      for(unsigned int t1 = 0; t1 < SixJet30_Vec.size(); t1++){
+	current_delta_R_SixJet30 = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),SixJet30_Vec.at(t1).eta(),SixJet30_Vec.at(t1).phi()));
+	if (current_delta_R_SixJet30<0.5){
+	  CHSJetsVect.at(s).addUserInt("TriggerMatched_SixJet30",1);
+	  break;
+	}
+      }
+      float current_delta_R_QuadPFJetMqq240 = 1000.;
+      for(unsigned int t1 = 0; t1 < QuadPFJetMqq240_Vec.size(); t1++){
+	current_delta_R_QuadPFJetMqq240 = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),QuadPFJetMqq240_Vec.at(t1).eta(),QuadPFJetMqq240_Vec.at(t1).phi()));
+	if (current_delta_R_QuadPFJetMqq240<0.5){
+	  CHSJetsVect.at(s).addUserInt("TriggerMatched_QuadPFJetMqq240",1);
+	  break;
+	}
+      }
+      float current_delta_R_QuadPFJetMqq500 = 1000.;
+      for(unsigned int t1 = 0; t1 < QuadPFJetMqq500_Vec.size(); t1++){
+	current_delta_R_QuadPFJetMqq500 = fabs(reco::deltaR(CHSJetsVect.at(s).eta(),CHSJetsVect.at(s).phi(),QuadPFJetMqq500_Vec.at(t1).eta(),QuadPFJetMqq500_Vec.at(t1).phi()));
+	if (current_delta_R_QuadPFJetMqq500<0.5){
+	  CHSJetsVect.at(s).addUserInt("TriggerMatched_QuadPFJetMqq500",1);
+	  break;
+	}
+      }
+      }//for loop jets
+
+    }//isShort
 
     //------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
@@ -2437,11 +2810,12 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       ObjectsFormat::FillJetType(CHSJets[i], &CHSJetsVect[i], isMC);//Remove CHSJets.size(), testing
     }
 
-    for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++){
-      ObjectsFormat::FillJetType(VBFPairJets[i], &VBFPairJetsVect[i], isMC);//nullFloat[i], nullFloat[i], nullFloat[i]);
-    }
 
-    for(unsigned int i = 0; i < ggHJetVect.size(); i++) ObjectsFormat::FillJetType(ggHJet[i], &ggHJetVect[i], isMC);
+      for(unsigned int i = 0; i < VBFPairJetsVect.size(); i++){
+	ObjectsFormat::FillJetType(VBFPairJets[i], &VBFPairJetsVect[i], isMC);//nullFloat[i], nullFloat[i], nullFloat[i]);
+
+      for(unsigned int i = 0; i < ggHJetVect.size(); i++) ObjectsFormat::FillJetType(ggHJet[i], &ggHJetVect[i], isMC);
+    }
 
     //for(unsigned int i = 0; i < AllBarrelJetsVect.size(); i++){
     //ObjectsFormat::FillJetType(AllBarrelJets[i], &AllBarrelJetsVect[i], isMC, 0., 0., 0.);
@@ -2462,7 +2836,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (WriteGenHiggs) for(unsigned int i = 0; i < GenHiggsVect.size(); i++) ObjectsFormat::FillGenPType(GenHiggs[i], &GenHiggsVect[i]);
     if (WriteGenLLPs) for(unsigned int i = 0; i < GenLongLivedVect.size(); i++) ObjectsFormat::FillGenPType(GenLLPs[i], &GenLongLivedVect[i]);
     if (WriteGenBquarks) for(unsigned int i = 0; i < GenBquarksVect.size(); i++) ObjectsFormat::FillGenPType(GenBquarks[i], &GenBquarksVect[i]);
-    if (isControl){
+    if (isShort) for(unsigned int i = 0; i < GenTTbarQuarksVect.size(); i++) ObjectsFormat::FillGenPType(GenTTbarQuarks[i], &GenTTbarQuarksVect[i]);
+    if (isShort or isControl){
       for(unsigned int i = 0; i < Muons.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
       for(unsigned int i = 0; i < Electrons.size(); i++) ObjectsFormat::FillElectronType(Electrons[i], &TightElecVect[i], isMC);
     }
@@ -2475,8 +2850,8 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //     for(unsigned int i = 0; i < Muons.size() && i < TightMuonVect.size(); i++) ObjectsFormat::FillMuonType(Muons[i], &TightMuonVect[i], isMC);
     //   }
     // }
-    ObjectsFormat::FillCandidateType(VBF, &theVBF, isMC);
-    if (isControl) {
+    if (isShort or isControl) {
+      ObjectsFormat::FillCandidateType(VBF, &theVBF, isMC);
         ObjectsFormat::FillCandidateType(Z, &theZ, isMC);
         ObjectsFormat::FillCandidateType(W, &theW, isMC);
     }
@@ -2534,7 +2909,7 @@ Ntuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(isVerbose) std::cout << "TREE FILL!" << std::endl;
     tree -> Fill();
     if(isVerbose) std::cout << "TREE FILLED!!!!!!!!!!!! Go to next event...--->" << std::endl;
-
+ 
 }
 
 
@@ -2608,13 +2983,14 @@ Ntuplizer::beginJob()
     tree -> Branch("LumiNumber" , &LumiNumber , "LumiNumber/L");
     tree -> Branch("RunNumber" , &RunNumber , "RunNumber/L");
     tree -> Branch("EventWeight", &EventWeight, "EventWeight/F");
-    if (isControl){
+    if (isShort or isControl){
       tree -> Branch("EventWeight_leptonSF", &EventWeight_leptonSF, "EventWeight_leptonSF/F");
       tree -> Branch("EventWeight_leptonSFUp", &EventWeight_leptonSFUp, "EventWeight_leptonSFUp/F");
       tree -> Branch("EventWeight_leptonSFDown", &EventWeight_leptonSFDown, "EventWeight_leptonSFDown/F");
       tree -> Branch("LeptonWeight", &LeptonWeight, "LeptonWeight/F");
       tree -> Branch("LeptonWeightUp", &LeptonWeightUp, "LeptonWeightUp/F");
       tree -> Branch("LeptonWeightDown", &LeptonWeightDown, "LeptonWeightDown/F");
+      tree -> Branch("TopPtWeight", &TopPtWeight, "TopPtWeight/F");
     }
     if (isShort){
       tree -> Branch("bTagWeight_central", &bTagWeight_central, "bTagWeight_central/F");
@@ -2636,8 +3012,31 @@ Ntuplizer::beginJob()
       tree -> Branch("bTagWeight_cferr1down", &bTagWeight_cferr1down, "bTagWeight_cferr1down/F");
       tree -> Branch("bTagWeight_cferr2up", &bTagWeight_cferr2up, "bTagWeight_cferr2up/F");
       tree -> Branch("bTagWeight_cferr2down", &bTagWeight_cferr2down, "bTagWeight_cferr2down/F");
+      tree -> Branch("prefiringweight", &prefiringweight, "prefiringweight/F");
+      tree -> Branch("prefiringweight_up", &prefiringweight_up, "prefiringweight_up/F");
+      tree -> Branch("prefiringweight_down", &prefiringweight_down, "prefiringweight_down/F");
+      tree -> Branch("PDFweight_Q", &PDFweight_Q, "PDFweight_Q/F");
+      tree -> Branch("PDFweight_id1", &PDFweight_id1, "PDFweight_id1/F");
+      tree -> Branch("PDFweight_id2", &PDFweight_id2, "PDFweight_id2/F");
+      tree -> Branch("PDFweight_x1", &PDFweight_x1, "PDFweight_x1/F");
+      tree -> Branch("PDFweight_x2", &PDFweight_x2, "PDFweight_x2/F");
+      tree -> Branch("PDFweight_xPDF1", &PDFweight_xPDF1, "PDFweight_xPDF1/F");
+      tree -> Branch("PDFweight_xPDF2", &PDFweight_xPDF2, "PDFweight_xPDF2/F");
+      tree -> Branch("PDF_originalXWGTUP", &PDF_originalXWGTUP, "PDF_originalXWGTUP/F");
+      tree -> Branch("PDF_systweights", &PDF_systweights);
+      tree -> Branch("murmuf_weight_upup", &murmuf_weight_upup, "murmuf_weight_upup/F");
+      tree -> Branch("murmuf_weight_upnone", &murmuf_weight_upnone, "murmuf_weight_upnone/F");
+      tree -> Branch("murmuf_weight_noneup", &murmuf_weight_noneup, "murmuf_weight_noneup/F");
+      tree -> Branch("murmuf_weight_downdown", &murmuf_weight_downdown, "murmuf_weight_downdown/F");
+      tree -> Branch("murmuf_weight_downnone", &murmuf_weight_downnone, "murmuf_weight_downnone/F");
+      tree -> Branch("murmuf_weight_nonedown", &murmuf_weight_nonedown, "murmuf_weight_nonedown/F");
+      tree -> Branch("murmuf_weight_updown", &murmuf_weight_updown, "murmuf_weight_updown/F");
+      tree -> Branch("murmuf_weight_downup", &murmuf_weight_downup, "murmuf_weight_downup/F");
+      
     }
     tree -> Branch("GenEventWeight", &GenEventWeight, "GenEventWeight/F");
+    tree -> Branch("GenEventWeight_full", &GenEventWeight_full, "GenEventWeight_full/F");
+    tree -> Branch("GenEventWeight_full_vector", &GenEventWeight_full_vector);
     tree -> Branch("model",       &model_);
     tree -> Branch("AtLeastOneTrigger" , &AtLeastOneTrigger , "AtLeastOneTrigger/O");
     tree -> Branch("AtLeastOneL1Filter" , &AtLeastOneL1Filter , "AtLeastOneL1Filter/O");
@@ -2650,6 +3049,7 @@ Ntuplizer::beginJob()
     tree -> Branch("ZewkWeight", &ZewkWeight, "ZewkWeight/F");
     tree -> Branch("WewkWeight", &WewkWeight, "WewkWeight/F");
     tree -> Branch("nGenBquarks" , &nGenBquarks , "nGenBquarks/L");
+    if (isShort) tree -> Branch("nGenTTbarQuarks" , &nGenTTbarQuarks , "nGenTTbarQuarks/L");
     tree -> Branch("nGenLL" , &nGenLL , "nGenLL/L");
     tree -> Branch("nMatchedCHSJets" , &nMatchedCHSJets , "nMatchedCHSJets/L");
     tree -> Branch("nMatchedFatJets" , &nMatchedFatJets , "nMatchedFatJets/L");
@@ -2661,6 +3061,7 @@ Ntuplizer::beginJob()
     tree -> Branch("nCHSJets" , &nCHSJets , "nCHSJets/L");
     tree -> Branch("nLooseCHSJets" , &nLooseCHSJets , "nLooseCHSJets/L");
     tree -> Branch("nTightCHSJets" , &nTightCHSJets , "nTightCHSJets/L");
+    tree -> Branch("nPrefiringJets" , &nPrefiringJets , "nPrefiringJets/L");
     tree -> Branch("nCHSFatJets" , &nCHSFatJets , "nCHSFatJets/L");
     tree -> Branch("nLooseCHSFatJets" , &nLooseCHSFatJets , "nLooseCHSFatJets/L");
     tree -> Branch("nTightCHSFatJets" , &nTightCHSFatJets , "nTightCHSFatJets/L");
@@ -2685,12 +3086,53 @@ Ntuplizer::beginJob()
       tree -> Branch("nPFCandidatesFullTrackInfo_pt", &nPFCandidatesFullTrackInfo_pt, "nPFCandidatesFullTrackInfo_pt/I");
       tree -> Branch("nPFCandidatesFullTrackInfo_hasTrackDetails", &nPFCandidatesFullTrackInfo_hasTrackDetails, "nPFCandidatesFullTrackInfo_hasTrackDetails/I");
     }
+    if (isShort){
+      tree -> Branch("nTriggerObjectsDoubleJet90" , &nTriggerObjectsDoubleJet90 , "nTriggerObjectsDoubleJet90/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltL1s_dRp5" , &nFilterObjectsDoubleJet90_hltL1s_dRp5, "nFilterObjectsDoubleJet90_hltL1s_dRp5/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5" , &nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5, "nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp5/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5" , &nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5, "nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp5/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5" , &nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5, "nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp5/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5" , &nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5, "nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp5/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5" , &nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5, "nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp5/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltL1s_dRp4" , &nFilterObjectsDoubleJet90_hltL1s_dRp4, "nFilterObjectsDoubleJet90_hltL1s_dRp4/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4" , &nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4, "nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp4/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4" , &nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4, "nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp4/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4" , &nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4, "nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp4/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4" , &nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4, "nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp4/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4" , &nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4, "nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp4/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltL1s_dRp2" , &nFilterObjectsDoubleJet90_hltL1s_dRp2, "nFilterObjectsDoubleJet90_hltL1s_dRp2/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2" , &nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2, "nFilterObjectsDoubleJet90_hltDoubleCentralJet90_dRp2/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2" , &nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2, "nFilterObjectsDoubleJet90_hltQuadCentralJet30_dRp2/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2" , &nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2, "nFilterObjectsDoubleJet90_hltDoublePFCentralJetLooseID90_dRp2/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2" , &nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2, "nFilterObjectsDoubleJet90_hltQuadPFCentralJetLooseID30_dRp2/L");
+      tree -> Branch("nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2" , &nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2, "nFilterObjectsDoubleJet90_hltBTagCaloCSVp087Triple_dRp2/L");
+
+      tree -> Branch("nTriggerObjectsQuadJet45" , &nTriggerObjectsQuadJet45 , "nTriggerObjectsQuadJet45/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltL1s_dRp5" , &nFilterObjectsQuadJet45_hltL1s_dRp5, "nFilterObjectsQuadJet45_hltL1s_dRp5/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5" , &nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5, "nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp5/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5" , &nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5, "nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp5/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5" , &nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5, "nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp5/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltL1s_dRp4" , &nFilterObjectsQuadJet45_hltL1s_dRp4, "nFilterObjectsQuadJet45_hltL1s_dRp4/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4" , &nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4, "nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp4/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4" , &nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4, "nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp4/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4" , &nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4, "nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp4/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltL1s_dRp2" , &nFilterObjectsQuadJet45_hltL1s_dRp2, "nFilterObjectsQuadJet45_hltL1s_dRp2/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2" , &nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2, "nFilterObjectsQuadJet45_hltQuadCentralJet45_dRp2/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2" , &nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2, "nFilterObjectsQuadJet45_hltQuadPFCentralJetLooseID45_dRp2/L");
+      tree -> Branch("nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2" , &nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2, "nFilterObjectsQuadJet45_hltBTagCaloCSVp087Triple_dRp2/L");
+
+      tree -> Branch("nTriggerObjectsDoubleJetC112MaxDeta1p6" , &nTriggerObjectsDoubleJetC112MaxDeta1p6 , "nTriggerObjectsDoubleJetC112MaxDeta1p6/L");
+      tree -> Branch("nTriggerObjectsDoubleJetC112" , &nTriggerObjectsDoubleJetC112 , "nTriggerObjectsDoubleJetC112/L");
+      tree -> Branch("nTriggerObjectsSixJet30" , &nTriggerObjectsSixJet30 , "nTriggerObjectsSixJet30/L");
+      tree -> Branch("nTriggerObjectsQuadPFJetMqq240" , &nTriggerObjectsQuadPFJetMqq240 , "nTriggerObjectsQuadPFJetMqq240/L");
+      tree -> Branch("nTriggerObjectsQuadPFJetMqq500" , &nTriggerObjectsQuadPFJetMqq500 , "nTriggerObjectsQuadPFJetMqq500/L");
+    }
     tree -> Branch("Flag_BadPFMuon", &BadPFMuonFlag, "Flag_BadPFMuon/O");
     tree -> Branch("Flag_BadChCand", &BadChCandFlag, "Flag_BadChCand/O");
     tree -> Branch("isVBF" , &isVBF, "isVBF/O");
     tree -> Branch("isggH" , &isggH, "isggH/O");
     tree -> Branch("isTriggerVBF" , &isTriggerVBF, "isTriggerVBF/O");
-    if (isControl) {
+    if (isShort or isControl) {
         tree -> Branch("isZtoEE" , &isZtoEE, "isZtoEE/O");
         tree -> Branch("isZtoMM" , &isZtoMM, "isZtoMM/O");
         tree -> Branch("isWtoEN" , &isWtoEN, "isWtoEN/O");
@@ -2713,7 +3155,7 @@ Ntuplizer::beginJob()
 	    }
         }
     for(auto it = MetFiltersMap.begin(); it != MetFiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());
-    //for(auto it = L1FiltersMap.begin(); it != L1FiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());//commented, filters treated differently in 2016/2017-8
+    for(auto it = L1FiltersMap.begin(); it != L1FiltersMap.end(); it++) tree->Branch(it->first.c_str(), &(it->second), (it->first+"/O").c_str());//commented, filters treated differently in 2016/2017-8
 
     tree -> Branch("HDiCHS", &HDiCHS, "HDiCHS/F");
     tree -> Branch("HTriCHS", &HTriCHS, "HTriCHS/F");
@@ -2740,7 +3182,7 @@ Ntuplizer::beginJob()
     ////for(int i = 0; i < WriteNLeptons; i++) Leptons.push_back( LeptonType() );
     //      for(int i = 0; i < WriteNLeptons; i++) Muons.push_back( LeptonType() );
     //      for(int i = 0; i < WriteNLeptons; i++) Electrons.push_back( LeptonType() );
-    if (isControl){
+    if (isShort or isControl){
       tree -> Branch("TightMuons", &Muons);
       tree -> Branch("TightElectrons", &Electrons);
     }
@@ -2756,20 +3198,21 @@ Ntuplizer::beginJob()
     tree -> Branch("GenHiggs", &GenHiggs);
     tree -> Branch("GenLLPs", &GenLLPs);
     tree -> Branch("GenBquarks", &GenBquarks);
+    if (isShort) tree -> Branch("GenTTbarQuarks", &GenTTbarQuarks);
     ////for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Lepton"+std::to_string(i+1)).c_str(), &(Leptons[i].pt), ObjectsFormat::ListLeptonType().c_str());
     //for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Muon"+std::to_string(i+1)).c_str(), &(Muons[i].pt), ObjectsFormat::ListLeptonType().c_str());
     //for(int i = 0; i < WriteNLeptons; i++) tree->Branch(("Electron"+std::to_string(i+1)).c_str(), &(Electrons[i].pt), ObjectsFormat::ListLeptonType().c_str());
 
-    tree -> Branch("VBFPair", &VBF.pt, ObjectsFormat::ListCandidateType().c_str());
-    if (isControl){
-      tree -> Branch("Z", &Z.pt, ObjectsFormat::ListCandidateType().c_str());
-      tree -> Branch("W", &W.pt, ObjectsFormat::ListCandidateType().c_str());
+    if (isShort or isControl){
+      tree -> Branch("VBFPair", &VBF.pt);//, ObjectsFormat::ListCandidateType().c_str());
+      tree -> Branch("VBFPairJets", &VBFPairJets);
+      tree -> Branch("ggHJet", &ggHJet);
+      tree -> Branch("Z", &Z.pt);//, ObjectsFormat::ListCandidateType().c_str());
+      tree -> Branch("W", &W.pt);//, ObjectsFormat::ListCandidateType().c_str());
     }
 
     tree -> Branch("Jets", &CHSJets);
     //tree -> Branch("CaloJets", &CaloJets);
-    tree -> Branch("VBFPairJets", &VBFPairJets);
-    tree -> Branch("ggHJet", &ggHJet);
     //tree -> Branch("AllBarrelJets", &AllBarrelJets);
     if (WriteAllJets) tree -> Branch("AllJets", &AllJets);
     if (WriteFatJets) tree -> Branch("FatJets", &CHSFatJets);
@@ -2781,6 +3224,10 @@ Ntuplizer::beginJob()
 
     //Histograms
     //Matching_to_b_AK4Jets = fs->make<TH1F>("Matching_to_b_AK4Jets", "Matching_to_b_AK4Jets", 10,0,10);
+    All_histo = fs->make<TH1F>("nEvents_All", "nEvents_All", 10,0,10);
+    Trigger_pass = fs->make<TH1F>("nEvents_Trigger_pass", "nEvents_Trigger_pass", 10,0,10);
+    AtLeastOneL1Filter_pass = fs->make<TH1F>("AtLeastOneL1Filter_pass", "AtLeastOneL1Filter_pass", 10,0,10);
+    isVBF_pass = fs->make<TH1F>("nEvents_isVBF_pass", "nEvents_isVBF_pass", 10,0,10);
 
 }
 

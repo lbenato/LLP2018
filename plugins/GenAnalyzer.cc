@@ -95,18 +95,36 @@ float GenAnalyzer::GenEventWeight(const edm::Event& iEvent) {
   const GenEventInfoProduct& genEventInfo = *(GenEventCollection.product());
 
   weight = genEventInfo.weights()[0];
-  //std::cout<< "weight[0]:" << genEventInfo.weights()[0] << std::endl;
-  //std::cout<< "weight[1]: " << genEventInfo.weights()[1] << std::endl;
-  //std::cout<< "weight[2]: " << genEventInfo.weights()[2] << std::endl;
-  //std::cout<< "weight[3]: " << genEventInfo.weights()[3] << std::endl;
-  //std::cout<< "weight(): " << genEventInfo.weight() << std::endl;
-  //std::cout<< "signalProcessID " << genEventInfo.signalProcessID() << std::endl;
-  //std::cout<< "qScale " << genEventInfo.qScale() << std::endl;
-  //std::cout<< "alphaQCD " << genEventInfo.alphaQCD() << std::endl;
-  //std::cout<< "alphaQED " << genEventInfo.alphaQED() << std::endl;
-  
-  
   return weight;
+}
+
+
+std::pair<float, std::vector<double>> GenAnalyzer::GenEventWeights(const edm::Event& iEvent) {
+  float weight(1.);
+  std::vector<double> all_weights;
+  //  if(iEvent.isRealData()) return weight;
+  if(iEvent.isRealData()) return std::pair<float, std::vector<double>>(weight,all_weights);
+
+  // Declare and open collection
+  edm::Handle<GenEventInfoProduct> GenEventCollection;
+  iEvent.getByToken(GenToken, GenEventCollection);
+  const GenEventInfoProduct& genEventInfo = *(GenEventCollection.product());
+
+  weight = genEventInfo.weights()[0];
+  all_weights = genEventInfo.weights();
+  // std::cout<< "weight[0]:" << genEventInfo.weights()[0] << std::endl;
+  // std::cout<< "weight[1]: " << genEventInfo.weights()[1] << std::endl;
+  // std::cout<< "weight[2]: " << genEventInfo.weights()[2] << std::endl;
+  // std::cout<< "weight[3]: " << genEventInfo.weights()[3] << std::endl;
+  // std::cout<< "weight(): " << genEventInfo.weight() << std::endl;
+  // std::cout<< "signalProcessID " << genEventInfo.signalProcessID() << std::endl;
+  // std::cout<< "qScale " << genEventInfo.qScale() << std::endl;
+  // std::cout<< "alphaQCD " << genEventInfo.alphaQCD() << std::endl;
+  // std::cout<< "alphaQED " << genEventInfo.alphaQED() << std::endl;
+  
+  
+  //  return weight;
+  return std::pair<float, std::vector<double>>(weight, all_weights);
 }
 
 
@@ -252,20 +270,20 @@ std::vector<reco::GenParticle> GenAnalyzer::FillVBFGenVector(const edm::Event& i
 
     }
 
-    
     std::vector<int> partidlist = {1,2,3,4,5,6,21};
     int partstatus = 23;
     //std::vector<int> motheridlist;
 
-    for(std::vector<reco::GenParticle>::const_iterator it = GenCollection->begin(); it != GenCollection->end(); ++it) {
 
 
-      for(unsigned int m = 0; m < VBFmothers.size(); m++) {
+    for(unsigned int m = 0; m < VBFmothers.size(); m++) {
+      //std::cout << "mother nr " << m << std::endl;
+      for(std::vector<reco::GenParticle>::const_iterator it = GenCollection->begin(); it != GenCollection->end(); ++it) {
 
 	for(unsigned int s = 0; s < partidlist.size(); s++) {
 	  if(abs(it->pdgId()) == partidlist.at(s) && it->status() == partstatus && it->mother()->pdgId() == VBFmothers.at(m).pdgId() && it->mother()->p() == VBFmothers.at(m).p()) 
 	    {
-	      //std::cout << "Scattered quarks/gluons due to VBF: pdgId " << it->pdgId() << " ; status " << it->status() << " ; pt " << it->pt()  << " ; eta " << it->eta()  << " ; mother pz " << it->mother()->pz() << std::endl;
+	      //std::cout << "Scattered quarks/gluons due to VBF: pdgId " << it->pdgId() << " ; status " << it->status() << " ; pt " << it->pt()  << " ; eta " << it->eta()  << " ; mother id " << it->mother()->pdgId() << " ; mother pz " << it->mother()->pz() << std::endl;
 	      Vect.push_back(*it); // Fill vector
 	    }
 	}
@@ -444,6 +462,55 @@ float GenAnalyzer::GetPUWeight(const edm::Event& iEvent) {
 
 
 // ---------- PDF ----------
+// Followed procedure described in https://twiki.cern.ch/twiki/bin/view/CMS/TopSystematics#PDF
+std::map<std::string, float> GenAnalyzer::GetPDFWeight(const edm::Event& iEvent) {
+  float Q = 1.;
+  float id1 = 1.;
+  float id2 = 1.;
+  float x1 = 1.;
+  float x2 = 1.;
+  float xPDF1 = 1.;
+  float xPDF2 = 1.;
+  std::map<std::string, float> PDFweights;
+
+  edm::Handle<GenEventInfoProduct> genEventInfoProduct;
+  iEvent.getByToken(GenToken, genEventInfoProduct);
+  const GenEventInfoProduct& genEventInfo = *(genEventInfoProduct.product());
+
+  const gen::PdfInfo* pdf = genEventInfo.pdf();
+  Q = pdf->scalePDF;
+  id1 = pdf->id.first;
+  id2 = pdf->id.second;
+  x1 = pdf->x.first;
+  x2 = pdf->x.second;
+  xPDF1 = pdf->xPDF.first;
+  xPDF2 = pdf->xPDF.second;
+
+  PDFweights["Q"] = Q;
+  PDFweights["id1"] = id1;
+  PDFweights["id2"] = id2;
+  PDFweights["x1"] = x1;
+  PDFweights["x2"] = x2;
+  PDFweights["xPDF1"] = xPDF1;
+  PDFweights["xPDF2"] = xPDF2;
+
+  return PDFweights;
+}
+
+std::pair<float, std::vector<float>> GenAnalyzer::GetPDFsystematics(const edm::Event& iEvent) {
+  float originalXWGTUP = 1.;
+  std::vector<float> systweights;
+
+  edm::Handle<LHEEventProduct> lhe;
+  if(iEvent.getByToken(LheToken,lhe)){
+    originalXWGTUP = lhe->originalXWGTUP();
+    for(unsigned int k=0; k<lhe->weights().size(); k++){
+      systweights.push_back(lhe->weights().at(k).wgt);
+    }
+  }
+
+  return std::pair<float, std::vector<float>>(originalXWGTUP, systweights);
+}
 
 std::pair<float, float> GenAnalyzer::GetQ2Weight(const edm::Event& iEvent) {
   //  float Q, id1, id2, x1, x2;

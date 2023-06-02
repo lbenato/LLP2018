@@ -187,8 +187,15 @@ sig1HB(-1.), sig2HB(-1.), sigAvHB(-1.),tan2thetaHB(-99999999.),ptDHB(-1.),
 sig1PF(-1.), sig2PF(-1.), sigAvPF(-1.),tan2thetaPF(-99999999.),ptDPF(-1.),
 //LLP calo tagger
 sigprob(-1.),
+//LLP parameterized short tagger
+sigprob_M15_0p05(-1.),sigprob_M15_0p1(-1.),sigprob_M15_1(-1.),sigprob_M15_5(-1.),sigprob_M15_10(-1.),
+sigprob_M40_0(-1.),sigprob_M40_0p05(-1.),sigprob_M40_0p1(-1.),sigprob_M40_1(-1.),sigprob_M40_5(-1.),sigprob_M40_10(-1.),
+sigprob_M55_0(-1.),sigprob_M55_0p05(-1.),sigprob_M55_0p1(-1.),sigprob_M55_1(-1.),sigprob_M55_5(-1.),sigprob_M55_10(-1.),
 //Imperial College tagger
-pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP1000(-1.), deepCSV_probb_probbb(-99.), deepCSV_probc_probudsg(-99.), deepCSV_probudsg(-99.), deepCSV_probb(-99.), deepCSV_probc(-99.), deepCSV_probbb(-99.), deepJet_probc_probg_probuds(-99.), deepJet_probb_probbb_problepb(-99.), deepJet_probuds(-99.),deepJet_probg(-99.), deepJet_problepb(-99.), deepJet_probb(-99.), deepJet_probc(-99.), deepJet_probbb(-99.){}
+    pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP1000(-1.), deepCSV_probb_probbb(-99.), deepCSV_probc_probudsg(-99.), deepCSV_probudsg(-99.), deepCSV_probb(-99.), deepCSV_probc(-99.), deepCSV_probbb(-99.), deepJet_probc_probg_probuds(-99.), deepJet_probb_probbb_problepb(-99.), deepJet_probuds(-99.),deepJet_probg(-99.), deepJet_problepb(-99.), deepJet_probb(-99.), deepJet_probc(-99.), deepJet_probbb(-99.),
+    TriggerMatched_DoubleJet90_dRp5(0), TriggerMatched_DoubleJet90_dRp4(0), TriggerMatched_DoubleJet90_dRp2(0), TriggerMatched_QuadJet45_dRp5(0), TriggerMatched_QuadJet45_dRp4(0), TriggerMatched_QuadJet45_dRp2(0), TriggerMatched_DoubleJetC112MaxDeta1p6(0),  TriggerMatched_DoubleJetC112(0),  TriggerMatched_SixJet30(0),  TriggerMatched_QuadPFJetMqq240(0),  TriggerMatched_QuadPFJetMqq500(0),
+  FilterMatched_dRp5_QuadJet45_hltL1s(0), FilterMatched_dRp5_QuadJet45_hltQuadCentralJet45(0), FilterMatched_dRp5_QuadJet45_hltBTagCaloCSVp087Triple(0), FilterMatched_dRp5_QuadJet45_hltQuadPFCentralJetLooseID45(0), FilterMatched_dRp4_QuadJet45_hltL1s(0), FilterMatched_dRp4_QuadJet45_hltQuadCentralJet45(0), FilterMatched_dRp4_QuadJet45_hltBTagCaloCSVp087Triple(0), FilterMatched_dRp4_QuadJet45_hltQuadPFCentralJetLooseID45(0), FilterMatched_dRp2_QuadJet45_hltL1s(0), FilterMatched_dRp2_QuadJet45_hltQuadCentralJet45(0), FilterMatched_dRp2_QuadJet45_hltBTagCaloCSVp087Triple(0), FilterMatched_dRp2_QuadJet45_hltQuadPFCentralJetLooseID45(0), 
+FilterMatched_dRp5_DoubleJet90_hltL1s(0), FilterMatched_dRp5_DoubleJet90_hltQuadCentralJet30(0), FilterMatched_dRp5_DoubleJet90_hltDoubleCentralJet90(0), FilterMatched_dRp5_DoubleJet90_hltBTagCaloCSVp087Triple(0), FilterMatched_dRp5_DoubleJet90_hltQuadPFCentralJetLooseID30(0), FilterMatched_dRp5_DoubleJet90_hltDoublePFCentralJetLooseID90(0), FilterMatched_dRp4_DoubleJet90_hltL1s(0), FilterMatched_dRp4_DoubleJet90_hltQuadCentralJet30(0), FilterMatched_dRp4_DoubleJet90_hltDoubleCentralJet90(0), FilterMatched_dRp4_DoubleJet90_hltBTagCaloCSVp087Triple(0), FilterMatched_dRp4_DoubleJet90_hltQuadPFCentralJetLooseID30(0), FilterMatched_dRp4_DoubleJet90_hltDoublePFCentralJetLooseID90(0), FilterMatched_dRp2_DoubleJet90_hltL1s(0), FilterMatched_dRp2_DoubleJet90_hltQuadCentralJet30(0), FilterMatched_dRp2_DoubleJet90_hltDoubleCentralJet90(0), FilterMatched_dRp2_DoubleJet90_hltBTagCaloCSVp087Triple(0), FilterMatched_dRp2_DoubleJet90_hltQuadPFCentralJetLooseID30(0), FilterMatched_dRp2_DoubleJet90_hltDoublePFCentralJetLooseID90(0){}
     float pt;
     float eta;
     float phi;
@@ -491,6 +498,25 @@ pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP10
     float ptDPF;
 
     float sigprob;
+
+    float sigprob_M15_0p05;
+    float sigprob_M15_0p1;
+    float sigprob_M15_1;
+    float sigprob_M15_5;
+    float sigprob_M15_10;
+    float sigprob_M40_0;
+    float sigprob_M40_0p05;
+    float sigprob_M40_0p1;
+    float sigprob_M40_1;
+    float sigprob_M40_5;
+    float sigprob_M40_10;
+    float sigprob_M55_0;
+    float sigprob_M55_0p05;
+    float sigprob_M55_0p1;
+    float sigprob_M55_1;
+    float sigprob_M55_5;
+    float sigprob_M55_10;
+
     float pfXWP0p01; 
     float pfXWP0p1;
     float pfXWP1; 
@@ -511,6 +537,49 @@ pfXWP0p01(-1.), pfXWP0p1(-1.), pfXWP1(-1.), pfXWP10(-1.), pfXWP100(-1.), pfXWP10
     float deepJet_probb;
     float deepJet_probc;
     float deepJet_probbb;
+
+    int TriggerMatched_DoubleJet90_dRp5;
+    int TriggerMatched_DoubleJet90_dRp4;
+    int TriggerMatched_DoubleJet90_dRp2;
+    int TriggerMatched_QuadJet45_dRp5;
+    int TriggerMatched_QuadJet45_dRp4;
+    int TriggerMatched_QuadJet45_dRp2;
+    int TriggerMatched_DoubleJetC112MaxDeta1p6;
+    int TriggerMatched_DoubleJetC112;
+    int TriggerMatched_SixJet30;
+    int TriggerMatched_QuadPFJetMqq240;
+    int TriggerMatched_QuadPFJetMqq500;
+    int FilterMatched_dRp5_QuadJet45_hltL1s;
+    int FilterMatched_dRp5_QuadJet45_hltQuadCentralJet45;
+    int FilterMatched_dRp5_QuadJet45_hltBTagCaloCSVp087Triple;
+    int FilterMatched_dRp5_QuadJet45_hltQuadPFCentralJetLooseID45;
+    int FilterMatched_dRp4_QuadJet45_hltL1s;
+    int FilterMatched_dRp4_QuadJet45_hltQuadCentralJet45;
+    int FilterMatched_dRp4_QuadJet45_hltBTagCaloCSVp087Triple;
+    int FilterMatched_dRp4_QuadJet45_hltQuadPFCentralJetLooseID45;
+    int FilterMatched_dRp2_QuadJet45_hltL1s;
+    int FilterMatched_dRp2_QuadJet45_hltQuadCentralJet45;
+    int FilterMatched_dRp2_QuadJet45_hltBTagCaloCSVp087Triple;
+    int FilterMatched_dRp2_QuadJet45_hltQuadPFCentralJetLooseID45;
+  
+    int FilterMatched_dRp5_DoubleJet90_hltL1s;
+    int FilterMatched_dRp5_DoubleJet90_hltQuadCentralJet30;
+    int FilterMatched_dRp5_DoubleJet90_hltDoubleCentralJet90;
+    int FilterMatched_dRp5_DoubleJet90_hltBTagCaloCSVp087Triple;
+    int FilterMatched_dRp5_DoubleJet90_hltQuadPFCentralJetLooseID30;
+    int FilterMatched_dRp5_DoubleJet90_hltDoublePFCentralJetLooseID90;
+    int FilterMatched_dRp4_DoubleJet90_hltL1s;
+    int FilterMatched_dRp4_DoubleJet90_hltQuadCentralJet30;
+    int FilterMatched_dRp4_DoubleJet90_hltDoubleCentralJet90;
+    int FilterMatched_dRp4_DoubleJet90_hltBTagCaloCSVp087Triple;
+    int FilterMatched_dRp4_DoubleJet90_hltQuadPFCentralJetLooseID30;
+    int FilterMatched_dRp4_DoubleJet90_hltDoublePFCentralJetLooseID90;
+    int FilterMatched_dRp2_DoubleJet90_hltL1s;
+    int FilterMatched_dRp2_DoubleJet90_hltQuadCentralJet30;
+    int FilterMatched_dRp2_DoubleJet90_hltDoubleCentralJet90;
+    int FilterMatched_dRp2_DoubleJet90_hltBTagCaloCSVp087Triple;
+    int FilterMatched_dRp2_DoubleJet90_hltQuadPFCentralJetLooseID30;
+    int FilterMatched_dRp2_DoubleJet90_hltDoublePFCentralJetLooseID90;
 };
 
 
@@ -1000,13 +1069,26 @@ GenPType(): pt(-1.), eta(-9.), rapidity(-99999.), phi(-9.), mass(-1.), energy(-1
 };
 
 struct TriggerObjectType {
-TriggerObjectType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), charge(0) {}
+TriggerObjectType(): pt(-1.), eta(-9.), phi(-9.), mass(-1.), energy(-1.), charge(0), et(-1.), is_calo_jet(false), is_calo_bjet(false), is_l1_ht(false), is_l1_jet(false), is_pf_jet(false), is_pf_bjet(false), is_jet(false), is_bjet(false), is_pf_ht(false), is_calo_ht(false), is_hltPFCentralJetLooseIDQuad30(false), is_hltAK4PFJetsLooseID(false) {}
     float pt;
     float eta;
     float phi;
     float mass;
     float energy;
     int charge;
+    float et;
+    bool is_calo_jet;
+    bool is_calo_bjet;
+    bool is_l1_ht;
+    bool is_l1_jet;
+    bool is_pf_jet;
+    bool is_pf_bjet;
+    bool is_jet;
+    bool is_bjet;
+    bool is_pf_ht;
+    bool is_calo_ht;
+    bool is_hltPFCentralJetLooseIDQuad30;
+    bool is_hltAK4PFJetsLooseID;
 };
 
 
